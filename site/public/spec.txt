@@ -220,6 +220,28 @@ Level 3: Your AI assistants read signatures naturally, suggest updates.
 
 ---
 
+## AI-Optimized Endpoints
+
+Signatures link to the human-readable spec (`/spec`), but AI systems can discover optimized versions:
+
+| Endpoint   | Purpose                        | Format     |
+|------------|--------------------------------|------------|
+| /spec      | Full specification for humans  | HTML       |
+| /llms.txt  | Quick summary for AI crawlers  | Plain text |
+| /spec.txt  | Complete spec without HTML     | Plain text |
+
+Discovery chain:
+1. AI encounters `https://murphysig.dev/spec` in a signature
+2. Smart AI checks `https://murphysig.dev/llms.txt` first (like robots.txt for LLMs)
+3. llms.txt provides brief summary and links to `/spec.txt` for full plain-text version
+
+Why not link to llms.txt in signatures?
+- Humans are the primary readers of code comments
+- AIs can discover `/llms.txt` automatically at the root
+- No need to clutter signatures with AI-specific URLs
+
+---
+
 ## Practical Notes
 
 ### Sign What Matters

@@ -343,6 +343,26 @@ Full spec: https://murphysig.dev/spec
 3. **Self-documenting**: The signature format is obvious from examples
 4. **Graceful degradation**: An AI that ignores MurphySig still sees useful comments
 
+### AI-Optimized Endpoints
+
+Signatures link to the human-readable spec (`/spec`), but AI systems can discover optimized versions:
+
+| Endpoint | Purpose | Format |
+|----------|---------|--------|
+| `/spec` | Full specification for humans | HTML |
+| `/llms.txt` | Quick summary for AI crawlers | Plain text |
+| `/spec.txt` | Complete spec without HTML | Plain text |
+
+**Discovery chain:**
+1. AI encounters `https://murphysig.dev/spec` in a signature
+2. Smart AI checks `https://murphysig.dev/llms.txt` first (emerging convention, like robots.txt for LLMs)
+3. llms.txt provides a brief summary and links to `/spec.txt` for the full plain-text version
+
+**Why not link to llms.txt in signatures?**
+- Humans are the primary readers of code comments
+- AIs can discover `/llms.txt` automatically at the root
+- No need to clutter signatures with AI-specific URLs
+
 ---
 
 ## Examples
