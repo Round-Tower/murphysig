@@ -1,9 +1,9 @@
 # MurphySig: A Human-Readable Provenance Standard for Creative Work
 
-**Version**: 0.1.0  
-**Authors**: Kev Murphy, Claude (claude-opus-4-5-20250514)  
-**Date**: January 2026  
-**Status**: Draft Specification  
+**Version**: 0.2.0
+**Authors**: Kev Murphy, Claude (claude-opus-4-5-20251101)
+**Date**: January 2026
+**Status**: Draft Specification
 **Spec URL**: https://murphysig.dev/spec
 
 ---
@@ -57,6 +57,22 @@ The problem: "after" requires a structure that captures the output so you can re
 
 MurphySig creates the gallery. It says: *this was a thing, at a time, made by specific collaborators, with specific confidence. You can come back.*
 
+### Not Cryptographic
+
+MurphySig is **not** a cryptographic signature. It provides no tamper-proof verification or authentication. Anyone can edit or forge a MurphySig block.
+
+This is intentional. MurphySig is about:
+- **Provenance documentation** — who contributed, when, why
+- **Intention capture** — what were they thinking
+- **Confidence signaling** — how solid is this
+
+It is **not** about:
+- Tamper-proof verification
+- Code signing or authentication
+- Legal attribution or copyright proof
+
+For cryptographic verification, use GPG signatures, code signing certificates, or blockchain-based systems.
+
 ### Why Natural Language?
 
 Structured schemas require:
@@ -79,6 +95,29 @@ A MurphySig is a **comment block at the top of a file** (or in frontmatter, or i
 
 That's it.
 
+### Block Boundaries
+
+A MurphySig block:
+- **Starts** with a comment line containing `Signed:`
+- **Continues** through contiguous comment lines
+- **Ends** at one of:
+  - A blank line followed by code
+  - A blank line followed by a non-signature comment
+  - An optional end marker: `End MurphySig` or `---`
+
+End markers are **optional** but help tooling and long signatures:
+
+```
+Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
+Context: Complex implementation with extensive notes...
+
+[... many lines of context, reviews, reflections ...]
+
+End MurphySig
+```
+
+When in doubt, parsers should be permissive: treat contiguous comment blocks starting with `Signed:` as the signature.
+
 ### What to Include
 
 | Element | Purpose | Required? |
@@ -87,6 +126,7 @@ That's it.
 | **When** | Date of creation | Yes |
 | **Context** | What you were thinking, why this exists | Yes |
 | **Confidence** | How solid it feels (0.0-1.0), with specifics | Recommended |
+| **Basis** | Evidence supporting confidence (tests, reviews, prod time) | Optional |
 | **Open** | What's unresolved, uncertain, risky | Recommended |
 | **Reference** | Where to find more context | Optional |
 | **Reviews** | Retrospective assessments: what changed, what broke | Added later |
@@ -414,6 +454,15 @@ For important files where you want any AI to immediately understand:
 
 ## Confidence as Accountability
 
+### What Confidence Measures
+
+Confidence measures **correctness and intent-fidelity**: How well does this code do what you intended? How likely is it to work as expected?
+
+It does **not** measure:
+- Feature completeness (use `Open:` for missing features)
+- Code quality or maintainability
+- Performance characteristics
+
 ### The Confidence Scale
 
 | Score | Meaning | When Mistakes Happen |
@@ -425,6 +474,26 @@ For important files where you want any AI to immediately understand:
 | 0.0-0.3 | Placeholder, probably wrong | Guaranteed |
 
 **Confidence is a prediction about failure modes.** When you write `Confidence: 0.5`, you're saying "I expect this to have issues." When it does, that's not failure—that's calibration.
+
+### Grounding Confidence with Basis
+
+Use the optional `Basis:` field to ground confidence in evidence:
+
+```
+Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
+Context: User authentication flow
+
+Confidence: 0.8
+Basis: Unit tests pass (15/15), code review approved, no prod testing yet
+Open: Need to verify password reset edge cases
+```
+
+Without `Basis:`, confidence is subjective. With it, others can evaluate whether they agree with your assessment. Common bases include:
+- Tests passing (with coverage)
+- Code review approval
+- Production time without incidents
+- Manual testing completed
+- Security audit passed
 
 ### Murphy's Law Integration
 
@@ -450,7 +519,9 @@ Over time, you might notice:
 
 MurphySig creates the data to learn these patterns.
 
-### Confidence Decay
+### Confidence Decay (Suggested Heuristic)
+
+This is a **recommended guideline**, not a requirement. Teams should adapt it to their review cadence and risk tolerance.
 
 Unreviewed work becomes less trustworthy:
 
@@ -461,7 +532,20 @@ Unreviewed work becomes less trustworthy:
 | 90-180 days | ×0.5 |
 | 180+ days | ×0.3 |
 
-This isn't automatic—it's a mindset. Old unreviewed code with `Confidence: 0.9` should be treated as `0.27` until you look at it again.
+Old unreviewed code with `Confidence: 0.9` should be treated as `0.27` until you look at it again.
+
+**What counts as a "review"?**
+- PR approval with meaningful review
+- Production deployment without incidents
+- Manual audit or testing
+- Re-reading code with fresh eyes and updating the signature
+
+**What does NOT count:**
+- Automated CI passing alone
+- Glancing at code during debugging
+- Incidental edits to nearby code
+
+The key is periodic reassessment, not rigid time-based decay.
 
 ---
 
@@ -537,6 +621,61 @@ They're not:
 They're not for anyone else. They're barely for future-you. They're for *present-you*, closing the loop on something you made.
 
 Write them in whatever voice feels true. They can be one line or a paragraph. They can be sentimental or sparse. They're yours.
+
+---
+
+## Multi-Author Workflow
+
+### The Question
+
+When multiple people modify signed code over time, should the `Signed:` block be:
+- **Immutable** — preserving original intent, with changes in `Reviews:`
+- **Mutable** — updated to reflect current ownership
+
+MurphySig recommends **immutable original intent** as the default.
+
+### Immutable Original Intent (Recommended)
+
+The `Signed:` block represents who created this and why. When others modify the code, they add `Reviews:` entries:
+
+```
+Signed: Alice + claude-opus-4-5-20250514, 2026-01-04
+Context: Initial implementation of caching layer
+Confidence: 0.7 - untested in production
+
+Reviews:
+
+2026-02-15 (Bob + gemini-2.0-flash-001): Fixed race condition
+in cache invalidation. Confidence now 0.8.
+
+2026-03-01 (Charlie): Deployed to production. Confidence 0.9.
+```
+
+This preserves historical context. You can always see who started this and what they intended.
+
+### When to Replace the Signature
+
+Replace the signature (using `Prior:`) when:
+- You rewrote >50% of the code
+- The original intent/approach is no longer valid
+- You're taking ownership of maintenance
+
+```
+Signed: Bob + gemini-2.0-flash-001, 2026-02-15
+Prior: Alice + claude-opus-4-5-20250514, 2026-01-04
+Context: Rewrote caching layer with new invalidation strategy
+
+Confidence: 0.8
+```
+
+### When to Add a Review
+
+Add a review entry when:
+- You fixed bugs or made improvements
+- The original approach remains valid
+- Changes are incremental
+
+**When uncertain, prefer adding a review.** Immutability preserves more context.
 
 ---
 

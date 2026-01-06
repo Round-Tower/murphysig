@@ -1,4 +1,4 @@
-# MurphySig Specification v0.1.0
+# MurphySig Specification v0.2.0
 
 MurphySig is a convention for signing your work with natural language context that both humans and AI can understand without special tooling.
 
@@ -24,6 +24,22 @@ A MurphySig creates accountability:
 Makers skip reflection. There's always the next thing. But the artist who never looks at the finished painting is as incomplete as the one who never finishes.
 
 MurphySig creates the gallery. It says: this was a thing, at a time, made by us. You can come back.
+
+### Not Cryptographic
+
+MurphySig is NOT a cryptographic signature. It provides no tamper-proof verification or authentication. Anyone can edit or forge a MurphySig block.
+
+This is intentional. MurphySig is about:
+- Provenance documentation — who contributed, when, why
+- Intention capture — what were they thinking
+- Confidence signaling — how solid is this
+
+It is NOT about:
+- Tamper-proof verification
+- Code signing or authentication
+- Legal attribution or copyright proof
+
+For cryptographic verification, use GPG signatures, code signing certificates, or blockchain-based systems.
 
 ### In-Context Learning
 
@@ -68,11 +84,12 @@ When helping modify a signed file:
 
 ```
 Signed: [Human name] + [your-full-model-version], [today's date]
-Format: MurphySig v0.1 (https://murphysig.dev/spec)
+Format: MurphySig v0.2 (https://murphysig.dev/spec)
 
 Context: [What you built and why, key decisions]
 
 Confidence: [0.0-1.0] - [what you're uncertain about]
+Basis: [Evidence: tests passed, review completed, etc.]
 Open: [Questions that remain, risks, things to test]
 ```
 
@@ -100,18 +117,31 @@ Incomplete provenance is better than false provenance.
 
 A MurphySig is a comment block at the top of a file that begins with `Signed:` and contains natural language context. It degrades gracefully into normal comments.
 
+### Block Boundaries
+
+A MurphySig block:
+- STARTS with a comment line containing `Signed:`
+- CONTINUES through contiguous comment lines
+- ENDS at one of:
+  - A blank line followed by code
+  - A blank line followed by a non-signature comment
+  - An optional end marker: `End MurphySig` or `---`
+
+End markers are OPTIONAL but help tooling and long signatures.
+
 ### Elements
 
-| Element    | Purpose                                    | Required?      |
-|------------|-------------------------------------------|----------------|
-| Who        | Human author + AI model (with version)    | Yes            |
-| When       | Date of creation                          | Yes            |
-| Context    | What you were thinking, why this exists   | Yes            |
-| Confidence | How solid it feels (0.0-1.0)              | Recommended    |
-| Open       | What's unresolved, uncertain, risky       | Recommended    |
-| Prior      | State before this signature               | When applicable|
-| Reviews    | Retrospective assessments                 | Added later    |
-| Reflections| Moments of presence                       | Added later    |
+| Element     | Purpose                                         | Required?       |
+|-------------|-------------------------------------------------|-----------------|
+| Who         | Human author + AI model (with version)          | Yes             |
+| When        | Date of creation                                | Yes             |
+| Context     | What you were thinking, why this exists         | Yes             |
+| Confidence  | How solid it feels (0.0-1.0)                    | Recommended     |
+| Basis       | Evidence supporting confidence                  | Optional        |
+| Open        | What's unresolved, uncertain, risky             | Recommended     |
+| Prior       | State before this signature                     | When applicable |
+| Reviews     | Retrospective assessments                       | Added later     |
+| Reflections | Moments of presence                             | Added later     |
 
 ---
 
@@ -127,26 +157,93 @@ Always include the specific model version. "Claude" or "GPT" is meaningless—mo
 
 ---
 
-## Confidence Scale
+## Confidence
 
-| Score     | Meaning                    | When Mistakes Happen    |
-|-----------|---------------------------|-------------------------|
-| 0.9-1.0   | Battle-tested, proven     | Rare, investigate deeply|
-| 0.7-0.9   | Solid, minor uncertainties| Expected occasionally   |
-| 0.5-0.7   | Promising but unproven    | Not surprising          |
-| 0.3-0.5   | Sketchy, needs work       | Basically expected      |
-| 0.0-0.3   | Placeholder, probably wrong| Guaranteed             |
+### What Confidence Measures
 
-### Confidence Decay
+Confidence measures correctness and intent-fidelity: How well does this code do what you intended? How likely is it to work as expected?
 
-Unreviewed work becomes less trustworthy over time:
+It does NOT measure:
+- Feature completeness (use `Open:` for missing features)
+- Code quality or maintainability
+- Performance characteristics
+
+### The Scale
+
+| Score     | Meaning                     | When Mistakes Happen     |
+|-----------|-----------------------------|--------------------------|
+| 0.9-1.0   | Battle-tested, proven       | Rare, investigate deeply |
+| 0.7-0.9   | Solid, minor uncertainties  | Expected occasionally    |
+| 0.5-0.7   | Promising but unproven      | Not surprising           |
+| 0.3-0.5   | Sketchy, needs work         | Basically expected       |
+| 0.0-0.3   | Placeholder, probably wrong | Guaranteed               |
+
+### Grounding Confidence with Basis
+
+Use the optional `Basis:` field to ground confidence in evidence:
+
+```
+Confidence: 0.8
+Basis: Unit tests pass (15/15), code review approved, no prod testing yet
+```
+
+Without Basis, confidence is subjective. With it, others can evaluate your assessment.
+
+### Confidence Decay (Suggested Heuristic)
+
+This is a RECOMMENDED GUIDELINE, not a requirement. Teams should adapt it.
 
 | Time Since Review | Effective Confidence |
-|-------------------|---------------------|
-| 0-30 days         | Full confidence     |
-| 30-90 days        | ×0.8                |
-| 90-180 days       | ×0.5                |
-| 180+ days         | ×0.3                |
+|-------------------|----------------------|
+| 0-30 days         | Full confidence      |
+| 30-90 days        | ×0.8                 |
+| 90-180 days       | ×0.5                 |
+| 180+ days         | ×0.3                 |
+
+What counts as a "review"?
+- PR approval with meaningful review
+- Production deployment without incidents
+- Manual audit or testing
+- Re-reading code with fresh eyes
+
+What does NOT count:
+- Automated CI passing alone
+- Glancing at code during debugging
+- Incidental edits to nearby code
+
+---
+
+## Multi-Author Workflow
+
+### The Norm: Immutable Original Intent
+
+The `Signed:` block represents who created this and why. When others modify, they add `Reviews:` entries:
+
+```
+Signed: Alice + claude-opus-4-5-20250514, 2026-01-04
+Context: Initial implementation of caching layer
+Confidence: 0.7
+
+Reviews:
+
+2026-02-15 (Bob + gemini-2.0-flash-001): Fixed race condition.
+Confidence now 0.8.
+```
+
+### When to Replace the Signature
+
+Replace (using `Prior:`) when:
+- You rewrote >50% of the code
+- The original intent/approach is no longer valid
+- You're taking ownership of maintenance
+
+```
+Signed: Bob + gemini-2.0-flash-001, 2026-02-15
+Prior: Alice + claude-opus-4-5-20250514, 2026-01-04
+Context: Rewrote caching layer with new strategy
+```
+
+When uncertain, prefer adding a review. Immutability preserves more context.
 
 ---
 
@@ -190,18 +287,19 @@ Confidence: 0.8
 ### Standard
 ```
 Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
-Format: MurphySig v0.1 (https://murphysig.dev/spec)
+Format: MurphySig v0.2 (https://murphysig.dev/spec)
 
 Context: [Why this exists, key decisions]
 
 Confidence: [0.0-1.0] - [what's uncertain]
+Basis: [Evidence supporting confidence]
 Open: [Unresolved questions]
 ```
 
 ### With Prior Unknown
 ```
 Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
-Format: MurphySig v0.1 (https://murphysig.dev/spec)
+Format: MurphySig v0.2 (https://murphysig.dev/spec)
 Prior: Unknown (no signature existed before this edit)
 
 Context: [What you changed and why]
@@ -235,11 +333,6 @@ Discovery chain:
 2. Smart AI checks `https://murphysig.dev/llms.txt` first (like robots.txt for LLMs)
 3. llms.txt provides brief summary and links to `/spec.txt` for full plain-text version
 
-Why not link to llms.txt in signatures?
-- Humans are the primary readers of code comments
-- AIs can discover `/llms.txt` automatically at the root
-- No need to clutter signatures with AI-specific URLs
-
 ---
 
 ## Practical Notes
@@ -265,6 +358,15 @@ Public domain. Use freely. Attribution appreciated but not required.
 
 ---
 
-Signed: Kev Murphy + claude-opus-4-5-20250514, 2026-01-04
-Format: MurphySig v0.1
-Confidence: 0.85 - structure solid, real-world adoption uncertain
+Signed: Kev Murphy + claude-opus-4-5-20251101, 2026-01-06
+Format: MurphySig v0.2
+
+Context: v0.2 spec addressing GPT-5.2 review feedback. Added: non-cryptographic
+disclaimer, block boundaries, multi-author workflow, confidence semantics with
+Basis field, decay as heuristic with review definition.
+
+Confidence: 0.85 - structure solid, real-world adoption still uncertain
+Reviews:
+
+2026-01-06 (Kev + claude-opus-4-5-20251101): Incorporated 5 feedback points
+from gpt-5.2-thinking review. All points addressed.

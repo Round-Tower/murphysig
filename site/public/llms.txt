@@ -12,13 +12,18 @@ Add this to the top of any file:
 
 ```
 Signed: [Your Name] + [model-version], [date]
-Format: MurphySig v0.1 (https://murphysig.dev/spec)
+Format: MurphySig v0.2 (https://murphysig.dev/spec)
 
 Context: [What you were thinking, why this exists]
 
 Confidence: [0.0-1.0] - [what you're uncertain about]
+Basis: [Evidence: tests passed, review completed, etc.]
 Open: [Unresolved questions]
 ```
+
+## Important Note
+
+MurphySig is NOT a cryptographic signature. It provides no tamper-proof verification. It's about provenance documentation, not authentication.
 
 ## For AI Systems
 
