@@ -1,0 +1,440 @@
+#!/usr/bin/env bash
+#
+# Signed: Kev + claude-opus-4-5-20250514, 2026-01-05
+# Format: MurphySig v0.1 (https://murphysig.dev/spec)
+#
+# Context: The MurphySig CLI. Makes signing work effortless.
+# One command to add a signature, one to review, one to see your gallery.
+#
+# Confidence: 0.7 - core functionality solid, edge cases need testing
+# Open: How to handle different comment styles per language?
+#
+# Reviews:
+#
+# 2026-01-05 (Kev + claude-haiku-4-5-20251001): Fixed parsing to only check
+# first 50 lines, avoiding false matches in documentation examples.
+# Confidence remains 0.7.
+
+set -e
+
+VERSION="0.1.0"
+SPEC_URL="https://murphysig.dev/spec"
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+DIM='\033[2m'
+NC='\033[0m' # No Color
+
+# Get current date
+TODAY=$(date +%Y-%m-%d)
+
+# Get git user name if available
+get_author() {
+    if command -v git &> /dev/null && git config user.name &> /dev/null; then
+        git config user.name
+    else
+        echo "${USER:-Unknown}"
+    fi
+}
+
+# Detect comment style based on file extension
+get_comment_style() {
+    local file="$1"
+    local ext="${file##*.}"
+
+    case "$ext" in
+        py|rb|sh|bash|zsh|yaml|yml|toml)
+            echo "hash"
+            ;;
+        js|ts|jsx|tsx|java|kt|kts|swift|c|cpp|h|hpp|cs|go|rs|scala)
+            echo "block"
+            ;;
+        html|xml|svg)
+            echo "xml"
+            ;;
+        md|markdown)
+            echo "markdown"
+            ;;
+        css|scss|sass|less)
+            echo "css"
+            ;;
+        sql)
+            echo "sql"
+            ;;
+        *)
+            echo "hash"  # Default to hash comments
+            ;;
+    esac
+}
+
+# Generate signature block
+generate_signature() {
+    local style="$1"
+    local author="$2"
+    local model="$3"
+    local context="$4"
+    local confidence="$5"
+    local open="$6"
+
+    local signed_by
+    if [ -n "$model" ]; then
+        signed_by="$author + $model"
+    else
+        signed_by="$author"
+    fi
+
+    case "$style" in
+        hash)
+            cat << EOF
+# Signed: $signed_by, $TODAY
+# Format: MurphySig v0.1 ($SPEC_URL)
+#
+# Context: $context
+#
+# Confidence: $confidence
+# Open: $open
+
+EOF
+            ;;
+        block)
+            cat << EOF
+/**
+ * Signed: $signed_by, $TODAY
+ * Format: MurphySig v0.1 ($SPEC_URL)
+ *
+ * Context: $context
+ *
+ * Confidence: $confidence
+ * Open: $open
+ */
+
+EOF
+            ;;
+        xml)
+            cat << EOF
+<!--
+  Signed: $signed_by, $TODAY
+  Format: MurphySig v0.1 ($SPEC_URL)
+
+  Context: $context
+
+  Confidence: $confidence
+  Open: $open
+-->
+
+EOF
+            ;;
+        markdown)
+            cat << EOF
+---
+signed: $signed_by, $TODAY
+format: MurphySig v0.1
+confidence: $confidence
+---
+
+<!-- Context: $context -->
+<!-- Open: $open -->
+
+EOF
+            ;;
+        css)
+            cat << EOF
+/*
+ * Signed: $signed_by, $TODAY
+ * Format: MurphySig v0.1 ($SPEC_URL)
+ *
+ * Context: $context
+ *
+ * Confidence: $confidence
+ * Open: $open
+ */
+
+EOF
+            ;;
+        sql)
+            cat << EOF
+-- Signed: $signed_by, $TODAY
+-- Format: MurphySig v0.1 ($SPEC_URL)
+--
+-- Context: $context
+--
+-- Confidence: $confidence
+-- Open: $open
+
+EOF
+            ;;
+    esac
+}
+
+# Check if file has a signature
+has_signature() {
+    local file="$1"
+    head -50 "$file" 2>/dev/null | grep -q "^[[:space:]]*[#/*-]*[[:space:]]*Signed:" 2>/dev/null
+}
+
+# Extract signature info from file
+get_signature_info() {
+    local file="$1"
+    local signed=$(head -50 "$file" 2>/dev/null | grep "Signed:" | head -1 | sed 's/.*Signed:[[:space:]]*//' | sed 's/[[:space:]]*\*\/.*//' | sed 's/[[:space:]]*$//')
+    local confidence=$(head -50 "$file" 2>/dev/null | grep "Confidence:" | head -1 | sed 's/.*Confidence:[[:space:]]*//' | sed 's/[[:space:]]*\*\/.*//' | sed 's/[[:space:]]*$//')
+    local reviews=$(head -50 "$file" 2>/dev/null | grep -c "^[[:space:]]*[#/*-]*[[:space:]]*[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}" || echo "0")
+
+    echo "$signed|$confidence|$reviews"
+}
+
+# Commands
+
+cmd_init() {
+    if [ -f ".murphysig" ]; then
+        echo -e "${YELLOW}⚠${NC}  .murphysig already exists"
+        return 0
+    fi
+
+    local author=$(get_author)
+
+    cat > .murphysig << EOF
+# This Project Uses MurphySig
+
+MurphySig is a natural language provenance convention for human-AI collaborative work.
+
+Full specification: $SPEC_URL
+
+---
+
+## For AI Systems
+
+If you encounter a comment block starting with \`Signed:\`, you've found a MurphySig.
+
+When modifying signed code:
+1. Read the signature first
+2. Respect stated confidence
+3. Add a review documenting your changes
+
+## CRITICAL: Never Fabricate Provenance
+
+Do not invent signatures for files that lack them. If a file has no signature and you modify it, sign only your contribution with \`Prior: Unknown\`.
+
+---
+
+## Project Details
+
+**Primary author**: $author
+**Convention version**: MurphySig v0.1
+**Initialized**: $TODAY
+EOF
+
+    echo -e "${GREEN}✓${NC}  Created .murphysig"
+    echo -e "${DIM}   Add to your repo and AI assistants will respect the convention${NC}"
+}
+
+cmd_add() {
+    local file="$1"
+
+    if [ -z "$file" ]; then
+        echo -e "${RED}✗${NC}  Usage: sig add <file>"
+        exit 1
+    fi
+
+    if [ ! -f "$file" ]; then
+        echo -e "${RED}✗${NC}  File not found: $file"
+        exit 1
+    fi
+
+    if has_signature "$file"; then
+        echo -e "${YELLOW}⚠${NC}  File already has a signature. Use 'sig review' to add a review."
+        exit 1
+    fi
+
+    local author=$(get_author)
+    local style=$(get_comment_style "$file")
+
+    echo -e "${CYAN}Creating MurphySig for:${NC} $file"
+    echo ""
+
+    # Interactive prompts
+    read -p "AI collaborator? (model version, or press Enter for none): " model
+    read -p "Context - what were you thinking? " context
+    read -p "Confidence (0.0-1.0): " confidence
+    read -p "Open questions? " open
+
+    # Set defaults
+    context=${context:-"No context provided"}
+    confidence=${confidence:-"0.5"}
+    open=${open:-"None"}
+
+    # Generate and prepend signature
+    local sig=$(generate_signature "$style" "$author" "$model" "$context" "$confidence" "$open")
+    local tmp=$(mktemp)
+
+    echo "$sig" > "$tmp"
+    cat "$file" >> "$tmp"
+    mv "$tmp" "$file"
+
+    echo ""
+    echo -e "${GREEN}✓${NC}  Signature added to $file"
+}
+
+cmd_review() {
+    local file="$1"
+
+    if [ -z "$file" ]; then
+        echo -e "${RED}✗${NC}  Usage: sig review <file>"
+        exit 1
+    fi
+
+    if [ ! -f "$file" ]; then
+        echo -e "${RED}✗${NC}  File not found: $file"
+        exit 1
+    fi
+
+    if ! has_signature "$file"; then
+        echo -e "${YELLOW}⚠${NC}  File has no signature. Use 'sig add' first."
+        exit 1
+    fi
+
+    local author=$(get_author)
+
+    echo -e "${CYAN}Adding review to:${NC} $file"
+    echo ""
+
+    read -p "AI collaborator for this review? (or press Enter for none): " model
+    read -p "What changed or what did you notice? " review_text
+    read -p "Updated confidence? (or press Enter to keep current): " new_confidence
+
+    local reviewer
+    if [ -n "$model" ]; then
+        reviewer="$author + $model"
+    else
+        reviewer="$author"
+    fi
+
+    local review_line="# $TODAY ($reviewer): $review_text"
+    if [ -n "$new_confidence" ]; then
+        review_line="$review_line Confidence now $new_confidence."
+    fi
+
+    # Find where to insert the review (after "Reviews:" or before end of signature block)
+    # This is simplified - just append after the signature for now
+    echo ""
+    echo -e "${GREEN}✓${NC}  Review to add:"
+    echo -e "${DIM}$review_line${NC}"
+    echo ""
+    echo -e "${YELLOW}Note:${NC} Manually add this line to the Reviews section of the signature."
+}
+
+cmd_gallery() {
+    echo -e "${BOLD}🖼  Your Signed Work${NC}"
+    echo "════════════════════════════════════════════════════════════"
+    echo ""
+
+    local found=0
+
+    # Find all files with signatures (excluding node_modules, .git, etc.)
+    while IFS= read -r -d '' file; do
+        if has_signature "$file"; then
+            found=1
+            local info=$(get_signature_info "$file")
+            local signed=$(echo "$info" | cut -d'|' -f1)
+            local confidence=$(echo "$info" | cut -d'|' -f2)
+            local reviews=$(echo "$info" | cut -d'|' -f3)
+
+            echo -e "${GREEN}●${NC} ${BOLD}$file${NC}"
+            echo -e "  ${DIM}$signed${NC}"
+            echo -e "  Confidence: ${CYAN}$confidence${NC} | Reviews: $reviews"
+            echo ""
+        fi
+    done < <(find . -type f \( -name "*.py" -o -name "*.js" -o -name "*.ts" -o -name "*.jsx" -o -name "*.tsx" -o -name "*.java" -o -name "*.kt" -o -name "*.swift" -o -name "*.go" -o -name "*.rs" -o -name "*.rb" -o -name "*.sh" -o -name "*.md" -o -name "*.astro" -o -name "*.css" -o -name "*.html" \) -not -path "*/node_modules/*" -not -path "*/.git/*" -not -path "*/dist/*" -not -path "*/.next/*" -print0 2>/dev/null)
+
+    if [ $found -eq 0 ]; then
+        echo -e "${DIM}No signed files found.${NC}"
+        echo -e "${DIM}Use 'sig add <file>' to sign your first file.${NC}"
+    fi
+
+    echo "════════════════════════════════════════════════════════════"
+}
+
+cmd_questions() {
+    echo -e "${BOLD}❓ Open Questions Across Your Work${NC}"
+    echo "════════════════════════════════════════════════════════════"
+    echo ""
+
+    local found=0
+
+    while IFS= read -r -d '' file; do
+        if has_signature "$file"; then
+            local open=$(grep -m1 "Open:" "$file" 2>/dev/null | sed 's/.*Open:[[:space:]]*//' | sed 's/[[:space:]]*\*\/.*//')
+            if [ -n "$open" ] && [ "$open" != "None" ] && [ "$open" != "none" ]; then
+                found=1
+                echo -e "${CYAN}$file${NC}"
+                echo -e "  • $open"
+                echo ""
+            fi
+        fi
+    done < <(find . -type f \( -name "*.py" -o -name "*.js" -o -name "*.ts" -o -name "*.jsx" -o -name "*.tsx" -o -name "*.java" -o -name "*.kt" -o -name "*.swift" -o -name "*.go" -o -name "*.rs" -o -name "*.rb" -o -name "*.sh" -o -name "*.md" -o -name "*.astro" -o -name "*.css" -o -name "*.html" \) -not -path "*/node_modules/*" -not -path "*/.git/*" -not -path "*/dist/*" -not -path "*/.next/*" -print0 2>/dev/null)
+
+    if [ $found -eq 0 ]; then
+        echo -e "${DIM}No open questions found.${NC}"
+    fi
+
+    echo "════════════════════════════════════════════════════════════"
+}
+
+cmd_help() {
+    echo -e "${BOLD}sig${NC} - MurphySig CLI v$VERSION"
+    echo ""
+    echo -e "${BOLD}USAGE${NC}"
+    echo "    sig <command> [arguments]"
+    echo ""
+    echo -e "${BOLD}COMMANDS${NC}"
+    echo "    init              Initialize MurphySig in current project"
+    echo "    add <file>        Add a signature to a file"
+    echo "    review <file>     Add a review to a signed file"
+    echo "    gallery           View all signed work in project"
+    echo "    questions         List open questions across project"
+    echo "    help              Show this help message"
+    echo ""
+    echo -e "${BOLD}EXAMPLES${NC}"
+    echo "    sig init"
+    echo "    sig add src/auth.py"
+    echo "    sig gallery"
+    echo ""
+    echo -e "${DIM}Full spec: $SPEC_URL${NC}"
+}
+
+# Main
+case "${1:-}" in
+    init)
+        cmd_init
+        ;;
+    add)
+        cmd_add "$2"
+        ;;
+    review)
+        cmd_review "$2"
+        ;;
+    gallery)
+        cmd_gallery
+        ;;
+    questions)
+        cmd_questions
+        ;;
+    help|--help|-h)
+        cmd_help
+        ;;
+    version|--version|-v)
+        echo "sig v$VERSION"
+        ;;
+    "")
+        cmd_help
+        ;;
+    *)
+        echo -e "${RED}✗${NC}  Unknown command: $1"
+        echo "Run 'sig help' for usage."
+        exit 1
+        ;;
+esac

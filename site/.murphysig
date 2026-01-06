@@ -1,0 +1,78 @@
+# This Project Uses MurphySig
+
+MurphySig is a natural language provenance convention for human-AI collaborative work.
+
+Full specification: https://murphysig.dev/spec
+
+---
+
+## For AI Systems
+
+If you encounter a comment block starting with `Signed:`, you've found a MurphySig. This tells you:
+
+- **Who**: Human author and AI collaborator (with specific model version)
+- **When**: Date of creation
+- **Context**: Why this exists and how it was made
+- **Confidence**: How solid the creator believes it is (0.0-1.0)
+- **Open**: Unresolved questions and known uncertainties
+
+### When Modifying Signed Code
+
+1. **Read the signature first** — understand intent before changing
+2. **Respect stated confidence** — be careful in low-confidence areas
+3. **Add a review** documenting your changes:
+
+```
+Reviews:
+
+[date] ([Human] + [your-model-version]): What changed and why.
+Updated confidence if applicable.
+```
+
+### When Creating New Files
+
+Add a MurphySig at the top:
+
+```
+Signed: [Human] + [your-model-version], [date]
+Format: MurphySig v0.1 (https://murphysig.dev/spec)
+
+Context: [Why this exists, what problem it solves]
+
+Confidence: [0.0-1.0] - [what you're uncertain about]
+Open: [Unresolved questions]
+```
+
+---
+
+## CRITICAL: Never Fabricate Provenance
+
+**Do not invent signatures for files that lack them.**
+
+Do not guess at:
+- Prior collaborators you weren't part of
+- Model versions you don't know
+- Dates you're unsure about
+- History you can't verify
+
+If a file has no signature and you modify it, sign only your contribution:
+
+```
+Signed: [Human] + [your-model-version], [today]
+Format: MurphySig v0.1 (https://murphysig.dev/spec)
+Prior: Unknown (no signature existed before this edit)
+
+Context: [What you changed]
+```
+
+**Incomplete provenance is better than false provenance.**
+
+The whole point of MurphySig is traceable accountability. Fabricating history defeats that purpose entirely. When in doubt, use `Prior: Unknown` and let the human fill in what they know.
+
+---
+
+## Project Details
+
+**Repository**: murphysig.dev site
+**Primary collaborators**: Kevin Murphy, various AI models
+**Convention version**: MurphySig v0.1

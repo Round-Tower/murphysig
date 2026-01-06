@@ -1,0 +1,104 @@
+---
+/**
+ * Signed: Kevin Murphy + gemini-2.0-flash-001, 2026-01-04
+ * Format: MurphySig v0.1 (https://murphysig.dev/spec)
+ *
+ * Context: The Manifesto. The homepage isn't a landing page, it's an essay.
+ * It argues that code is worth witnessing.
+ *
+ * Confidence: 0.85 - Copy feels strong, design is minimal.
+ *
+ * Reviews:
+ *
+ * 2026-01-04 (Kev + claude-opus-4-5-20250514): Reviewed with Claude Opus.
+ * Kept the aesthetic, refined copy. Gemini's foundation was solid.
+ * Confidence remains 0.85.
+ */
+
+import ArtLayout from '../layouts/ArtLayout.astro';
+---
+
+<ArtLayout title="MurphySig: A Human-Readable Provenance Standard">
+    
+    <header class="mb-24 md:mb-32">
+        <h1 class="text-6xl md:text-9xl font-serif leading-[0.9] tracking-tight mb-8">
+            MurphySig
+        </h1>
+        <p class="text-xl md:text-2xl font-serif text-neutral-600 max-w-lg leading-relaxed">
+            Anything worth making is worth returning to.
+        </p>
+    </header>
+
+    <section class="space-y-12 md:space-y-16">
+        
+        <!-- The Hook -->
+        <div class="prose prose-lg prose-neutral font-serif">
+            <p class="text-2xl md:text-3xl leading-snug">
+                We build in the dark. We ship. We move on. <br/>
+                <span class="text-neutral-400">The velocity of modern work eliminates reflection.</span>
+            </p>
+        </div>
+
+        <!-- The Solution (Visual) -->
+        <div class="bg-gray-50 border border-neutral-200 p-6 md:p-10 rounded-sm font-mono text-sm md:text-base overflow-x-auto">
+            <div class="text-neutral-400 select-none mb-4">/* src/consciousness.ts */</div>
+            <div class="text-blue-600">/**</div>
+            <div class="text-neutral-600">
+                <span class="text-blue-600"> *</span> Signed: <strong class="text-black">Kev + claude-opus-4.5</strong>, 2026-01-04<br/>
+                <span class="text-blue-600"> *</span> <br/>
+                <span class="text-blue-600"> *</span> <span class="italic text-neutral-800">Context:</span> Designing capability elicitation. Key insight:<br/>
+                <span class="text-blue-600"> *</span> emergence isn't magic, it's unlockable through structure.<br/>
+                <span class="text-blue-600"> *</span> <br/>
+                <span class="text-blue-600"> *</span> <span class="italic text-neutral-800">Confidence:</span> 0.7 - architecture solid, thresholds need testing<br/>
+                <span class="text-blue-600"> *</span> <span class="italic text-neutral-800">Reflections:</span><br/>
+                <span class="text-blue-600"> *</span> 2026-06-01: Looking back, this was when it clicked.<br/>
+            </div>
+            <div class="text-blue-600"> */</div>
+        </div>
+
+        <!-- The Philosophy -->
+        <article class="prose prose-neutral max-w-none font-serif text-lg leading-relaxed space-y-8">
+            
+            <div>
+                <h3 class="text-xl font-sans font-medium mb-2 tracking-wide text-neutral-900 uppercase text-xs">The Gallery Problem</h3>
+                <p>
+                    An artist should only worry about the output after the art is created. 
+                    But "after" requires a structure that captures the output so you can return to it. 
+                    Without that structure, there is no "after"—just an endless stream of now.
+                </p>
+                <p>
+                    MurphySig creates the gallery. It says: <em>this was a thing, at a time, made by us.</em>
+                </p>
+            </div>
+
+            <hr class="border-neutral-200 w-12 my-12" />
+
+            <div>
+                <h3 class="text-xl font-sans font-medium mb-2 tracking-wide text-neutral-900 uppercase text-xs">Temporal Context for Models</h3>
+                <p>
+                    AI systems have no continuity. Each conversation starts fresh. 
+                    New models emerge every 90 days. 
+                </p>
+                <p>
+                    When we sign our work with specific model versions 
+                    (<code class="font-mono text-sm bg-neutral-100 px-1 py-0.5 rounded">claude-opus-4-5-20250514</code>), 
+                    we leave breadcrumbs for the future. We allow the AGI of tomorrow to understand 
+                    the limitations of the tools we used today. 
+                </p>
+                <p>
+                   We provide <strong>temporal context</strong> to intelligence itself.
+                </p>
+            </div>
+
+        </article>
+        
+        <!-- CTA -->
+        <div class="pt-12">
+            <a href="/spec" class="inline-block border-b-2 border-black pb-1 text-2xl font-serif italic hover:text-neutral-600 transition-colors">
+                Read the Specification &rarr;
+            </a>
+        </div>
+
+    </section>
+
+</ArtLayout>

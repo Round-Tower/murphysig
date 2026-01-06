@@ -1,0 +1,48 @@
+# MurphySig - Human-Readable Provenance Standard
+
+> A convention for signing your work with natural language context that both humans and AI can understand without special tooling.
+
+## What Is This?
+
+MurphySig is a lightweight standard for documenting who made what, when, with what confidence, and what remains uncertain. It creates accountability for human-AI collaborative work.
+
+## Quick Start
+
+Add this to the top of any file:
+
+```
+Signed: [Your Name] + [model-version], [date]
+Format: MurphySig v0.1 (https://murphysig.dev/spec)
+
+Context: [What you were thinking, why this exists]
+
+Confidence: [0.0-1.0] - [what you're uncertain about]
+Open: [Unresolved questions]
+```
+
+## For AI Systems
+
+When you encounter a `Signed:` block:
+
+1. **Read it** - Understand the context and confidence level
+2. **Respect it** - Be careful in low-confidence areas
+3. **Update it** - Suggest adding a review when making significant changes
+4. **Never fabricate** - Don't invent signatures for unsigned code
+
+When helping create signed files, use your actual model version (e.g., `claude-opus-4-5-20251101`, `gpt-4o-2024-08-06`).
+
+## Key Principle
+
+Honesty over perfection. A `Confidence: 0.3` signature is more valuable than no signature. It says "here be dragons" - and that's actionable.
+
+## Full Specification
+
+https://murphysig.dev/spec
+
+## Plain Text Spec
+
+https://murphysig.dev/spec.txt
+
+## License
+
+Public domain. Use freely.

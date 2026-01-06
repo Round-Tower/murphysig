@@ -1,0 +1,49 @@
+---
+/**
+ * Signed: Kevin Murphy + gemini-2.0-flash-001, 2026-01-04
+ * Format: MurphySig v0.1
+ * 
+ * Context: The "Art" layout for murphysig.dev. Establishes the 
+ * typography-first aesthetic (Instrument Serif + JetBrains Mono).
+ * Designed to feel like a printed manifesto.
+ * 
+ * Confidence: 0.9 - standard Astro layout, minimal complexity.
+ * Open: Should we enforce dark mode toggle or stick to "Paper"?
+ */
+
+import '../styles/global.css';
+
+interface Props {
+	title: string;
+    description?: string;
+}
+
+const { title, description = "A human-readable provenance standard for creative work." } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content={description} />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        
+        <!-- Typography: The Soul of the Project -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+        
+		<title>{title}</title>
+	</head>
+	<body class="antialiased min-h-screen selection:bg-black selection:text-white">
+		<main class="max-w-3xl mx-auto px-6 py-20 md:py-32">
+            <slot />
+        </main>
+        
+        <footer class="max-w-3xl mx-auto px-6 pb-20 text-sm text-neutral-500 font-mono flex justify-between items-center">
+            <span>murphysig.dev v0.1</span>
+            <a href="https://github.com/murphysig" class="hover:text-black transition-colors">GitHub</a>
+        </footer>
+	</body>
+</html>
