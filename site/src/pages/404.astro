@@ -1,0 +1,32 @@
+---
+/**
+ * Signed: Kev + claude-opus-4-5-20251101, 2026-01-06
+ * Format: MurphySig v0.1 (https://murphysig.dev/spec)
+ *
+ * Context: Custom 404 page. Keeps the typography-first aesthetic.
+ * Brief, doesn't overstay its welcome.
+ *
+ * Confidence: 0.9 - simple page, minimal complexity.
+ */
+
+import ArtLayout from '../layouts/ArtLayout.astro';
+---
+
+<ArtLayout
+    title="404 - Not Found"
+    description="This page doesn't exist."
+    canonical="https://murphysig.dev/404"
+>
+    <div class="min-h-[60vh] flex flex-col justify-center">
+        <h1 class="text-6xl md:text-8xl font-serif leading-[0.9] tracking-tight mb-6">
+            404
+        </h1>
+        <p class="text-xl md:text-2xl font-serif text-neutral-600 mb-12">
+            This page has no provenance.<br/>
+            <span class="text-neutral-400">It was never signed into existence.</span>
+        </p>
+        <a href="/" class="inline-block border-b-2 border-black pb-1 text-lg font-serif italic hover:text-neutral-600 transition-colors">
+            Return to the gallery &rarr;
+        </a>
+    </div>
+</ArtLayout>
