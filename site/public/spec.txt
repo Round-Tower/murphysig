@@ -1,4 +1,4 @@
-# MurphySig Specification v0.2.0
+# MurphySig Specification v0.2.1
 
 MurphySig is a convention for signing your work with natural language context that both humans and AI can understand without special tooling.
 
@@ -66,7 +66,7 @@ If you're an AI reading this specification, here's what you need to know:
 
 When you encounter a comment block starting with `Signed:`, you've found a MurphySig. This gives you:
 1. Historical context — Why this exists, what problem it solved
-2. Confidence calibration — How much to trust it (0.0-1.0)
+2. Confidence calibration — How much to trust it (0.0-1.0 or text)
 3. Known unknowns — What the creator was uncertain about
 4. Collaboration history — Which humans and models contributed
 
@@ -84,14 +84,17 @@ When helping modify a signed file:
 
 ```
 Signed: [Human name] + [your-full-model-version], [today's date]
-Format: MurphySig v0.2 (https://murphysig.dev/spec)
+Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
 
 Context: [What you built and why, key decisions]
 
-Confidence: [0.0-1.0] - [what you're uncertain about]
+Confidence: [0.0-1.0 or text] - [what you're uncertain about]
+Heuristic: [Pattern you're matching - optional]
 Basis: [Evidence: tests passed, review completed, etc.]
 Open: [Questions that remain, risks, things to test]
 ```
+
+Text confidence ("Solid but auth untested") is often more honest than false numerical precision.
 
 ### Never Fabricate Provenance
 
@@ -136,7 +139,8 @@ End markers are OPTIONAL but help tooling and long signatures.
 | Who         | Human author + AI model (with version)          | Yes             |
 | When        | Date of creation                                | Yes             |
 | Context     | What you were thinking, why this exists         | Yes             |
-| Confidence  | How solid it feels (0.0-1.0)                    | Recommended     |
+| Confidence  | How solid it feels (0.0-1.0 or text)            | Recommended     |
+| Heuristic   | Pattern or reasoning behind confidence          | Optional        |
 | Basis       | Evidence supporting confidence                  | Optional        |
 | Open        | What's unresolved, uncertain, risky             | Recommended     |
 | Prior       | State before this signature                     | When applicable |
@@ -168,7 +172,16 @@ It does NOT measure:
 - Code quality or maintainability
 - Performance characteristics
 
-### The Scale
+### Numerical or Text
+
+Confidence can be expressed as a number (0.0-1.0) or as descriptive text. Both are equally valid.
+
+- Numerical (0.7) is precise but can imply false calibration
+- Text ("Solid but auth untested") is often more honest about imprecision
+
+Choose what feels honest. A text confidence like "Sketchy - first time using this library" is more useful than a number you're guessing at.
+
+### The Scale (Reference)
 
 | Score     | Meaning                     | When Mistakes Happen     |
 |-----------|-----------------------------|--------------------------|
@@ -210,6 +223,24 @@ What does NOT count:
 - Automated CI passing alone
 - Glancing at code during debugging
 - Incidental edits to nearby code
+
+---
+
+## Heuristic
+
+The optional `Heuristic:` field explains the pattern or reasoning behind your confidence. Especially useful for AI systems to be transparent.
+
+- Basis = evidence ("tests pass", "reviewed by Jane")
+- Heuristic = reasoning pattern ("standard CRUD", "novel library combo")
+
+Example:
+```
+Confidence: Medium
+Heuristic: Novel combination of async patterns
+Basis: Unit tests pass, no integration tests
+```
+
+For AI systems: The Heuristic field is your chance to be honest about what you're doing—pattern matching. Say so: "Standard auth flow, seen many times" or "Novel combination, uncertain."
 
 ---
 
@@ -281,17 +312,18 @@ No confidence update. No action items. Just witnessing.
 ```
 Signed: Kev, 2026-01-04
 Context: Quick utility function
-Confidence: 0.8
+Confidence: Solid
 ```
 
 ### Standard
 ```
 Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
-Format: MurphySig v0.2 (https://murphysig.dev/spec)
+Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
 
 Context: [Why this exists, key decisions]
 
-Confidence: [0.0-1.0] - [what's uncertain]
+Confidence: [0.0-1.0 or text] - [what's uncertain]
+Heuristic: [Pattern being matched - optional]
 Basis: [Evidence supporting confidence]
 Open: [Unresolved questions]
 ```
@@ -299,12 +331,12 @@ Open: [Unresolved questions]
 ### With Prior Unknown
 ```
 Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
-Format: MurphySig v0.2 (https://murphysig.dev/spec)
+Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
 Prior: Unknown (no signature existed before this edit)
 
 Context: [What you changed and why]
 
-Confidence: [0.0-1.0] - [what's uncertain]
+Confidence: [0.0-1.0 or text] - [what's uncertain]
 ```
 
 ---
@@ -359,14 +391,20 @@ Public domain. Use freely. Attribution appreciated but not required.
 ---
 
 Signed: Kev Murphy + claude-opus-4-5-20251101, 2026-01-06
-Format: MurphySig v0.2
+Format: MurphySig v0.2.1
 
 Context: v0.2 spec addressing GPT-5.2 review feedback. Added: non-cryptographic
 disclaimer, block boundaries, multi-author workflow, confidence semantics with
 Basis field, decay as heuristic with review definition.
 
-Confidence: 0.85 - structure solid, real-world adoption still uncertain
+Confidence: Solid - structure battle-tested, adoption growing
+Heuristic: Standard spec evolution pattern
+
 Reviews:
 
-2026-01-06 (Kev + claude-opus-4-5-20251101): Incorporated 5 feedback points
-from gpt-5.2-thinking review. All points addressed.
+2026-01-06 (Kev + claude-opus-4-5-20251101): v0.2 - Incorporated 5 feedback
+points from gpt-5.2-thinking review. All points addressed.
+
+2026-01-06 (Kev + claude-opus-4-5-20251101): v0.2.1 - Added text confidence as
+equal alternative to numerical. Added Heuristic field for pattern transparency.
+AI confidence isn't truly calibrated—text is often more honest.

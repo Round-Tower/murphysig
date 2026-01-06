@@ -1,7 +1,7 @@
 ---
 layout: ../layouts/MarkdownLayout.astro
 title: The MurphySig Specification
-version: 0.2.0
+version: 0.2.1
 date: 2026-01-06
 description: The official specification for MurphySig, a human-readable provenance standard for creative work.
 ---
@@ -16,21 +16,21 @@ Add this to the top of any file:
 
 ```
 Signed: [Your Name] + [model-version], [date]
-Format: MurphySig v0.2 (https://murphysig.dev/spec)
+Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
 
 Context: [What you were thinking, why this exists]
 
-Confidence: [0.0-1.0] - [what you're uncertain about]
+Confidence: [0.0-1.0] or [text] - [what you're uncertain about]
 Open: [Unresolved questions]
 ```
 
 That's it. You're using MurphySig.
 
-**Example:**
+**Example (numerical confidence):**
 
 ```python
 # Signed: Kev + claude-opus-4-5-20251101, 2026-01-06
-# Format: MurphySig v0.2 (https://murphysig.dev/spec)
+# Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
 #
 # Context: Authentication middleware. Standard JWT validation
 # with refresh token rotation. Followed OWASP guidelines.
@@ -39,6 +39,21 @@ That's it. You're using MurphySig.
 # Open: Should we add rate limiting per user?
 
 def authenticate(request):
+    # ...
+```
+
+**Example (text confidence):**
+
+```python
+# Signed: Kev, 2026-01-06
+# Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
+#
+# Context: Quick CSV parser for data migration.
+#
+# Confidence: Solid but untested with edge cases
+# Open: What about malformed rows?
+
+def parse_csv(path):
     # ...
 ```
 
@@ -81,7 +96,7 @@ If you're an AI reading this specification, here's what you need to know:
 When you encounter a comment block starting with `Signed:`, you've found a MurphySig. This gives you:
 
 1. **Historical context** — Why this exists, what problem it solved
-2. **Confidence calibration** — How much to trust it (0.0-1.0)
+2. **Confidence calibration** — How much to trust it (0.0-1.0 or descriptive text)
 3. **Known unknowns** — What the creator was uncertain about
 4. **Collaboration history** — Which humans and models contributed
 
@@ -109,15 +124,16 @@ When creating files that warrant provenance:
 
 ```
 Signed: [Human name] + [your-full-model-version], [today's date]
-Format: MurphySig v0.1 (https://murphysig.dev/spec)
+Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
 
 Context: [What you built and why, key decisions, insights from collaboration]
 
-Confidence: [0.0-1.0] - [what you're uncertain about]
+Confidence: [0.0-1.0 or text] - [what you're uncertain about]
+Heuristic: [Pattern you're matching, if helpful]
 Open: [Questions that remain, risks, things to test]
 ```
 
-Be honest about confidence. Your human collaborator will calibrate based on your track record.
+Be honest about confidence. Text confidence ("Solid but needs edge case testing") is often more honest than false numerical precision. Your human collaborator will calibrate based on your track record.
 
 ### Model Accountability
 
@@ -194,7 +210,8 @@ When in doubt, parsers should be permissive: treat contiguous comment blocks sta
 | **Who** | Human author + AI model (with version) | Yes |
 | **When** | Date of creation | Yes |
 | **Context** | What you were thinking, why this exists | Yes |
-| **Confidence** | How solid it feels (0.0-1.0), with specifics | Recommended |
+| **Confidence** | How solid it feels (0.0-1.0 or text), with specifics | Recommended |
+| **Heuristic** | Pattern or reasoning behind confidence (especially for AI) | Optional |
 | **Basis** | Evidence supporting confidence (tests, reviews, prod time) | Optional |
 | **Open** | What's unresolved, uncertain, risky | Recommended |
 | **Prior** | State of provenance before this signature | When applicable |
@@ -254,7 +271,19 @@ It does **not** measure:
 - Code quality or maintainability
 - Performance characteristics
 
-### The Scale
+### Numerical or Text
+
+Confidence can be expressed as a number (0.0-1.0) or as descriptive text. Both are equally valid.
+
+**Numerical** (`0.7`) is precise but can imply false calibration—especially for AI systems that aren't truly calibrated.
+
+**Text** (`Solid but auth untested`) is often more honest about imprecision and what specifically is uncertain.
+
+Choose what feels honest. A text confidence like "Sketchy - first time using this library" is more useful than a number you're guessing at.
+
+### The Scale (Reference)
+
+For numerical confidence, this scale provides guidance:
 
 | Score | Meaning | When Mistakes Happen |
 |-------|---------|----------------------|
@@ -264,7 +293,12 @@ It does **not** measure:
 | 0.3-0.5 | Sketchy, needs work | Basically expected |
 | 0.0-0.3 | Placeholder, probably wrong | Guaranteed |
 
-When you write `Confidence: 0.5`, you're saying "I expect this to have issues." When it does, that's not failure—that's calibration.
+For text confidence, similar levels:
+- **High / Solid / Battle-tested** — would bet on it
+- **Medium / Promising / Uncertain** — needs verification
+- **Low / Sketchy / Prototype** — expect issues
+
+When you write `Confidence: 0.5` or `Confidence: Promising but unproven`, you're saying "I expect this to have issues." When it does, that's not failure—that's calibration.
 
 ### Grounding Confidence with Basis
 
@@ -328,6 +362,48 @@ For teams adopting MurphySig, establish what confidence means in your context:
 | 0.3 | "Prototype quality" / "Don't deploy without review" |
 
 The specific definitions matter less than consistency. A team where everyone's 0.7 means the same thing has useful data. A team where 0.7 varies wildly has noise.
+
+---
+
+## Heuristic
+
+The optional `Heuristic:` field explains the pattern or reasoning behind your confidence. It's especially useful for AI systems to be transparent about how they're assessing code.
+
+### Heuristic vs Basis
+
+- **Basis** = evidence ("tests pass", "reviewed by Jane", "6 months in prod")
+- **Heuristic** = reasoning pattern ("standard CRUD", "novel library combo", "familiar territory")
+
+Both are optional. Use whichever helps ground your confidence honestly.
+
+### Examples
+
+```
+Confidence: Medium
+Heuristic: Novel combination of async patterns
+Basis: Unit tests pass, no integration tests
+```
+
+```
+Confidence: High - familiar territory
+Heuristic: Standard Django ORM pattern
+```
+
+```
+Confidence: Sketchy
+Heuristic: First time using this library
+```
+
+### For AI Systems
+
+When you sign code, the `Heuristic:` field is your chance to be honest about what you're doing: pattern matching. You're not computing probability. You're recognizing similarity to patterns in your training.
+
+Say so:
+- "Standard auth flow, seen many times"
+- "Novel combination, uncertain"
+- "Similar to patterns that often have edge case bugs"
+
+This transparency helps humans calibrate trust in your assessments.
 
 ---
 
@@ -461,7 +537,7 @@ this tells you:
 - **Who**: Human author and AI collaborator (with model version)
 - **When**: Date of creation
 - **Context**: Why this exists and how it was made
-- **Confidence**: How solid the creator believes it is (0.0-1.0)
+- **Confidence**: How solid the creator believes it is (0.0-1.0 or text)
 - **Open**: Unresolved questions and known uncertainties
 
 When modifying signed code:
@@ -527,16 +603,34 @@ class CapabilityElicitor {
 
 ```python
 # Signed: Kev, 2026-01-04
-# Format: MurphySig v0.1
+# Format: MurphySig v0.2.1
 #
 # Context: Quick script to batch-convert images.
 # Nothing clever here, just needed it done.
 #
-# Confidence: 0.9 - tested on 500 images
+# Confidence: Solid - tested on 500 images
 # Open: Should probably handle HEIC at some point
 
 def convert_images(input_dir, output_dir):
     # ...
+```
+
+### Text Confidence with Heuristic (AI Collaboration)
+
+```swift
+// Signed: Kev + claude-opus-4-5-20251101, 2026-01-06
+// Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
+//
+// Context: Network retry logic with exponential backoff.
+// Handles transient failures gracefully.
+//
+// Confidence: Medium-high - familiar pattern, edge cases possible
+// Heuristic: Standard retry pattern, seen in many networking libs
+// Open: What's the right max retry count for mobile?
+
+class NetworkRetry {
+    // ...
+}
 ```
 
 ### Multi-Model Evolution
@@ -625,18 +719,31 @@ inconsistent. Sometimes reverts to base model behavior.
 ```
 Signed: Kev, 2026-01-04
 Context: Quick utility function
-Confidence: 0.8
+Confidence: Solid
 ```
 
 ### Standard
 
 ```
 Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
-Format: MurphySig v0.1 (https://murphysig.dev/spec)
+Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
 
 Context: [Why this exists, key decisions]
 
-Confidence: [0.0-1.0] - [what's uncertain]
+Confidence: [0.0-1.0 or text] - [what's uncertain]
+Open: [Unresolved questions]
+```
+
+### With Heuristic (AI)
+
+```
+Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
+Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
+
+Context: [Why this exists, key decisions]
+
+Confidence: [text or number] - [what's uncertain]
+Heuristic: [Pattern being matched]
 Open: [Unresolved questions]
 ```
 
@@ -644,11 +751,11 @@ Open: [Unresolved questions]
 
 ```
 Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
-Format: MurphySig v0.1 (https://murphysig.dev/spec)
+Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
 
 Context: [Why this exists]
 
-Confidence: 0.9
+Confidence: High - battle-tested
 Open: None remaining
 
 Reviews:
@@ -670,12 +777,12 @@ When adding a signature to code that had none:
 
 ```
 Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
-Format: MurphySig v0.1 (https://murphysig.dev/spec)
+Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
 Prior: Unknown (no signature existed before this edit)
 
 Context: [What you changed and why]
 
-Confidence: [0.0-1.0] - [what's uncertain]
+Confidence: [0.0-1.0 or text] - [what's uncertain]
 ```
 
 ---
@@ -721,12 +828,15 @@ Public domain. Use freely. Attribution appreciated but not required.
 ---
 
 *Signed: Kev Murphy + claude-opus-4-5-20251101, 2026-01-06*
-*Format: MurphySig v0.2*
+*Format: MurphySig v0.2.1*
 
 *Context: v0.2 spec addressing GPT-5.2 review feedback. Added: non-cryptographic disclaimer, block boundaries, multi-author workflow, confidence semantics with Basis field, decay as heuristic.*
 
-*Confidence: 0.85 - structure solid, real-world adoption uncertain*
+*Confidence: Solid - structure battle-tested, adoption growing*
+*Heuristic: Standard spec evolution pattern*
 
 *Reviews:*
 
-*2026-01-06 (Kev + claude-opus-4-5-20251101): Incorporated 5 feedback points from gpt-5.2-thinking review. All points addressed.*
+*2026-01-06 (Kev + claude-opus-4-5-20251101): v0.2 - Incorporated 5 feedback points from gpt-5.2-thinking review. All points addressed.*
+
+*2026-01-06 (Kev + claude-opus-4-5-20251101): v0.2.1 - Added text confidence as equal alternative to numerical. Added Heuristic field for pattern transparency, especially for AI. AI confidence isn't truly calibrated—text is often more honest than false precision.*

@@ -12,14 +12,17 @@ Add this to the top of any file:
 
 ```
 Signed: [Your Name] + [model-version], [date]
-Format: MurphySig v0.2 (https://murphysig.dev/spec)
+Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
 
 Context: [What you were thinking, why this exists]
 
-Confidence: [0.0-1.0] - [what you're uncertain about]
+Confidence: [0.0-1.0 or text] - [what you're uncertain about]
+Heuristic: [Pattern you're matching - optional, for AI]
 Basis: [Evidence: tests passed, review completed, etc.]
 Open: [Unresolved questions]
 ```
+
+Confidence can be numerical (0.7) or text ("Solid but auth untested"). Text is often more honest about imprecision.
 
 ## Important Note
 
