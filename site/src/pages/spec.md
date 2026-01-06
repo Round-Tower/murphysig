@@ -10,66 +10,65 @@ description: The official specification for MurphySig, a human-readable provenan
 
 ---
 
-## Philosophy
+## Quick Start
 
-### Murphy's Law: Accountability
+Add this to the top of any file:
 
-> "Anything that can go wrong will go wrong."
+```
+Signed: [Your Name] + [model-version], [date]
+Format: MurphySig v0.2 (https://murphysig.dev/spec)
 
-This isn't pessimism—it's engineering wisdom. Things *will* go wrong. Code will have bugs. Models will hallucinate. The question isn't whether mistakes happen, but whether you can trace them.
+Context: [What you were thinking, why this exists]
 
-A MurphySig creates accountability:
-- **Who** made this? (Human and AI, with specific model version)
-- **How confident** were they? (Calibrated expectations)
-- **What were they uncertain about?** (Known unknowns documented)
+Confidence: [0.0-1.0] - [what you're uncertain about]
+Open: [Unresolved questions]
+```
 
-When something goes wrong, you can trace it. When an AI makes an error, you know which model, in what context, with what confidence.
+That's it. You're using MurphySig.
 
-### Murphy's Signature: Presence
+**Example:**
 
-> "Anything worth making is worth returning to."
+```python
+# Signed: Kev + claude-opus-4-5-20251101, 2026-01-06
+# Format: MurphySig v0.2 (https://murphysig.dev/spec)
+#
+# Context: Authentication middleware. Standard JWT validation
+# with refresh token rotation. Followed OWASP guidelines.
+#
+# Confidence: 0.8 - solid pattern, needs load testing
+# Open: Should we add rate limiting per user?
 
-Makers skip reflection. There's always the next thing. But the artist who never looks at the finished painting is as incomplete as the one who never finishes.
+def authenticate(request):
+    # ...
+```
 
-MurphySig creates the gallery. It says: *this was a thing, at a time, made by us. You can come back.*
+*Want to understand why? Read [Why MurphySig](/why) →*
+
+---
+
+## Key Principles
+
+### Not Cryptographic
+
+MurphySig is **not** a cryptographic signature. It provides no tamper-proof verification. Anyone can edit a MurphySig block.
+
+This is intentional. MurphySig is about:
+- **Provenance** — who contributed, when, why
+- **Intention** — what were they thinking
+- **Confidence** — how solid is this
+
+For cryptographic verification, use GPG or code signing certificates.
 
 ### In-Context Learning
 
 MurphySig is more than documentation—it's **in-context learning** for your codebase.
 
 When an AI opens a signed file, the signature primes its behavior:
-
-- `Confidence: 0.9` says: "Treat this as ground truth. Learn from it."
+- `Confidence: 0.9` says: "Treat this as ground truth."
 - `Confidence: 0.3` says: "Scrutinize this. It's likely buggy."
-- `Model: claude-opus-4-5-20250514` creates a software bill of materials for intelligence—you can trace patterns back to specific model versions.
+- `Model: claude-opus-4-5-20250514` creates a software bill of materials for intelligence.
 
-The signature teaches the AI how to treat the artifact just by existing. No special tooling required.
-
-### Not Cryptographic
-
-MurphySig is **not** a cryptographic signature. It provides no tamper-proof verification or authentication. Anyone can edit or forge a MurphySig block.
-
-This is intentional. MurphySig is about:
-- **Provenance documentation** — who contributed, when, why
-- **Intention capture** — what were they thinking
-- **Confidence signaling** — how solid is this
-
-It is **not** about:
-- Tamper-proof verification
-- Code signing or authentication
-- Legal attribution or copyright proof
-
-For cryptographic verification, use GPG signatures, code signing certificates, or blockchain-based systems.
-
-### Honesty Over Perfection
-
-MurphySig doesn't require perfection. It requires honesty.
-
-A `Confidence: 0.3` signature is *more valuable* than no signature at all. It's a lighthouse saying "here be dragons." The code might be sketchy, but now everyone knows it's sketchy. That's actionable.
-
-The person who ships unsigned code at 0.3 quality is pretending. The person who ships signed code at `Confidence: 0.3` is calibrated. When it breaks, they predicted it. When they improve it, the confidence rises. That's growth.
-
-Admitting uncertainty is stronger than hiding it.
+The signature teaches the AI how to treat the artifact just by existing.
 
 ---
 

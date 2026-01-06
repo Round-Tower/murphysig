@@ -86,9 +86,13 @@ const fullTitle = title === siteTitle ? title : `${title} | ${siteTitle}`;
             <slot />
         </main>
         
-        <footer class="max-w-3xl mx-auto px-6 pb-20 text-sm text-neutral-500 font-mono flex justify-between items-center">
-            <span>MurphySig v0.1</span>
-            <a href="https://github.com/Round-Tower/murphysig" class="hover:text-black transition-colors">GitHub</a>
+        <footer class="max-w-3xl mx-auto px-6 pb-20 text-sm text-neutral-500 font-mono">
+            <nav class="flex flex-wrap gap-x-6 gap-y-2 mb-4">
+                <a href="/spec" class="hover:text-black transition-colors">Spec</a>
+                <a href="/why" class="hover:text-black transition-colors">Why</a>
+                <a href="https://github.com/Round-Tower/murphysig" class="hover:text-black transition-colors">GitHub</a>
+            </nav>
+            <span>MurphySig v0.2</span>
         </footer>
 	</body>
 </html>
