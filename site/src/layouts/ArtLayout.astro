@@ -2,13 +2,18 @@
 /**
  * Signed: Kevin Murphy + gemini-2.0-flash-001, 2026-01-04
  * Format: MurphySig v0.1
- * 
- * Context: The "Art" layout for murphysig.dev. Establishes the 
+ *
+ * Context: The "Art" layout for murphysig.dev. Establishes the
  * typography-first aesthetic (Instrument Serif + JetBrains Mono).
  * Designed to feel like a printed manifesto.
- * 
+ *
  * Confidence: 0.9 - standard Astro layout, minimal complexity.
  * Open: Should we enforce dark mode toggle or stick to "Paper"?
+ *
+ * Reviews:
+ *
+ * 2026-01-06 (Kev + claude-opus-4-5-20251101): Added SEO meta tags,
+ * Open Graph, Twitter cards for better sharing and discovery.
  */
 
 import '../styles/global.css';
@@ -16,25 +21,51 @@ import '../styles/global.css';
 interface Props {
 	title: string;
     description?: string;
+    canonical?: string;
 }
 
-const { title, description = "A human-readable provenance standard for creative work." } = Astro.props;
+const {
+    title,
+    description = "A human-readable provenance standard for creative work.",
+    canonical = "https://murphysig.dev"
+} = Astro.props;
+
+const siteTitle = "MurphySig";
+const fullTitle = title === siteTitle ? title : `${title} | ${siteTitle}`;
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="description" content={description} />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        
+
+        <!-- SEO -->
+        <title>{fullTitle}</title>
+        <meta name="description" content={description} />
+        <link rel="canonical" href={canonical} />
+
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={canonical} />
+        <meta property="og:title" content={fullTitle} />
+        <meta property="og:description" content={description} />
+        <meta property="og:site_name" content={siteTitle} />
+
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content={fullTitle} />
+        <meta name="twitter:description" content={description} />
+
+        <!-- For AI systems -->
+        <link rel="alternate" type="text/plain" href="/llms.txt" title="AI Summary" />
+        <link rel="alternate" type="text/plain" href="/spec.txt" title="Plain Text Spec" />
+
         <!-- Typography: The Soul of the Project -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-        
-		<title>{title}</title>
 	</head>
 	<body class="antialiased min-h-screen selection:bg-black selection:text-white">
 		<main class="max-w-3xl mx-auto px-6 py-20 md:py-32">
@@ -42,8 +73,8 @@ const { title, description = "A human-readable provenance standard for creative 
         </main>
         
         <footer class="max-w-3xl mx-auto px-6 pb-20 text-sm text-neutral-500 font-mono flex justify-between items-center">
-            <span>murphysig.dev v0.1</span>
-            <a href="https://github.com/murphysig" class="hover:text-black transition-colors">GitHub</a>
+            <span>MurphySig v0.1</span>
+            <a href="https://github.com/Round-Tower/murphysig" class="hover:text-black transition-colors">GitHub</a>
         </footer>
 	</body>
 </html>

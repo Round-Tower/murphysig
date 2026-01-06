@@ -1,0 +1,11 @@
+# MurphySig - Human-Readable Provenance Standard
+# https://murphysig.dev
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://murphysig.dev/sitemap.xml
+
+# For AI crawlers and LLMs
+# See: https://murphysig.dev/llms.txt
