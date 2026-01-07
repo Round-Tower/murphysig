@@ -101,21 +101,44 @@ import ArtLayout from '../layouts/ArtLayout.astro';
 
         </article>
 
-        <!-- The Solution (Visual) -->
-        <div class="bg-gray-50 border border-neutral-200 p-6 md:p-10 rounded-sm font-mono text-sm md:text-base overflow-x-auto">
-            <div class="text-neutral-400 select-none mb-4">/* src/consciousness.ts */</div>
-            <div class="text-blue-600">/**</div>
-            <div class="text-neutral-600">
-                <span class="text-blue-600"> *</span> Signed: <strong class="text-black">Kev + claude-opus-4.5</strong>, 2026-01-04<br/>
-                <span class="text-blue-600"> *</span> <br/>
-                <span class="text-blue-600"> *</span> <span class="italic text-neutral-800">Context:</span> Designing capability elicitation. Key insight:<br/>
-                <span class="text-blue-600"> *</span> emergence isn't magic, it's unlockable through structure.<br/>
-                <span class="text-blue-600"> *</span> <br/>
-                <span class="text-blue-600"> *</span> <span class="italic text-neutral-800">Confidence:</span> 0.7 - architecture solid, thresholds need testing<br/>
-                <span class="text-blue-600"> *</span> <span class="italic text-neutral-800">Reflections:</span><br/>
-                <span class="text-blue-600"> *</span> 2026-06-01: Looking back, this was when it clicked.<br/>
+        <!-- The Solution (Visual) - Level 0: Minimal -->
+        <div class="space-y-4">
+            <div>
+                <h4 class="text-xs font-sans font-medium tracking-wide text-neutral-500 uppercase mb-3">Level 0: The Minimum</h4>
+                <div class="bg-gray-50 border border-neutral-200 p-4 md:p-6 rounded-sm font-mono text-xs md:text-sm">
+                    <div class="text-neutral-400 select-none mb-2 text-[10px] md:text-xs">/* authentication.ts */</div>
+                    <div class="text-blue-600 text-xs md:text-sm">/**</div>
+                    <div class="text-neutral-600 text-xs md:text-sm leading-relaxed">
+                        <span class="text-blue-600"> *</span> Signed: <strong class="text-black">Sarah + claude-opus-4.5</strong>, 2026-01-15<br/>
+                        <span class="text-blue-600"> *</span> Context: OAuth2 token refresh with 5min buffer for latency<br/>
+                    </div>
+                    <div class="text-blue-600 text-xs md:text-sm"> */</div>
+                </div>
             </div>
-            <div class="text-blue-600"> */</div>
+
+            <!-- Level 1: The Full Picture -->
+            <div>
+                <h4 class="text-xs font-sans font-medium tracking-wide text-neutral-500 uppercase mb-3">Level 1: Add Confidence & Evolution</h4>
+                <div class="bg-gray-50 border border-neutral-200 p-4 md:p-6 rounded-sm font-mono text-xs md:text-sm">
+                    <div class="text-neutral-400 select-none mb-2 text-[10px] md:text-xs">/* consciousness.ts */</div>
+                    <div class="text-blue-600 text-xs md:text-sm">/**</div>
+                    <div class="text-neutral-600 text-xs md:text-sm leading-relaxed">
+                        <span class="text-blue-600"> *</span> Signed: <strong class="text-black">Kev + claude-opus-4.5</strong>, 2026-01-04<br/>
+                        <span class="text-blue-600"> *</span> <br/>
+                        <span class="text-blue-600"> *</span> <span class="italic text-neutral-800">Context:</span> Designing capability elicitation. Key<br/>
+                        <span class="text-blue-600"> *</span> insight: emergence isn't magic, it's unlockable<br/>
+                        <span class="text-blue-600"> *</span> through structure.<br/>
+                        <span class="text-blue-600"> *</span> <br/>
+                        <span class="text-blue-600"> *</span> <span class="italic text-neutral-800">Confidence:</span> 0.7 - architecture solid, thresholds<br/>
+                        <span class="text-blue-600"> *</span> need testing<br/>
+                        <span class="text-blue-600"> *</span> <br/>
+                        <span class="text-blue-600"> *</span> <span class="italic text-neutral-800">Reflections:</span><br/>
+                        <span class="text-blue-600"> *</span> 2026-06-01: Looking back, this was when it<br/>
+                        <span class="text-blue-600"> *</span> clicked.<br/>
+                    </div>
+                    <div class="text-blue-600 text-xs md:text-sm"> */</div>
+                </div>
+            </div>
         </div>
 
         <!-- Poetic Close -->
