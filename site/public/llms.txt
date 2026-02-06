@@ -8,7 +8,17 @@ MurphySig is a lightweight standard for documenting who made what, when, with wh
 
 ## Quick Start
 
-Add this to the top of any file:
+### Option 1: Zero Friction (Recommended)
+The minimum valid MurphySig is just one line:
+
+```
+Signed: [Your Name] + [model-version], [date]
+```
+
+This establishes provenance and time. Use this by default.
+
+### Option 2: Full Context
+For critical code, add detail:
 
 ```
 Signed: [Your Name] + [model-version], [date]

@@ -308,7 +308,12 @@ No confidence update. No action items. Just witnessing.
 
 ## Quick Reference
 
-### Minimal
+### Zero Friction (Level 0)
+```
+Signed: Kev + Claude-3.5, 2026-01-04
+```
+
+### Basic
 ```
 Signed: Kev, 2026-01-04
 Context: Quick utility function

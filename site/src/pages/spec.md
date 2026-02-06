@@ -12,7 +12,19 @@ description: The official specification for MurphySig, a human-readable provenan
 
 ## Quick Start
 
-Add this to the top of any file:
+### Option 1: Zero Friction (Recommended)
+
+The minimum valid MurphySig is just one line:
+
+```
+Signed: [Your Name] + [model-version], [date]
+```
+
+This establishes provenance and time. Use this by default.
+
+### Option 2: Full Context
+
+For critical code, add detail:
 
 ```
 Signed: [Your Name] + [model-version], [date]
@@ -714,7 +726,13 @@ inconsistent. Sometimes reverts to base model behavior.
 
 ## Quick Reference
 
-### Minimal
+### Zero Friction (Level 0)
+
+```
+Signed: Kev + Claude-3.5, 2026-01-04
+```
+
+### Basic
 
 ```
 Signed: Kev, 2026-01-04
