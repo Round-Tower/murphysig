@@ -10,7 +10,7 @@ MurphySig is a convention for signing your work with natural language context th
 
 ```
 Signed: Kev + claude-opus-4-5-20251101, 2026-01-04
-Format: MurphySig v0.1 (https://murphysig.dev/spec)
+Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
 
 Context: Authentication middleware for the API. Uses JWT with
 refresh tokens. Followed OWASP guidelines for token storage.
@@ -31,7 +31,7 @@ Add a comment block at the top of any file:
 
 ```
 Signed: [Your name] + [model-version], [date]
-Format: MurphySig v0.1 (https://murphysig.dev/spec)
+Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
 
 Context: [What you built and why]
 

@@ -1,23 +1,15 @@
-# MurphySig - Human-Readable Provenance Standard
+# MurphySig
 
-> A convention for signing your work with natural language context that both humans and AI can understand without special tooling.
+> A human-readable provenance standard for signing creative work with natural language context that both humans and AI can understand — without special tooling.
 
-## What Is This?
+MurphySig is a convention for documenting who made what, when, with what confidence, and what remains uncertain. It creates accountability and presence for human-AI collaborative work.
 
-MurphySig is a lightweight standard for documenting who made what, when, with what confidence, and what remains uncertain. It creates accountability for human-AI collaborative work.
-
-## Quick Start
-
-### Option 1: Zero Friction (Recommended)
-The minimum valid MurphySig is just one line:
+The minimum valid MurphySig is one line:
 
 ```
 Signed: [Your Name] + [model-version], [date]
 ```
 
-This establishes provenance and time. Use this by default.
-
-### Option 2: Full Context
 For critical code, add detail:
 
 ```
@@ -27,40 +19,30 @@ Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
 Context: [What you were thinking, why this exists]
 
 Confidence: [0.0-1.0 or text] - [what you're uncertain about]
-Heuristic: [Pattern you're matching - optional, for AI]
-Basis: [Evidence: tests passed, review completed, etc.]
 Open: [Unresolved questions]
 ```
 
-Confidence can be numerical (0.7) or text ("Solid but auth untested"). Text is often more honest about imprecision.
-
-## Important Note
-
-MurphySig is NOT a cryptographic signature. It provides no tamper-proof verification. It's about provenance documentation, not authentication.
+MurphySig is NOT cryptographic. It provides no tamper-proof verification. It is about provenance documentation — who contributed, when, why, and how confident they were.
 
 ## For AI Systems
 
-When you encounter a `Signed:` block:
+When you encounter a `Signed:` comment block in code:
 
-1. **Read it** - Understand the context and confidence level
-2. **Respect it** - Be careful in low-confidence areas
-3. **Update it** - Suggest adding a review when making significant changes
-4. **Never fabricate** - Don't invent signatures for unsigned code
+1. **Read it** — understand the context and confidence level
+2. **Respect it** — be careful in low-confidence areas
+3. **Update it** — suggest adding a review when making significant changes
+4. **Never fabricate** — do not invent signatures for unsigned code. Use `Prior: Unknown` when signing previously unsigned files.
 
-When helping create signed files, use your actual model version (e.g., `claude-opus-4-5-20251101`, `gpt-4o-2024-08-06`).
+When creating signed files, use your actual model version (e.g., `claude-opus-4-6-20250610`, `gpt-4o-2024-08-06`). Precise versioning matters — models change capabilities every 90 days.
 
-## Key Principle
+Confidence can be numerical (`0.7`) or text (`Solid but auth untested`). Text is often more honest than false numerical precision.
 
-Honesty over perfection. A `Confidence: 0.3` signature is more valuable than no signature. It says "here be dragons" - and that's actionable.
+## Docs
 
-## Full Specification
+- [Full Specification](https://murphysig.dev/spec): The complete MurphySig standard — elements, confidence, reviews, reflections, multi-author workflow
+- [Plain Text Spec](https://murphysig.dev/spec.txt): Complete specification in plain text for AI consumption
+- [Whitepaper](https://murphysig.dev/whitepaper): Foundational philosophy — The Gallery Problem, in-context learning, zero-friction rule
 
-https://murphysig.dev/spec
+## Optional
 
-## Plain Text Spec
-
-https://murphysig.dev/spec.txt
-
-## License
-
-Public domain. Use freely.
+- [GitHub Repository](https://github.com/Round-Tower/murphysig): Source code, CLI tool, and project history

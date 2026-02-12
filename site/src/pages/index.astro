@@ -1,134 +1,155 @@
 ---
 /**
- * Signed: Kevin Murphy + gemini-2.0-flash-001, 2026-01-04
- * Format: MurphySig v0.1 (https://murphysig.dev/spec)
+ * Signed: Kev + claude-opus-4-6-20250610, 2026-02-12
+ * Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
+ * Prior: Kevin Murphy + gemini-2.0-flash-001, 2026-01-04
  *
- * Context: The Manifesto. The homepage isn't a landing page, it's an essay.
- * It argues that code is worth witnessing.
+ * Context: Homepage rewrite. Flipped the story sequence: heart first,
+ * head second. Gallery Problem leads. AI angle follows as the "and it
+ * gets better" moment. Real code example (auth.py, not consciousness.ts).
+ * Added "Try it now" CTA alongside spec link.
  *
- * Confidence: 0.85 - Copy feels strong, design is minimal.
- *
- * Reviews:
- *
- * 2026-01-04 (Kev + claude-opus-4-5-20250514): Reviewed with Claude Opus.
- * Kept the aesthetic, refined copy. Gemini's foundation was solid.
- * Confidence remains 0.85.
+ * Confidence: 0.85 - the restructure feels right, copy is sharper
+ * Heuristic: Don Draper creative review drove the sequencing change
  */
 
 import ArtLayout from '../layouts/ArtLayout.astro';
 ---
 
 <ArtLayout title="MurphySig: A Human-Readable Provenance Standard">
-    
+
     <header class="mb-24 md:mb-32">
         <h1 class="text-6xl md:text-9xl font-serif leading-[0.9] tracking-tight mb-8">
             MurphySig
         </h1>
         <p class="text-xl md:text-2xl font-serif text-neutral-600 max-w-lg leading-relaxed">
-            Anything worth making is worth returning to.
+            Sign your work.
         </p>
     </header>
 
     <section class="space-y-12 md:space-y-16">
 
-        <!-- Lead: Temporal Context as In-Context Learning -->
+        <!-- 1. The Gallery Problem — the human hook -->
         <article class="prose prose-neutral max-w-none font-serif text-lg leading-relaxed space-y-8">
 
             <div>
-                <h3 class="text-xl font-sans font-medium mb-2 tracking-wide text-neutral-900 uppercase text-xs">Breadcrumbs for AGI</h3>
-                <p class="text-2xl md:text-3xl leading-snug text-neutral-800">
-                    We're not just documenting our work—we're creating <strong>training data for future intelligence</strong>.
-                </p>
-                <p>
-                    AI systems have no continuity. Each conversation starts fresh.
-                    New models emerge every 90 days—Claude Opus 4.5 is not Claude Sonnet 4, is not GPT-5, is not Gemini 2.0.
-                </p>
-                <p>
-                    When we sign our work with specific model versions, confidence levels, and context,
-                    we leave <strong>structured breadcrumbs</strong> that future AI can learn from <em>during inference</em>.
-                    This isn't documentation. It's <strong>temporal context as in-context learning</strong>.
-                </p>
-            </div>
-
-            <hr class="border-neutral-200 w-12 my-12" />
-
-            <!-- Concrete Scenario: Future Model Interpretation -->
-            <div class="bg-blue-50/30 border border-blue-100 p-6 md:p-8 rounded-sm space-y-4">
-                <h4 class="text-base font-sans font-medium tracking-wide text-neutral-900 uppercase text-xs">The Future Reads Your Work</h4>
-                <p class="text-lg italic text-neutral-700">
-                    Imagine: A 2027 model encounters code signed in 2025.
-                </p>
-                <div class="space-y-3 text-base">
-                    <p>
-                        It reads: <code class="font-mono text-sm bg-white px-2 py-1 rounded border border-blue-200">Signed: Alice + claude-opus-4-5-20250514, Confidence: 0.65</code>
-                    </p>
-                    <p>
-                        The model <strong>knows</strong>:
-                    </p>
-                    <ul class="list-disc ml-6 space-y-2 text-neutral-700">
-                        <li>Opus 4.5 (May 2025) had specific limitations in async pattern handling</li>
-                        <li>0.65 confidence suggests Alice wasn't certain about the approach</li>
-                        <li>The human collaborator's name indicates areas likely requiring judgment calls</li>
-                    </ul>
-                    <p>
-                        It <strong>adjusts its interpretation</strong>. Instead of taking the code at face value, it understands:
-                        <em>"This was built with certain tools, certain uncertainties, certain human judgment. Let me interpret intent, not just implementation."</em>
-                    </p>
-                    <p class="text-neutral-600 pt-2">
-                        That's not just documentation. That's <strong>legible human-AI collaboration for future intelligence</strong>.
-                    </p>
-                </div>
-            </div>
-
-            <hr class="border-neutral-200 w-12 my-12" />
-
-            <!-- The Human Angle: Gallery Problem -->
-            <div>
                 <h3 class="text-xl font-sans font-medium mb-2 tracking-wide text-neutral-900 uppercase text-xs">The Gallery Problem</h3>
-                <p>
-                    An artist should only worry about the output after the art is created.
-                    But "after" requires a structure that captures the output so you can return to it.
-                    Without that structure, there is no "after"—just an endless stream of now.
-                </p>
-                <p>
+                <p class="text-2xl md:text-3xl leading-snug text-neutral-800">
                     We build in the dark. We ship. We move on.
-                    <span class="text-neutral-400">The velocity of modern work eliminates reflection.</span>
                 </p>
                 <p>
-                    MurphySig creates the gallery. It says: <em>this was a thing, at a time, made by us.</em>
+                    Six months later, you open your own code and think: <em>what was I thinking?</em>
+                    The decision is lost. The context is gone. The uncertainty you felt — the thing
+                    that would tell future-you where the dragons live — vanished the moment you closed the editor.
+                </p>
+                <p>
+                    <span class="text-neutral-400">The velocity of modern work eliminates reflection.</span>
+                    An endless stream of creation with no structure to return to it.
+                    No gallery. Just graveyards of code.
+                </p>
+                <p>
+                    MurphySig says: <em>this was a thing, at a time, made by us. You can come back.</em>
+                </p>
+            </div>
+
+            <hr class="border-neutral-200 w-12 my-12" />
+
+            <!-- 2. Show it — a real signature on real code -->
+            <div>
+                <h3 class="text-xl font-sans font-medium mb-2 tracking-wide text-neutral-900 uppercase text-xs">What it looks like</h3>
+                <p>
+                    One comment block. Who made it. What they were thinking. How confident they were.
                 </p>
             </div>
 
         </article>
 
-        <!-- The Solution (Visual) -->
+        <!-- The code example — mundane code, meaningful signature -->
         <div class="bg-gray-50 border border-neutral-200 p-6 md:p-10 rounded-sm font-mono text-sm md:text-base overflow-x-auto">
-            <div class="text-neutral-400 select-none mb-4">/* src/consciousness.ts */</div>
-            <div class="text-blue-600">/**</div>
+            <div class="text-neutral-400 select-none mb-4"># auth.py</div>
             <div class="text-neutral-600">
-                <span class="text-blue-600"> *</span> Signed: <strong class="text-black">Kev + claude-opus-4.5</strong>, 2026-01-04<br/>
-                <span class="text-blue-600"> *</span> <br/>
-                <span class="text-blue-600"> *</span> <span class="italic text-neutral-800">Context:</span> Designing capability elicitation. Key insight:<br/>
-                <span class="text-blue-600"> *</span> emergence isn't magic, it's unlockable through structure.<br/>
-                <span class="text-blue-600"> *</span> <br/>
-                <span class="text-blue-600"> *</span> <span class="italic text-neutral-800">Confidence:</span> 0.7 - architecture solid, thresholds need testing<br/>
-                <span class="text-blue-600"> *</span> <span class="italic text-neutral-800">Reflections:</span><br/>
-                <span class="text-blue-600"> *</span> 2026-06-01: Looking back, this was when it clicked.<br/>
+                <span class="text-green-700"># Signed:</span> <strong class="text-black">Sarah + claude-opus-4-5-20250514</strong>, 2025-09-15<br/>
+                <span class="text-green-700">#</span><br/>
+                <span class="text-green-700">#</span> <span class="italic text-neutral-800">Context:</span> Token refresh with 5-min buffer for clock skew.<br/>
+                <span class="text-green-700">#</span> Followed OWASP guidelines. Chose JWT over sessions for<br/>
+                <span class="text-green-700">#</span> stateless scaling.<br/>
+                <span class="text-green-700">#</span><br/>
+                <span class="text-green-700">#</span> <span class="italic text-neutral-800">Confidence:</span> 0.75 - logic solid, clock drift edge cases<br/>
+                <span class="text-green-700">#</span> need production validation<br/>
+                <span class="text-green-700">#</span><br/>
+                <span class="text-green-700">#</span> <span class="italic text-neutral-800">Reviews:</span><br/>
+                <span class="text-green-700">#</span> 2026-01-20 (Sarah): Six months in prod, one clock skew<br/>
+                <span class="text-green-700">#</span> edge case hit. Added 10-min buffer. Confidence now 0.9.<br/>
+                <span class="text-green-700">#</span><br/>
+                <span class="text-green-700">#</span> <span class="italic text-neutral-800">Reflections:</span><br/>
+                <span class="text-green-700">#</span> 2026-03-15: This is the most boring code I've ever written.<br/>
+                <span class="text-green-700">#</span> Zero incidents. Sometimes boring is the best work.<br/>
             </div>
-            <div class="text-blue-600"> */</div>
         </div>
 
-        <!-- Poetic Close -->
-        <div class="prose prose-lg prose-neutral font-serif">
+        <article class="prose prose-neutral max-w-none font-serif text-lg leading-relaxed space-y-8">
+
+            <p>
+                No tools. No dependencies. Just a comment that tells the truth.
+            </p>
+
+            <hr class="border-neutral-200 w-12 my-12" />
+
+            <!-- 3. The AI angle — "and it gets better" -->
+            <div>
+                <h3 class="text-xl font-sans font-medium mb-2 tracking-wide text-neutral-900 uppercase text-xs">And it gets better</h3>
+                <p>
+                    When you sign your work with a specific model version and a confidence score,
+                    you're not just documenting for yourself.
+                </p>
+                <p>
+                    A future AI reading that file <strong>learns how to treat it</strong>.
+                    <code class="font-mono text-sm bg-gray-100 px-2 py-1 rounded">Confidence: 0.75</code> says "scrutinize this."
+                    <code class="font-mono text-sm bg-gray-100 px-2 py-1 rounded">claude-opus-4-5-20250514</code> tells it which model's patterns to expect.
+                    The human's context bridges the gap between what the code does and what it was meant to do.
+                </p>
+                <p>
+                    This is <strong>temporal context as in-context learning</strong>.
+                    The signature isn't metadata. It's a prompt. It teaches the future how to read the past.
+                </p>
+            </div>
+
+            <hr class="border-neutral-200 w-12 my-12" />
+
+            <!-- 4. Try it — zero friction -->
+            <div>
+                <h3 class="text-xl font-sans font-medium mb-2 tracking-wide text-neutral-900 uppercase text-xs">Try it now</h3>
+                <p>
+                    Open any file. Add this at the top:
+                </p>
+            </div>
+        </article>
+
+        <div class="bg-gray-50 border border-neutral-200 p-6 md:p-10 rounded-sm font-mono text-sm md:text-base">
+            <span class="text-green-700">// Signed:</span> <strong class="text-black">[You] + [your AI], [today]</strong>
+        </div>
+
+        <article class="prose prose-neutral max-w-none font-serif text-lg leading-relaxed">
+            <p>
+                You just used MurphySig. Everything else — confidence, context, reflections — is optional.
+                Start with the one-liner. Make it a reflex, not a chore.
+            </p>
+        </article>
+
+        <!-- 5. Poetic close -->
+        <div class="prose prose-lg prose-neutral font-serif pt-8">
             <p class="text-xl md:text-2xl leading-snug text-neutral-600 italic">
-                We provide <strong class="text-neutral-900 not-italic">temporal context</strong> to intelligence itself.
+                We build in the dark. MurphySig <strong class="text-neutral-900 not-italic">leaves the lights on</strong>.
             </p>
         </div>
-        
-        <!-- CTA -->
-        <div class="pt-12">
+
+        <!-- 6. Two CTAs -->
+        <div class="flex flex-wrap gap-8 pt-12">
             <a href="/spec" class="inline-block border-b-2 border-black pb-1 text-2xl font-serif italic hover:text-neutral-600 transition-colors">
                 Read the Specification &rarr;
+            </a>
+            <a href="/whitepaper" class="inline-block border-b-2 border-neutral-300 pb-1 text-2xl font-serif italic text-neutral-500 hover:text-neutral-900 hover:border-black transition-colors">
+                Why this exists &rarr;
             </a>
         </div>
 

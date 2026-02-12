@@ -69,8 +69,6 @@ def parse_csv(path):
     # ...
 ```
 
-*Want to understand why? Read [Why MurphySig](/why) →*
-
 ---
 
 ## Key Principles
