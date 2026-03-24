@@ -1,7 +1,7 @@
 ---
 /**
  * Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
- * Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
+ * Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
  * Prior: Unknown (no signature existed before this edit)
  *
  * Context: Layout for markdown/spec pages. Wraps content in prose
@@ -15,7 +15,7 @@ import ArtLayout from './ArtLayout.astro';
 
 const { frontmatter } = Astro.props;
 ---
-<ArtLayout title={frontmatter.title} description={frontmatter.description}>
+<ArtLayout title={frontmatter.title} description={frontmatter.description} canonical={`https://murphysig.dev${Astro.url.pathname}`}>
     <header class="mb-16 border-b border-neutral-200 pb-8">
         <h1 class="text-4xl md:text-5xl font-serif mb-4">{frontmatter.title}</h1>
         <p class="font-mono text-sm text-neutral-500">

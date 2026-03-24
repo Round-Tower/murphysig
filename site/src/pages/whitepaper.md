@@ -85,7 +85,7 @@ It turns our repositories from graveyards of code into galleries of thought.
 ---
 
 *Signed: Kev Murphy + claude-opus-4-6-20250610, 2026-02-12*
-*Format: MurphySig v0.2.1 (https://murphysig.dev/spec)*
+*Format: MurphySig v0.3.3 (https://murphysig.dev/spec)*
 
 *Context: v0.0.2 whitepaper evolution. Aligned model version references with spec guidance (precise IDs, not friendly names). Added text confidence as equal to numerical. Updated minimum viable example to current date and model.*
 

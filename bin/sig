@@ -1,23 +1,25 @@
 #!/usr/bin/env bash
 #
-# Signed: Kev + claude-opus-4-5-20250514, 2026-01-05
-# Format: MurphySig v0.1 (https://murphysig.dev/spec)
+# Signed: Kev + claude-opus-4-6, 2026-03-23
+# Prior: Kev + claude-opus-4-5-20250514, 2026-01-05
+# Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
 #
-# Context: The MurphySig CLI. Makes signing work effortless.
-# One command to add a signature, one to review, one to see your gallery.
+# Context: MurphySig CLI v0.3.3 — "The Gruber Cut". Three key improvements:
+# 1. sig review now actually writes the review into the file (was display-only)
+# 2. Gallery/questions use grep discovery, not hardcoded file extensions
+# 3. Agent mode: --reviewer/--text/--confidence flags for non-interactive use
 #
-# Confidence: 0.7 - core functionality solid, edge cases need testing
-# Open: How to handle different comment styles per language?
+# Confidence: 0.8 - core logic solid, agent mode needs real-world testing
+# Open: Multi-line review entries? Comment block end detection edge cases?
 #
 # Reviews:
 #
 # 2026-01-05 (Kev + claude-haiku-4-5-20251001): Fixed parsing to only check
 # first 50 lines, avoiding false matches in documentation examples.
-# Confidence remains 0.7.
 
 set -e
 
-VERSION="0.1.0"
+VERSION="0.3.3"
 SPEC_URL="https://murphysig.dev/spec"
 
 # Colors
@@ -72,6 +74,12 @@ get_comment_style() {
     esac
 }
 
+# Extract comment prefix from existing signature (e.g. "# " or " * ")
+get_comment_prefix() {
+    local file="$1"
+    head -50 "$file" 2>/dev/null | grep "Signed:" | head -1 | sed 's/Signed:.*//'
+}
+
 # Generate signature block
 generate_signature() {
     local style="$1"
@@ -92,7 +100,7 @@ generate_signature() {
         hash)
             cat << EOF
 # Signed: $signed_by, $TODAY
-# Format: MurphySig v0.1 ($SPEC_URL)
+# Format: MurphySig v0.3.3 ($SPEC_URL)
 #
 # Context: $context
 #
@@ -105,7 +113,7 @@ EOF
             cat << EOF
 /**
  * Signed: $signed_by, $TODAY
- * Format: MurphySig v0.1 ($SPEC_URL)
+ * Format: MurphySig v0.3.3 ($SPEC_URL)
  *
  * Context: $context
  *
@@ -119,7 +127,7 @@ EOF
             cat << EOF
 <!--
   Signed: $signed_by, $TODAY
-  Format: MurphySig v0.1 ($SPEC_URL)
+  Format: MurphySig v0.3.3 ($SPEC_URL)
 
   Context: $context
 
@@ -133,7 +141,7 @@ EOF
             cat << EOF
 ---
 signed: $signed_by, $TODAY
-format: MurphySig v0.1
+format: MurphySig v0.3.3
 confidence: $confidence
 ---
 
@@ -146,7 +154,7 @@ EOF
             cat << EOF
 /*
  * Signed: $signed_by, $TODAY
- * Format: MurphySig v0.1 ($SPEC_URL)
+ * Format: MurphySig v0.3.3 ($SPEC_URL)
  *
  * Context: $context
  *
@@ -159,7 +167,7 @@ EOF
         sql)
             cat << EOF
 -- Signed: $signed_by, $TODAY
--- Format: MurphySig v0.1 ($SPEC_URL)
+-- Format: MurphySig v0.3.3 ($SPEC_URL)
 --
 -- Context: $context
 --
@@ -171,10 +179,18 @@ EOF
     esac
 }
 
-# Check if file has a signature
+# Preserve file permissions across temp file replacement (macOS stat)
+safe_replace() {
+    local tmp="$1"
+    local target="$2"
+    chmod "$(stat -f '%A' "$target")" "$tmp" 2>/dev/null || true
+    mv "$tmp" "$target"
+}
+
+# Check if file has a signature (first 50 lines only)
 has_signature() {
     local file="$1"
-    head -50 "$file" 2>/dev/null | grep -q "^[[:space:]]*[#/*-]*[[:space:]]*Signed:" 2>/dev/null
+    head -50 "$file" 2>/dev/null | grep -q "^[[:space:]]*[-#/*]*[[:space:]]*Signed:" 2>/dev/null
 }
 
 # Extract signature info from file
@@ -182,7 +198,8 @@ get_signature_info() {
     local file="$1"
     local signed=$(head -50 "$file" 2>/dev/null | grep "Signed:" | head -1 | sed 's/.*Signed:[[:space:]]*//' | sed 's/[[:space:]]*\*\/.*//' | sed 's/[[:space:]]*$//')
     local confidence=$(head -50 "$file" 2>/dev/null | grep "Confidence:" | head -1 | sed 's/.*Confidence:[[:space:]]*//' | sed 's/[[:space:]]*\*\/.*//' | sed 's/[[:space:]]*$//')
-    local reviews=$(head -50 "$file" 2>/dev/null | grep -c "^[[:space:]]*[#/*-]*[[:space:]]*[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}" || echo "0")
+    local reviews
+    reviews=$(head -50 "$file" 2>/dev/null | grep -c "^[[:space:]]*[-#/*]*[[:space:]]*[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}" 2>/dev/null) || reviews=0
 
     echo "$signed|$confidence|$reviews"
 }
@@ -224,7 +241,7 @@ Do not invent signatures for files that lack them. If a file has no signature an
 ## Project Details
 
 **Primary author**: $author
-**Convention version**: MurphySig v0.1
+**Convention version**: MurphySig v0.3.3
 **Initialized**: $TODAY
 EOF
 
@@ -273,7 +290,7 @@ cmd_add() {
 
     echo "$sig" > "$tmp"
     cat "$file" >> "$tmp"
-    mv "$tmp" "$file"
+    safe_replace "$tmp" "$file"
 
     echo ""
     echo -e "${GREEN}✓${NC}  Signature added to $file"
@@ -281,9 +298,21 @@ cmd_add() {
 
 cmd_review() {
     local file="$1"
+    shift 2>/dev/null || true
+
+    # Parse flags for non-interactive (agent) mode
+    local flag_reviewer="" flag_text="" flag_confidence=""
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --reviewer) flag_reviewer="$2"; shift 2 ;;
+            --text) flag_text="$2"; shift 2 ;;
+            --confidence) flag_confidence="$2"; shift 2 ;;
+            *) shift ;;
+        esac
+    done
 
     if [ -z "$file" ]; then
-        echo -e "${RED}✗${NC}  Usage: sig review <file>"
+        echo -e "${RED}✗${NC}  Usage: sig review <file> [--reviewer NAME --text TEXT --confidence N]"
         exit 1
     fi
 
@@ -298,44 +327,87 @@ cmd_review() {
     fi
 
     local author=$(get_author)
+    local reviewer review_text new_confidence
 
-    echo -e "${CYAN}Adding review to:${NC} $file"
-    echo ""
-
-    read -p "AI collaborator for this review? (or press Enter for none): " model
-    read -p "What changed or what did you notice? " review_text
-    read -p "Updated confidence? (or press Enter to keep current): " new_confidence
-
-    local reviewer
-    if [ -n "$model" ]; then
-        reviewer="$author + $model"
+    if [ -n "$flag_text" ]; then
+        # Non-interactive (agent) mode
+        reviewer="${flag_reviewer:-$author}"
+        review_text="$flag_text"
+        new_confidence="$flag_confidence"
     else
-        reviewer="$author"
+        # Interactive mode
+        echo -e "${CYAN}Adding review to:${NC} $file"
+        echo ""
+
+        read -p "AI collaborator for this review? (or press Enter for none): " model
+        read -p "What changed or what did you notice? " review_text
+        read -p "Updated confidence? (or press Enter to keep current): " new_confidence
+
+        if [ -n "$model" ]; then
+            reviewer="$author + $model"
+        else
+            reviewer="$author"
+        fi
     fi
 
-    local review_line="# $TODAY ($reviewer): $review_text"
+    # Get comment prefix from existing signature
+    local prefix=$(get_comment_prefix "$file")
+    local blank_prefix
+    blank_prefix=$(echo "$prefix" | sed 's/[[:space:]]*$//')
+
+    # Build review entry
+    local entry="${prefix}${TODAY} (${reviewer}): ${review_text}"
     if [ -n "$new_confidence" ]; then
-        review_line="$review_line Confidence now $new_confidence."
+        entry="${entry} Confidence now ${new_confidence}."
     fi
 
-    # Find where to insert the review (after "Reviews:" or before end of signature block)
-    # This is simplified - just append after the signature for now
+    # Insert into file
+    local tmp=$(mktemp)
+    local reviews_ln
+    reviews_ln=$(head -50 "$file" | grep -n "Reviews:" | head -1 | cut -d: -f1)
+
+    if [ -n "$reviews_ln" ]; then
+        # Reviews section exists — insert after it
+        head -n "$reviews_ln" "$file" > "$tmp"
+        echo "$blank_prefix" >> "$tmp"
+        echo "$entry" >> "$tmp"
+        tail -n +"$((reviews_ln + 1))" "$file" >> "$tmp"
+    else
+        # No Reviews section — add one after Open: / Confidence: / Signed:
+        local insert_ln
+        insert_ln=$(head -50 "$file" | grep -n "Open:" | head -1 | cut -d: -f1)
+        [ -z "$insert_ln" ] && insert_ln=$(head -50 "$file" | grep -n "Confidence:" | head -1 | cut -d: -f1)
+        [ -z "$insert_ln" ] && insert_ln=$(head -50 "$file" | grep -n "Signed:" | head -1 | cut -d: -f1)
+
+        if [ -z "$insert_ln" ]; then
+            echo -e "${RED}✗${NC}  Could not find insertion point in signature block"
+            rm "$tmp"
+            exit 1
+        fi
+
+        head -n "$insert_ln" "$file" > "$tmp"
+        echo "$blank_prefix" >> "$tmp"
+        echo "${prefix}Reviews:" >> "$tmp"
+        echo "$blank_prefix" >> "$tmp"
+        echo "$entry" >> "$tmp"
+        tail -n +"$((insert_ln + 1))" "$file" >> "$tmp"
+    fi
+
+    safe_replace "$tmp" "$file"
+
     echo ""
-    echo -e "${GREEN}✓${NC}  Review to add:"
-    echo -e "${DIM}$review_line${NC}"
-    echo ""
-    echo -e "${YELLOW}Note:${NC} Manually add this line to the Reviews section of the signature."
+    echo -e "${GREEN}✓${NC}  Review added to $file"
+    echo -e "${DIM}$entry${NC}"
 }
 
 cmd_gallery() {
-    echo -e "${BOLD}🖼  Your Signed Work${NC}"
-    echo "════════════════════════════════════════════════════════════"
+    echo -e "${BOLD}Your Signed Work${NC}"
     echo ""
 
     local found=0
 
-    # Find all files with signatures (excluding node_modules, .git, etc.)
-    while IFS= read -r -d '' file; do
+    # Grep-based discovery: find any file containing "Signed:" (skip binaries)
+    while IFS= read -r file; do
         if has_signature "$file"; then
             found=1
             local info=$(get_signature_info "$file")
@@ -343,45 +415,44 @@ cmd_gallery() {
             local confidence=$(echo "$info" | cut -d'|' -f2)
             local reviews=$(echo "$info" | cut -d'|' -f3)
 
-            echo -e "${GREEN}●${NC} ${BOLD}$file${NC}"
+            echo -e "${GREEN}*${NC} ${BOLD}$file${NC}"
             echo -e "  ${DIM}$signed${NC}"
             echo -e "  Confidence: ${CYAN}$confidence${NC} | Reviews: $reviews"
             echo ""
         fi
-    done < <(find . -type f \( -name "*.py" -o -name "*.js" -o -name "*.ts" -o -name "*.jsx" -o -name "*.tsx" -o -name "*.java" -o -name "*.kt" -o -name "*.swift" -o -name "*.go" -o -name "*.rs" -o -name "*.rb" -o -name "*.sh" -o -name "*.md" -o -name "*.astro" -o -name "*.css" -o -name "*.html" \) -not -path "*/node_modules/*" -not -path "*/.git/*" -not -path "*/dist/*" -not -path "*/.next/*" -print0 2>/dev/null)
+    done < <(grep -rIl "Signed:" . 2>/dev/null | grep -v -e 'node_modules' -e '\.git/' -e '/dist/' -e '\.next/' -e '\.DS_Store' | sort)
 
     if [ $found -eq 0 ]; then
         echo -e "${DIM}No signed files found.${NC}"
         echo -e "${DIM}Use 'sig add <file>' to sign your first file.${NC}"
     fi
 
-    echo "════════════════════════════════════════════════════════════"
+    echo ""
 }
 
 cmd_questions() {
-    echo -e "${BOLD}❓ Open Questions Across Your Work${NC}"
-    echo "════════════════════════════════════════════════════════════"
+    echo -e "${BOLD}Open Questions Across Your Work${NC}"
     echo ""
 
     local found=0
 
-    while IFS= read -r -d '' file; do
+    while IFS= read -r file; do
         if has_signature "$file"; then
-            local open=$(grep -m1 "Open:" "$file" 2>/dev/null | sed 's/.*Open:[[:space:]]*//' | sed 's/[[:space:]]*\*\/.*//')
+            local open=$(head -50 "$file" 2>/dev/null | grep -m1 "Open:" | sed 's/.*Open:[[:space:]]*//' | sed 's/[[:space:]]*\*\/.*//')
             if [ -n "$open" ] && [ "$open" != "None" ] && [ "$open" != "none" ]; then
                 found=1
                 echo -e "${CYAN}$file${NC}"
-                echo -e "  • $open"
+                echo -e "  $open"
                 echo ""
             fi
         fi
-    done < <(find . -type f \( -name "*.py" -o -name "*.js" -o -name "*.ts" -o -name "*.jsx" -o -name "*.tsx" -o -name "*.java" -o -name "*.kt" -o -name "*.swift" -o -name "*.go" -o -name "*.rs" -o -name "*.rb" -o -name "*.sh" -o -name "*.md" -o -name "*.astro" -o -name "*.css" -o -name "*.html" \) -not -path "*/node_modules/*" -not -path "*/.git/*" -not -path "*/dist/*" -not -path "*/.next/*" -print0 2>/dev/null)
+    done < <(grep -rIl "Signed:" . 2>/dev/null | grep -v -e 'node_modules' -e '\.git/' -e '/dist/' -e '\.next/' -e '\.DS_Store' | sort)
 
     if [ $found -eq 0 ]; then
         echo -e "${DIM}No open questions found.${NC}"
     fi
 
-    echo "════════════════════════════════════════════════════════════"
+    echo ""
 }
 
 cmd_help() {
@@ -398,9 +469,16 @@ cmd_help() {
     echo "    questions         List open questions across project"
     echo "    help              Show this help message"
     echo ""
+    echo -e "${BOLD}REVIEW FLAGS${NC} (for agent/CI use)"
+    echo "    --reviewer NAME   Who is reviewing (e.g. 'Kev + claude-opus-4-6')"
+    echo "    --text TEXT        Review content"
+    echo "    --confidence N     Updated confidence score"
+    echo ""
     echo -e "${BOLD}EXAMPLES${NC}"
     echo "    sig init"
     echo "    sig add src/auth.py"
+    echo "    sig review src/auth.py"
+    echo "    sig review src/auth.py --reviewer 'claude-opus-4-6' --text 'Security audit passed' --confidence 0.9"
     echo "    sig gallery"
     echo ""
     echo -e "${DIM}Full spec: $SPEC_URL${NC}"
@@ -415,7 +493,8 @@ case "${1:-}" in
         cmd_add "$2"
         ;;
     review)
-        cmd_review "$2"
+        shift  # remove 'review'
+        cmd_review "$@"
         ;;
     gallery)
         cmd_gallery

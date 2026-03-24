@@ -35,7 +35,7 @@ Add a MurphySig at the top:
 
 ```
 Signed: [Human] + [your-model-version], [date]
-Format: MurphySig v0.1 (https://murphysig.dev/spec)
+Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
 
 Context: [Why this exists, what problem it solves]
 
@@ -59,7 +59,7 @@ If a file has no signature and you modify it, sign only your contribution:
 
 ```
 Signed: [Human] + [your-model-version], [today]
-Format: MurphySig v0.1 (https://murphysig.dev/spec)
+Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
 Prior: Unknown (no signature existed before this edit)
 
 Context: [What you changed]
@@ -75,4 +75,4 @@ The whole point of MurphySig is traceable accountability. Fabricating history de
 
 **Repository**: murphysig.dev site
 **Primary collaborators**: Kevin Murphy, various AI models
-**Convention version**: MurphySig v0.1
+**Convention version**: MurphySig v0.3.3

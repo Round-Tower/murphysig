@@ -1,4 +1,4 @@
-# MurphySig Specification v0.2.1
+# MurphySig Specification v0.3.3
 
 MurphySig is a convention for signing your work with natural language context that both humans and AI can understand without special tooling.
 
@@ -84,7 +84,7 @@ When helping modify a signed file:
 
 ```
 Signed: [Human name] + [your-full-model-version], [today's date]
-Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
+Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
 
 Context: [What you built and why, key decisions]
 
@@ -276,6 +276,31 @@ Context: Rewrote caching layer with new strategy
 
 When uncertain, prefer adding a review. Immutability preserves more context.
 
+### Agent Reviews
+
+AI agents can contribute reviews directly — with full human visibility.
+
+Non-interactive mode (for agents, CI, automation):
+
+```
+sig review src/auth.py \
+  --reviewer "Kev + claude-opus-4-6" \
+  --text "Security audit: token rotation sound." \
+  --confidence 0.85
+```
+
+The review is inserted directly into the file's signature block. It shows up in
+source, in diffs, in PRs. No hidden metadata. Just a comment in the code.
+
+Principles:
+1. Full attribution — every agent review includes who ran it and which model
+2. Human oversight — reviews land in source files, go through normal code review
+3. Transparency — the review is a comment, readable by anyone
+4. Any agent welcome — Claude, GPT, Gemini, local models. Convention is model-agnostic
+
+What agents must NOT do: Fabricate reviews for unanalyzed code, override human
+confidence without approval, remove existing reviews, or auto-approve own contributions.
+
 ---
 
 ## Reviews vs Reflections
@@ -323,7 +348,7 @@ Confidence: Solid
 ### Standard
 ```
 Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
-Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
+Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
 
 Context: [Why this exists, key decisions]
 
@@ -336,7 +361,7 @@ Open: [Unresolved questions]
 ### With Prior Unknown
 ```
 Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
-Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
+Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
 Prior: Unknown (no signature existed before this edit)
 
 Context: [What you changed and why]
@@ -351,7 +376,7 @@ Confidence: [0.0-1.0 or text] - [what's uncertain]
 Level 0: Just write `Signed:` comments. Include who, when, context.
 Level 1: Adopt confidence scores, open questions, reviews. Track model versions.
 Level 2: Add `.murphysig` to your repos. Include the spec URL.
-Level 3: Your AI assistants read signatures naturally, suggest updates.
+Level 3: Your AI assistants read signatures naturally, suggest updates, contribute agent reviews, and become accountable participants.
 
 ---
 
@@ -396,7 +421,7 @@ Public domain. Use freely. Attribution appreciated but not required.
 ---
 
 Signed: Kev Murphy + claude-opus-4-5-20251101, 2026-01-06
-Format: MurphySig v0.2.1
+Format: MurphySig v0.3.3
 
 Context: v0.2 spec addressing GPT-5.2 review feedback. Added: non-cryptographic
 disclaimer, block boundaries, multi-author workflow, confidence semantics with
@@ -413,3 +438,7 @@ points from gpt-5.2-thinking review. All points addressed.
 2026-01-06 (Kev + claude-opus-4-5-20251101): v0.2.1 - Added text confidence as
 equal alternative to numerical. Added Heuristic field for pattern transparency.
 AI confidence isn't truly calibrated—text is often more honest.
+
+2026-03-23 (Kev + claude-opus-4-6): v0.3.3 — "The Gruber Cut". Added Agent Reviews
+for non-interactive agent contributions with full human visibility. Simplified CLI
+discovery. All versions aligned to v0.3.3.

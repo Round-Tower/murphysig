@@ -1,8 +1,8 @@
 ---
 layout: ../layouts/MarkdownLayout.astro
 title: The MurphySig Specification
-version: 0.2.1
-date: 2026-01-06
+version: 0.3.3
+date: 2026-03-23
 description: The official specification for MurphySig, a human-readable provenance standard for creative work.
 ---
 
@@ -28,7 +28,7 @@ For critical code, add detail:
 
 ```
 Signed: [Your Name] + [model-version], [date]
-Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
+Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
 
 Context: [What you were thinking, why this exists]
 
@@ -42,7 +42,7 @@ That's it. You're using MurphySig.
 
 ```python
 # Signed: Kev + claude-opus-4-5-20251101, 2026-01-06
-# Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
+# Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
 #
 # Context: Authentication middleware. Standard JWT validation
 # with refresh token rotation. Followed OWASP guidelines.
@@ -58,7 +58,7 @@ def authenticate(request):
 
 ```python
 # Signed: Kev, 2026-01-06
-# Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
+# Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
 #
 # Context: Quick CSV parser for data migration.
 #
@@ -134,7 +134,7 @@ When creating files that warrant provenance:
 
 ```
 Signed: [Human name] + [your-full-model-version], [today's date]
-Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
+Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
 
 Context: [What you built and why, key decisions, insights from collaboration]
 
@@ -510,6 +510,32 @@ Add a review entry when:
 
 **When uncertain, prefer adding a review.** Immutability preserves more context.
 
+### Agent Reviews
+
+AI agents can contribute reviews directly — with full human visibility.
+
+**Non-interactive mode** (for agents, CI, automation):
+
+```bash
+sig review src/auth.py \
+  --reviewer "Kev + claude-opus-4-6" \
+  --text "Security audit: token rotation sound. Rate limiting gap on refresh." \
+  --confidence 0.85
+```
+
+The review is inserted directly into the file's signature block. It shows up in source, in diffs, in PRs. No hidden metadata. No external database. Just a comment in the code.
+
+**Principles:**
+
+1. **Full attribution** — every agent review includes who ran it and which model
+2. **Human oversight** — reviews land in source files, go through normal code review
+3. **Transparency** — the review is a comment, readable by anyone
+4. **Any agent welcome** — Claude, GPT, Gemini, local models. The convention is model-agnostic
+
+**What agents should review:** Security audits, consistency checks across signatures, confidence recalibration from test results or production data, drift between stated intent and actual implementation.
+
+**What agents must NOT do:** Fabricate reviews for code they haven't analyzed, override human confidence without approval, remove existing reviews, or auto-approve their own contributions.
+
 ---
 
 ## Cross-Model Discovery
@@ -524,7 +550,7 @@ Include the format and spec URL in each signature:
 
 ```
 Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
-Format: MurphySig v0.1 (https://murphysig.dev/spec)
+Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
 ```
 
 Any AI can follow the URL to understand the convention.
@@ -594,7 +620,7 @@ Signatures link to the human-readable spec (`/spec`), but AI systems can discove
 ```kotlin
 /*
  * Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
- * Format: MurphySig v0.1 (https://murphysig.dev/spec)
+ * Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
  *
  * Context: Capability elicitation for M1K3. Routes queries through
  * zero-shot, few-shot, or chain-of-thought based on complexity.
@@ -613,7 +639,7 @@ class CapabilityElicitor {
 
 ```python
 # Signed: Kev, 2026-01-04
-# Format: MurphySig v0.2.1
+# Format: MurphySig v0.3.3
 #
 # Context: Quick script to batch-convert images.
 # Nothing clever here, just needed it done.
@@ -629,7 +655,7 @@ def convert_images(input_dir, output_dir):
 
 ```swift
 // Signed: Kev + claude-opus-4-5-20251101, 2026-01-06
-// Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
+// Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
 //
 // Context: Network retry logic with exponential backoff.
 // Handles transient failures gracefully.
@@ -648,7 +674,7 @@ class NetworkRetry {
 ```javascript
 /**
  * Signed: Kev + gpt-4o-2024-08-06, 2025-06-15
- * Format: MurphySig v0.1 (https://murphysig.dev/spec)
+ * Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
  *
  * Context: Authentication flow. GPT-4o helped design the token
  * refresh logic. Standard OAuth2 with edge case handling.
@@ -699,7 +725,7 @@ For artifacts that can't contain comments (images, binaries, models):
 # Signature: qwen3-0.6b-m1k3-finetune.gguf
 
 **Signed**: Kev + claude-opus-4-5-20250514, 2026-03-15
-**Format**: MurphySig v0.1
+**Format**: MurphySig v0.3.3
 
 ## Context
 
@@ -742,7 +768,7 @@ Confidence: Solid
 
 ```
 Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
-Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
+Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
 
 Context: [Why this exists, key decisions]
 
@@ -754,7 +780,7 @@ Open: [Unresolved questions]
 
 ```
 Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
-Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
+Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
 
 Context: [Why this exists, key decisions]
 
@@ -767,7 +793,7 @@ Open: [Unresolved questions]
 
 ```
 Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
-Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
+Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
 
 Context: [Why this exists]
 
@@ -793,7 +819,7 @@ When adding a signature to code that had none:
 
 ```
 Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
-Format: MurphySig v0.2.1 (https://murphysig.dev/spec)
+Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
 Prior: Unknown (no signature existed before this edit)
 
 Context: [What you changed and why]
@@ -811,7 +837,7 @@ Confidence: [0.0-1.0 or text] - [what's uncertain]
 
 **Level 2**: Add `.murphysig` to your repos. Include the spec URL.
 
-**Level 3**: Your AI assistants read signatures naturally, suggest updates, become accountable participants.
+**Level 3**: Your AI assistants read signatures naturally, suggest updates, contribute agent reviews, and become accountable participants.
 
 ---
 
@@ -844,7 +870,7 @@ Public domain. Use freely. Attribution appreciated but not required.
 ---
 
 *Signed: Kev Murphy + claude-opus-4-5-20251101, 2026-01-06*
-*Format: MurphySig v0.2.1*
+*Format: MurphySig v0.3.3*
 
 *Context: v0.2 spec addressing GPT-5.2 review feedback. Added: non-cryptographic disclaimer, block boundaries, multi-author workflow, confidence semantics with Basis field, decay as heuristic.*
 
@@ -856,3 +882,5 @@ Public domain. Use freely. Attribution appreciated but not required.
 *2026-01-06 (Kev + claude-opus-4-5-20251101): v0.2 - Incorporated 5 feedback points from gpt-5.2-thinking review. All points addressed.*
 
 *2026-01-06 (Kev + claude-opus-4-5-20251101): v0.2.1 - Added text confidence as equal alternative to numerical. Added Heuristic field for pattern transparency, especially for AI. AI confidence isn't truly calibrated—text is often more honest than false precision.*
+
+*2026-03-23 (Kev + claude-opus-4-6): v0.3.3 — "The Gruber Cut". Added Agent Reviews for non-interactive agent contributions with full human visibility. Simplified CLI discovery (grep over hardcoded extensions). All versions aligned to v0.3.3.*

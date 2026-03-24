@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Signed: Kev + claude-opus-4-5-20251101, 2026-01-05
-# Format: MurphySig v0.1 (https://murphysig.dev/spec)
+# Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
 #
 # Context: One-command deploy script for MurphySig site to Netlify.
 # Builds the Astro site and pushes to production.

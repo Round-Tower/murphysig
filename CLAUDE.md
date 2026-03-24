@@ -51,7 +51,7 @@ Every significant file in this repo is signed with MurphySig. When modifying sig
 3. **Replace the signature** (with `Prior:` reference) only for rewrites of >50% of the file
 4. **Never fabricate provenance** — if signing previously unsigned code, use `Prior: Unknown`
 
-Current spec version is **v0.2.1**. The `.murphysig` file at project root is the cross-model discovery mechanism.
+Current spec version is **v0.3.3**. The `.murphysig` file at project root is the cross-model discovery mechanism.
 
 ## Key Files
 
