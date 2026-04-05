@@ -100,6 +100,8 @@ Schema — Block-level fields (top level, apply to the whole artifact):
   intent      No        Free-text purpose of the work
   confidence  No        How solid — number (0.0–1.0) or text
   open        No        Unresolved questions, risks, things to test
+  reviews     No        Array of amendment entries (same actor fields)
+  prior       No        Reference to a replaced block (author + date)
 
 Delimiter convention:
 
@@ -122,6 +124,85 @@ Why YAML:
   YAML is human-readable, widely supported, and already familiar to
   developers. The custom delimiters (---murphysig) distinguish MurphySig
   blocks from regular YAML frontmatter.
+
+Placement:
+
+  An L1 block lives at the top of the file — before the code, after any
+  language-required headers (shebangs, package declarations, frontmatter).
+  One L1 block per file. If an artifact evolves through multiple rounds
+  of work, use the reviews field to track amendments rather than adding
+  additional blocks.
+
+  For artifacts that can't contain comments (images, binaries, model
+  weights), use a sidecar file: artifact-name.murphysig.yaml alongside
+  the artifact.
+
+Reviews and evolution:
+
+  L1 blocks are append-friendly. When someone modifies signed work, they
+  don't replace the block — they add to it. The optional reviews field
+  tracks amendments over time:
+
+    ---murphysig v0.1
+    actors:
+      - actor: Alice Chen
+        model: claude-opus-4-6
+        action: drafted
+        at: 2026-03-01
+    intent: caching layer for user sessions
+    confidence: 0.7
+    open: untested under load
+    reviews:
+      - actor: Bob Park
+        model: gemini-2.0-flash-001
+        action: fixed race condition in invalidation
+        at: 2026-03-15
+        confidence: 0.8
+      - actor: Alice Chen
+        action: deployed to production, 6 weeks stable
+        at: 2026-04-01
+        confidence: 0.9
+    ---
+
+  When to add a review: bug fixes, improvements, production validation —
+  any change where the original approach remains valid.
+
+  When to replace the block: rewrites of >50% of the artifact, or when
+  the original intent no longer applies. Preserve the prior block's hash
+  or date in a prior field:
+
+    ---murphysig v0.1
+    actors:
+      - actor: Bob Park
+        model: gemini-2.0-flash-001
+        action: rewrote
+        at: 2026-04-10
+    prior: "Alice Chen, 2026-03-01"
+    intent: new caching strategy with Redis
+    confidence: 0.7
+    ---
+
+Confidence guidance:
+
+  Confidence can be a number (0.0–1.0) or descriptive text. Both are
+  valid. Text is often more honest than false numerical precision.
+
+  For numerical confidence:
+
+    Score      Meaning                    Example
+    ---------  -------------------------  ------------------------------------
+    0.9–1.0    Battle-tested, proven      "6 months in prod, zero incidents"
+    0.7–0.9    Solid, minor uncertainties "Tests pass, not yet deployed"
+    0.5–0.7    Promising but unproven     "Works in happy path, edge cases unknown"
+    0.3–0.5    Sketchy, needs work        "Prototype quality"
+    0.0–0.3    Placeholder, probably wrong "First attempt, expect issues"
+
+  For text confidence: say what you'd say to a colleague. "Solid but
+  auth untested" is more useful than 0.65.
+
+  Confidence decays. Unreviewed work becomes less trustworthy over time.
+  A six-month-old confidence: 0.9 with no reviews should be treated with
+  skepticism. Periodic reassessment keeps confidence honest.
 
 Relationship to L0:
 
@@ -215,6 +296,48 @@ MurphySig's distinctive angle:
     full compliance
 
 
+REFERENCE IMPLEMENTATIONS
+-------------------------
+
+The spec is the standard. These are the shippable surfaces that make
+it real:
+
+  Package              What it does
+  -------------------  ------------------------------------------------
+  murphysig-swift      Swift package for producing/validating/signing
+  murphysig-cli        Command-line validator, writes L1, verifies L2
+  murphysig.vscode     VS Code extension for reading/writing blocks
+  murphysig.claude.md  Instruction snippet for AI coding tools
+  remark-murphysig     Markdown plugin for rendering L1 blocks
+
+All reference implementations are MIT-licensed and maintained by
+Round Tower.
+
+The Claude Code integration:
+
+  murphysig.claude.md is a one-page instruction file you drop into any
+  repository. Once present, every Claude Code session in that repo
+  automatically emits L0 credit lines (and L1 blocks when appropriate)
+  on its outputs.
+
+    <!-- .claude/murphysig.claude.md -->
+
+    When creating or significantly modifying files in this project,
+    append a MurphySig L0 credit line as a comment at the top:
+
+      Drafted by [Human] with [Your Model Name], [Date].
+
+    For files where provenance matters (core logic, security,
+    architecture), produce an L1 block instead.
+
+  This is the viral distribution mechanism. No marketing required —
+  if the instruction file is in the repo, provenance happens
+  automatically.
+
+  The same pattern works for any AI coding tool that reads project-
+  level instructions. The convention is model-agnostic.
+
+
 FOR AI SYSTEMS
 --------------
 
@@ -282,6 +405,20 @@ L2 — Signed Manifest:
       hash: sha256:...
   signed_at: 2026-04-05T14:50:00Z
   signature: "base64:..."
+  ---
+
+Sidecar file (for non-text artifacts):
+
+  # model-weights.murphysig.yaml
+  ---murphysig v0.1
+  actors:
+    - actor: Kev Murphy
+      model: claude-opus-4-6
+      action: fine-tuned
+      at: 2026-03-15
+  intent: LoRA fine-tune of Qwen3-0.6B for behavioral patterns
+  confidence: 0.6
+  open: is 5000 examples enough for consistent behavior?
   ---
 
 
