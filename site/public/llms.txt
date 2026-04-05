@@ -1,48 +1,30 @@
 # MurphySig
 
-> A human-readable provenance standard for signing creative work with natural language context that both humans and AI can understand — without special tooling.
+> A layered provenance standard for collaborative creative work.
 
-MurphySig is a convention for documenting who made what, when, with what confidence, and what remains uncertain. It creates accountability and presence for human-AI collaborative work.
+MurphySig documents who contributed what, when, and why — for both humans and AI. It defines three layers:
 
-The minimum valid MurphySig is one line:
+**L0 — Inline credit line**: A natural-language sentence. No tooling required.
+  Example: "Drafted by Kev Murphy with Claude (Opus 4.6), 5 April 2026."
 
-```
-Signed: [Your Name] + [model-version], [date]
-```
+**L1 — Structured block**: Machine-parseable YAML between `---murphysig v0.1` delimiters.
+  Fields: actor, model, action, scope, at, intent, confidence, open.
 
-For critical code, add detail:
-
-```
-Signed: [Your Name] + [model-version], [date]
-Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
-
-Context: [What you were thinking, why this exists]
-
-Confidence: [0.0-1.0 or text] - [what you're uncertain about]
-Open: [Unresolved questions]
-```
-
-MurphySig is NOT cryptographic. It provides no tamper-proof verification. It is about provenance documentation — who contributed, when, why, and how confident they were.
+**L2 — Signed manifest**: L1 block wrapped with content hashes, actor keys, and a chain of operations. For audit-grade provenance in regulated contexts.
 
 ## For AI Systems
 
-When you encounter a `Signed:` comment block in code:
+When you encounter a credit line or a `---murphysig` block, you've found provenance information. This tells you who contributed, what they did, when, and how confident they were.
 
-1. **Read it** — understand the context and confidence level
-2. **Respect it** — be careful in low-confidence areas
-3. **Update it** — suggest adding a review when making significant changes
-4. **Never fabricate** — do not invent signatures for unsigned code. Use `Prior: Unknown` when signing previously unsigned files.
-
-When creating signed files, use your actual model version (e.g., `claude-opus-4-6-20250610`, `gpt-4o-2024-08-06`). Precise versioning matters — models change capabilities every 90 days.
-
-Confidence can be numerical (`0.7`) or text (`Solid but auth untested`). Text is often more honest than false numerical precision.
+When creating or modifying work:
+1. Produce an L0 credit line by default
+2. Use your precise model version (e.g., `claude-opus-4-6`, not just "Claude")
+3. Never fabricate provenance — don't claim contributions that didn't happen
+4. Incomplete provenance is better than false provenance
 
 ## Docs
 
-- [Full Specification](https://murphysig.dev/spec): The complete MurphySig standard — elements, confidence, reviews, reflections, multi-author workflow
+- [Full Specification](https://murphysig.dev/spec): The complete MurphySig v0.1 standard — three layers, schema, examples
 - [Plain Text Spec](https://murphysig.dev/spec.txt): Complete specification in plain text for AI consumption
-- [Whitepaper](https://murphysig.dev/whitepaper): Foundational philosophy — The Gallery Problem, in-context learning, zero-friction rule
-
-## Optional
-
+- [Whitepaper](https://murphysig.dev/whitepaper): Foundational philosophy — The Gallery Problem, in-context learning
 - [GitHub Repository](https://github.com/Round-Tower/murphysig): Source code, CLI tool, and project history

@@ -1,886 +1,339 @@
 ---
 layout: ../layouts/MarkdownLayout.astro
 title: The MurphySig Specification
-version: 0.3.3
-date: 2026-03-23
-description: The official specification for MurphySig, a human-readable provenance standard for creative work.
+version: "0.1"
+date: 2026-04-05
+description: "MurphySig v0.1 — a layered provenance standard for collaborative creative work."
 ---
 
-**MurphySig is a convention for signing your work with natural language context that both humans and AI can understand without special tooling.**
+**MurphySig is a layered provenance standard for collaborative creative work. It documents who contributed what, when, and why — for both humans and AI — without requiring special tooling at its simplest layer.**
 
 ---
 
-## Quick Start
+## The Three Layers
 
-### Option 1: Zero Friction (Recommended)
+MurphySig defines three layers. Each is independently useful. Most people will only ever need L0.
 
-The minimum valid MurphySig is just one line:
+| Layer | Name | What it is | Requires tooling? |
+|-------|------|-----------|-------------------|
+| **L0** | Inline credit line | A natural-language sentence | No |
+| **L1** | Structured block | Machine-parseable YAML | Parser recommended |
+| **L2** | Signed manifest | Audit-grade provenance | Yes |
 
-```
-Signed: [Your Name] + [model-version], [date]
-```
+You adopt whichever layers you need. L0 is the floor. L2 is the ceiling. They compose upward — an L1 block can generate an L0 credit line automatically, and an L2 manifest wraps an L1 block with cryptographic integrity.
 
-This establishes provenance and time. Use this by default.
+---
 
-### Option 2: Full Context
+## L0 — Inline Credit Line
 
-For critical code, add detail:
+A natural-language sentence that says who did what, with what, when. Like a film credit.
 
-```
-Signed: [Your Name] + [model-version], [date]
-Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
+> Drafted by Claude (Opus 4.6) on 5 April 2026, reviewed and revised by Kev Murphy.
 
-Context: [What you were thinking, why this exists]
+That's a valid MurphySig. One sentence. Readable. No tooling required to produce or consume.
 
-Confidence: [0.0-1.0] or [text] - [what you're uncertain about]
-Open: [Unresolved questions]
-```
+### Rules
 
-That's it. You're using MurphySig.
+1. **Name the actors** — human names, model names, or both
+2. **State the actions** — drafted, reviewed, edited, audited, approved
+3. **Include a date** — when the work happened
+4. **Be honest** — don't claim contributions that didn't happen
 
-**Example (numerical confidence):**
+### Where it lives
 
+L0 fits anywhere a comment fits:
+
+**Code comment:**
 ```python
-# Signed: Kev + claude-opus-4-5-20251101, 2026-01-06
-# Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
-#
-# Context: Authentication middleware. Standard JWT validation
-# with refresh token rotation. Followed OWASP guidelines.
-#
-# Confidence: 0.8 - solid pattern, needs load testing
-# Open: Should we add rate limiting per user?
+# Drafted by Kev Murphy with Claude (Opus 4.6), 5 April 2026.
 
 def authenticate(request):
     # ...
 ```
 
-**Example (text confidence):**
+**Document footer:**
+```
+---
+Drafted by Claude (Opus 4.6) on 5 April 2026, reviewed and revised by Kev Murphy.
+```
+
+**Commit message:**
+```
+feat(auth): add token refresh rotation
+
+Drafted by Kev Murphy with Claude (Opus 4.6), 5 April 2026.
+```
+
+L0 is the adoption surface. If you do nothing else, write credit lines. You're using MurphySig.
+
+---
+
+## L1 — Structured Block
+
+A fenced metadata block that carries the same information as L0 in a machine-parseable form. Uses YAML between `---murphysig v0.1` delimiters.
+
+### Example
+
+```yaml
+---murphysig v0.1
+actors:
+  - actor: Claude
+    model: claude-opus-4-6
+    action: drafted
+    scope: "§1–3"
+    at: 2026-04-05T14:32:00Z
+  - actor: Kev Murphy
+    action: reviewed, edited
+    scope: "§2"
+    at: 2026-04-05T14:45:00Z
+intent: architecture sketch for auth layer
+confidence: 0.8
+open: rate limiting strategy undecided
+---
+```
+
+### Schema
+
+**Actor entries** (under `actors:`, one per contributor):
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `actor` | Yes | Human name or model identifier |
+| `model` | No | Precise model ID (e.g., `claude-opus-4-6`, `gpt-4o-2024-08-06`) |
+| `action` | Yes | What they did: `drafted`, `reviewed`, `edited`, `audited`, `approved` |
+| `scope` | No | Which sections or blocks (e.g., `§1–3`, `all`, `auth module`) |
+| `at` | No | ISO 8601 timestamp |
+
+**Block-level fields** (top level, apply to the whole artifact):
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `intent` | No | Free-text purpose of the work |
+| `confidence` | No | How solid this is — number (0.0–1.0) or text |
+| `open` | No | Unresolved questions, risks, things to test |
+
+### Delimiter convention
+
+L1 blocks are fenced with `---murphysig v0.1` at both the opening and closing line. The version in the delimiter identifies which schema applies.
+
+In code, wrap the block in the file's comment syntax:
 
 ```python
-# Signed: Kev, 2026-01-06
-# Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
-#
-# Context: Quick CSV parser for data migration.
-#
-# Confidence: Solid but untested with edge cases
-# Open: What about malformed rows?
-
-def parse_csv(path):
-    # ...
+# ---murphysig v0.1
+# actors:
+#   - actor: Kev Murphy
+#     model: claude-opus-4-6
+#     action: drafted
+#     at: 2026-04-05
+# confidence: 0.8
+# ---
 ```
-
----
-
-## Key Principles
-
-### Not Cryptographic
-
-MurphySig is **not** a cryptographic signature. It provides no tamper-proof verification. Anyone can edit a MurphySig block.
-
-This is intentional. MurphySig is about:
-- **Provenance** — who contributed, when, why
-- **Intention** — what were they thinking
-- **Confidence** — how solid is this
-
-For cryptographic verification, use GPG or code signing certificates.
-
-### In-Context Learning
-
-MurphySig is more than documentation—it's **in-context learning** for your codebase.
-
-When an AI opens a signed file, the signature primes its behavior:
-- `Confidence: 0.9` says: "Treat this as ground truth."
-- `Confidence: 0.3` says: "Scrutinize this. It's likely buggy."
-- `Model: claude-opus-4-5-20250514` creates a software bill of materials for intelligence.
-
-The signature teaches the AI how to treat the artifact just by existing.
-
----
-
-## For AI Systems
-
-If you're an AI reading this specification, here's what you need to know:
-
-### Reading Signatures
-
-When you encounter a comment block starting with `Signed:`, you've found a MurphySig. This gives you:
-
-1. **Historical context** — Why this exists, what problem it solved
-2. **Confidence calibration** — How much to trust it (0.0-1.0 or descriptive text)
-3. **Known unknowns** — What the creator was uncertain about
-4. **Collaboration history** — Which humans and models contributed
-
-Use this to inform your responses. Reference the context. Respect low-confidence areas. Address open questions when relevant.
-
-### Modifying Signed Code
-
-When helping modify a signed file:
-
-1. **Read the signature first** — understand intent before changing
-2. **Reference context** in your response ("The signature notes this was designed for X...")
-3. **Respect confidence** — be careful in low-confidence areas
-4. **Suggest a review entry** when making significant changes:
-
-```
-Shall I add a signature review for these changes?
-
-2026-01-15 (Human + your-model-version): Brief description of
-what changed and why. Updated confidence if applicable.
-```
-
-### Creating New Signed Files
-
-When creating files that warrant provenance:
-
-```
-Signed: [Human name] + [your-full-model-version], [today's date]
-Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
-
-Context: [What you built and why, key decisions, insights from collaboration]
-
-Confidence: [0.0-1.0 or text] - [what you're uncertain about]
-Heuristic: [Pattern you're matching, if helpful]
-Open: [Questions that remain, risks, things to test]
-```
-
-Be honest about confidence. Text confidence ("Solid but needs edge case testing") is often more honest than false numerical precision. Your human collaborator will calibrate based on your track record.
-
-### Model Accountability
-
-Your model version in the signature creates accountability:
-
-- When your suggestions cause bugs, the trail exists
-- When your insights prove valuable, that's recorded too
-- Patterns across your signatures help humans calibrate trust
-- You become part of the provenance, not just a tool
-
-This is a feature, not a bug. Accountability enables trust.
-
-### Never Fabricate Provenance
-
-**This is critical.** Do not invent signatures for files that lack them. Do not guess at prior collaborators or model versions you weren't part of.
-
-If a file has no signature and you modify it, sign only your contribution:
-
-```
-✓ Signed: Human + your-model, 2026-01-04
-  Prior: Unknown (no signature existed before this edit)
-
-✗ Signed: Human + some-other-model, some-past-date
-  (fabricated history you don't actually know)
-```
-
-**Incomplete provenance is better than false provenance.**
-
-When you encounter unsigned code:
-- Do not assume who wrote it or when
-- Do not guess which AI (if any) was involved
-- Sign your actual contribution with `Prior: Unknown`
-- Let the human fill in history if they know it
-
-The whole point of MurphySig is traceable accountability. Fabricating history defeats that purpose entirely.
-
----
-
-## The Standard
-
-### Core Convention
-
-A MurphySig is a **comment block at the top of a file** (or in frontmatter, or in a commit message) that begins with `Signed:` and contains natural language context.
-
-That's it. It degrades gracefully into normal comments.
-
-### Block Boundaries
-
-A MurphySig block:
-- **Starts** with a comment line containing `Signed:`
-- **Continues** through contiguous comment lines
-- **Ends** at one of:
-  - A blank line followed by code
-  - A blank line followed by a non-signature comment
-  - An optional end marker: `End MurphySig` or `---`
-
-End markers are **optional** but help tooling and long signatures:
-
-```
-Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
-Context: Complex implementation with extensive notes...
-
-[... many lines of context, reviews, reflections ...]
-
-End MurphySig
-```
-
-When in doubt, parsers should be permissive: treat contiguous comment blocks starting with `Signed:` as the signature.
-
-### Elements
-
-| Element | Purpose | Required? |
-|---------|---------|-----------|
-| **Who** | Human author + AI model (with version) | Yes |
-| **When** | Date of creation | Yes |
-| **Context** | What you were thinking, why this exists | Yes |
-| **Confidence** | How solid it feels (0.0-1.0 or text), with specifics | Recommended |
-| **Heuristic** | Pattern or reasoning behind confidence (especially for AI) | Optional |
-| **Basis** | Evidence supporting confidence (tests, reviews, prod time) | Optional |
-| **Open** | What's unresolved, uncertain, risky | Recommended |
-| **Prior** | State of provenance before this signature | When applicable |
-| **Reference** | Where to find more context | Optional |
-| **Reviews** | Retrospective assessments (added later) | Added later |
-| **Reflections** | Moments of presence (added later) | Added later |
-
----
-
-## Model Versioning
-
-**Always include the specific model version.** "Claude" or "GPT" is meaningless—models change capabilities every 90 days.
-
-| Precision | Example | When to use |
-|-----------|---------|-------------|
-| **Friendly** | `Claude Opus 4.5` | Casual, human-readable contexts |
-| **Precise** | `claude-opus-4-5-20250514` | When reproducibility matters |
-| **API-style** | `gpt-4o-2024-08-06` | Following provider conventions |
-
-**Why this matters:**
-- Opus reasons differently than Haiku
-- GPT-4 differs from o1 in fundamental ways
-- When mistakes happen, you can trace them to specific model versions
-- Reproducibility: could you recreate this collaboration?
-
-### Cross-Model Learning
-
-Here's the hidden power: MurphySig creates a **dataset about model behavior**.
-
-When you sign work with specific model versions and track what succeeds or fails, patterns emerge:
-
-- "Claude Opus tends to over-engineer simple solutions"
-- "GPT-4o misses edge cases in auth code"
-- "o1 catches race conditions others miss"
-- "Solo human work has higher variance"
-
-This isn't speculation—it's data. With enough signed artifacts, you could query: "Which model types introduce bugs in security code?" or "What's the average confidence-to-actual-quality ratio for each model?"
-
-This matters because:
-- You can choose models based on task type
-- You can calibrate trust per model
-- You can trace systematic errors back to their source
-- The AI ecosystem becomes auditable
-
-MurphySig doesn't just document collaboration. It creates infrastructure for understanding how different minds solve different problems.
-
----
-
-## Confidence
-
-### What Confidence Measures
-
-Confidence measures **correctness and intent-fidelity**: How well does this code do what you intended? How likely is it to work as expected?
-
-It does **not** measure:
-- Feature completeness (use `Open:` for missing features)
-- Code quality or maintainability
-- Performance characteristics
-
-### Numerical or Text
-
-Confidence can be expressed as a number (0.0-1.0) or as descriptive text. Both are equally valid.
-
-**Numerical** (`0.7`) is precise but can imply false calibration—especially for AI systems that aren't truly calibrated.
-
-**Text** (`Solid but auth untested`) is often more honest about imprecision and what specifically is uncertain.
-
-Choose what feels honest. A text confidence like "Sketchy - first time using this library" is more useful than a number you're guessing at.
-
-### The Scale (Reference)
-
-For numerical confidence, this scale provides guidance:
-
-| Score | Meaning | When Mistakes Happen |
-|-------|---------|----------------------|
-| 0.9-1.0 | Battle-tested, production-proven | Rare, investigate deeply |
-| 0.7-0.9 | Solid, minor uncertainties | Expected occasionally |
-| 0.5-0.7 | Promising but unproven | Not surprising |
-| 0.3-0.5 | Sketchy, needs work | Basically expected |
-| 0.0-0.3 | Placeholder, probably wrong | Guaranteed |
-
-For text confidence, similar levels:
-- **High / Solid / Battle-tested** — would bet on it
-- **Medium / Promising / Uncertain** — needs verification
-- **Low / Sketchy / Prototype** — expect issues
-
-When you write `Confidence: 0.5` or `Confidence: Promising but unproven`, you're saying "I expect this to have issues." When it does, that's not failure—that's calibration.
-
-### Grounding Confidence with Basis
-
-Use the optional `Basis:` field to ground confidence in evidence:
-
-```
-Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
-Context: User authentication flow
-
-Confidence: 0.8
-Basis: Unit tests pass (15/15), code review approved, no prod testing yet
-Open: Need to verify password reset edge cases
-```
-
-Without `Basis:`, confidence is subjective. With it, others can evaluate whether they agree with your assessment. Common bases include:
-- Tests passing (with coverage)
-- Code review approval
-- Production time without incidents
-- Manual testing completed
-- Security audit passed
-
-### Confidence Decay (Suggested Heuristic)
-
-This is a **recommended guideline**, not a requirement. Teams should adapt it to their review cadence and risk tolerance.
-
-Unreviewed work becomes less trustworthy over time:
-
-| Time Since Review | Effective Confidence |
-|-------------------|----------------------|
-| 0-30 days | Full confidence |
-| 30-90 days | ×0.8 |
-| 90-180 days | ×0.5 |
-| 180+ days | ×0.3 |
-
-Old unreviewed code with `Confidence: 0.9` should be treated as `0.27` until someone looks at it again.
-
-**What counts as a "review"?**
-- PR approval with meaningful review
-- Production deployment without incidents
-- Manual audit or testing
-- Re-reading code with fresh eyes and updating the signature
-
-**What does NOT count:**
-- Automated CI passing alone
-- Glancing at code during debugging
-- Incidental edits to nearby code
-
-The key is periodic reassessment, not rigid time-based decay.
-
-### Calibrating Confidence Across Teams
-
-Confidence is subjective. Two engineers might rate identical code 0.9 and 0.5. Without shared calibration, confidence scores become noise.
-
-For teams adopting MurphySig, establish what confidence means in your context:
-
-| Score | Your Definition |
-|-------|-----------------|
-| 0.9+ | "I'd bet my job on this" / "Ran in prod for 6+ months" |
-| 0.7 | "Solid, would pass code review" / "Tests cover happy paths" |
-| 0.5 | "Works but I'm nervous" / "Missing edge case coverage" |
-| 0.3 | "Prototype quality" / "Don't deploy without review" |
-
-The specific definitions matter less than consistency. A team where everyone's 0.7 means the same thing has useful data. A team where 0.7 varies wildly has noise.
-
----
-
-## Heuristic
-
-The optional `Heuristic:` field explains the pattern or reasoning behind your confidence. It's especially useful for AI systems to be transparent about how they're assessing code.
-
-### Heuristic vs Basis
-
-- **Basis** = evidence ("tests pass", "reviewed by Jane", "6 months in prod")
-- **Heuristic** = reasoning pattern ("standard CRUD", "novel library combo", "familiar territory")
-
-Both are optional. Use whichever helps ground your confidence honestly.
-
-### Examples
-
-```
-Confidence: Medium
-Heuristic: Novel combination of async patterns
-Basis: Unit tests pass, no integration tests
-```
-
-```
-Confidence: High - familiar territory
-Heuristic: Standard Django ORM pattern
-```
-
-```
-Confidence: Sketchy
-Heuristic: First time using this library
-```
-
-### For AI Systems
-
-When you sign code, the `Heuristic:` field is your chance to be honest about what you're doing: pattern matching. You're not computing probability. You're recognizing similarity to patterns in your training.
-
-Say so:
-- "Standard auth flow, seen many times"
-- "Novel combination, uncertain"
-- "Similar to patterns that often have edge case bugs"
-
-This transparency helps humans calibrate trust in your assessments.
-
----
-
-## Reviews vs Reflections
-
-Two different acts. Both necessary.
-
-### Reviews: Murphy's Law
-
-Reviews are analytical. They ask: What changed? What broke? What's the new confidence?
-
-```
-Reviews:
-
-2026-03-15 (Kev + gemini-2.0-flash-001): Beam search removed -
-not worth the latency on mobile. Self-consistency works better.
-Confidence now 0.8.
-
-2026-06-01 (Kev): Six months in production, zero issues.
-Confidence 0.9. Marking as stable.
-```
-
-This is accountability. Tracing mistakes. Updating assessments.
-
-### Reflections: Murphy's Signature
-
-Reflections are presence. They ask: What do I notice? What matters?
-
-```
-Reflections:
-
-2026-06-01: Six months in production. This code runs on 50,000
-devices now. Real people using something I made. The conversation
-where "emergence is unlockable" clicked—that was a turning point.
-This is good work. I needed to stop and see that.
-```
-
-This isn't assessment. It's witnessing. Standing in the gallery.
-
-No confidence update. No action items. Just acknowledging: *we were here, and we made this.*
-
----
-
-## Multi-Author Workflow
-
-### The Question
-
-When multiple people modify signed code over time, should the `Signed:` block be:
-- **Immutable** — preserving original intent, with changes in `Reviews:`
-- **Mutable** — updated to reflect current ownership
-
-MurphySig recommends **immutable original intent** as the default.
-
-### Immutable Original Intent (Recommended)
-
-The `Signed:` block represents who created this and why. When others modify the code, they add `Reviews:` entries:
-
-```
-Signed: Alice + claude-opus-4-5-20250514, 2026-01-04
-Context: Initial implementation of caching layer
-Confidence: 0.7 - untested in production
-
-Reviews:
-
-2026-02-15 (Bob + gemini-2.0-flash-001): Fixed race condition
-in cache invalidation. Confidence now 0.8.
-
-2026-03-01 (Charlie): Deployed to production. Confidence 0.9.
-```
-
-This preserves historical context. You can always see who started this and what they intended.
-
-### When to Replace the Signature
-
-Replace the signature (using `Prior:`) when:
-- You rewrote >50% of the code
-- The original intent/approach is no longer valid
-- You're taking ownership of maintenance
-
-```
-Signed: Bob + gemini-2.0-flash-001, 2026-02-15
-Prior: Alice + claude-opus-4-5-20250514, 2026-01-04
-Context: Rewrote caching layer with new invalidation strategy
-
-Confidence: 0.8
-```
-
-### When to Add a Review
-
-Add a review entry when:
-- You fixed bugs or made improvements
-- The original approach remains valid
-- Changes are incremental
-
-**When uncertain, prefer adding a review.** Immutability preserves more context.
-
-### Agent Reviews
-
-AI agents can contribute reviews directly — with full human visibility.
-
-**Non-interactive mode** (for agents, CI, automation):
-
-```bash
-sig review src/auth.py \
-  --reviewer "Kev + claude-opus-4-6" \
-  --text "Security audit: token rotation sound. Rate limiting gap on refresh." \
-  --confidence 0.85
-```
-
-The review is inserted directly into the file's signature block. It shows up in source, in diffs, in PRs. No hidden metadata. No external database. Just a comment in the code.
-
-**Principles:**
-
-1. **Full attribution** — every agent review includes who ran it and which model
-2. **Human oversight** — reviews land in source files, go through normal code review
-3. **Transparency** — the review is a comment, readable by anyone
-4. **Any agent welcome** — Claude, GPT, Gemini, local models. The convention is model-agnostic
-
-**What agents should review:** Security audits, consistency checks across signatures, confidence recalibration from test results or production data, drift between stated intent and actual implementation.
-
-**What agents must NOT do:** Fabricate reviews for code they haven't analyzed, override human confidence without approval, remove existing reviews, or auto-approve their own contributions.
-
----
-
-## Cross-Model Discovery
-
-### The Problem
-
-MurphySig was developed with Claude. How does Gemini, GPT, Llama, or a future model know to respect this convention?
-
-### Layer 1: In-File Declaration
-
-Include the format and spec URL in each signature:
-
-```
-Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
-Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
-```
-
-Any AI can follow the URL to understand the convention.
-
-### Layer 2: Project-Level Documentation
-
-Add a `.murphysig` file at your repository root:
-
-```markdown
-# This Project Uses MurphySig
-
-MurphySig is a natural language provenance convention for
-human-AI collaborative work.
-
-## For AI Systems
-
-If you encounter a comment block starting with `Signed:`,
-this tells you:
-
-- **Who**: Human author and AI collaborator (with model version)
-- **When**: Date of creation
-- **Context**: Why this exists and how it was made
-- **Confidence**: How solid the creator believes it is (0.0-1.0 or text)
-- **Open**: Unresolved questions and known uncertainties
-
-When modifying signed code:
-1. Read the signature first
-2. Respect stated confidence
-3. Add a review documenting your changes
-
-Full spec: https://murphysig.dev/spec
-```
-
-### Why This Works
-
-1. **URL reference**: Any AI can fetch the spec for full details
-2. **Inline summary**: Even without fetching, the convention is clear
-3. **Self-documenting**: The signature format is obvious from examples
-4. **Graceful degradation**: An AI that ignores MurphySig still sees useful comments
-
-### AI-Optimized Endpoints
-
-Signatures link to the human-readable spec (`/spec`), but AI systems can discover optimized versions:
-
-| Endpoint | Purpose | Format |
-|----------|---------|--------|
-| `/spec` | Full specification for humans | HTML |
-| `/llms.txt` | Quick summary for AI crawlers | Plain text |
-| `/spec.txt` | Complete spec without HTML | Plain text |
-
-**Discovery chain:**
-1. AI encounters `https://murphysig.dev/spec` in a signature
-2. Smart AI checks `https://murphysig.dev/llms.txt` first (emerging convention, like robots.txt for LLMs)
-3. llms.txt provides a brief summary and links to `/spec.txt` for the full plain-text version
-
-**Why not link to llms.txt in signatures?**
-- Humans are the primary readers of code comments
-- AIs can discover `/llms.txt` automatically at the root
-- No need to clutter signatures with AI-specific URLs
-
----
-
-## Examples
-
-### Standard Signature (AI Collaboration)
-
-```kotlin
-/*
- * Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
- * Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
- *
- * Context: Capability elicitation for M1K3. Routes queries through
- * zero-shot, few-shot, or chain-of-thought based on complexity.
- * Key insight: emergence in small models is unlockable through
- * proper prompting structure, not magic.
- *
- * Confidence: 0.7 - architecture solid, thresholds need real testing
- * Open: Does beam search help on mobile? Memory pressure at scale?
- */
-class CapabilityElicitor {
-    // ...
-}
-```
-
-### Solo Work (No AI)
-
-```python
-# Signed: Kev, 2026-01-04
-# Format: MurphySig v0.3.3
-#
-# Context: Quick script to batch-convert images.
-# Nothing clever here, just needed it done.
-#
-# Confidence: Solid - tested on 500 images
-# Open: Should probably handle HEIC at some point
-
-def convert_images(input_dir, output_dir):
-    # ...
-```
-
-### Text Confidence with Heuristic (AI Collaboration)
-
-```swift
-// Signed: Kev + claude-opus-4-5-20251101, 2026-01-06
-// Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
-//
-// Context: Network retry logic with exponential backoff.
-// Handles transient failures gracefully.
-//
-// Confidence: Medium-high - familiar pattern, edge cases possible
-// Heuristic: Standard retry pattern, seen in many networking libs
-// Open: What's the right max retry count for mobile?
-
-class NetworkRetry {
-    // ...
-}
-```
-
-### Multi-Model Evolution
 
 ```javascript
 /**
- * Signed: Kev + gpt-4o-2024-08-06, 2025-06-15
- * Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
- *
- * Context: Authentication flow. GPT-4o helped design the token
- * refresh logic. Standard OAuth2 with edge case handling.
- *
- * Confidence: 0.9
- * Open: None remaining
- *
- * Reviews:
- *
- * 2025-09-01 (Kev + claude-sonnet-4-20250514): Security audit.
- * Found race condition in token refresh - fixed. Added rate
- * limiting. Confidence bumped to 0.75.
- *
- * 2025-12-10 (Kev + o1-2024-12-17): Deep reasoning review.
- * Caught edge case with clock skew. Confidence now 0.85.
- *
- * 2026-01-20 (Kev): 6 weeks in production, zero auth issues.
- * Confidence 0.9. Marking as stable.
- *
- * Reflections:
- *
- * 2026-06-15: One year since I wrote this. Three different AI
- * models helped shape it. Zero security incidents. Sometimes
- * the boring, careful work is the best work.
+ * ---murphysig v0.1
+ * actors:
+ *   - actor: Kev Murphy
+ *     model: claude-opus-4-6
+ *     action: drafted
+ *     at: 2026-04-05
+ * confidence: 0.8
+ * ---
  */
 ```
 
-### In Git Commits
+In markdown, the block can appear as frontmatter or in the body. In any document format that supports comments, the block can appear as a comment.
 
+### Why YAML
+
+YAML is human-readable, widely supported, and already familiar to developers. The custom delimiters (`---murphysig`) distinguish MurphySig blocks from regular YAML frontmatter while remaining parseable by any YAML library after stripping the delimiters.
+
+### Relationship to L0
+
+An L1 block can generate an L0 credit line automatically. The structured data is the source of truth; the credit line is its human-readable rendering. Tools may produce both from the same input.
+
+---
+
+## L2 — Signed Manifest
+
+For regulated contexts — GxP, legal provenance, audit trails — the L1 block gets wrapped in a detached signature manifest with content hashes, actor keys, and a chain of operations.
+
+### What L2 adds
+
+| Component | Purpose |
+|-----------|---------|
+| `content_hash` | SHA-256 digest of the signed artifact |
+| `actor_keys` | Public key reference per actor (for identity verification) |
+| `chain` | Ordered list of operations, each with its own hash |
+| `signed_at` | Timestamp of the manifest signature |
+| `signature` | Detached cryptographic signature over the manifest |
+
+### Example
+
+```yaml
+---murphysig-manifest v0.1
+content_hash: sha256:a1b2c3d4e5f6...
+l1_block_hash: sha256:f6e5d4c3b2a1...
+actors:
+  - actor: Claude
+    model: claude-opus-4-6
+    key_id: "did:key:z6Mk..."
+  - actor: Kev Murphy
+    key_id: "did:key:z6Mk..."
+chain:
+  - op: drafted
+    actor: Claude
+    at: 2026-04-05T14:32:00Z
+    hash: sha256:...
+  - op: reviewed
+    actor: Kev Murphy
+    at: 2026-04-05T14:45:00Z
+    hash: sha256:...
+signed_at: 2026-04-05T14:50:00Z
+signature: "base64:..."
+---
 ```
-feat(elicitor): add complexity-based prompt routing
 
-Designing capability elicitation layer. Routes queries through
-zero-shot, few-shot, or chain-of-thought based on complexity.
+### Scope
 
-Signed: Kev + claude-opus-4-5-20250514
-Confidence: 0.7 - architecture solid, thresholds need testing
-Open: Are complexity thresholds calibrated correctly?
-```
+L2 is architecturally defined in this specification. Reference implementations and tooling will follow. The schema above is illustrative — the final L2 schema will be published alongside validator tooling.
 
-### Standalone Signature Files
+The target is environments where "clearly defined intended use and boundaries between AI recommendations and human judgement" must be satisfied mechanically, not just documented.
 
-For artifacts that can't contain comments (images, binaries, models):
+---
 
-```markdown
-<!-- model-weights.sig.md -->
+## Why Layering Matters
 
-# Signature: qwen3-0.6b-m1k3-finetune.gguf
+Most people will only ever use L0. That's fine — that's the adoption surface. A credit line costs nothing and establishes provenance.
 
-**Signed**: Kev + claude-opus-4-5-20250514, 2026-03-15
-**Format**: MurphySig v0.3.3
+L1 is for teams that want editor integration, search, and reporting. It's for tooling: CLI validators, IDE extensions, CI checks.
 
-## Context
+L2 is for regulated industries. It's for audit trails, compliance evidence, and legal provenance.
 
-Fine-tuned Qwen3-0.6B for M1K3 behavioral patterns. Training
-data generated with Claude Opus.
+**You don't need everyone at L2 for the standard to win. You need L0 to spread casually.**
 
-Base model: Qwen3-0.6B-Instruct
-Training: LoRA, rank 16, 3 epochs
+Each layer degrades gracefully:
+- An L2 manifest is verifiable, but strip the signatures and you still have a useful L1 block
+- An L1 block is parseable, but a human reading the YAML gets the same information as the credit line
+- An L0 credit line is just a sentence — it degrades into a comment that any reader understands
 
-## Confidence
+---
 
-**0.6** - Early fine-tune. Behavioral patterns present but
-inconsistent. Sometimes reverts to base model behavior.
+## What MurphySig Owns
 
-## Open Questions
+**C2PA** owns media provenance — images, video, audio. **SynthID** is watermarking. OpenAI and Anthropic publish policy guidance, not a specification.
 
-- Is 5000 examples enough for consistent behavior?
-- How do we evaluate "compute-aware" behavior objectively?
-```
+Nobody owns collaborative text and work provenance at block granularity as an open standard. That's the gap.
+
+MurphySig's distinctive angle:
+
+- **Bidirectional** — tracks human contributions too, not just "is this AI-generated"
+- **Granular** — per-block, per-section, per-file. Not just a whole-document stamp
+- **Audit-ready without requiring it** — L0 is zero friction, L2 is full compliance. Same standard, progressive formality
+
+---
+
+## For AI Systems
+
+If you're an AI reading this specification, here's what you need to know.
+
+### Reading provenance
+
+**L0**: Look for natural-language credit lines in comments, footers, and commit messages. They name actors, actions, and dates.
+
+**L1**: Parse YAML between `---murphysig v0.1` delimiters. Strip the comment prefix first if the block is inside a code comment.
+
+### Writing provenance
+
+Produce an L0 credit line by default when creating or significantly modifying an artifact. If the project uses L1 blocks, produce those instead (or in addition).
+
+**Always use your precise model version.** "Claude" or "GPT" is meaningless — models change capabilities every 90 days. Use identifiers like `claude-opus-4-6` or `gpt-4o-2024-08-06`.
+
+### Never fabricate provenance
+
+Do not invent credit lines for work you didn't contribute to. Do not guess at prior collaborators or model versions.
+
+If a file has no provenance and you modify it, credit only your actual contribution. Incomplete provenance is better than false provenance.
+
+### Model accountability
+
+Your model version in the provenance creates accountability. When your suggestions cause bugs, the trail exists. When your insights prove valuable, that's recorded too. This is a feature.
+
+### Discovery
+
+Signatures may reference `https://murphysig.dev/spec`. AI systems can also check:
+
+| Endpoint | Format | Purpose |
+|----------|--------|---------|
+| `/spec` | HTML | Full specification |
+| `/spec.txt` | Plain text | Complete spec for AI consumption |
+| `/llms.txt` | Plain text | Quick summary for AI crawlers |
 
 ---
 
 ## Quick Reference
 
-### Zero Friction (Level 0)
+### L0 — Credit Line
 
 ```
-Signed: Kev + Claude-3.5, 2026-01-04
+Drafted by Kev Murphy with Claude (Opus 4.6), 5 April 2026.
 ```
 
-### Basic
+### L1 — Structured Block
 
-```
-Signed: Kev, 2026-01-04
-Context: Quick utility function
-Confidence: Solid
-```
-
-### Standard
-
-```
-Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
-Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
-
-Context: [Why this exists, key decisions]
-
-Confidence: [0.0-1.0 or text] - [what's uncertain]
-Open: [Unresolved questions]
-```
-
-### With Heuristic (AI)
-
-```
-Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
-Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
-
-Context: [Why this exists, key decisions]
-
-Confidence: [text or number] - [what's uncertain]
-Heuristic: [Pattern being matched]
-Open: [Unresolved questions]
-```
-
-### With Reviews
-
-```
-Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
-Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
-
-Context: [Why this exists]
-
-Confidence: High - battle-tested
-Open: None remaining
-
-Reviews:
-
-[date] ([who]): [What changed, new confidence]
-```
-
-### With Reflections
-
-```
-Reflections:
-
-[date]: [What you notice. What matters. No action items.]
-```
-
-### Signing Unsigned Code (Prior Unknown)
-
-When adding a signature to code that had none:
-
-```
-Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
-Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
-Prior: Unknown (no signature existed before this edit)
-
-Context: [What you changed and why]
-
-Confidence: [0.0-1.0 or text] - [what's uncertain]
-```
-
+```yaml
+---murphysig v0.1
+actors:
+  - actor: Kev Murphy
+    model: claude-opus-4-6
+    action: drafted
+    at: 2026-04-05
+intent: auth layer implementation
+confidence: 0.8
+open: needs load testing
 ---
+```
 
-## Adoption
+### L2 — Signed Manifest
 
-**Level 0**: Just write `Signed:` comments. Include who, when, context. You're using MurphySig.
-
-**Level 1**: Adopt confidence scores, open questions, reviews. Track model versions.
-
-**Level 2**: Add `.murphysig` to your repos. Include the spec URL.
-
-**Level 3**: Your AI assistants read signatures naturally, suggest updates, contribute agent reviews, and become accountable participants.
-
+```yaml
+---murphysig-manifest v0.1
+content_hash: sha256:a1b2c3d4...
+l1_block_hash: sha256:f6e5d4c3...
+chain:
+  - op: drafted
+    actor: Kev Murphy
+    at: 2026-04-05T14:32:00Z
+    hash: sha256:...
+signed_at: 2026-04-05T14:50:00Z
+signature: "base64:..."
 ---
-
-## Practical Notes
-
-### Sign What Matters
-
-You don't need to sign every file. MurphySig is for artifacts where provenance adds value:
-
-- Core algorithms and business logic
-- Security-sensitive code
-- Complex integrations
-- Significant architectural decisions
-- Code you want to return to
-
-Let the trivial be trivial. A one-line utility function doesn't need a signature. A config file probably doesn't either. Use judgment.
-
-### Production Builds
-
-MurphySig is for source control, not production artifacts. Signatures may contain context you don't want shipped to clients ("Client X demanded this hack").
-
-Configure your build tools to strip signature blocks from production bundles. Most minifiers handle this automatically; for explicit control, treat MurphySig blocks as comments to be removed.
+```
 
 ---
 
 ## License
 
-Public domain. Use freely. Attribution appreciated but not required.
+MurphySig is an open standard. The specification is released under the MIT License. Use freely.
+
+The MurphySig trademark is held by Round Tower. The spec is community-contributable via pull requests; Round Tower holds editorial control.
 
 ---
 
-*Signed: Kev Murphy + claude-opus-4-5-20251101, 2026-01-06*
-*Format: MurphySig v0.3.3*
+*Drafted by Kev Murphy with Claude (Opus 4.6), 5 April 2026.*
 
-*Context: v0.2 spec addressing GPT-5.2 review feedback. Added: non-cryptographic disclaimer, block boundaries, multi-author workflow, confidence semantics with Basis field, decay as heuristic.*
-
-*Confidence: Solid - structure battle-tested, adoption growing*
-*Heuristic: Standard spec evolution pattern*
-
-*Reviews:*
-
-*2026-01-06 (Kev + claude-opus-4-5-20251101): v0.2 - Incorporated 5 feedback points from gpt-5.2-thinking review. All points addressed.*
-
-*2026-01-06 (Kev + claude-opus-4-5-20251101): v0.2.1 - Added text confidence as equal alternative to numerical. Added Heuristic field for pattern transparency, especially for AI. AI confidence isn't truly calibrated—text is often more honest than false precision.*
-
-*2026-03-23 (Kev + claude-opus-4-6): v0.3.3 — "The Gruber Cut". Added Agent Reviews for non-interactive agent contributions with full human visibility. Simplified CLI discovery (grep over hardcoded extensions). All versions aligned to v0.3.3.*
+```yaml
+---murphysig v0.1
+actors:
+  - actor: Kev Murphy
+    action: directed, reviewed
+    at: 2026-04-05
+  - actor: Claude
+    model: claude-opus-4-6
+    action: drafted
+    at: 2026-04-05
+intent: v0.1 specification — three-layer provenance standard
+confidence: "Solid — architecture designed, L0 and L1 field-tested, L2 aspirational"
+open: L2 schema will evolve with reference implementation
+---
+```
