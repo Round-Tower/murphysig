@@ -44,14 +44,17 @@ Typography-first, "printed manifesto" feel. Paper-tone background (`#fbfaf8`), i
 
 ## MurphySig Convention (This Repo Practices What It Preaches)
 
-Every significant file in this repo is signed with MurphySig. When modifying signed files:
+This repo uses MurphySig v0.1. See `murphysig.claude.md` at project root for the full AI instruction set.
 
-1. **Read the existing signature first** — understand the context and confidence
-2. **Add a `Reviews:` entry** for incremental changes (don't replace the original `Signed:` block)
-3. **Replace the signature** (with `Prior:` reference) only for rewrites of >50% of the file
-4. **Never fabricate provenance** — if signing previously unsigned code, use `Prior: Unknown`
+**Quick version:** When you create or modify a significant file, add an L0 credit line at the top:
 
-Current spec version is **v0.3.3**. The `.murphysig` file at project root is the cross-model discovery mechanism.
+```
+# Drafted by [Human] with [Your Model + Version], [Date].
+```
+
+For critical code, use an L1 structured block (`---murphysig v0.1` delimiters). When modifying signed files, add a `reviews` entry rather than replacing the block. Never fabricate provenance.
+
+Full spec: https://murphysig.dev/spec
 
 ## Key Files
 
