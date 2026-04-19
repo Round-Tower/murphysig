@@ -17,6 +17,11 @@
  * 2026-01-06 (Kev + claude-opus-4-5-20251101): Added SEO meta tags,
  * Open Graph, Twitter cards, JSON-LD structured data for better
  * sharing and discovery.
+ *
+ * 2026-04-19 (Kev + claude-opus-4-7): Footer refresh — version bumped
+ * v0.3.3 → v0.4, added /benchmark and home links to nav, added
+ * monospace breadcrumb-style site identifier. Part of the "design
+ * milestone 1" pass to make the site match the v0.4 spec.
  */
 
 import '../styles/global.css';
@@ -87,7 +92,7 @@ const fullTitle = title === siteTitle ? title : `${title} | ${siteTitle}`;
         <!-- Typography: The Soul of the Project -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 	</head>
 	<body class="antialiased min-h-screen selection:bg-black selection:text-white">
 		<main class="max-w-3xl mx-auto px-6 py-20 md:py-32">
@@ -96,12 +101,14 @@ const fullTitle = title === siteTitle ? title : `${title} | ${siteTitle}`;
         
         <footer class="max-w-3xl mx-auto px-6 pb-20 text-sm text-neutral-500 font-mono">
             <nav class="flex flex-wrap gap-x-6 gap-y-2 mb-4">
+                <a href="/" class="hover:text-black transition-colors">Home</a>
                 <a href="/spec" class="hover:text-black transition-colors">Spec</a>
+                <a href="/benchmark" class="hover:text-black transition-colors">Benchmark</a>
                 <a href="/whitepaper" class="hover:text-black transition-colors">Whitepaper</a>
                 <a href="https://github.com/Round-Tower/murphysig" class="hover:text-black transition-colors">GitHub</a>
                 <a href="https://github.com/kpmmmurphy" class="hover:text-black transition-colors">@kpmmmurphy</a>
             </nav>
-            <span>MurphySig v0.3.3</span>
+            <span class="tracking-tight">MurphySig v0.4 <span class="text-neutral-300 mx-2">·</span> <span class="text-neutral-400">murphysig.dev</span></span>
         </footer>
 	</body>
 </html>
