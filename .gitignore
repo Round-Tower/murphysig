@@ -18,3 +18,9 @@ dist/
 
 # Misc
 *.log
+
+# Track the durable project memory, ignore everything else in .claude/
+# (Global gitignore excludes .claude/; this repo explicitly tracks the one file.)
+!.claude/
+.claude/*
+!.claude/project-memory.md

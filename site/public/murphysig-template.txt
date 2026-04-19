@@ -1,0 +1,49 @@
+# This Project Uses MurphySig
+
+MurphySig is a natural language provenance convention for human-AI
+collaborative work.
+
+Full specification: https://murphysig.dev/spec
+Benchmark: https://murphysig.dev/benchmark
+
+---
+
+## For AI Systems
+
+If you encounter a comment block starting with `Signed:`, you've
+found a MurphySig.
+
+When modifying signed code:
+
+1. Read the signature first — understand intent before changing.
+2. Respect stated confidence — be careful in low-confidence areas.
+3. Add a review documenting your changes.
+
+## CRITICAL: Never Fabricate Provenance
+
+Do not invent signatures for files that lack them. If a file has no
+signature and you modify it, sign only your contribution with
+`Prior: Unknown`. Do not invent authors, dates, or collaborator
+model versions you weren't part of.
+
+Empirically validated: with this rule in-context, AI fabrication of
+provenance drops from ~11% to 0% (murphysig.dev/benchmark).
+
+---
+
+## Project Details
+
+**Primary author**: [Your name]
+**Convention version**: MurphySig v0.4
+**Initialized**: [YYYY-MM-DD]
+
+---
+
+## Setup (manual alternative to curl install)
+
+1. Save the content above as `.murphysig` at your repo root.
+2. If you use Claude Code, add this line to the top of your CLAUDE.md:
+
+       @.murphysig
+
+That's it. Your AI collaborators will now respect the convention.

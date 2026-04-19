@@ -6,6 +6,19 @@
 [build.environment]
   NODE_VERSION = "20"
 
+# /init → /init.sh so users can `curl -sL https://murphysig.dev/init | bash`
+[[redirects]]
+  from = "/init"
+  to = "/init.sh"
+  status = 200
+  force = true
+
+[[headers]]
+  for = "/init.sh"
+  [headers.values]
+    Content-Type = "text/x-shellscript; charset=utf-8"
+    Cache-Control = "public, max-age=300"
+
 [[headers]]
   for = "/*"
   [headers.values]
