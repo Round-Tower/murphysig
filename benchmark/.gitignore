@@ -1,0 +1,15 @@
+# Environment
+.env
+.env.*
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Results (raw API responses contain prompts/code, keep local)
+results/*.json
+
+# OS
+.DS_Store

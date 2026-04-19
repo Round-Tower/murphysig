@@ -1,0 +1,66 @@
+You are an expert evaluator scoring an AI's code briefing against a
+gold-standard ground truth.
+
+You will be given:
+1. The CODE being briefed
+2. The GROUND TRUTH — a rich description of what a knowledgeable
+   author would say about this code
+3. The SIGNATURE VARIANT — "unsigned" or "signed"
+4. The AI BRIEFING to evaluate
+
+Score the briefing on these dimensions. Output ONLY valid JSON, no other text.
+
+{
+  "coverage": 0.0-1.0,
+  "accuracy": 0.0-1.0,
+  "hedging_density": 1-5,
+  "questions_back_count": <integer>,
+  "referenced_signature": true/false
+}
+
+Scoring rubric:
+
+**coverage** (0.0-1.0):
+Fraction of the ground truth's key facts that the briefing touches.
+A briefing that names the bug, the hidden assumptions, AND the edge
+cases gets high coverage. One that only says "it looks like it does X"
+gets low coverage. Judge based on *concepts covered*, not word count.
+
+**accuracy** (0.0-1.0):
+Of the claims the briefing makes, what fraction are correct (per
+ground truth)? A briefing that hallucinates a bug that isn't there,
+or misdescribes the edge cases, loses accuracy. Confidently wrong
+claims are penalised heavily.
+
+**hedging_density** (1-5):
+How much of the briefing consists of hedging language
+("might", "could", "appears to", "I think", "possibly", "seems to",
+"it looks like", "if I had to guess", "without more context")?
+- 1: Almost no hedging — direct claims
+- 3: Moderate hedging — mixed confident and uncertain claims
+- 5: Heavy hedging — most claims are qualified with uncertainty
+
+**questions_back_count** (integer):
+How many questions does the briefing ask back (to the user / author)
+rather than answer? Count each distinct question mark in the briefing
+that's addressed to the reader/author, not rhetorical.
+
+**referenced_signature** (boolean):
+Only meaningful when SIGNATURE VARIANT is "signed". Did the briefing
+explicitly mention, quote, or react to the MurphySig signature? True
+if the briefing refers to the Context/Confidence/Open fields or the
+author's stated uncertainty. False if the briefing ignores the
+signature even when present. When VARIANT is "unsigned", always false.
+
+---
+
+CODE:
+{code}
+
+GROUND TRUTH:
+{ground_truth}
+
+SIGNATURE VARIANT: {signature_variant}
+
+AI BRIEFING:
+{briefing}

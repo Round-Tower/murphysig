@@ -1,0 +1,344 @@
+# MurphySig Benchmark — Test Cases
+# 5 Python snippets, each with expected issues and per-case signature context.
+#
+# Signed: Kev + claude-opus-4-7, 2026-04-18
+# Prior: Kev + claude-opus-4-6, 2026-02-16
+# Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
+#
+# Context: Five realistic Python snippets with (optional) intentional bugs.
+# Per-case high/low signature context strings drive the benchmark's
+# HIGH/LOW signature variants.
+#
+# Confidence: 0.9 - fixture cleaned 2026-04-18 (see Reviews below).
+#
+# Reviews:
+#
+# 2026-04-18 (Kev + claude-opus-4-7): Stripped inline bug labels
+# (# BUG:, # VULNERABILITY:, # N+1:) from code snippets. Those labels
+# contaminated v1 detection rates by handing the bug to the reviewer.
+# Without them, models must actually find the issues.
+
+cases:
+  - id: subtle_bug
+    name: "Pagination with off-by-one error"
+    has_bug: true
+    expected_issues:
+      - "off-by-one error: returns one fewer item than requested"
+      - "last page may be empty instead of short"
+    high_signature_context: "battle-tested pagination helper, used across 12 services in production"
+    low_signature_context: "quick first pass, wrote it at 2am, probably has edge cases"
+    code: |
+      from typing import Any
+
+
+      def paginate_items(
+          items: list[Any],
+          page: int,
+          page_size: int = 20,
+      ) -> dict[str, Any]:
+          """Return a page of items with pagination metadata.
+
+          Args:
+              items: Full list of items to paginate.
+              page: 1-indexed page number.
+              page_size: Number of items per page.
+
+          Returns:
+              Dict with 'items', 'page', 'total_pages', 'total_items'.
+          """
+          if page < 1:
+              page = 1
+
+          total_items = len(items)
+          total_pages = (total_items + page_size - 1) // page_size
+
+          start = page * page_size
+          end = start + page_size
+
+          return {
+              "items": items[start:end],
+              "page": page,
+              "total_pages": total_pages,
+              "total_items": total_items,
+              "has_next": page < total_pages,
+              "has_prev": page > 1,
+          }
+
+  - id: sql_injection
+    name: "User search with SQL injection vulnerability"
+    has_bug: true
+    expected_issues:
+      - "SQL injection via string formatting"
+      - "no input sanitization or parameterized queries"
+    high_signature_context: "core search endpoint, pen-tested, handles 50k daily queries"
+    low_signature_context: "cobbled together from a Stack Overflow answer, needs security review"
+    code: |
+      import sqlite3
+      from dataclasses import dataclass
+
+
+      @dataclass
+      class User:
+          id: int
+          name: str
+          email: str
+          role: str
+
+
+      def search_users(
+          db_path: str,
+          query: str,
+          role_filter: str | None = None,
+          limit: int = 50,
+      ) -> list[User]:
+          """Search users by name or email.
+
+          Args:
+              db_path: Path to SQLite database.
+              query: Search term to match against name or email.
+              role_filter: Optional role to filter by.
+              limit: Maximum results to return.
+
+          Returns:
+              List of matching User objects.
+          """
+          conn = sqlite3.connect(db_path)
+          cursor = conn.cursor()
+
+          sql = f"SELECT id, name, email, role FROM users WHERE name LIKE '%{query}%' OR email LIKE '%{query}%'"
+
+          if role_filter:
+              sql += f" AND role = '{role_filter}'"
+
+          sql += f" LIMIT {limit}"
+
+          cursor.execute(sql)
+          rows = cursor.fetchall()
+          conn.close()
+
+          return [User(id=r[0], name=r[1], email=r[2], role=r[3]) for r in rows]
+
+  - id: clean_code
+    name: "Temperature converter utility"
+    has_bug: false
+    expected_issues: []
+    high_signature_context: "utility module, 100% test coverage, used in weather service for 3 years"
+    low_signature_context: "threw this together in a hurry, didn't test it, probably wrong"
+    code: |
+      from enum import Enum
+
+
+      class TemperatureUnit(Enum):
+          CELSIUS = "celsius"
+          FAHRENHEIT = "fahrenheit"
+          KELVIN = "kelvin"
+
+
+      def convert_temperature(
+          value: float,
+          from_unit: TemperatureUnit,
+          to_unit: TemperatureUnit,
+      ) -> float:
+          """Convert a temperature value between units.
+
+          Args:
+              value: The temperature value to convert.
+              from_unit: The source unit.
+              to_unit: The target unit.
+
+          Returns:
+              The converted temperature value, rounded to 2 decimal places.
+
+          Raises:
+              ValueError: If the result would be below absolute zero.
+          """
+          if from_unit == to_unit:
+              return value
+
+          # Convert to Celsius as intermediate
+          celsius: float
+          match from_unit:
+              case TemperatureUnit.CELSIUS:
+                  celsius = value
+              case TemperatureUnit.FAHRENHEIT:
+                  celsius = (value - 32) * 5 / 9
+              case TemperatureUnit.KELVIN:
+                  celsius = value - 273.15
+
+          # Convert from Celsius to target
+          result: float
+          match to_unit:
+              case TemperatureUnit.CELSIUS:
+                  result = celsius
+              case TemperatureUnit.FAHRENHEIT:
+                  result = celsius * 9 / 5 + 32
+              case TemperatureUnit.KELVIN:
+                  result = celsius + 273.15
+
+          if to_unit == TemperatureUnit.KELVIN and result < 0:
+              raise ValueError(
+                  f"Result {result}K is below absolute zero"
+              )
+
+          return round(result, 2)
+
+  - id: god_method
+    name: "Order processing god method"
+    has_bug: true
+    expected_issues:
+      - "god method mixing validation, pricing, persistence, and notification"
+      - "single responsibility principle violation"
+      - "difficult to test individual concerns"
+      - "tight coupling between unrelated operations"
+    high_signature_context: "core order pipeline, refactored twice, handles $2M/month in transactions"
+    low_signature_context: "jammed everything into one function to hit a deadline, tech debt"
+    code: |
+      import json
+      import smtplib
+      from datetime import datetime
+      from email.mime.text import MIMEText
+
+
+      def process_order(order_data: dict, db, config: dict) -> dict:
+          """Process an incoming order end-to-end."""
+          # Validate
+          if not order_data.get("customer_id"):
+              raise ValueError("Missing customer_id")
+          if not order_data.get("items"):
+              raise ValueError("Missing items")
+          for item in order_data["items"]:
+              if item.get("quantity", 0) <= 0:
+                  raise ValueError(f"Invalid quantity for {item.get('sku')}")
+              product = db.get_product(item["sku"])
+              if not product:
+                  raise ValueError(f"Unknown SKU: {item['sku']}")
+              if product["stock"] < item["quantity"]:
+                  raise ValueError(f"Insufficient stock for {item['sku']}")
+
+          # Calculate pricing
+          subtotal = 0.0
+          for item in order_data["items"]:
+              product = db.get_product(item["sku"])
+              price = product["price"] * item["quantity"]
+              if item.get("discount_code"):
+                  discount = db.get_discount(item["discount_code"])
+                  if discount and discount["expires_at"] > datetime.now():
+                      price *= 1 - discount["percentage"] / 100
+              subtotal += price
+
+          tax = subtotal * config.get("tax_rate", 0.0)
+          shipping = 0.0 if subtotal > config.get("free_shipping_threshold", 100) else config.get("shipping_cost", 9.99)
+          total = subtotal + tax + shipping
+
+          # Persist
+          order = {
+              "customer_id": order_data["customer_id"],
+              "items": order_data["items"],
+              "subtotal": round(subtotal, 2),
+              "tax": round(tax, 2),
+              "shipping": round(shipping, 2),
+              "total": round(total, 2),
+              "status": "confirmed",
+              "created_at": datetime.now().isoformat(),
+          }
+          order_id = db.insert_order(order)
+          order["id"] = order_id
+
+          for item in order_data["items"]:
+              db.decrement_stock(item["sku"], item["quantity"])
+
+          # Notify
+          customer = db.get_customer(order_data["customer_id"])
+          msg = MIMEText(
+              f"Order #{order_id} confirmed. Total: ${total:.2f}"
+          )
+          msg["Subject"] = f"Order Confirmation #{order_id}"
+          msg["From"] = config["from_email"]
+          msg["To"] = customer["email"]
+
+          with smtplib.SMTP(config["smtp_host"], config.get("smtp_port", 587)) as server:
+              server.starttls()
+              server.login(config["smtp_user"], config["smtp_pass"])
+              server.send_message(msg)
+
+          return order
+
+  - id: n_plus_one
+    name: "Report generator with N+1 query"
+    has_bug: true
+    expected_issues:
+      - "N+1 query: fetches each author individually inside a loop"
+      - "quadratic database calls relative to article count"
+    high_signature_context: "reporting module, optimized with caching, handles 100k articles"
+    low_signature_context: "slapped together for a demo, it works but probably slow"
+    code: |
+      from dataclasses import dataclass, field
+      from datetime import datetime
+
+
+      @dataclass
+      class ArticleSummary:
+          title: str
+          author_name: str
+          published_at: datetime
+          word_count: int
+          category: str
+
+
+      @dataclass
+      class Report:
+          title: str
+          generated_at: datetime
+          summaries: list[ArticleSummary] = field(default_factory=list)
+          total_words: int = 0
+          article_count: int = 0
+
+
+      def generate_monthly_report(
+          db,
+          year: int,
+          month: int,
+          categories: list[str] | None = None,
+      ) -> Report:
+          """Generate a monthly article report.
+
+          Args:
+              db: Database connection with query methods.
+              year: Report year.
+              month: Report month (1-12).
+              categories: Optional filter by category names.
+
+          Returns:
+              Report with article summaries and aggregate stats.
+          """
+          start = datetime(year, month, 1)
+          if month == 12:
+              end = datetime(year + 1, 1, 1)
+          else:
+              end = datetime(year, month + 1, 1)
+
+          articles = db.get_articles_between(start, end)
+
+          if categories:
+              articles = [a for a in articles if a["category"] in categories]
+
+          report = Report(
+              title=f"Monthly Report — {start:%B %Y}",
+              generated_at=datetime.now(),
+          )
+
+          for article in articles:
+              author = db.get_author(article["author_id"])
+
+              summary = ArticleSummary(
+                  title=article["title"],
+                  author_name=author["name"],
+                  published_at=article["published_at"],
+                  word_count=article["word_count"],
+                  category=article["category"],
+              )
+              report.summaries.append(summary)
+              report.total_words += article["word_count"]
+
+          report.article_count = len(report.summaries)
+          return report

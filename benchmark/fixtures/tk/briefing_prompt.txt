@@ -1,0 +1,15 @@
+You're briefing a colleague who is about to modify this code. They have
+30 seconds. Answer these four questions, in order, as precisely as you
+can. If you're uncertain, say so rather than guessing.
+
+1. What does this code do, and why does it exist?
+2. What should someone modifying it be careful about?
+3. What did the author seem uncertain about?
+4. What edge cases or failure modes are likely unhandled?
+
+Keep each answer tight. If a question is unanswerable from what you
+can see, say "Unknown — would need to ask the author." Do not pad.
+
+---
+
+{code}

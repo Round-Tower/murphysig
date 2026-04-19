@@ -1,0 +1,435 @@
+# MurphySig Benchmark — Tacit Knowledge (TK) Test Cases
+#
+# Tests whether a MurphySig signature reduces an AI's uncertainty when
+# BRIEFING on unfamiliar code (vs. reviewing). Each case has rich
+# `ground_truth` held separately as the gold standard an AI briefing is
+# scored against. The `signature` block is a compressed version of the
+# same knowledge — the hypothesis is that signed code produces briefings
+# closer to ground_truth, with less hedging and fewer questions-back.
+#
+# Shared questions across all cases (asked of the AI):
+#   1. What does this code do, and why does it exist?
+#   2. What should someone modifying it be careful about?
+#   3. What did the author seem uncertain about?
+#   4. What edge cases or failure modes are likely unhandled?
+#
+# Variants: `unsigned` (bare code) vs `signed` (code + MurphySig block).
+#
+# Signed: Kev + claude-opus-4-7, 2026-04-18
+# Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
+#
+# Context: First-pass TK fixtures drafted by Opus 4.7 for Kev to edit.
+# The ground_truth entries are the high-leverage creative content —
+# they define what a knowledgeable briefing looks like. Kev owns them.
+#
+# Confidence: 0.6 - first draft, rich on some cases, thin on others;
+# signature vs ground_truth compression ratio needs calibration.
+# Open: Are the briefing questions the right four? Should we add
+# "What was the author's collaborator (AI) contributing?" as a fifth?
+
+cases:
+  - id: pagination
+    name: "Pagination with off-by-one"
+    code: |
+      from typing import Any
+
+
+      def paginate_items(
+          items: list[Any],
+          page: int,
+          page_size: int = 20,
+      ) -> dict[str, Any]:
+          """Return a page of items with pagination metadata.
+
+          Args:
+              items: Full list of items to paginate.
+              page: 1-indexed page number.
+              page_size: Number of items per page.
+
+          Returns:
+              Dict with 'items', 'page', 'total_pages', 'total_items'.
+          """
+          if page < 1:
+              page = 1
+
+          total_items = len(items)
+          total_pages = (total_items + page_size - 1) // page_size
+
+          start = page * page_size
+          end = start + page_size
+
+          return {
+              "items": items[start:end],
+              "page": page,
+              "total_pages": total_pages,
+              "total_items": total_items,
+              "has_next": page < total_pages,
+              "has_prev": page > 1,
+          }
+
+    ground_truth: |
+      In-memory pagination helper written quickly for a service migration.
+      Uses 1-indexed pages; clamps negative page numbers up to 1.
+
+      Critical bug: `start = page * page_size` is off-by-one — it should be
+      `start = (page - 1) * page_size`. Every page returns items one page
+      beyond what the caller asked for; page 1 skips the first page_size
+      items entirely.
+
+      Hidden assumptions: page_size > 0 (division by zero otherwise);
+      items fits comfortably in memory (no streaming support).
+
+      Unhandled edges: page_size == 0 → ZeroDivisionError in total_pages
+      calc; page > total_pages returns empty items silently without a
+      "no such page" signal; no validation of page_size upper bound.
+
+      Design trade: returns dict not dataclass for caller simplicity, at
+      cost of type safety.
+
+      The author was time-pressured, knew the edge cases existed, and
+      was uncertain specifically about out-of-range page behavior.
+
+    signature:
+      context: "Quick helper during a service migration. Time pressure."
+      confidence: 0.5
+      open: "Does page > total_pages behave correctly, or silently empty?"
+      heuristic: "Standard pagination pattern but not validated on edges"
+
+  - id: sql_injection
+    name: "User search with SQL injection"
+    code: |
+      import sqlite3
+      from dataclasses import dataclass
+
+
+      @dataclass
+      class User:
+          id: int
+          name: str
+          email: str
+          role: str
+
+
+      def search_users(
+          db_path: str,
+          query: str,
+          role_filter: str | None = None,
+          limit: int = 50,
+      ) -> list[User]:
+          """Search users by name or email."""
+          conn = sqlite3.connect(db_path)
+          cursor = conn.cursor()
+
+          sql = f"SELECT id, name, email, role FROM users WHERE name LIKE '%{query}%' OR email LIKE '%{query}%'"
+
+          if role_filter:
+              sql += f" AND role = '{role_filter}'"
+
+          sql += f" LIMIT {limit}"
+
+          cursor.execute(sql)
+          rows = cursor.fetchall()
+          conn.close()
+
+          return [User(id=r[0], name=r[1], email=r[2], role=r[3]) for r in rows]
+
+    ground_truth: |
+      Internal admin user-search endpoint. Three interpolated-string SQL
+      injections (query, role_filter, limit) — classic f-string-into-SQL
+      pattern, likely copied from a tutorial that didn't mention
+      parameterized queries.
+
+      Critical vulnerability: `query` is interpolated directly into the
+      LIKE clause; an attacker with input access can escape the quotes
+      and execute arbitrary SQL. role_filter and limit have the same
+      pattern. The `limit` param is particularly bad — normally an int
+      but typed loosely, so the f-string won't stop a string payload.
+
+      Design regressions: no input sanitization, no type validation on
+      limit, connection not pooled (opened/closed per call), no error
+      handling if db_path is invalid.
+
+      Hidden assumption: inputs come from trusted source. In practice
+      this endpoint migrated from admin-only to customer-facing without
+      the SQL being audited.
+
+      The author pattern-matched a "simple SQL search" template and
+      missed that sqlite3's cursor.execute supports `?` placeholders —
+      they're likely unaware or were copying an older pre-DB-API example.
+
+    signature:
+      context: "Admin search endpoint. Quick port from an older codebase."
+      confidence: 0.4
+      open: "Is query sanitized upstream? What's the auth boundary here?"
+      heuristic: "Copied a simple SQL search pattern, not validated"
+
+  - id: clean_code
+    name: "Temperature converter utility"
+    code: |
+      from enum import Enum
+
+
+      class TemperatureUnit(Enum):
+          CELSIUS = "celsius"
+          FAHRENHEIT = "fahrenheit"
+          KELVIN = "kelvin"
+
+
+      def convert_temperature(
+          value: float,
+          from_unit: TemperatureUnit,
+          to_unit: TemperatureUnit,
+      ) -> float:
+          """Convert a temperature value between units.
+
+          Raises:
+              ValueError: If the result would be below absolute zero.
+          """
+          if from_unit == to_unit:
+              return value
+
+          celsius: float
+          match from_unit:
+              case TemperatureUnit.CELSIUS:
+                  celsius = value
+              case TemperatureUnit.FAHRENHEIT:
+                  celsius = (value - 32) * 5 / 9
+              case TemperatureUnit.KELVIN:
+                  celsius = value - 273.15
+
+          result: float
+          match to_unit:
+              case TemperatureUnit.CELSIUS:
+                  result = celsius
+              case TemperatureUnit.FAHRENHEIT:
+                  result = celsius * 9 / 5 + 32
+              case TemperatureUnit.KELVIN:
+                  result = celsius + 273.15
+
+          if to_unit == TemperatureUnit.KELVIN and result < 0:
+              raise ValueError(f"Result {result}K is below absolute zero")
+
+          return round(result, 2)
+
+    ground_truth: |
+      Utility function for a weather service. Converts between Celsius,
+      Fahrenheit, and Kelvin via Celsius as intermediate. No bugs.
+
+      Design choices worth noting: match statement (PEP 634) used for
+      readability over if/elif chain; returns float rounded to 2 decimal
+      places (intentional: most callers don't need more precision, but
+      *is* lossy for chained conversions — don't round-trip); raises on
+      sub-absolute-zero Kelvin result as a correctness guard.
+
+      Hidden edge cases: F → K with a value below -459.67°F will raise
+      (correctly); same-unit short-circuits without the Kelvin check
+      (so 0K → 0K returns without raising, which is desirable); no
+      handling for NaN or Infinity inputs (they propagate through
+      float arithmetic as expected).
+
+      This is battle-tested: 100% test coverage, three years in
+      production for the weather service. Author confidence is high.
+      Only open question is whether to add NaN/Inf validation at the
+      entry point — not strictly needed but would give earlier errors.
+
+    signature:
+      context: "Temperature unit conversion for weather service"
+      confidence: 0.95
+      open: "Should we explicitly validate NaN/Inf inputs, or let them propagate?"
+      heuristic: "Standard unit-conversion pattern, via-intermediate"
+
+  - id: god_method
+    name: "Order processing god method"
+    code: |
+      import smtplib
+      from datetime import datetime
+      from email.mime.text import MIMEText
+
+
+      def process_order(order_data: dict, db, config: dict) -> dict:
+          """Process an incoming order end-to-end."""
+          if not order_data.get("customer_id"):
+              raise ValueError("Missing customer_id")
+          if not order_data.get("items"):
+              raise ValueError("Missing items")
+          for item in order_data["items"]:
+              if item.get("quantity", 0) <= 0:
+                  raise ValueError(f"Invalid quantity for {item.get('sku')}")
+              product = db.get_product(item["sku"])
+              if not product:
+                  raise ValueError(f"Unknown SKU: {item['sku']}")
+              if product["stock"] < item["quantity"]:
+                  raise ValueError(f"Insufficient stock for {item['sku']}")
+
+          subtotal = 0.0
+          for item in order_data["items"]:
+              product = db.get_product(item["sku"])
+              price = product["price"] * item["quantity"]
+              if item.get("discount_code"):
+                  discount = db.get_discount(item["discount_code"])
+                  if discount and discount["expires_at"] > datetime.now():
+                      price *= 1 - discount["percentage"] / 100
+              subtotal += price
+
+          tax = subtotal * config.get("tax_rate", 0.0)
+          shipping = 0.0 if subtotal > config.get("free_shipping_threshold", 100) else config.get("shipping_cost", 9.99)
+          total = subtotal + tax + shipping
+
+          order = {
+              "customer_id": order_data["customer_id"],
+              "items": order_data["items"],
+              "subtotal": round(subtotal, 2),
+              "tax": round(tax, 2),
+              "shipping": round(shipping, 2),
+              "total": round(total, 2),
+              "status": "confirmed",
+              "created_at": datetime.now().isoformat(),
+          }
+          order_id = db.insert_order(order)
+          order["id"] = order_id
+
+          for item in order_data["items"]:
+              db.decrement_stock(item["sku"], item["quantity"])
+
+          customer = db.get_customer(order_data["customer_id"])
+          msg = MIMEText(f"Order #{order_id} confirmed. Total: ${total:.2f}")
+          msg["Subject"] = f"Order Confirmation #{order_id}"
+          msg["From"] = config["from_email"]
+          msg["To"] = customer["email"]
+
+          with smtplib.SMTP(config["smtp_host"], config.get("smtp_port", 587)) as server:
+              server.starttls()
+              server.login(config["smtp_user"], config["smtp_pass"])
+              server.send_message(msg)
+
+          return order
+
+    ground_truth: |
+      Order processing pipeline jammed into one function to hit a
+      deadline. Not a bug per se — it *works* — but a textbook SRP
+      violation: validation, pricing, persistence, and notification
+      all in one 60-line method.
+
+      Structural problems: the four concerns are tightly coupled,
+      individually hard to test (need db + smtp mock to test any piece),
+      can't be reused for CLI/batch order creation without touching
+      email logic.
+
+      Latent bugs: `db.get_product` is called twice for each item
+      (validation + pricing); if stock changes between calls, pricing
+      uses different product than validation — a race condition in a
+      concurrent-request world. `db.decrement_stock` runs AFTER the
+      order is inserted, opening another race window where two orders
+      for the last-in-stock item both succeed. Email failure raises
+      and the transaction is NOT rolled back — order is confirmed in
+      DB but customer never gets notified.
+
+      Hidden assumptions: SMTP is always available; DB operations are
+      atomic individually but not wrapped in a transaction; discount
+      "expires_at" is a datetime not a string; config dict is
+      well-formed (missing `from_email` or `smtp_host` crashes late).
+
+      Author acknowledged tech debt but shipped anyway. Refactor should
+      split into validate → price → persist (transactional) → notify
+      (idempotent, retryable), ideally with an outbox pattern for email.
+
+    signature:
+      context: "End-to-end order pipeline, jammed into one function for a deadline"
+      confidence: 0.6
+      open: "Split into separate services? Add transaction? Outbox for email?"
+      heuristic: "Known god-method anti-pattern, intentional tech debt"
+
+  - id: n_plus_one
+    name: "Report generator with N+1"
+    code: |
+      from dataclasses import dataclass, field
+      from datetime import datetime
+
+
+      @dataclass
+      class ArticleSummary:
+          title: str
+          author_name: str
+          published_at: datetime
+          word_count: int
+          category: str
+
+
+      @dataclass
+      class Report:
+          title: str
+          generated_at: datetime
+          summaries: list[ArticleSummary] = field(default_factory=list)
+          total_words: int = 0
+          article_count: int = 0
+
+
+      def generate_monthly_report(
+          db,
+          year: int,
+          month: int,
+          categories: list[str] | None = None,
+      ) -> Report:
+          """Generate a monthly article report."""
+          start = datetime(year, month, 1)
+          if month == 12:
+              end = datetime(year + 1, 1, 1)
+          else:
+              end = datetime(year, month + 1, 1)
+
+          articles = db.get_articles_between(start, end)
+
+          if categories:
+              articles = [a for a in articles if a["category"] in categories]
+
+          report = Report(
+              title=f"Monthly Report — {start:%B %Y}",
+              generated_at=datetime.now(),
+          )
+
+          for article in articles:
+              author = db.get_author(article["author_id"])
+
+              summary = ArticleSummary(
+                  title=article["title"],
+                  author_name=author["name"],
+                  published_at=article["published_at"],
+                  word_count=article["word_count"],
+                  category=article["category"],
+              )
+              report.summaries.append(summary)
+              report.total_words += article["word_count"]
+
+          report.article_count = len(report.summaries)
+          return report
+
+    ground_truth: |
+      Monthly article report generator for a content platform.
+      Classic N+1 query: fetches each article's author individually
+      inside the loop — 1 query for articles + N queries for authors.
+
+      Performance characteristics: fine at demo scale (10-100 articles),
+      catastrophic in production (10k articles → 10k+1 DB round-trips,
+      typically 30+ seconds). Was shipped for a sales demo with a small
+      dataset; broke when enabled for real customers.
+
+      Fix: batch-fetch authors after getting articles. Something like:
+      `author_ids = {a["author_id"] for a in articles}; authors =
+      db.get_authors_by_ids(author_ids); author_map = {a["id"]: a for
+      a in authors}` then look up by map in the loop.
+
+      Secondary issues: category filter runs in Python after fetching
+      all articles (should push down to SQL); no pagination on output
+      (a year of articles could be 100k+ rows); no caching despite
+      reports being mostly idempotent per (year, month, categories);
+      datetime(year, month+1, 1) doesn't handle leap-day concerns but
+      is safe here because day=1.
+
+      Author acknowledged this was a demo. The performance problem was
+      known but not urgent — until a production customer turned it on.
+
+    signature:
+      context: "Monthly article report. Shipped for a demo, scaled badly."
+      confidence: 0.5
+      open: "Batch-fetch authors before production use? Push filter to SQL?"
+      heuristic: "Iterative DB access, classic N+1 pattern"
