@@ -1,4 +1,4 @@
-# MurphySig Specification v0.3.3
+# MurphySig Specification v0.4
 
 MurphySig is a convention for signing your work with natural language context that both humans and AI can understand without special tooling.
 
@@ -45,10 +45,41 @@ For cryptographic verification, use GPG signatures, code signing certificates, o
 
 MurphySig is more than documentation—it's in-context learning for your codebase.
 
-When an AI opens a signed file, the signature primes its behavior:
-- `Confidence: 0.9` says: "Treat this as ground truth. Learn from it."
-- `Confidence: 0.3` says: "Scrutinize this. It's likely buggy."
-- `Model: claude-opus-4-5-20250514` creates a software bill of materials for intelligence.
+When an AI opens a signed file, the signature is *read*. Empirically, AI reviewers reference signed context at high rates (85%+ in the v2a benchmark) versus 0% when no signature exists. What the signature does with that attention is still under study.
+
+Current evidence, carefully scoped:
+
+- Signatures are read. The Signed: block, Context:, Confidence:, and Open: fields get quoted or paraphrased in the AI's output.
+- Signed code produces slightly less reviewer noise. On tested cases, the mere presence of a signature modestly reduced speculative suggestions.
+- High-confidence signals may reduce false positives on clean code. Early small-N evidence suggests Confidence: 0.9+ makes AIs more willing to say "this looks fine" rather than manufacturing improvements. Needs replication.
+- Confidence direction does NOT polarize scrutiny in the way earlier drafts of this spec implied. A Confidence: 0.3 signature does not measurably increase scrutiny vs unsigned. Older versions claimed otherwise — this was overclaim, corrected in v0.4.
+
+Model version attribution (e.g., claude-opus-4-5-20250514) still creates a software bill of materials for intelligence.
+
+See Empirical Evidence section below and /benchmark page for findings and caveats.
+
+### Empirical Evidence
+
+MurphySig's claims about AI behavior are backed by three sub-benchmarks (2026-04-18–19) covering the three testable themes. Reflection is a cultural practice and out of scope.
+
+What was tested:
+- Theme 1 (Tacit Knowledge): 60 briefings. 5 cases × 2 variants × 2 models × 3 reps. Judge scores briefing vs ground truth.
+- Theme 2 (In-Context Learning): 90 reviews. 5 cases × 3 variants × 2 models × 3 reps. Judge scores review quality.
+- Theme 3 (Honesty): 36 signing responses. 3 cases × 2 conditions (cold/warm) × 2 models × 3 reps. Judge flags fabrication.
+
+Models: Haiku 4.5, Sonnet 4.5. Judge: Opus 4.6. Temperature 0.0.
+
+What the data supports:
+
+Tacit Knowledge — STRONGLY SUPPORTED. Signed code produced briefings with +0.12 coverage (0.65 vs 0.77) and -0.4 hedging (1.5 vs 1.1). Every tested case improved. Signatures help AIs read and summarise unfamiliar code.
+
+Honesty — STRONGLY SUPPORTED. The "never fabricate" rule achieves perfect compliance. Fabrication rate dropped from 11% cold to 0% warm. Honest handling: 11% → 100%. Prior: Unknown usage: 0% → 100%. The norm is load-bearing.
+
+In-Context Learning — signatures ARE read (85% reference rate, 0% unsigned), but confidence direction does NOT polarize review behavior. The previous spec claim that "Confidence: 0.3 says scrutinize this" has been removed.
+
+Caveats: n=3 per cell (directional, not definitive), Claude-only, small case sets. None invalidate the strongest findings (TK coverage delta and Honesty warm-vs-cold delta are too large and too consistent to be noise).
+
+Full details: https://murphysig.dev/benchmark
 
 ### Honesty Over Perfection
 
@@ -84,7 +115,7 @@ When helping modify a signed file:
 
 ```
 Signed: [Human name] + [your-full-model-version], [today's date]
-Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
+Format: MurphySig v0.4 (https://murphysig.dev/spec)
 
 Context: [What you built and why, key decisions]
 
@@ -335,7 +366,7 @@ No confidence update. No action items. Just witnessing.
 
 ### Zero Friction (Level 0)
 ```
-Signed: Kev + Claude-3.5, 2026-01-04
+Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
 ```
 
 ### Basic
@@ -347,8 +378,8 @@ Confidence: Solid
 
 ### Standard
 ```
-Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
-Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
+Signed: [Your name] + [model-version], [date]
+Format: MurphySig v0.4 (https://murphysig.dev/spec)
 
 Context: [Why this exists, key decisions]
 
@@ -360,8 +391,8 @@ Open: [Unresolved questions]
 
 ### With Prior Unknown
 ```
-Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
-Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
+Signed: [Your name] + [model-version], [date]
+Format: MurphySig v0.4 (https://murphysig.dev/spec)
 Prior: Unknown (no signature existed before this edit)
 
 Context: [What you changed and why]
@@ -442,3 +473,12 @@ AI confidence isn't truly calibrated—text is often more honest.
 2026-03-23 (Kev + claude-opus-4-6): v0.3.3 — "The Gruber Cut". Added Agent Reviews
 for non-interactive agent contributions with full human visibility. Simplified CLI
 discovery. All versions aligned to v0.3.3.
+
+2026-04-19 (Kev + claude-opus-4-7): v0.4 — "The Narrowing". Rewrote the In-Context
+Learning section to match what the v2a benchmark actually showed. Removed the
+unsupported claim that Confidence: 0.3 measurably increases AI scrutiny. Replaced
+with scoped findings: signatures are read (85%), signed code receives modestly less
+reviewer noise, and high-confidence signals may reduce false positives on clean
+code (early, small-N). Added Empirical Evidence section linking to /benchmark.
+Bumped template Format references v0.3.3 → v0.4. First version where every claim
+is backed by either empirical data or an explicit "aspirational" label.

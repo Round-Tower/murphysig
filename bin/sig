@@ -16,6 +16,12 @@
 #
 # 2026-01-05 (Kev + claude-haiku-4-5-20251001): Fixed parsing to only check
 # first 50 lines, avoiding false matches in documentation examples.
+#
+# 2026-04-18 (Kev + claude-opus-4-7): Markdown comment style was outputting
+# YAML frontmatter + split HTML Context/Open comments — non-spec shape and
+# missing the Format: URL. Replaced with a single HTML comment block
+# matching the xml style (spec-compliant, doesn't collide with existing
+# frontmatter in .md files).
 
 set -e
 
@@ -139,14 +145,15 @@ EOF
             ;;
         markdown)
             cat << EOF
----
-signed: $signed_by, $TODAY
-format: MurphySig v0.3.3
-confidence: $confidence
----
+<!--
+Signed: $signed_by, $TODAY
+Format: MurphySig v0.3.3 ($SPEC_URL)
 
-<!-- Context: $context -->
-<!-- Open: $open -->
+Context: $context
+
+Confidence: $confidence
+Open: $open
+-->
 
 EOF
             ;;

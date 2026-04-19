@@ -14,7 +14,7 @@ For critical code, add detail:
 
 ```
 Signed: [Your Name] + [model-version], [date]
-Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
+Format: MurphySig v0.4 (https://murphysig.dev/spec)
 
 Context: [What you were thinking, why this exists]
 
@@ -37,10 +37,25 @@ When creating signed files, use your actual model version (e.g., `claude-opus-4-
 
 Confidence can be numerical (`0.7`) or text (`Solid but auth untested`). Text is often more honest than false numerical precision.
 
+## Empirical Evidence
+
+MurphySig's claims about AI behavior are backed by three sub-benchmarks (2026-04-18–19). Key findings:
+
+**Tacit Knowledge (STRONGLY SUPPORTED):** Signatures help AIs brief unfamiliar code. Coverage improved +0.12 (0.65→0.77) across every tested case. Hedging dropped -0.4. Signature referenced 93% when present. *This is the load-bearing empirical result.*
+
+**Honesty / Provenance (STRONGLY SUPPORTED):** The ".murphysig never fabricate" rule achieves perfect compliance. Without it, AIs fabricate provenance 11% overall (33% on bare utility files). With it, 0% fabrication, 100% honest handling, 100% use of `Prior: Unknown`.
+
+**In-Context Learning (partial):** Signatures are read (85% reference rate, 0% unsigned). BUT confidence direction does NOT polarize review behavior. The previous "Confidence: 0.3 says scrutinize" framing was removed in v0.4.
+
+**Reflection:** Not empirical, cultural practice, out of scope.
+
+Full findings: https://murphysig.dev/benchmark
+
 ## Docs
 
 - [Full Specification](https://murphysig.dev/spec): The complete MurphySig standard — elements, confidence, reviews, reflections, multi-author workflow
 - [Plain Text Spec](https://murphysig.dev/spec.txt): Complete specification in plain text for AI consumption
+- [Benchmark Results](https://murphysig.dev/benchmark): Empirical findings on what signatures actually do for AI behavior
 - [Whitepaper](https://murphysig.dev/whitepaper): Foundational philosophy — The Gallery Problem, in-context learning, zero-friction rule
 
 ## Optional

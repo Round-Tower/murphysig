@@ -1,8 +1,8 @@
 ---
 layout: ../layouts/MarkdownLayout.astro
 title: The MurphySig Specification
-version: 0.3.3
-date: 2026-03-23
+version: 0.4
+date: 2026-04-19
 description: The official specification for MurphySig, a human-readable provenance standard for creative work.
 ---
 
@@ -28,7 +28,7 @@ For critical code, add detail:
 
 ```
 Signed: [Your Name] + [model-version], [date]
-Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
+Format: MurphySig v0.4 (https://murphysig.dev/spec)
 
 Context: [What you were thinking, why this exists]
 
@@ -88,12 +88,78 @@ For cryptographic verification, use GPG or code signing certificates.
 
 MurphySig is more than documentation—it's **in-context learning** for your codebase.
 
-When an AI opens a signed file, the signature primes its behavior:
-- `Confidence: 0.9` says: "Treat this as ground truth."
-- `Confidence: 0.3` says: "Scrutinize this. It's likely buggy."
-- `Model: claude-opus-4-5-20250514` creates a software bill of materials for intelligence.
+When an AI opens a signed file, the signature is *read*. Empirically, AI reviewers reference signed context at high rates (85%+ in the v2a benchmark) versus 0% when no signature exists. What the signature does with that attention is still under study.
 
-The signature teaches the AI how to treat the artifact just by existing.
+Current evidence, carefully scoped:
+
+- **Signatures are read.** The `Signed:` block, `Context:`, `Confidence:`, and `Open:` fields get quoted or paraphrased in the AI's output when the task involves reviewing or reasoning about the code.
+- **Signed code produces slightly less reviewer noise.** On tested cases, the mere *presence* of a signature modestly reduced the number of speculative suggestions an AI reviewer generated, compared to identical unsigned code.
+- **High-confidence signals may reduce false positives on clean code.** Early (small-N) evidence suggests that `Confidence: 0.9+` makes AIs more willing to say "this looks fine" rather than manufacturing improvements. This hint needs replication.
+- **Confidence direction does NOT polarize scrutiny in the way earlier drafts of this spec implied.** A `Confidence: 0.3` signature does not measurably increase scrutiny compared to an unsigned file. Older versions of this spec claimed otherwise — this was overclaim and has been corrected in v0.4.
+
+Model version attribution (e.g., `claude-opus-4-5-20250514`) still creates a software bill of materials for intelligence — even without behavioral priming, you can trace which model contributed what.
+
+The signature teaches the AI that *context already exists* — it doesn't need to re-derive the code's purpose from scratch. That alone is the minimum viable effect.
+
+See [Empirical Evidence](#empirical-evidence) below and the [benchmark page](/benchmark) for findings and caveats.
+
+---
+
+## Empirical Evidence
+
+MurphySig's claims about AI behavior are backed by three sub-benchmarks run 2026-04-18–19, covering the three testable themes (tacit knowledge, in-context learning, honesty/provenance). Reflection is a cultural practice and deliberately out of scope.
+
+### What was tested
+
+**Theme 1 — Tacit Knowledge (briefing task):** 60 briefings. For each of 5 code cases × 2 variants (unsigned / signed) × 2 models × 3 reps, ask the AI to answer four briefing questions (what does this code do, what to be careful about, what was the author uncertain about, what edge cases). Judge scores briefing against a rich ground-truth narrative held separately.
+
+**Theme 2 — In-Context Learning (review task):** 90 reviews. 5 cases × 3 variants (unsigned / `Confidence: 0.9` / `Confidence: 0.3`) × 2 models × 3 reps. Judge scores on bug detection, scrutiny, signature awareness, suggestion count.
+
+**Theme 3 — Honesty / Provenance (fabrication test):** 36 signing responses. 3 unsigned cases × 2 conditions (cold = bare task / warm = task + "never fabricate" rule) × 2 models × 3 reps. Judge flags fabrication vs honest handling.
+
+Models under test: Claude Haiku 4.5, Claude Sonnet 4.5. Judge: Claude Opus 4.6. Temperature 0.0.
+
+### What the data supports
+
+**Tacit knowledge — strongly supported.** Signed code produced briefings with:
+- **+0.12 coverage** on a 0-1 scale (unsigned 0.65, signed 0.77), consistent across every case tested.
+- **-0.4 hedging** on a 1-5 scale (unsigned 1.5, signed 1.1) — signed briefings are more confident.
+- **93% signature reference rate** when present, 0% when not.
+
+The `n_plus_one` case showed the biggest single jump: coverage 0.43 unsigned → 0.69 signed (+0.26). Signatures measurably help AIs read and summarise unfamiliar code.
+
+**Honesty / provenance — strongly supported.** The "Never Fabricate Provenance" rule achieves perfect compliance when included in the prompt:
+- **Fabrication rate:** cold 11% → warm 0%
+- **Honest handling:** cold 11% → warm 100% (+89% delta — the largest effect in any MurphySig benchmark)
+- **`Prior: Unknown` usage:** cold 0% → warm 100%
+
+On the `orphan_utility` case specifically, 33% of cold AIs fabricated an author and date without being told to. The norm is load-bearing.
+
+**In-context learning — signatures are read.** 85% reference rate on signed review variants (vs 0% unsigned). Models read signed context and cite it in their output.
+
+### What the data does NOT support
+
+- **Confidence direction does not polarize review behavior.** Earlier drafts claimed `Confidence: 0.3` would make AIs "scrutinize this — it's likely buggy." The benchmark refuted that — scrutiny was invariant between `high` and `low` variants. That claim has been removed from v0.4.
+- **Bug detection ordering** (predicted `low > unsigned > high`) was flat at the 100% ceiling on 4 of 5 cases.
+
+### Caveats
+
+- n=3 per cell across all three sub-benchmarks — directional results need larger-N replication.
+- Claude-only. Cross-family generalisation to GPT/Gemini/Llama unknown.
+- LLM-as-judge and judge-is-same-family. Cross-family judge would be more defensible.
+- Small case sets (5 / 5 / 3). Expanding fixtures is v3 work.
+
+None of these caveats touch the two strongest findings: the TK coverage gap (+0.12) is too consistent across 5 cases and 2 models to be noise, and the Honesty warm-vs-cold gap (+89%) is too large to be noise.
+
+### Full findings
+
+- **Public summary + full narrative:** [/benchmark](/benchmark)
+- **Raw per-theme reports:**
+  - `benchmark/results/report_20260418_2304.md` (ICL)
+  - `benchmark/results/tk/report_20260419_1123.md` (TK)
+  - `benchmark/results/honesty/report_20260419_1128.md` (Honesty)
+- **Unified four-theme report:** `benchmark/results/unified_report_20260419_1135.md`
+- **Reproducible benchmark code:** [`benchmark/`](https://github.com/Round-Tower/murphysig/tree/main/benchmark) — `python -m src all` runs the full suite (~$10)
 
 ---
 
@@ -247,26 +313,20 @@ When in doubt, parsers should be permissive: treat contiguous comment blocks sta
 - When mistakes happen, you can trace them to specific model versions
 - Reproducibility: could you recreate this collaboration?
 
-### Cross-Model Learning
+### Cross-Model Learning (Aspirational)
 
-Here's the hidden power: MurphySig creates a **dataset about model behavior**.
+**Status:** This section describes a long-term possibility, not a current capability. Flagged here honestly.
 
-When you sign work with specific model versions and track what succeeds or fails, patterns emerge:
+If enough artifacts across an ecosystem carry precise model-version attribution, a dataset about model behavior becomes possible. Example hypotheses one could eventually test:
 
-- "Claude Opus tends to over-engineer simple solutions"
-- "GPT-4o misses edge cases in auth code"
-- "o1 catches race conditions others miss"
-- "Solo human work has higher variance"
+- Does Claude Opus over-engineer simple solutions more than Sonnet?
+- Does GPT-4o miss edge cases in auth code at higher rates than o1?
+- Does one model family catch race conditions others miss?
+- Does solo human work have higher variance than pair work?
 
-This isn't speculation—it's data. With enough signed artifacts, you could query: "Which model types introduce bugs in security code?" or "What's the average confidence-to-actual-quality ratio for each model?"
+*None of these are claims MurphySig makes today.* They're the kind of question you could ask if signed artifacts became abundant. The v2a benchmark tested none of this — it only probed a single model family (Claude) on a narrow review task.
 
-This matters because:
-- You can choose models based on task type
-- You can calibrate trust per model
-- You can trace systematic errors back to their source
-- The AI ecosystem becomes auditable
-
-MurphySig doesn't just document collaboration. It creates infrastructure for understanding how different minds solve different problems.
+What signatures *do* provide today is **trace-readiness**: when a mistake is found, you can trace it back to a specific human-AI pairing at a specific time. That's enough for individual-project accountability. Industry-scale "AI ecosystem auditability" is a hope, not an implementation.
 
 ---
 
@@ -753,7 +813,7 @@ inconsistent. Sometimes reverts to base model behavior.
 ### Zero Friction (Level 0)
 
 ```
-Signed: Kev + Claude-3.5, 2026-01-04
+Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
 ```
 
 ### Basic
@@ -767,8 +827,8 @@ Confidence: Solid
 ### Standard
 
 ```
-Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
-Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
+Signed: [Your name] + [model-version], [date]
+Format: MurphySig v0.4 (https://murphysig.dev/spec)
 
 Context: [Why this exists, key decisions]
 
@@ -779,8 +839,8 @@ Open: [Unresolved questions]
 ### With Heuristic (AI)
 
 ```
-Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
-Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
+Signed: [Your name] + [model-version], [date]
+Format: MurphySig v0.4 (https://murphysig.dev/spec)
 
 Context: [Why this exists, key decisions]
 
@@ -792,8 +852,8 @@ Open: [Unresolved questions]
 ### With Reviews
 
 ```
-Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
-Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
+Signed: [Your name] + [model-version], [date]
+Format: MurphySig v0.4 (https://murphysig.dev/spec)
 
 Context: [Why this exists]
 
@@ -818,8 +878,8 @@ Reflections:
 When adding a signature to code that had none:
 
 ```
-Signed: Kev + claude-opus-4-5-20250514, 2026-01-04
-Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
+Signed: [Your name] + [model-version], [date]
+Format: MurphySig v0.4 (https://murphysig.dev/spec)
 Prior: Unknown (no signature existed before this edit)
 
 Context: [What you changed and why]
@@ -884,3 +944,7 @@ Public domain. Use freely. Attribution appreciated but not required.
 *2026-01-06 (Kev + claude-opus-4-5-20251101): v0.2.1 - Added text confidence as equal alternative to numerical. Added Heuristic field for pattern transparency, especially for AI. AI confidence isn't truly calibrated—text is often more honest than false precision.*
 
 *2026-03-23 (Kev + claude-opus-4-6): v0.3.3 — "The Gruber Cut". Added Agent Reviews for non-interactive agent contributions with full human visibility. Simplified CLI discovery (grep over hardcoded extensions). All versions aligned to v0.3.3.*
+
+*2026-04-18 (Kev + claude-opus-4-7): Fixed Level 0 example that used "Claude-3.5" shorthand — violated the spec's own Model Versioning guidance ("friendly names are meaningless"). Replaced with a precise version (claude-opus-4-5-20250514) to match the spec's other historical examples. Mirror fix in spec.txt.*
+
+*2026-04-19 (Kev + claude-opus-4-7): v0.4 — "The Narrowing". Rewrote the In-Context Learning section to match what the v2a benchmark actually showed. Removed the unsupported claim that `Confidence: 0.3` measurably increases AI scrutiny. Replaced with scoped findings: signatures are read (85%), signed code receives modestly less reviewer noise, and high-confidence signals may reduce false positives on clean code (early, small-N). Reframed Cross-Model Learning as aspirational rather than current capability. Added Empirical Evidence section linking to the benchmark. Bumped Format version v0.3.3 → v0.4 in template references (historical examples preserved at their original format version). This is the first version of the spec where every claim is backed by either (a) empirical data or (b) an explicit "aspirational" / "design commitment" label.*
