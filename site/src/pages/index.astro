@@ -11,6 +11,17 @@
  *
  * Confidence: 0.85 - the restructure feels right, copy is sharper
  * Heuristic: Don Draper creative review drove the sequencing change
+ *
+ * Reviews:
+ *
+ * 2026-04-18 (Kev + claude-opus-4-7): Added Format: line to the code
+ * example. The Format URL is MurphySig's cross-model discovery mechanism
+ * — every example should show it, especially the homepage.
+ *
+ * 2026-04-19 (Kev + claude-opus-4-7): Added /benchmark CTA alongside
+ * /spec and /whitepaper. Label "Does it actually work?" matches the
+ * honest framing of the benchmark page — MurphySig is practicing what
+ * it preaches, including admitting which claims the data refuted.
  */
 
 import ArtLayout from '../layouts/ArtLayout.astro';
@@ -69,6 +80,7 @@ import ArtLayout from '../layouts/ArtLayout.astro';
             <div class="text-neutral-400 select-none mb-4"># auth.py</div>
             <div class="text-neutral-600">
                 <span class="text-green-700"># Signed:</span> <strong class="text-black">Sarah + claude-opus-4-5-20250514</strong>, 2025-09-15<br/>
+                <span class="text-green-700"># Format:</span> MurphySig v0.3.3 (https://murphysig.dev/spec)<br/>
                 <span class="text-green-700">#</span><br/>
                 <span class="text-green-700">#</span> <span class="italic text-neutral-800">Context:</span> Token refresh with 5-min buffer for clock skew.<br/>
                 <span class="text-green-700">#</span> Followed OWASP guidelines. Chose JWT over sessions for<br/>
@@ -143,10 +155,13 @@ import ArtLayout from '../layouts/ArtLayout.astro';
             </p>
         </div>
 
-        <!-- 6. Two CTAs -->
+        <!-- 6. Three CTAs: spec · benchmark · whitepaper -->
         <div class="flex flex-wrap gap-8 pt-12">
             <a href="/spec" class="inline-block border-b-2 border-black pb-1 text-2xl font-serif italic hover:text-neutral-600 transition-colors">
                 Read the Specification &rarr;
+            </a>
+            <a href="/benchmark" class="inline-block border-b-2 border-neutral-300 pb-1 text-2xl font-serif italic text-neutral-500 hover:text-neutral-900 hover:border-black transition-colors">
+                Does it actually work? &rarr;
             </a>
             <a href="/whitepaper" class="inline-block border-b-2 border-neutral-300 pb-1 text-2xl font-serif italic text-neutral-500 hover:text-neutral-900 hover:border-black transition-colors">
                 Why this exists &rarr;
