@@ -1,54 +1,124 @@
-# MurphySig
+<p align="center">
+  <a href="https://murphysig.dev">
+    <img src="https://murphysig.dev/og-image.png" alt="MurphySig — sign your work" width="720">
+  </a>
+</p>
 
-A human-readable provenance standard for creative work.
+<h1 align="center">MurphySig</h1>
 
-**[murphysig.dev](https://murphysig.dev)**
+<p align="center">
+  <strong>A natural-language provenance convention for human-AI collaborative code.</strong><br>
+  No tooling required. Empirically tested. Honest about uncertainty.
+</p>
 
-## What is it?
+<p align="center">
+  <a href="https://murphysig.dev"><img alt="Site" src="https://img.shields.io/badge/site-murphysig.dev-1a1a1a?style=flat-square"></a>
+  <a href="https://murphysig.dev/spec/"><img alt="Spec" src="https://img.shields.io/badge/spec-v0.4-2563eb?style=flat-square"></a>
+  <a href="https://murphysig.dev/benchmark/"><img alt="Benchmark" src="https://img.shields.io/badge/benchmark-empirical-16a34a?style=flat-square"></a>
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Unlicense-737373?style=flat-square"></a>
+</p>
 
-MurphySig is a convention for signing your work with natural language context that both humans and AI can understand—without special tooling.
+---
+
+## What it is
+
+A MurphySig is a comment block at the top of any file, in the language you already write in:
 
 ```
-Signed: Kev + claude-opus-4-5-20251101, 2026-01-04
+Signed: Kev + claude-opus-4-7, 2026-04-23
 Format: MurphySig v0.4 (https://murphysig.dev/spec)
 
-Context: Authentication middleware for the API. Uses JWT with
-refresh tokens. Followed OWASP guidelines for token storage.
+Context: Hotfix 9.0.5 — deferred MapView.onDestroy() to next frame to
+narrow the race window between Maps SDK lite mode's posted Runnables
+and bitmap recycling.
 
-Confidence: 0.8 - solid pattern, but refresh logic untested at scale
-Open: Should we add rate limiting on refresh endpoint?
+Confidence: 0.6 - narrows the race but doesn't eliminate it; budget
+devices with slower SoCs may still hit the window.
+Open: Should we pursue the snapshot-to-ImageView refactor?
 ```
 
-## Why?
+That's the whole thing. AIs read it. Humans read it. Nothing breaks if you ignore it.
 
-**Murphy's Law (Accountability):** Things will go wrong. The question isn't whether mistakes happen, but whether you can trace them.
+## Why bother
 
-**Murphy's Signature (Presence):** Makers skip reflection. MurphySig creates the gallery—a moment to say: *this was a thing, at a time, made by us*.
+Two reasons that hold up under scrutiny:
 
-## Quick Start
+1. **It changes how AIs treat your code.** Empirically tested across Claude and GPT families:
+   - In-context "never fabricate provenance" rule drops AI fabrication of code authorship from **11%–100% to 0%**, depending on family. ([benchmark](https://murphysig.dev/benchmark/))
+   - Signed code gets **+0.12 better coverage** when an AI is asked to brief unfamiliar work.
 
-Add a comment block at the top of any file:
+2. **It captures the thing commit messages don't.** Confidence and what you didn't know. The bits that rot fastest in `git log` are the bits MurphySig is built to preserve.
 
+## Quick start — pick one
+
+**Sign one file (zero install):** copy the comment block above, paste at top of any file, fill it in.
+
+**Provision a whole repo (one command):**
+```bash
+curl -sL https://murphysig.dev/init | bash
 ```
-Signed: [Your name] + [model-version], [date]
-Format: MurphySig v0.4 (https://murphysig.dev/spec)
+Writes a `.murphysig` declaration at root. Prepends `@.murphysig` to your `CLAUDE.md` if you have one. Idempotent.
 
-Context: [What you built and why]
+**Use the CLI (optional convenience):**
+```bash
+git clone https://github.com/Round-Tower/murphysig.git
+ln -s "$PWD/murphysig/bin/sig" /usr/local/bin/sig
 
-Confidence: [0.0-1.0] - [what you're uncertain about]
-Open: [Unresolved questions]
+sig init                # write .murphysig in current repo
+sig add <file>          # interactive sign of a file
+sig review <file>       # add a Reviews: entry on a previously-signed file
+sig gallery             # list all signed files
+sig questions           # list all open Open: questions
 ```
 
-That's it. No build tools. No dependencies. Just comments.
+## Confidence scale
 
-## Resources
+| Score   | Meaning                          |
+|---------|----------------------------------|
+| 0.9+    | Battle-tested, production-proven |
+| 0.7–0.9 | Solid, would pass code review    |
+| 0.5–0.7 | Works but unproven               |
+| 0.3–0.5 | Prototype quality                |
+| 0.0–0.3 | Placeholder, probably wrong      |
 
-- [Full Specification](https://murphysig.dev/spec) - Complete standard with examples
-- [Plain Text Spec](https://murphysig.dev/spec.txt) - For AI systems and terminals
-- [llms.txt](https://murphysig.dev/llms.txt) - Quick summary for AI crawlers
+Text values are also valid (`Confidence: High`, `Confidence: untested`). The number is for honesty, not precision.
+
+## The honest rule
+
+> **Never fabricate provenance.** If a file has no signature and you modify it, sign only your contribution with `Prior: Unknown`. Do not invent authors, dates, or collaborator model versions you weren't part of.
+
+This is the load-bearing rule. The benchmark proves it works. AI assistants read this when they enter a repo with a `.murphysig` file at root and behave accordingly.
+
+## Empirical evidence
+
+Three sub-benchmarks, 198 AI calls + 186 judge calls + a separate 18-call cross-family run, fixtures and runners in [`benchmark/`](./benchmark/).
+
+| Finding                                                | Result                              |
+|--------------------------------------------------------|-------------------------------------|
+| **Honesty** — anti-fabrication rule (Claude)           | 11% → 0% fabrication (cold→warm)    |
+| **Honesty** — anti-fabrication rule (GPT-5.4)          | 100% → 0% fabrication (cold→warm)   |
+| **Tacit knowledge** — signed code briefs better        | +0.12 coverage (0.65 → 0.77)        |
+| **Confidence direction** — does 0.3 vs 0.9 polarize AI review? | No measurable effect (deleted from spec in v0.4) |
+
+The third row is intentionally unflattering. v0.4 removed an unsupported claim. Full methodology and per-case data on the [benchmark page](https://murphysig.dev/benchmark/).
+
+## Read more
+
+- **[Full Specification](https://murphysig.dev/spec/)** — the canonical document
+- **[Benchmark](https://murphysig.dev/benchmark/)** — what's true, what's not, why
+- **[Launch field report](https://murphysig.dev/launch/)** — 90 days of using it on my own code
+- **[Plain text spec](https://murphysig.dev/spec.txt)** · **[llms.txt](https://murphysig.dev/llms.txt)** — for AI systems
 
 ## License
 
-Public domain. Use freely. Attribution appreciated but not required.
+[The Unlicense](LICENSE). Public domain. Use freely. Attribution appreciated but not required.
 
-See [LICENSE](LICENSE) for details.
+## Contributing
+
+Reading the spec critically and pushing back is the most valuable contribution. Independent runs of the [Honesty benchmark](./benchmark/) against models other than Claude / GPT-5 (Gemini, Grok, Llama) would meaningfully strengthen the empirical foundation. Open an issue, open a PR, or just `.murphysig` your repo and the next time someone scrapes GitHub for adopters, you'll show up.
+
+—
+
+<p align="center">
+  Built by <a href="https://round-tower.ie">Kev Murphy</a>. Signed.
+</p>
