@@ -22,10 +22,21 @@
 # missing the Format: URL. Replaced with a single HTML comment block
 # matching the xml style (spec-compliant, doesn't collide with existing
 # frontmatter in .md files).
+#
+# 2026-04-23 (Kev + claude-opus-4-7): Five fixes from a 6-month audit:
+# (1) emit Format: v0.4 to match the live spec; (2) get_author honours
+# MURPHYSIG_AUTHOR env var, then .murphysig.author project file, then git;
+# (3) cmd_add now prompts separately for confidence rationale and joins to
+# the canonical "<value> - <rationale>" form; (4) get_signature_info uses
+# tab-separated output instead of pipe so single-line shorthand sigs that
+# contain ` | ` no longer scramble gallery columns; (5) cmd_review inserts
+# ". " between review text and "Confidence now …" and strips a trailing
+# period from the text to avoid doubling. New tests/test_sig.sh covers all
+# five with pure-bash assertions. Confidence now 0.85.
 
 set -e
 
-VERSION="0.3.3"
+VERSION="0.4"
 SPEC_URL="https://murphysig.dev/spec"
 
 # Colors
@@ -43,7 +54,14 @@ TODAY=$(date +%Y-%m-%d)
 
 # Get git user name if available
 get_author() {
-    if command -v git &> /dev/null && git config user.name &> /dev/null; then
+    # Resolution order: MURPHYSIG_AUTHOR env > .murphysig.author file > git config > $USER.
+    # Env wins because users want one global preference; file wins next so projects can
+    # override per-repo (e.g. a pen-name persona). Git config is the safe fallback.
+    if [ -n "${MURPHYSIG_AUTHOR:-}" ]; then
+        echo "$MURPHYSIG_AUTHOR"
+    elif [ -f ".murphysig.author" ]; then
+        head -1 .murphysig.author | tr -d '\n'
+    elif command -v git &> /dev/null && git config user.name &> /dev/null; then
         git config user.name
     else
         echo "${USER:-Unknown}"
@@ -106,7 +124,7 @@ generate_signature() {
         hash)
             cat << EOF
 # Signed: $signed_by, $TODAY
-# Format: MurphySig v0.3.3 ($SPEC_URL)
+# Format: MurphySig v0.4 ($SPEC_URL)
 #
 # Context: $context
 #
@@ -119,7 +137,7 @@ EOF
             cat << EOF
 /**
  * Signed: $signed_by, $TODAY
- * Format: MurphySig v0.3.3 ($SPEC_URL)
+ * Format: MurphySig v0.4 ($SPEC_URL)
  *
  * Context: $context
  *
@@ -133,7 +151,7 @@ EOF
             cat << EOF
 <!--
   Signed: $signed_by, $TODAY
-  Format: MurphySig v0.3.3 ($SPEC_URL)
+  Format: MurphySig v0.4 ($SPEC_URL)
 
   Context: $context
 
@@ -147,7 +165,7 @@ EOF
             cat << EOF
 <!--
 Signed: $signed_by, $TODAY
-Format: MurphySig v0.3.3 ($SPEC_URL)
+Format: MurphySig v0.4 ($SPEC_URL)
 
 Context: $context
 
@@ -161,7 +179,7 @@ EOF
             cat << EOF
 /*
  * Signed: $signed_by, $TODAY
- * Format: MurphySig v0.3.3 ($SPEC_URL)
+ * Format: MurphySig v0.4 ($SPEC_URL)
  *
  * Context: $context
  *
@@ -174,7 +192,7 @@ EOF
         sql)
             cat << EOF
 -- Signed: $signed_by, $TODAY
--- Format: MurphySig v0.3.3 ($SPEC_URL)
+-- Format: MurphySig v0.4 ($SPEC_URL)
 --
 -- Context: $context
 --
@@ -208,7 +226,9 @@ get_signature_info() {
     local reviews
     reviews=$(head -50 "$file" 2>/dev/null | grep -c "^[[:space:]]*[-#/*]*[[:space:]]*[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}" 2>/dev/null) || reviews=0
 
-    echo "$signed|$confidence|$reviews"
+    # Tab-separated: signature content can legally contain pipes (single-line
+    # shorthand sigs use ` | ` as a field separator inside the Signed: line).
+    printf '%s\t%s\t%s\n' "$signed" "$confidence" "$reviews"
 }
 
 # Commands
@@ -283,7 +303,8 @@ cmd_add() {
     # Interactive prompts
     read -p "AI collaborator? (model version, or press Enter for none): " model
     read -p "Context - what were you thinking? " context
-    read -p "Confidence (0.0-1.0): " confidence
+    read -p "Confidence (0.0-1.0 or text like 'High'): " confidence
+    read -p "What are you uncertain about? " confidence_rationale
     read -p "Open questions? " open
 
     # Set defaults
@@ -291,8 +312,15 @@ cmd_add() {
     confidence=${confidence:-"0.5"}
     open=${open:-"None"}
 
+    # Compose confidence line: "0.7 - rationale" if rationale given, else just "0.7".
+    # Spec format is "<value> - <rationale>"; rationale is optional.
+    local confidence_line="$confidence"
+    if [ -n "${confidence_rationale:-}" ]; then
+        confidence_line="$confidence - $confidence_rationale"
+    fi
+
     # Generate and prepend signature
-    local sig=$(generate_signature "$style" "$author" "$model" "$context" "$confidence" "$open")
+    local sig=$(generate_signature "$style" "$author" "$model" "$context" "$confidence_line" "$open")
     local tmp=$(mktemp)
 
     echo "$sig" > "$tmp"
@@ -362,8 +390,10 @@ cmd_review() {
     local blank_prefix
     blank_prefix=$(echo "$prefix" | sed 's/[[:space:]]*$//')
 
-    # Build review entry
-    local entry="${prefix}${TODAY} (${reviewer}): ${review_text}"
+    # Build review entry. Strip any trailing period from review_text so we
+    # don't end up with two ("…passed.. Confidence now 0.8.").
+    local review_text_clean="${review_text%.}"
+    local entry="${prefix}${TODAY} (${reviewer}): ${review_text_clean}."
     if [ -n "$new_confidence" ]; then
         entry="${entry} Confidence now ${new_confidence}."
     fi
@@ -418,9 +448,9 @@ cmd_gallery() {
         if has_signature "$file"; then
             found=1
             local info=$(get_signature_info "$file")
-            local signed=$(echo "$info" | cut -d'|' -f1)
-            local confidence=$(echo "$info" | cut -d'|' -f2)
-            local reviews=$(echo "$info" | cut -d'|' -f3)
+            local signed=$(printf '%s' "$info" | cut -f1)
+            local confidence=$(printf '%s' "$info" | cut -f2)
+            local reviews=$(printf '%s' "$info" | cut -f3)
 
             echo -e "${GREEN}*${NC} ${BOLD}$file${NC}"
             echo -e "  ${DIM}$signed${NC}"
