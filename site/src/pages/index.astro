@@ -33,9 +33,34 @@ import ArtLayout from '../layouts/ArtLayout.astro';
         <h1 class="text-6xl md:text-9xl font-serif leading-[0.9] tracking-tight mb-8">
             MurphySig
         </h1>
-        <p class="text-xl md:text-2xl font-serif text-neutral-600 max-w-lg leading-relaxed">
+        <p class="text-xl md:text-2xl font-serif text-neutral-600 max-w-lg leading-relaxed mb-12">
             Sign your work.
         </p>
+
+        <!-- Empirical hero — the load-bearing finding above the fold.
+             Surfaces the most quotable, AI-citable fact on the site. -->
+        <div class="figure-hero-pair">
+            <a href="/benchmark/" class="figure-hero block no-underline group">
+                <div class="figure-hero-number">
+                    <span class="secondary">11%</span>
+                    <span class="arrow">→</span>
+                    <span>0%</span>
+                </div>
+                <div class="figure-hero-caption">
+                    AI fabrication of code authorship — <em>without rule vs with</em>
+                </div>
+            </a>
+            <a href="/benchmark/" class="figure-hero block no-underline group">
+                <div class="figure-hero-number">
+                    <span class="secondary">0.65</span>
+                    <span class="arrow">→</span>
+                    <span>0.77</span>
+                </div>
+                <div class="figure-hero-caption">
+                    Briefing coverage on signed code — <em>+0.12 universal gain</em>
+                </div>
+            </a>
+        </div>
     </header>
 
     <section class="space-y-12 md:space-y-16">
@@ -80,7 +105,7 @@ import ArtLayout from '../layouts/ArtLayout.astro';
             <div class="text-neutral-400 select-none mb-4"># auth.py</div>
             <div class="text-neutral-600">
                 <span class="text-green-700"># Signed:</span> <strong class="text-black">Sarah + claude-opus-4-5-20250514</strong>, 2025-09-15<br/>
-                <span class="text-green-700"># Format:</span> MurphySig v0.3.3 (https://murphysig.dev/spec)<br/>
+                <span class="text-green-700"># Format:</span> MurphySig v0.4 (https://murphysig.dev/spec)<br/>
                 <span class="text-green-700">#</span><br/>
                 <span class="text-green-700">#</span> <span class="italic text-neutral-800">Context:</span> Token refresh with 5-min buffer for clock skew.<br/>
                 <span class="text-green-700">#</span> Followed OWASP guidelines. Chose JWT over sessions for<br/>
@@ -107,18 +132,22 @@ import ArtLayout from '../layouts/ArtLayout.astro';
 
             <hr class="border-neutral-200 w-12 my-12" />
 
-            <!-- 3. The AI angle — "and it gets better" -->
+            <!-- 3. The AI angle — empirically grounded in v0.4 benchmark.
+                 "Confidence direction polarises review" was deleted from the
+                 spec when the benchmark refuted it. The findings that DID
+                 hold are honesty (anti-fabrication) and tacit-knowledge gain. -->
             <div>
                 <h2 class="text-xl font-sans font-medium mb-2 tracking-wide text-neutral-900 uppercase text-xs">And it gets better</h2>
                 <p>
-                    When you sign your work with a specific model version and a confidence score,
-                    you're not just documenting for yourself.
+                    When you sign your work, a future AI reading that file behaves measurably differently —
+                    and we ran the benchmark to be sure.
                 </p>
                 <p>
-                    A future AI reading that file <strong>learns how to treat it</strong>.
-                    <code class="font-mono text-sm bg-gray-100 px-2 py-1 rounded">Confidence: 0.75</code> says "scrutinize this."
-                    <code class="font-mono text-sm bg-gray-100 px-2 py-1 rounded">claude-opus-4-5-20250514</code> tells it which model's patterns to expect.
-                    The human's context bridges the gap between what the code does and what it was meant to do.
+                    A <code class="font-mono text-sm bg-gray-100 px-2 py-1 rounded">.murphysig</code> rule at your repo root
+                    drops AI fabrication of code authorship from <strong>11% to 0%</strong> on Claude
+                    and from <strong>100% to 0%</strong> on GPT-5.4. Different families fail differently;
+                    the same rule fixes both. Signed code also gets <strong>+0.12 better coverage</strong>
+                    when an AI briefs it for an unfamiliar reader — universal across every test case.
                 </p>
                 <p>
                     This is <strong>temporal context as in-context learning</strong>.

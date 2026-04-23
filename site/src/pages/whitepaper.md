@@ -8,6 +8,8 @@ description: The foundational whitepaper for MurphySig - why legible provenance 
 
 **Authors**: Kevin Murphy, Claude (claude-opus-4-6-20250610)
 
+> **Historical document.** This whitepaper was written against MurphySig v0.0.2 in February 2026 and references the older v0.3.3 spec. The current canonical specification is **[v0.4 — "The Narrowing"](/spec/)**, which removed an empirically-unsupported claim about confidence-direction polarising AI review behaviour ([benchmark](/benchmark/)). The philosophy below still stands; refer to the live spec for the operational form.
+
 ---
 
 ## Abstract

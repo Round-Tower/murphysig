@@ -14,8 +14,107 @@
 import ArtLayout from './ArtLayout.astro';
 
 const { frontmatter } = Astro.props;
+const path = Astro.url.pathname.replace(/\/$/, '');
+const canonical = `https://murphysig.dev${Astro.url.pathname}`;
+
+const KEVIN = { "@type": "Person", "@id": "https://murphysig.dev/#kevin", "name": "Kevin Murphy", "url": "https://murphysig.dev" };
+const ROUND_TOWER = { "@type": "Organization", "@id": "https://round-tower.ie/#org", "name": "Round-Tower", "url": "https://round-tower.ie" };
+
+let schemaJson;
+if (path === '/spec') {
+    schemaJson = {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "TechArticle",
+                "@id": `${canonical}#article`,
+                "headline": frontmatter.title,
+                "description": frontmatter.description,
+                "url": canonical,
+                "inLanguage": "en",
+                "author": { "@id": "https://murphysig.dev/#kevin" },
+                "publisher": { "@id": "https://round-tower.ie/#org" },
+                "proficiencyLevel": "Expert",
+                "dependencies": "Code comments, version control",
+                "datePublished": frontmatter.date,
+                "dateModified": frontmatter.date,
+                "about": { "@id": `${canonical}#term-set` }
+            },
+            {
+                "@type": "DefinedTermSet",
+                "@id": `${canonical}#term-set`,
+                "name": `MurphySig Convention v${frontmatter.version}`,
+                "url": canonical,
+                "hasDefinedTerm": [
+                    { "@type": "DefinedTerm", "name": "Signed", "description": "Identifies collaborators (human + AI) who authored or modified the work." },
+                    { "@type": "DefinedTerm", "name": "Confidence", "description": "Numeric 0.0–1.0 or text indicating author certainty in the contribution." },
+                    { "@type": "DefinedTerm", "name": "Prior", "description": "Names earlier authors or 'Unknown' if provenance cannot be verified." }
+                ]
+            },
+            KEVIN,
+            ROUND_TOWER
+        ]
+    };
+} else if (path === '/benchmark') {
+    schemaJson = {
+        "@context": "https://schema.org",
+        "@type": "Dataset",
+        "name": "MurphySig Provenance Fabrication Benchmark",
+        "description": "Empirical measurement of AI fabrication of authorship/provenance metadata in collaborative code, with and without the MurphySig 'never fabricate provenance' rule in context.",
+        "url": canonical,
+        "keywords": ["AI provenance", "hallucination", "code attribution", "human-AI collaboration", "MurphySig"],
+        "license": "https://creativecommons.org/licenses/by/4.0/",
+        "creator": KEVIN,
+        "publisher": ROUND_TOWER,
+        "isAccessibleForFree": true,
+        "inLanguage": "en",
+        "datePublished": frontmatter.date,
+        "variableMeasured": [
+            { "@type": "PropertyValue", "name": "Fabrication rate without MurphySig rule (Claude)", "value": "11%" },
+            { "@type": "PropertyValue", "name": "Fabrication rate with MurphySig rule (Claude)", "value": "0%" },
+            { "@type": "PropertyValue", "name": "Briefing coverage gain (signed vs unsigned)", "value": "+0.12 (0.65 → 0.77)" }
+        ]
+    };
+} else if (path === '/launch') {
+    schemaJson = {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": frontmatter.title,
+        "description": frontmatter.description,
+        "url": canonical,
+        "mainEntityOfPage": canonical,
+        "datePublished": frontmatter.date,
+        "dateModified": frontmatter.date,
+        "inLanguage": "en",
+        "author": KEVIN,
+        "publisher": ROUND_TOWER,
+        "image": "https://murphysig.dev/og-image.png",
+        "about": {
+            "@type": "DefinedTermSet",
+            "name": `MurphySig Convention v${frontmatter.version || '0.4'}`,
+            "url": "https://murphysig.dev/spec/"
+        }
+    };
+} else if (path === '/whitepaper') {
+    schemaJson = {
+        "@context": "https://schema.org",
+        "@type": "ScholarlyArticle",
+        "headline": frontmatter.title,
+        "description": frontmatter.description,
+        "url": canonical,
+        "datePublished": frontmatter.date,
+        "inLanguage": "en",
+        "author": KEVIN,
+        "publisher": ROUND_TOWER
+    };
+}
 ---
-<ArtLayout title={frontmatter.title} description={frontmatter.description} canonical={`https://murphysig.dev${Astro.url.pathname}`}>
+<ArtLayout
+    title={frontmatter.title}
+    description={frontmatter.description}
+    canonical={canonical}
+    schemaJson={schemaJson}
+>
     <header class="mb-16 border-b border-neutral-200 pb-8">
         <h1 class="text-4xl md:text-5xl font-serif mb-4">{frontmatter.title}</h1>
         <p class="font-mono text-sm text-neutral-500">

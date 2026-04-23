@@ -300,6 +300,11 @@ body {
   margin-top: 1.5em;
   margin-bottom: 1.75em;
   overflow-x: auto;
+  /* Defensive: never let a code block push the page wider than the viewport.
+     Without max-width, long single lines (e.g. the launch page's signature
+     example) caused horizontal page scroll on mobile (375px) — a hard UX
+     blocker for HN's mobile traffic. */
+  max-width: 100%;
 }
 
 .prose pre code {

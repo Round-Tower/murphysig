@@ -30,16 +30,39 @@ interface Props {
 	title: string;
     description?: string;
     canonical?: string;
+    /**
+     * Optional page-specific Schema.org JSON-LD. When provided, replaces
+     * the default homepage WebSite schema. Pass plain objects; will be
+     * stringified at render. Sub-pages should override this so search
+     * engines see TechArticle / Dataset / BlogPosting per page rather
+     * than a duplicated WebSite stub on every URL.
+     */
+    schemaJson?: object;
 }
 
 const {
     title,
     description = "A human-readable provenance standard for creative work.",
-    canonical = "https://murphysig.dev"
+    canonical = "https://murphysig.dev",
+    schemaJson
 } = Astro.props;
 
 const siteTitle = "MurphySig";
 const fullTitle = title === siteTitle ? title : `${title} | ${siteTitle}`;
+
+const defaultWebsiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": siteTitle,
+    "description": "A human-readable provenance standard for creative work.",
+    "url": "https://murphysig.dev",
+    "potentialAction": {
+        "@type": "ReadAction",
+        "target": "https://murphysig.dev/spec"
+    }
+};
+
+const renderedSchema = schemaJson ?? defaultWebsiteSchema;
 ---
 
 <!doctype html>
@@ -72,18 +95,8 @@ const fullTitle = title === siteTitle ? title : `${title} | ${siteTitle}`;
         <meta name="twitter:description" content={description} />
         <meta name="twitter:image" content="https://murphysig.dev/og-image.png" />
 
-        <!-- JSON-LD Structured Data -->
-        <script type="application/ld+json" set:html={JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "WebSite",
-            "name": siteTitle,
-            "description": "A human-readable provenance standard for creative work.",
-            "url": "https://murphysig.dev",
-            "potentialAction": {
-                "@type": "ReadAction",
-                "target": "https://murphysig.dev/spec"
-            }
-        })} />
+        <!-- JSON-LD Structured Data — page-specific when provided, else WebSite default. -->
+        <script type="application/ld+json" set:html={JSON.stringify(renderedSchema)} />
 
         <!-- For AI systems -->
         <link rel="alternate" type="text/plain" href="/llms.txt" title="AI Summary" />
@@ -99,7 +112,7 @@ const fullTitle = title === siteTitle ? title : `${title} | ${siteTitle}`;
             <slot />
         </main>
         
-        <footer class="max-w-3xl mx-auto px-6 pb-20 text-sm text-neutral-500 font-mono">
+        <footer class="max-w-3xl mx-auto px-6 pb-20 text-sm text-neutral-600 font-mono">
             <nav class="flex flex-wrap gap-x-6 gap-y-2 mb-4">
                 <a href="/" class="hover:text-black transition-colors">Home</a>
                 <a href="/spec" class="hover:text-black transition-colors">Spec</a>
