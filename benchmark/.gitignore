@@ -7,6 +7,8 @@ __pycache__/
 *.pyc
 *.pyo
 .pytest_cache/
+.venv*/
+venv/
 
 # Results — raw API responses contain prompts/code, keep local.
 # Commit .md reports only. Covers top-level and sub-theme dirs.
