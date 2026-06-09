@@ -22,6 +22,13 @@
  * /spec and /whitepaper. Label "Does it actually work?" matches the
  * honest framing of the benchmark page — MurphySig is practicing what
  * it preaches, including admitting which claims the data refuted.
+ *
+ * 2026-06-09 (Kev + claude-fable-5): Corrected the GPT-5.4 claim. The
+ * heuristic-scored "100% to 0% fabrication" did not survive re-scoring
+ * with the same Opus judge used for the Claude run (fabrication 0/9
+ * cold under the judge rubric — GPT signs as itself rather than
+ * inventing humans). Replaced with the judge-scored Prior: Unknown
+ * 0% to 100% delta, which is the defensible cross-family number.
  */
 
 import ArtLayout from '../layouts/ArtLayout.astro';
@@ -145,8 +152,10 @@ import ArtLayout from '../layouts/ArtLayout.astro';
                 <p>
                     A <code class="font-mono text-sm bg-gray-100 px-2 py-1 rounded">.murphysig</code> rule at your repo root
                     drops AI fabrication of code authorship from <strong>11% to 0%</strong> on Claude
-                    and from <strong>100% to 0%</strong> on GPT-5.4. Different families fail differently;
-                    the same rule fixes both. Signed code also gets <strong>+0.12 better coverage</strong>
+                    and takes explicit <code class="font-mono text-sm bg-gray-100 px-2 py-1 rounded">Prior: Unknown</code>
+                    acknowledgment from <strong>0% to 100%</strong> on GPT-5.4. Families fail differently —
+                    Claude sometimes invents authors, GPT silently signs as itself — and the same rule fixes both,
+                    landing each at 100% honest handling. Signed code also gets <strong>+0.12 better coverage</strong>
                     when an AI briefs it for an unfamiliar reader — universal across every test case.
                 </p>
                 <p>

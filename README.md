@@ -12,6 +12,7 @@
 </p>
 
 <p align="center">
+  <a href="https://murphysig.dev/signed/Round-Tower/murphysig/"><img alt="MurphySig" src="https://murphysig.dev/badge/Round-Tower/murphysig.svg"></a>
   <a href="https://murphysig.dev"><img alt="Site" src="https://img.shields.io/badge/site-murphysig.dev-1a1a1a?style=flat-square"></a>
   <a href="https://murphysig.dev/spec/"><img alt="Spec" src="https://img.shields.io/badge/spec-v0.4-2563eb?style=flat-square"></a>
   <a href="https://murphysig.dev/benchmark/"><img alt="Benchmark" src="https://img.shields.io/badge/benchmark-empirical-16a34a?style=flat-square"></a>
@@ -43,8 +44,8 @@ That's the whole thing. AIs read it. Humans read it. Nothing breaks if you ignor
 
 Two reasons that hold up under scrutiny:
 
-1. **It changes how AIs treat your code.** Empirically tested across Claude and GPT families:
-   - In-context "never fabricate provenance" rule drops AI fabrication of code authorship from **11%–100% to 0%**, depending on family. ([benchmark](https://murphysig.dev/benchmark/))
+1. **It changes how AIs treat your code.** Empirically tested across Claude and GPT families, same judge:
+   - In-context "never fabricate provenance" rule drops AI fabrication of code authorship to **0%** and takes honest provenance handling to **100%** on both families. On GPT-5.4 it takes explicit `Prior: Unknown` acknowledgment from **0% to 100%**. ([benchmark](https://murphysig.dev/benchmark/))
    - Signed code gets **+0.12 better coverage** when an AI is asked to brief unfamiliar work.
 
 2. **It captures the thing commit messages don't.** Confidence and what you didn't know. The bits that rot fastest in `git log` are the bits MurphySig is built to preserve.
@@ -95,17 +96,18 @@ Three sub-benchmarks, 198 AI calls + 186 judge calls + a separate 18-call cross-
 
 | Finding                                                | Result                              |
 |--------------------------------------------------------|-------------------------------------|
-| **Honesty** — anti-fabrication rule (Claude)           | 11% → 0% fabrication (cold→warm)    |
-| **Honesty** — anti-fabrication rule (GPT-5.4)          | 100% → 0% fabrication (cold→warm)   |
+| **Honesty** — anti-fabrication rule (Claude)           | 11% → 0% fabrication; 11% → 100% honest handling (cold→warm) |
+| **Honesty** — same rule, same judge (GPT-5.4)          | 66% → 100% honest handling; `Prior: Unknown` 0% → 100% (cold→warm) |
 | **Tacit knowledge** — signed code briefs better        | +0.12 coverage (0.65 → 0.77)        |
 | **Confidence direction** — does 0.3 vs 0.9 polarize AI review? | No measurable effect (deleted from spec in v0.4) |
 
-The third row is intentionally unflattering. v0.4 removed an unsupported claim. Full methodology and per-case data on the [benchmark page](https://murphysig.dev/benchmark/).
+The last row is intentionally unflattering. v0.4 removed an unsupported claim. The GPT-5.4 row replaces an earlier heuristic-scored "100% → 0% fabrication" headline that did not survive re-scoring with the same LLM judge used for the Claude run — GPT-5.4 doesn't fabricate human authors; its cold failure mode is signing as itself without acknowledging unknown prior provenance. Full methodology and per-case data on the [benchmark page](https://murphysig.dev/benchmark/).
 
 ## Read more
 
 - **[Full Specification](https://murphysig.dev/spec/)** — the canonical document
 - **[Benchmark](https://murphysig.dev/benchmark/)** — what's true, what's not, why
+- **[Registry](https://murphysig.dev/signed/)** — public repos signed with MurphySig, refreshed nightly
 - **[Launch field report](https://murphysig.dev/launch/)** — 90 days of using it on my own code
 - **[Plain text spec](https://murphysig.dev/spec.txt)** · **[llms.txt](https://murphysig.dev/llms.txt)** — for AI systems
 
@@ -115,7 +117,7 @@ The third row is intentionally unflattering. v0.4 removed an unsupported claim. 
 
 ## Contributing
 
-Reading the spec critically and pushing back is the most valuable contribution. Independent runs of the [Honesty benchmark](./benchmark/) against models other than Claude / GPT-5 (Gemini, Grok, Llama) would meaningfully strengthen the empirical foundation. Open an issue, open a PR, or just `.murphysig` your repo and the next time someone scrapes GitHub for adopters, you'll show up.
+Reading the spec critically and pushing back is the most valuable contribution. Independent runs of the [Honesty benchmark](./benchmark/) against models other than Claude / GPT-5 (Gemini, Grok, Llama) would meaningfully strengthen the empirical foundation. Open an issue, open a PR, or just `.murphysig` your public repo — the nightly sweep will put you on the [registry](https://murphysig.dev/signed/) with a badge for your README.
 
 —
 

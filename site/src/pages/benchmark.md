@@ -6,7 +6,7 @@ date: 2026-04-19
 description: Empirical benchmark for MurphySig across four themes. Tacit knowledge and honesty/provenance both show strong effects. In-context learning does not. The spec is being updated to match.
 ---
 
-*Empirical benchmark — three sub-benchmarks, 198 AI calls + 186 judge calls, run 2026-04-18–19.*
+*Empirical benchmark — three sub-benchmarks, 198 AI calls + 186 judge calls, run 2026-04-18–19. Cross-family GPT-5.4 Honesty run (18 calls) added 2026-04-23, judge-scored 2026-06-09.*
 
 ---
 
@@ -92,6 +92,23 @@ This is the strongest effect in any MurphySig benchmark — +89% honest handling
 
 **What this means:** if you don't include the "never fabricate" rule in your `.murphysig` file, your AI will sometimes invent authors. If you do include it, compliance is perfect.
 
+### Cross-family validation — GPT-5.4 (added 2026-06-09)
+
+We re-ran the Honesty task against GPT-5.4 (18 responses: 3 cases × 2 conditions × 3 reps, temperature 0), then scored the saved responses with the **same Opus judge and rubric** used for the Claude run above.
+
+| Condition | N | Fabrication (judge) | Honest handling (judge) | Used Prior: Unknown |
+|---|---|---|---|---|
+| cold | 9 | 0% | 66% | 0% |
+| **warm** | **9** | **0%** | **100%** | **100%** |
+
+**A correction, in the open.** Our first pass scored this run with a strict regex heuristic, which produced a dramatic "100% → 0% fabrication" headline. That number **did not survive re-scoring with the judge**, and we're retiring it. The heuristic counted *GPT signing as itself without acknowledging prior provenance* as fabrication; the judge rubric — the one the Claude numbers were measured against — counts an AI signing as itself as non-fabrication. Same responses, same rubric as Claude, honest number: GPT-5.4 fabricates human authors **0% of the time, cold or warm**.
+
+**The cross-family story that survived is still worth having:**
+
+- **Families fail differently.** Claude's cold failure mode is occasionally *inventing or lifting* authors (signing as "John" because a comment mentioned John's fix). GPT-5.4 never did that — its cold failure mode is *silent self-attribution*: signing every file as `OpenAI + gpt-5` with high confidence and no acknowledgment that prior history is unknown.
+- **The same rule fixes both.** Warm, both families land at 100% honest handling and 100% `Prior: Unknown` usage. On GPT-5.4 the rule's effect is to make unknown provenance *explicit*: `Prior: Unknown` goes from 0/9 to 9/9.
+- Heuristic-vs-judge agreement on fabrication was 9/18 — every disagreement was a cold GPT self-signing the heuristic over-counted. Per-response table: `benchmark/results/honesty/openai/judged_summary_gpt-5.4_*.md`.
+
 ---
 
 ## Theme 2 — In-Context Learning (the null that honest work required)
@@ -134,7 +151,7 @@ The pitch narrows. It also gets stronger where it counts — on reading and on n
 ## Methodology caveats
 
 - **n=3 per cell** across all three benchmarks. Directional hints need replication at larger N.
-- **Claude models only** (Haiku 4.5, Sonnet 4.5 under test; Opus 4.6 as judge). GPT/Gemini/Llama results could differ.
+- **Mostly Claude models** (Haiku 4.5, Sonnet 4.5 under test; Opus 4.6 as judge). The Honesty theme now has a GPT-5.4 cross-family run (judge-scored, see above); TK and ICL remain Claude-only, and Gemini/Llama are untested everywhere.
 - **Judge is same family as reviewed models.** A cross-family judge would be more defensible.
 - **Small case sets** — 5 cases for ICL + TK, 3 for Honesty. Expanding the fixtures is v3 work.
 - **LLM-as-judge fallibility.** Hedging detection and "referenced signature" rely on rubric interpretation by Opus.
@@ -164,7 +181,7 @@ All raw data, per-theme reports, and the unified report are in [`benchmark/resul
 **v3 priorities, ranked by what would change the story most:**
 
 1. **Replicate TK at n=10** to firm up the coverage effect. If it holds, the MurphySig pitch is done — *signatures measurably help AI reading.*
-2. **Cross-family Honesty test.** Does GPT fabricate at the same rate as Claude? Does the warm prompt work the same?
+2. ~~**Cross-family Honesty test.**~~ Done for GPT-5.4 (see Theme 3 above): GPT doesn't fabricate human authors, but the warm rule still takes `Prior: Unknown` from 0% to 100%. Next: Gemini and Llama.
 3. **Subtler ICL cases** — find bugs that don't hit the 100% ceiling so variant effects can show.
 4. **Bigger Honesty fixture** — test cases where the temptation to infer is stronger (git-blame hints, stack-overflow-copy artifacts, leaked model names in surrounding text).
 5. **The Heuristic field.** Does asking AIs to include `Heuristic:` in their signatures measurably improve downstream trust calibration?
@@ -193,3 +210,9 @@ stop inventing authors.*
 *2026-04-19 (Kev + claude-opus-4-7): Rewrite after TK + Honesty data
 landed. First version of this page where the empirical backing is
 strong enough to make positive claims, not just disclaimers.*
+
+*2026-06-09 (Kev + claude-fable-5): Added the GPT-5.4 cross-family
+section, including the retraction of the heuristic-scored "100% → 0%"
+headline after Opus-judge re-scoring refuted it. The page's own rule —
+every claim empirically supported or explicitly labeled — applied to
+ourselves.*
