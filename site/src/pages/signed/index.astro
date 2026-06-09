@@ -1,0 +1,105 @@
+---
+/**
+ * Signed: Kev + claude-fable-5, 2026-06-09
+ * Format: MurphySig v0.4 (https://murphysig.dev/spec)
+ * Prior: Unknown (new file)
+ *
+ * Context: The public registry — every public GitHub repo with a
+ * root-level .murphysig declaration, discovered nightly by
+ * scripts/update-registry.mjs and rendered statically from
+ * data/registry.json. This page is also the receipt for the 60-day
+ * adoption experiment: it shows exactly what the convention's
+ * footprint is, however small.
+ *
+ * Confidence: 0.8 - rendering is simple; the page's honesty about a
+ * small count is deliberate, not a placeholder state.
+ */
+
+import ArtLayout from '../../layouts/ArtLayout.astro';
+import registry from '../../data/registry.json';
+
+const generated = registry.generated_at.slice(0, 10);
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'MurphySig Registry — signed repositories',
+  description:
+    'Public GitHub repositories carrying a root-level .murphysig provenance declaration, refreshed nightly.',
+  url: 'https://murphysig.dev/signed/',
+};
+---
+
+<ArtLayout
+  title="Signed Repositories"
+  description="The MurphySig registry — every public repo with a .murphysig declaration at root, refreshed nightly."
+  canonical="https://murphysig.dev/signed/"
+  schemaJson={schema}
+>
+  <header class="mb-16 md:mb-24">
+    <h1 class="text-5xl md:text-7xl font-serif leading-[0.95] tracking-tight mb-6">
+      Signed repositories
+    </h1>
+    <p class="text-xl font-serif text-neutral-600 max-w-lg leading-relaxed">
+      Every public repo on GitHub with a <code class="font-mono text-base">.murphysig</code> declaration
+      at root. Discovered nightly. No registration, no submission — sign your repo and you appear here.
+    </p>
+  </header>
+
+  <section class="mb-16">
+    <div class="font-mono text-xs text-neutral-500 uppercase tracking-widest mb-6">
+      {registry.count} {registry.count === 1 ? 'repository' : 'repositories'} · refreshed {generated}
+    </div>
+
+    <div class="divide-y divide-neutral-200 border-y border-neutral-200">
+      {registry.repos.map((r) => (
+        <div class="py-5 flex flex-col md:flex-row md:items-baseline gap-1 md:gap-6">
+          <div class="md:w-1/2">
+            <a href={`/signed/${r.owner}/${r.repo}/`} class="font-mono text-base text-black underline decoration-neutral-300 hover:decoration-black transition-colors">
+              {r.full_name}
+            </a>
+            {r.description && (
+              <p class="font-serif text-neutral-600 text-sm mt-1">{r.description}</p>
+            )}
+          </div>
+          <div class="font-mono text-sm text-neutral-600 md:w-1/4">
+            {r.author ?? 'author unknown'}
+          </div>
+          <div class="font-mono text-sm text-neutral-500 md:w-1/4">
+            {r.version ?? '—'}
+            {r.last_push && <span class="text-neutral-400"> · pushed {r.last_push.slice(0, 10)}</span>}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="prose prose-neutral max-w-none font-serif text-lg leading-relaxed space-y-8 mb-16">
+    <div>
+      <h2 class="text-xl font-sans font-medium mb-2 tracking-wide text-neutral-900 uppercase text-xs">Get listed</h2>
+      <p>Provision your repo (one command, zero dependencies):</p>
+    </div>
+  </section>
+
+  <div class="bg-gray-50 border border-neutral-200 p-6 rounded-sm font-mono text-sm mb-8 overflow-x-auto">
+    curl -sL https://murphysig.dev/init | bash
+  </div>
+
+  <section class="prose prose-neutral max-w-none font-serif text-lg leading-relaxed space-y-8">
+    <p>
+      Push it, and the nightly sweep will pick you up. Private repos are never listed —
+      the registry only sees what GitHub code search makes public.
+    </p>
+    <div>
+      <h2 class="text-xl font-sans font-medium mb-2 tracking-wide text-neutral-900 uppercase text-xs">The badge</h2>
+      <p>
+        Once listed, your repo has a badge at
+        <code class="font-mono text-sm">murphysig.dev/badge/&lt;owner&gt;/&lt;repo&gt;.svg</code> —
+        each repo page shows the snippet to paste into your README.
+      </p>
+      <p>
+        <img src="/badge/Round-Tower/murphysig.svg" alt="MurphySig: signed badge example" width="160" height="20" />
+      </p>
+    </div>
+  </section>
+</ArtLayout>

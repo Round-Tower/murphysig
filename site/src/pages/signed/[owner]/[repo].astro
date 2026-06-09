@@ -1,0 +1,79 @@
+---
+/**
+ * Signed: Kev + claude-fable-5, 2026-06-09
+ * Format: MurphySig v0.4 (https://murphysig.dev/spec)
+ * Prior: Unknown (new file)
+ *
+ * Context: Per-repo registry page — /signed/<owner>/<repo>/. Shows
+ * the repo's .murphysig declaration verbatim, its badge, and the
+ * README snippet. Statically rendered from data/registry.json.
+ *
+ * Confidence: 0.8 - straightforward getStaticPaths render.
+ */
+
+import ArtLayout from '../../../layouts/ArtLayout.astro';
+import registry from '../../../data/registry.json';
+
+export function getStaticPaths() {
+  return registry.repos.map((r) => ({
+    params: { owner: r.owner, repo: r.repo },
+    props: { entry: r },
+  }));
+}
+
+const { entry } = Astro.props;
+const badgeUrl = `https://murphysig.dev/badge/${entry.full_name}.svg`;
+const snippet = `[![MurphySig](${badgeUrl})](https://murphysig.dev/signed/${entry.full_name}/)`;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareSourceCode',
+  name: entry.full_name,
+  codeRepository: entry.html_url,
+  author: entry.author ? { '@type': 'Person', name: entry.author } : undefined,
+  description: entry.description ?? undefined,
+};
+---
+
+<ArtLayout
+  title={`${entry.full_name} — signed`}
+  description={`${entry.full_name} carries a MurphySig provenance declaration (${entry.version ?? 'version unknown'}).`}
+  canonical={`https://murphysig.dev/signed/${entry.full_name}/`}
+  schemaJson={schema}
+>
+  <header class="mb-12 md:mb-16">
+    <div class="font-mono text-xs text-neutral-500 uppercase tracking-widest mb-4">
+      <a href="/signed/" class="hover:text-black transition-colors">registry</a> / signed
+    </div>
+    <h1 class="text-4xl md:text-6xl font-serif leading-[0.95] tracking-tight mb-6 break-words">
+      {entry.full_name}
+    </h1>
+    <p class="font-mono text-sm text-neutral-600">
+      {entry.author ?? 'author unknown'}
+      <span class="text-neutral-300 mx-2">·</span>
+      {entry.version ?? 'version unknown'}
+      {entry.initialized && (
+        <><span class="text-neutral-300 mx-2">·</span>signed since {entry.initialized}</>
+      )}
+    </p>
+    <p class="mt-6">
+      <img src={`/badge/${entry.full_name}.svg`} alt={`MurphySig: signed ${entry.version ?? ''}`} height="20" />
+    </p>
+  </header>
+
+  <section class="mb-12">
+    <h2 class="text-xl font-sans font-medium mb-4 tracking-wide text-neutral-900 uppercase text-xs">The declaration</h2>
+    <pre class="bg-gray-50 border border-neutral-200 p-6 rounded-sm font-mono text-sm overflow-x-auto whitespace-pre-wrap">{entry.declaration}</pre>
+  </section>
+
+  <section class="mb-12">
+    <h2 class="text-xl font-sans font-medium mb-4 tracking-wide text-neutral-900 uppercase text-xs">Badge for your README</h2>
+    <pre class="bg-gray-50 border border-neutral-200 p-6 rounded-sm font-mono text-sm overflow-x-auto">{snippet}</pre>
+  </section>
+
+  <section class="font-serif text-lg">
+    <a href={entry.html_url} class="underline decoration-neutral-300 hover:decoration-black transition-colors">
+      View {entry.full_name} on GitHub →
+    </a>
+  </section>
+</ArtLayout>

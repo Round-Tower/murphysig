@@ -22,6 +22,9 @@
  * v0.3.3 → v0.4, added /benchmark and home links to nav, added
  * monospace breadcrumb-style site identifier. Part of the "design
  * milestone 1" pass to make the site match the v0.4 spec.
+ *
+ * 2026-06-09 (Kev + claude-fable-5): Added /signed (registry) to the
+ * footer nav alongside the new registry + badge surfaces.
  */
 
 import '../styles/global.css';
@@ -117,6 +120,7 @@ const renderedSchema = schemaJson ?? defaultWebsiteSchema;
                 <a href="/" class="hover:text-black transition-colors">Home</a>
                 <a href="/spec" class="hover:text-black transition-colors">Spec</a>
                 <a href="/benchmark" class="hover:text-black transition-colors">Benchmark</a>
+                <a href="/signed" class="hover:text-black transition-colors">Registry</a>
                 <a href="/whitepaper" class="hover:text-black transition-colors">Whitepaper</a>
                 <a href="https://github.com/Round-Tower/murphysig" class="hover:text-black transition-colors">GitHub</a>
                 <a href="https://github.com/kpmmmurphy" class="hover:text-black transition-colors">@kpmmmurphy</a>

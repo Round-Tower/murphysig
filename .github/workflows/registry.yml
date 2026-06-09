@@ -1,0 +1,54 @@
+# Signed: Kev + claude-fable-5, 2026-06-09
+# Format: MurphySig v0.4 (https://murphysig.dev/spec)
+# Prior: Unknown (new file)
+#
+# Context: Nightly registry refresh. Searches GitHub for root-level
+# .murphysig files, rewrites site/src/data/registry.json, and commits
+# if it changed — the push triggers the Netlify rebuild, which
+# pre-renders /signed/ pages and /badge/ SVGs. The badge endpoint
+# itself never calls GitHub.
+#
+# Confidence: 0.7 - standard cron+commit workflow; the open risk is
+# code-search visibility under the default GITHUB_TOKEN. If the sweep
+# misses repos it should see, add a classic PAT as REGISTRY_TOKEN.
+
+name: registry
+
+on:
+  schedule:
+    - cron: "23 3 * * *" # nightly, off the :00 stampede
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run parser tests
+        run: node --test scripts/
+
+      - name: Update registry
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
+        run: node scripts/update-registry.mjs
+
+      - name: Commit if changed
+        run: |
+          if git diff --quiet site/src/data/registry.json; then
+            echo "Registry unchanged."
+            exit 0
+          fi
+          git config user.name "murphysig-registry[bot]"
+          git config user.email "registry@murphysig.dev"
+          git add site/src/data/registry.json
+          git commit -m "chore(registry): nightly sweep"
+          git push

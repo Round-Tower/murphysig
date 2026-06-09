@@ -13,6 +13,14 @@
   status = 200
   force = true
 
+# Badge fallback: pre-rendered badges (real files at /badge/<owner>/<repo>.svg)
+# win because force is off; anything else gets the "not found" badge.
+# Never calls GitHub at request time — registry refresh is a nightly Action.
+[[redirects]]
+  from = "/badge/*"
+  to = "/badge-not-found.svg"
+  status = 200
+
 [[headers]]
   for = "/init.sh"
   [headers.values]
@@ -41,3 +49,9 @@
   for = "/*.svg"
   [headers.values]
     Cache-Control = "public, max-age=86400"
+
+# Badges refresh nightly — cache for an hour so updates propagate same-day.
+[[headers]]
+  for = "/badge/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"

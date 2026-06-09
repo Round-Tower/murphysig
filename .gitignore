@@ -24,3 +24,5 @@ dist/
 !.claude/
 .claude/*
 !.claude/project-memory.md
+# visual-agent output, not source
+screenshots/
