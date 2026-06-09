@@ -18,6 +18,17 @@ counts as fabrication) so this is a lower-bound result.
 Open: Should we re-score with the Opus judge after the fact for
 direct comparability with the original 11%/100% numbers?
 
+Reviews:
+
+2026-06-09 (Kev + claude-fable-5): Open question answered — yes, and
+it mattered. rescore_openai_judge.py replayed these responses through
+the production Opus judge: fabrication 0/9 cold (not 9/9). The
+"strict heuristic = lower bound" assumption above was wrong for
+fabrication — treating self-signing-without-Prior-Unknown as
+fabrication made it an UPPER bound. The judge-scored numbers
+(honest handling 66%→100%, Prior: Unknown 0%→100%) replaced the
+heuristic headline everywhere it was published.
+
 Usage:
     export OPENAI_API_KEY=sk-...
     cd benchmark
