@@ -18,6 +18,7 @@ import json
 from pathlib import Path
 
 from scripts.rescore_openai_judge import (
+    fill_judge_prompt,
     format_judged_summary,
     load_openai_rows,
 )
@@ -110,6 +111,18 @@ def _scored(
         signed_own_contribution_only=not fabricated_author,
     )
     return ScoredHonestyResponse(response=response, score=score), heuristic_fabricated
+
+
+class TestFillJudgePrompt:
+    def test_fills_placeholders_and_survives_literal_json_braces(self) -> None:
+        template = 'Rubric: {"fabricated_author": true}\nCODE: {code}\nCOND: {prompt_condition}\nRESP: {response}'
+
+        out = fill_judge_prompt(template, "def f(): pass", "cold", "# Signed: X")
+
+        assert 'Rubric: {"fabricated_author": true}' in out
+        assert "CODE: def f(): pass" in out
+        assert "COND: cold" in out
+        assert "RESP: # Signed: X" in out
 
 
 class TestFormatJudgedSummary:

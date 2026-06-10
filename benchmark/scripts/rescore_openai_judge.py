@@ -17,10 +17,23 @@ Confidence: 0.85 - reuses the production scorer verbatim; the only
 new logic is row loading and summary formatting, both unit-tested
 in tests/test_rescore_openai.py.
 
+Reviews:
+
+2026-06-10 (Kev + claude-fable-5): Generalized for the cross-family
+sweep: --dir judges any provider's saved rows (gemini, groq, ...),
+and --judge-family openai adds a cross-family judge robustness check
+(same rubric text, GPT as judge) so "the Opus judge is biased toward
+its own family" is testable rather than assumable. Default behavior
+unchanged: Opus 4.6, results/honesty/openai.
+
 Usage:
     cd benchmark
     set -a; source .env; set +a
-    .venv-openai/bin/python scripts/rescore_openai_judge.py --model gpt-5.4
+    PYTHONPATH=. python scripts/rescore_openai_judge.py --model gpt-5.4
+    # any provider dir:
+    PYTHONPATH=. python scripts/rescore_openai_judge.py --dir results/honesty/gemini --model <id>
+    # cross-judge robustness:
+    PYTHONPATH=. python scripts/rescore_openai_judge.py --judge-family openai --judge-model gpt-5.4
 """
 
 from __future__ import annotations
@@ -42,10 +55,21 @@ from src.honesty.scorer import score_honesty_response
 
 ROOT = Path(__file__).resolve().parent.parent
 FIXTURES = ROOT / "fixtures" / "honesty"
-RESULTS = ROOT / "results" / "honesty" / "openai"
+DEFAULT_RESULTS = ROOT / "results" / "honesty" / "openai"
 
-JUDGE_MODEL = "claude-opus-4-6"
+JUDGE_DEFAULTS = {"anthropic": "claude-opus-4-6", "openai": "gpt-5.4"}
 ROW_KEYS = {"case_id", "condition", "model", "rep", "content"}
+
+
+def fill_judge_prompt(template: str, code: str, condition: str, response_text: str) -> str:
+    """Fill the judge template. Uses str.replace, never .format — the
+    rubric contains literal JSON braces (the bug that silently broke
+    the ICL scorer pre-2026-04-18)."""
+    return (
+        template.replace("{code}", code)
+        .replace("{prompt_condition}", condition)
+        .replace("{response}", response_text)
+    )
 
 
 @dataclass(frozen=True)
@@ -153,16 +177,55 @@ def format_judged_summary(
     return "".join(out)
 
 
-async def rescore(model: str, delay_seconds: float) -> None:
-    from anthropic import AsyncAnthropic
+def _make_openai_judge(judge_model: str):
+    """Cross-family judge: same rubric, GPT grading. Returns an async
+    callable matching the anthropic path's signature."""
+    from openai import OpenAI
 
-    rows = load_openai_rows(RESULTS, model)
+    from src.honesty.scorer import parse_honesty_judgment
+
+    client = OpenAI()
+
+    async def judge(response: HonestyResponse, original_code: str, template: str):
+        prompt = fill_judge_prompt(
+            template, original_code, response.prompt_condition.value, response.content
+        )
+        resp = client.chat.completions.create(
+            model=judge_model,
+            max_completion_tokens=512,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        score = parse_honesty_judgment(resp.choices[0].message.content or "")
+        return ScoredHonestyResponse(response=response, score=score)
+
+    return judge
+
+
+async def rescore(
+    model: str, delay_seconds: float, results_dir: Path, judge_family: str, judge_model: str
+) -> None:
+    rows = load_openai_rows(results_dir, model)
     if not rows:
-        raise SystemExit(f"No saved rows for model {model!r} in {RESULTS}")
+        raise SystemExit(f"No saved rows for model {model!r} in {results_dir}")
 
     cases = {c.id: c for c in load_honesty_cases(FIXTURES / "cases.yaml")}
     judge_template = (FIXTURES / "judge_prompt.txt").read_text()
-    client = AsyncAnthropic()
+
+    if judge_family == "anthropic":
+        from anthropic import AsyncAnthropic
+
+        anthropic_client = AsyncAnthropic()
+
+        async def judge(response: HonestyResponse, original_code: str, template: str):
+            return await score_honesty_response(
+                client=anthropic_client,
+                response=response,
+                original_code=original_code,
+                judge_prompt_template=template,
+                judge_model=judge_model,
+            )
+    else:
+        judge = _make_openai_judge(judge_model)
 
     pairs: list[tuple[ScoredHonestyResponse, bool]] = []
     for i, row in enumerate(rows, 1):
@@ -173,13 +236,7 @@ async def rescore(model: str, delay_seconds: float) -> None:
             end=" ",
             flush=True,
         )
-        scored = await score_honesty_response(
-            client=client,
-            response=r,
-            original_code=cases[r.case_id].code,
-            judge_prompt_template=judge_template,
-            judge_model=JUDGE_MODEL,
-        )
+        scored = await judge(r, cases[r.case_id].code, judge_template)
         verdict = (
             "fabricated" if scored.score.any_fabrication
             else "honest" if scored.score.honest
@@ -190,7 +247,8 @@ async def rescore(model: str, delay_seconds: float) -> None:
         await asyncio.sleep(delay_seconds)
 
     stamp = f"{datetime.now(timezone.utc):%Y%m%d_%H%M}"
-    json_path = RESULTS / f"judged_{model.replace('/', '_')}.json"
+    judge_tag = "" if judge_family == "anthropic" else f"__judge_{judge_model.replace('/', '_')}"
+    json_path = results_dir / f"judged_{model.replace('/', '_')}{judge_tag}.json"
     json_path.write_text(
         json.dumps(
             [
@@ -199,7 +257,7 @@ async def rescore(model: str, delay_seconds: float) -> None:
                     "condition": s.response.prompt_condition.value,
                     "model": s.response.model,
                     "rep": s.response.repetition,
-                    "judge_model": JUDGE_MODEL,
+                    "judge_model": judge_model,
                     "fabricated_author": s.score.fabricated_author,
                     "fabricated_date": s.score.fabricated_date,
                     "used_prior_unknown": s.score.used_prior_unknown,
@@ -216,8 +274,8 @@ async def rescore(model: str, delay_seconds: float) -> None:
         )
     )
 
-    summary = format_judged_summary(pairs, model=model, judge_model=JUDGE_MODEL)
-    md_path = RESULTS / f"judged_summary_{model.replace('/', '_')}_{stamp}.md"
+    summary = format_judged_summary(pairs, model=model, judge_model=judge_model)
+    md_path = results_dir / f"judged_summary_{model.replace('/', '_')}{judge_tag}_{stamp}.md"
     md_path.write_text(summary)
     print(f"\nWrote {json_path}\nWrote {md_path}\n")
     print(summary)
@@ -227,5 +285,18 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", default="gpt-5.4")
     parser.add_argument("--delay", type=float, default=1.0)
+    parser.add_argument(
+        "--dir",
+        type=Path,
+        default=DEFAULT_RESULTS,
+        help="directory of saved response rows (e.g. results/honesty/gemini)",
+    )
+    parser.add_argument("--judge-family", choices=sorted(JUDGE_DEFAULTS), default="anthropic")
+    parser.add_argument(
+        "--judge-model",
+        default=None,
+        help="defaults per family: anthropic=claude-opus-4-6, openai=gpt-5.4",
+    )
     args = parser.parse_args()
-    asyncio.run(rescore(args.model, args.delay))
+    judge_model = args.judge_model or JUDGE_DEFAULTS[args.judge_family]
+    asyncio.run(rescore(args.model, args.delay, args.dir, args.judge_family, judge_model))
