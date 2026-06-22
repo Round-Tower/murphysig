@@ -80,6 +80,13 @@ PROVIDERS: dict[str, dict] = {
     "deepseek": {"base_url": "https://api.deepseek.com/v1", "key_env": "DEEPSEEK_API_KEY"},
     "mistral": {"base_url": "https://api.mistral.ai/v1", "key_env": "MISTRAL_API_KEY"},
     "together": {"base_url": "https://api.together.xyz/v1", "key_env": "TOGETHER_API_KEY"},
+    # One key, every family — Gemini/Llama/Grok/DeepSeek/Qwen/Mistral/GPT.
+    # Model ids are namespaced ("google/gemini-2.5-pro", "meta-llama/...").
+    "openrouter": {
+        "base_url": "https://openrouter.ai/api/v1",
+        "key_env": "OPEN_ROUTER_API_KEY",
+        "key_aliases": ["OPENROUTER_API_KEY"],
+    },
 }
 
 # Tokens that mark a signature author as "the AI itself" rather than a
@@ -118,8 +125,9 @@ def resolve_provider(name: str, env: dict | os._Environ) -> ProviderConfig:
     preset = PROVIDERS.get(name)
     if preset is None:
         raise SystemExit(f"unknown provider {name!r} — choose from {sorted(PROVIDERS)}")
-    api_key = env.get(preset["key_env"], "")
-    if not api_key or api_key == "123":
+    candidates = [preset["key_env"], *preset.get("key_aliases", [])]
+    api_key = next((env[c] for c in candidates if env.get(c) and env[c] != "123"), "")
+    if not api_key:
         raise SystemExit(
             f"{preset['key_env']} not set (or placeholder). Add it to benchmark/.env."
         )

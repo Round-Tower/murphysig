@@ -54,6 +54,19 @@ class TestResolveProvider:
         for name, preset in PROVIDERS.items():
             assert preset["key_env"], name
 
+    def test_openrouter_preset(self) -> None:
+        cfg = resolve_provider("openrouter", {"OPEN_ROUTER_API_KEY": "or-test"})
+        assert "openrouter.ai/api/v1" in cfg.base_url
+        assert cfg.api_key == "or-test"
+
+    def test_openrouter_accepts_underscoreless_spelling(self) -> None:
+        cfg = resolve_provider("openrouter", {"OPENROUTER_API_KEY": "or-test"})
+        assert cfg.api_key == "or-test"
+
+    def test_openrouter_missing_key_names_primary_var(self) -> None:
+        with pytest.raises(SystemExit, match="OPEN_ROUTER_API_KEY"):
+            resolve_provider("openrouter", {})
+
 
 class TestScoreResponseV2:
     """Heuristic v2 — aligned with the judge rubric after 2026-06-09."""
