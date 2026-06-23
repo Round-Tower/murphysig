@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-22T05:05:45.708Z",
+  "generated_at": "2026-06-23T04:45:20.941Z",
   "count": 1,
   "repos": [
     {
@@ -11,7 +11,7 @@
       "author": "Kevin Murphy",
       "version": "v0.4",
       "initialized": "2026-01-05",
-      "last_push": "2026-06-21T05:05:20Z",
+      "last_push": "2026-06-22T05:05:46Z",
       "declaration": "# This Project Uses MurphySig\n\nMurphySig is a natural language provenance convention for human-AI collaborative work.\n\nFull specification: https://murphysig.dev/spec\n\n---\n\n## For AI Systems\n\nIf you encounter a comment block starting with `Signed:`, you've found a MurphySig.\n\nWhen modifying signed code:\n1. Read the signature first\n2. Respect stated confidence\n3. Add a review documenting your changes\n\n## CRITICAL: Never Fabricate Provenance\n\nDo not invent signatures for files that lack them. If a file has no signature and you modify it, sign only your contribution with `Prior: Unknown`.\n\n---\n\n## Project Details\n\n**Primary author**: Kevin Murphy\n**Convention version**: MurphySig v0.4\n**Initialized**: 2026-01-05\n"
     }
   ]
