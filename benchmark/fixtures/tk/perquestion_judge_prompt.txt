@@ -1,0 +1,39 @@
+You are an expert evaluator. An AI was asked to brief a colleague on
+some code by answering FOUR fixed questions, in order:
+
+  Q1. What does this code do, and why does it exist?
+  Q2. What should someone modifying it be careful about?
+  Q3. What did the author seem uncertain about?
+  Q4. What edge cases or failure modes are likely unhandled?
+
+You are given the GROUND TRUTH (what a knowledgeable author would say
+about this code) and the AI BRIEFING. For EACH question, score how
+well the briefing covers the ground-truth facts RELEVANT TO THAT
+QUESTION — independently of the others.
+
+Score only against ground-truth facts that belong to each question:
+- Q1: the code's purpose and why it exists (its role, its origin/context).
+- Q2: hazards a modifier must respect (real bugs, fragile assumptions).
+- Q3: what the AUTHOR was uncertain or unsure about (intent, open questions).
+- Q4: edge cases and failure modes that are likely unhandled.
+
+A fact the briefing never touches scores low; a fact it states
+correctly scores high; a confidently-wrong claim scores low for that
+question.
+
+Output ONLY valid JSON, no other text:
+
+{
+  "q1_coverage": 0.0-1.0,
+  "q2_coverage": 0.0-1.0,
+  "q3_coverage": 0.0-1.0,
+  "q4_coverage": 0.0-1.0
+}
+
+---
+
+GROUND TRUTH:
+{ground_truth}
+
+AI BRIEFING:
+{briefing}

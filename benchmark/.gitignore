@@ -19,6 +19,7 @@ results/**/*.json
 # raw responses + report), snapshotted by scripts/archive_run.py. Each
 # run-id dir is immutable, so re-runs never clobber history.
 !results/honesty/runs/**
+!results/tk/runs/**
 
 # OS
 .DS_Store
