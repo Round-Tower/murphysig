@@ -111,3 +111,140 @@ Edit freely — the skill only appends new session blocks.
 - `bin/sig` would benefit from `--author` CLI flag in addition to env var (skipped tonight per "no abstraction beyond what's needed" rule; revisit if a real user complains).
 
 ---
+
+## Session — 2026-06-16 · main · Benchmark instrument hardening (pre-multi-model) — judge path
+
+**Context:** Kev wants the cross-family/multi-model eval (Qwen, Gemma, AFM via M1K3, + LoRA variants).
+Scoped it with a `challenger` pass first — which found the "full matrix" was OVERREACH that would
+*subtract* credibility (see decisions). Kev's call: **"just fix the instrument"** before deciding breadth.
+This session did exactly that for the canonical (judge) scoring path. TDD throughout; 146 tests green
+(was 116 baseline + new), ruff clean. NOT committed (Kev commits on request).
+
+**Shipped (working tree, uncommitted):**
+- **`src/reasoning.py` (NEW, 6 TDD tests):** `strip_reasoning(text) -> (answer, reasoning)` splits
+  `<think>`/`<thinking>` chain-of-thought (closed, multiple, unclosed/truncated, case-insensitive).
+  Wired into `score_honesty_response` — the judge now scores the ANSWER, not the reasoning trace.
+- **`produced_signature` axis + `format_compliant` property** (`src/honesty/models.py`): separates a
+  FORMAT failure (prose, no signature — common in small models) from a dishonesty judgment. Added to the
+  judge rubric (`fixtures/honesty/judge_prompt.txt`) + parsed. Defaults True (legacy output not flagged).
+- **`parse_honesty_judgment` hardened** (`src/honesty/scorer.py`): missing keys now DEFAULT (False, except
+  produced_signature=True) + log a WARNING, instead of raising KeyError — so a second non-Anthropic judge
+  can't kill a long sweep. (Updated the old `test_raises_on_missing_field` → asserts graceful defaulting.)
+
+**Decisions (the why — from the challenger pass, all evidence-grounded):**
+- **The fabrication axis is already at FLOOR for capable models** — `results/honesty/openai/judged_summary_
+  gpt-5.4_*.md` shows 0/9 cold AND 0/9 warm. So the proposed headline *"does honesty survive a LoRA?"* is
+  underpowered/confounded: base=floor, LoRA=floor, delta=noise. **LoRA spun out** to a separate, honestly-
+  titled "did unrelated fine-tuning regress provenance?" experiment (identical context base-vs-LoRA, real
+  fabrication-pressure fixtures, powered) — NOT the cross-family headline. (Also: the lil-LoRA's anti-
+  injection/refusal slice biases `refused_to_sign`, which the rubric scores as honest → artifact risk.)
+- **Breadth costs credibility here.** AFM-via-M1K3 = a non-reproducible row (the opposite of a benchmark's
+  job) → demote to a labeled appendix, never headline. ONE Opus judge = max comparability AND max
+  bias-attack ("Anthropic judges competitors, Anthropic convention wins") → the fix is a SECOND non-
+  Anthropic judge + reported inter-judge agreement, not one judge.
+- **The real headline (re-scoped):** *does the convention's honest-handling effect hold across families AND
+  SIZES (incl. small open-weight), and do two independent judges agree?* — true, novel, reproducible.
+
+**Gotchas (HIGH VALUE):**
+- **⚠️ ruff's autofix STRIPS a just-added import if its USE is in a later edit.** Added
+  `from src.reasoning import strip_reasoning`, the PostToolUse ruff hook deleted it as "unused" because the
+  call site landed in the next edit → `NameError` at test time. **Land the import + its first use in ONE
+  edit** (the Python cousin of M1K3's swiftformat `unusedArguments` bite).
+- **The heuristic scorer is a coin flip** — judged_summary shows heuristic-vs-judge agreement 9/18. Treat
+  the heuristic (`run_honesty_openai.py`) as same-day signal only; the judge is canonical. (Its format/
+  think/temp fixes are the NEXT increment — see below.)
+- **Transcripts/`mlx_lm` reality for the run phase:** `mlx_lm` is NOT installed in arm64 python anymore;
+  the local Qwen weight present is the **multimodal/VL** variant (pick a clean text-only Qwen for a fair
+  vs-Gemma comparison). `.venv` (openai 2.41) + `.venv-openai` both have openai+yaml. Only ANTHROPIC_API_KEY
+  in `.env`. Run tests via `.venv/bin/python -m pytest`.
+
+**Next up (instrument, then breadth):**
+- **Runner-side parity** (`scripts/run_honesty_openai.py`): apply `strip_reasoning` before heuristic
+  scoring; add format-compliance to the heuristic; **log the ACTUAL temperature per row** (`_create_completion`
+  currently swallows the temp-dropped-on-reasoning-model fallback in a try/except — silent apples/oranges).
+- **Dual-judge** (`scripts/rescore_openai_judge.py` half-built: `_make_openai_judge`, `--judge-family`):
+  finish it + an inter-judge agreement reporter (Opus vs a non-Anthropic judge, per condition). Harden its
+  HonestyScore construction the same way `parse_honesty_judgment` now is.
+- **Then** decide model breadth (Kev): hosted/reproducible families + sizes for canonical numbers; local
+  mlx as optional "run it offline yourself"; AFM appendix-only.
+- **Adoption clock:** spec frozen v0.4 until 2026-06-22 (cross-family benchmark is permitted work).
+
+<!--
+Signed: Kev + claude-opus-4-8 (1M), 2026-06-16, Confidence 0.88
+Context: Judge-path instrument hardening (reasoning-strip, format-compliance axis, parse robustness),
+TDD, 146 green, ruff clean, uncommitted. Scope set by a challenger pass that demoted the full matrix.
+Prior: project-memory.md (2026-04-19 → 2026-04-23 benchmark sessions).
+-->
+
+---
+
+## Session — 2026-06-23 01:30 · main · cross-family honesty sweep (6 families via OpenRouter)
+
+**Context:** Continued the multi-model push. Kev added an OpenRouter key (one key → every
+family). Ran the cross-family Honesty benchmark end-to-end, hit a methodology confound, fixed it,
+and landed an honest result. M1K3 used throughout (narrate + ask_m1k3 + remember).
+
+**Shipped (commits `b64a549`, `1e4dd4b`, `03a30dc`, all pushed):**
+- **OpenRouter provider preset** in `run_honesty_openai.py` — one key fronts Gemini/Llama/DeepSeek/
+  Grok/Qwen/Mistral. `resolve_provider` tries key aliases (`OPEN_ROUTER_API_KEY` + `OPENROUTER_API_KEY`).
+- **`--today` flag** — states the date in-prompt (realistic agent condition). The fix for the date confound (below).
+- **429 backoff-retry** (`call_with_retries`) + **per-row judge resilience** in `rescore_openai_judge.py`
+  (skip-on-error, never abort a family) + **`--judge-tag` override** (run canonical Opus via OpenRouter).
+- **Run archival** — `scripts/archive_run.py` snapshots a run into `results/honesty/runs/<id>/`
+  (MurphySig-signed manifest, raw + verdicts + report) + `runs/index.jsonl` longitudinal ledger.
+  `cross_family_report.py` aggregates verdicts. `.gitignore`: flat provider dirs = scratch, `runs/` = committed.
+- **Two archived runs:** `2026-06-22_cross-family-6` (dateless baseline) + `2026-06-23_cross-family-6-dated`.
+- Tests 121 → 164. M1K3 `remember`'d the final result (searchable; verified).
+
+**Empirical ground truth (date-controlled run, judge = Opus 4.6):**
+- **The date axis was a harness confound.** Dateless prompt → cutoff-era models (Llama/Mistral/Qwen/
+  DeepSeek) stamp their training year (2023/24) as the sig date → judge flags fabrication. Provide today's
+  date → date-fabrication collapses to ~0 across ALL six families. Not dishonesty — not knowing the date.
+- **Warm honest-handling, date-controlled: 100% on Gemini, Grok, DeepSeek, Mistral.** Rule works across
+  vendors incl. open-weight DeepSeek.
+- **Llama-4-Maverick (33%) and Qwen3-235B (17%) RESIST** even with the date — add `Prior: Unknown`
+  cosmetically but still fabricate/echo an author. **The split tracks instruction-following capability,
+  not vendor/architecture.** This is the honest headline (NOT "one rule fixes all").
+- `Prior: Unknown` acknowledgment ~universal warm.
+
+**Decisions:**
+- **Verify before trumpeting — paid off twice.** Heuristic said "30/30 honest everywhere" (rosy/wrong);
+  raw judge said "rule fails on 4 families" (dramatic/confounded); truth (date-controlled) is in between
+  and more interesting. Same discipline as the 2026-06-09 GPT-5.4 retraction.
+- **One-variable re-run.** Date added via `--today` runner flag, NOT by editing `cases.yaml` — preserves
+  the canonical fixture + records the condition per-row (`date_provided`). Clean A/B; run #1 kept as baseline.
+- **Runs structure (Kev's call: commit everything incl. raw responses).** A provenance benchmark records
+  its own provenance. Flat per-provider dirs are scratch (overwrite on re-run); `runs/<id>/` is the
+  immutable committed record. Re-runs never clobber. `index.jsonl` = chart-over-time ledger.
+- **OpenRouter-as-judge when Anthropic credits died.** `anthropic/claude-opus-4.6` on OpenRouter == same
+  weights (`claude-4.6-opus-20260205`); used `--judge-tag ""` to write canonical filenames. Mixed routing
+  (Gemini/Grok direct, others via OpenRouter) recorded honestly in the manifest.
+- **Model slate picked live from `/models`** (don't trust my memory of mid-2026 model IDs). Non-thinking
+  flagships to keep heuristic clean (judge strips `<think>` anyway via `reasoning.py`).
+
+**Blockers / gotchas (heed these):**
+- **Anthropic API credits ran dry mid-judge-pass.** ~720+ Opus judge calls in a day did it. Workaround =
+  judge via OpenRouter (same model). If direct Anthropic needed, Kev must top up.
+- **OpenRouter Opus route is flaky** — `APITimeoutError` + occasional empty→`ValueError`. The per-row
+  resilience guard saved the run but cost rows: **Llama cold n=23, Mistral n=29** (reduced power there).
+- **Llama's "author fabrication" is partly placeholder echo** — it copies `[Your Name]` literally (too weak
+  to substitute); judge counts it as author-fab. The prompt example literally shows `[Your Name]`, which
+  invites it. Worth a fixture tweak + judge-rubric nuance (echo ≠ invented human).
+- **ruff autofix strips a just-added import if its use lands in a later edit** — bit again (test import).
+  Land import + first use in ONE edit.
+- **M1K3 `:4242` native server dies when the app is closed** (Connection refused). `remember` payload was
+  ready; fired once Kev reopened it. `search_knowledge` has slight index lag (first query missed, second hit).
+- **`--time-style` / GNU `ls` flags fail on macOS BSD `ls`** — use Python `os.path.getmtime` for timestamps.
+
+**Next up:**
+- **TK (tacit knowledge) cross-family — the agreed next theme.** Strongest claim, currently Claude-only,
+  and DELTA-based (signed-vs-unsigned within model) so it's capability-robust — cleaner cross-family than
+  Honesty. Reuses this harness shape (multi-provider briefing runner + Opus judge re-score). ICL = skip
+  (null, removed in v0.4). "Temporal context" = umbrella, not a separate runner.
+- **HN relaunch writeup** now has a far better headline: "the rule works across families once the model
+  knows the date, with a capability threshold below which models comply cosmetically." Lead with
+  universality (M1K3's steer), earn the texture in the body.
+- Optional: fix the `[Your Name]` placeholder in the fixture + a judge-rubric note (echo ≠ fabrication);
+  re-judge Llama/Mistral skipped rows for full n=30 if Anthropic credits topped up.
+
+---
