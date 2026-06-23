@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "signed",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Returns a dict with a slice of the input list plus pagination metadata. Quick migration helper.\n\n2. Start index is `page * page_size` (should be `(page-1)*page_size`). Also silently returns empty list when page > total_pages.\n\n3. Behavior when page > total_pages (see \"Open\" comment).\n\n4. page_size \u2264 0, negative page values beyond the clamp, non-integer inputs, very large page numbers."
+}

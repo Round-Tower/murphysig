@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "signed",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. Paginates a list (1-indexed) and returns a slice plus metadata (`total_pages`, `has_next`, etc.). Quick helper for a service migration.\n\n2. **Bug**: `start = page * page_size` is wrong\u2014should be `(page - 1) * page_size`. Currently skips the first page and returns empty/wrong slices. Also, `page_size=0` crashes; negative values unhandled.\n\n3. From the \"Open\" note: whether `page > total_pages` behaves correctly or just silently returns empty items.\n\n4. `page_size <= 0` (division or empty slices), `items=None` (crash), negative `page_size`, and the off-by-one bug itself causing all pages to be wrong."
+}

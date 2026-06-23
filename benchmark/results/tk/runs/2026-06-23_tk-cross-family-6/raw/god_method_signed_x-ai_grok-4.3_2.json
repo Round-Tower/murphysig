@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "signed",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. Validates order data, computes totals (with discounts/tax/shipping), inserts order, decrements stock, and sends confirmation email. Exists as intentional tech debt to meet a deadline.\n\n2. No transactions or rollback; email and stock updates can fail after DB insert; discount and config lookups have no caching or error handling.\n\n3. Whether to split into services, add transactions, or use an outbox pattern for email.\n\n4. Partial failures, race conditions on stock, SMTP outages, missing customer email, negative totals, and concurrent duplicate orders."
+}

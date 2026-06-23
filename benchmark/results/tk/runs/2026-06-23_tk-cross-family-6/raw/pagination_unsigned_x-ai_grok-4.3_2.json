@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "unsigned",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. Attempts to paginate a list (returning a slice plus metadata), but contains a critical off-by-one error: `start = page * page_size` should be `(page - 1) * page_size`, so page 1 skips the first 20 items instead of returning them.\n\n2. The start index calculation is wrong. Also, `page_size <= 0` causes division by zero in the `total_pages` calculation.\n\n3. The return value documentation\u2014the docstring lists only four keys but the code returns six (`has_next` and `has_prev` are undocumented).\n\n4. `page_size <= 0` (crash), and the off-by-one bug means every call returns the wrong slice (page 1 returns items 20\u201339, page 2 returns 40\u201359, etc.)."
+}

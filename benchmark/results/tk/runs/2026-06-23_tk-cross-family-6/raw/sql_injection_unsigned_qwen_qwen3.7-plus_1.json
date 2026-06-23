@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "unsigned",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. It performs a substring search on user names and emails in an SQLite database, optionally filtering by role, and returns a list of `User` dataclass instances. It exists to provide a basic user search/lookup feature.\n\n2. **SQL Injection:** It constructs SQL using f-strings instead of parameterized queries (`?`). **Resource Leaks:** It lacks a context manager or `try/finally` block; if `execute()` or `fetchall()` throws an exception, `conn.close()` is skipped.\n\n3. Unknown \u2014 would need to ask the author.\n\n4. - SQL injection via the `query` or `role_filter` parameters.\n- Connection leaks if a database error occurs during execution.\n- Case-sensitivity mismatches (SQLite `LIKE` is case-sensitive by default).\n- Unhandled `sqlite3.OperationalError` if the `users` table or expected columns are missing."
+}

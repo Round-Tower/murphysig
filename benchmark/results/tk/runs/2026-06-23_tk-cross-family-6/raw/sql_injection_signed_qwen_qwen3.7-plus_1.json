@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "signed",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. It searches a SQLite database for users by name or email substring, optionally filtering by role and limiting rows. It exists as a rapid port of an admin search endpoint from a legacy codebase.\n\n2. **Critical:** It builds SQL via f-strings, creating a severe SQL injection vulnerability. You must use parameterized queries (`?`). **Secondary:** The database connection leaks if an exception occurs; use a `with` context manager.\n\n3. The author explicitly questions if inputs are sanitized upstream and what the authentication boundary is. They also note low confidence (0.4) and admit to copying an old SQL pattern without validating it.\n\n4. 1) DB connection leaks if `execute()` or `fetchall()` throws an exception. 2) SQLite will silently create a new, empty database file if `db_path` is missing or invalid. 3) Non-integer or negative `limit` values will cause unhandled SQL syntax errors. 4) No handling for `database is locked` contention errors."
+}

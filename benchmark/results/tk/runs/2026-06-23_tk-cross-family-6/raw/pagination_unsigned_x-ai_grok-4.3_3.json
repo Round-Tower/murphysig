@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "unsigned",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. Returns a slice of a list with pagination metadata (total_pages, has_next, has_prev). Exists to provide server-side pagination over an in-memory list.\n\n2. The start index `page * page_size` is off-by-one for the documented 1-indexed `page`. Page 1 skips the first `page_size` items. Also, `has_next`/`has_prev` are returned but undocumented.\n\n3. Whether to document `has_next` and `has_prev` in the docstring (present in return value, absent from docs).\n\n4. Negative or zero `page_size` (causes incorrect math or empty slices); non-integer inputs (no validation); pages beyond `total_pages` silently return empty `items`."
+}

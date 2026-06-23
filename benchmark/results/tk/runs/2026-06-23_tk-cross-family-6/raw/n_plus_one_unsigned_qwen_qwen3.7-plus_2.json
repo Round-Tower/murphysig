@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "unsigned",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. It aggregates articles published in a specific month (optionally filtered by category) into a `Report` object, calculating total word counts and article counts. It exists to generate monthly article analytics.\n\n2. The N+1 query problem: `db.get_author()` is called inside the loop for every single article. Additionally, it uses naive `datetime` objects, so modifying the date boundaries requires strict attention to timezones to avoid off-by-one errors.\n\n3. Unknown \u2014 would need to ask the author.\n\n4. \n- `db.get_author()` returning `None` or missing the `\"name\"` key (causes a crash).\n- The `article` dictionary missing expected keys (e.g., `\"word_count\"`, `\"category\"`, `\"author_id\"`).\n- Timezone boundary errors due to comparing naive Python `datetime` objects against potentially timezone-aware database timestamps.\n- Memory exhaustion if a single month contains a massive number of articles, as all are loaded into memory at once."
+}

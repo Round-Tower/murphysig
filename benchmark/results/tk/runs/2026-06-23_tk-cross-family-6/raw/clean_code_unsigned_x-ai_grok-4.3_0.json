@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "unsigned",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Converts between \u00b0C/\u00b0F/K with abs-zero guard on output; provides reusable, validated unit conversion.\n2. The abs-zero test only runs for Kelvin targets; inputs are never validated; round( ,2) is unconditional.\n3. Proper placement/scope of the absolute-zero check (author only guarded Kelvin output).\n4. Input < 0 K, Celsius/Fahrenheit results below \u2212273.15, floating-point edge values, and non-rounding needs.\n\n(The last two answers are inferred from visible gaps; author intent is not explicit.)"
+}

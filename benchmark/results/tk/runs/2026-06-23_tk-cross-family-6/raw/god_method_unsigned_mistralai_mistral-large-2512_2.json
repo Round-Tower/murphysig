@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "unsigned",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. **Purpose**: Processes e-commerce orders\u2014validates, calculates totals, updates stock, and emails confirmations. Exists to automate order fulfillment.\n\n2. **Careful about**:\n   - **Atomicity**: Stock decrements and order insertion should be transactional (currently not).\n   - **Email failures**: No retry/rollback if SMTP fails after stock is decremented.\n   - **Floating-point rounding**: `round()` may cause precision issues in financial calculations.\n   - **Config validation**: No checks for missing SMTP/tax/shipping config keys.\n\n3. **Author uncertainty**:\n   - Default `smtp_port` (587) and `shipping_cost` (9.99) are hardcoded in `get()`\u2014suggests indecision on defaults.\n   - No handling for `discount[\"expires_at\"]` timezone (assumes local time).\n\n4. **Unhandled edge cases**:\n   - **Concurrency**: Race conditions on stock checks/decrements.\n   - **Partial failures**: No rollback if stock decrement fails mid-loop.\n   - **Customer lookup**: No check if `customer` exists or has an email.\n   - **Email formatting**: No validation for `customer[\"email\"]` or `config[\"from_email\"]`.\n   - **Discounts**: No check for `discount[\"percentage\"]` bounds (e.g., >100%).\n   - **Tax/shipping**: No validation for negative `tax_rate` or `shipping_cost`.\n   - **Order ID**: No handling if `db.insert_order()` fails."
+}

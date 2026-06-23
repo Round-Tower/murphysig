@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "unsigned",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. **Purpose**: Paginates a list of items, returning a slice with metadata (current page, total pages, etc.). Exists to split large datasets into manageable chunks for APIs/UI.\n\n2. **Caution**: Off-by-one errors (1-based `page` vs 0-based list slicing). `page_size` validation (e.g., \u22640). Input `items` could be non-list/empty.\n\n3. **Uncertainty**: No `page_size` bounds checking (e.g., negative/zero). No type hints for return dict values (e.g., `dict[str, Any]` is vague).\n\n4. **Unhandled edge cases**:\n   - `items` is empty.\n   - `page` exceeds `total_pages` (returns empty list, but no error).\n   - `page_size` is 0 or negative (causes division issues).\n   - `items` is not a list (will raise `TypeError` on `len()`)."
+}

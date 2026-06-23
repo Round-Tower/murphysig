@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "unsigned",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. Converts temperature values between Celsius, Fahrenheit, and Kelvin. Exists to provide unit conversion with type safety via the Enum.\n\n2. Must maintain the two-step conversion through Celsius. Adding new units requires updating both match statements and ensuring all conversions are consistent.\n\n3. Unknown \u2014 would need to ask the author.\n\n4. Only validates absolute zero for Kelvin outputs. Negative temperatures are valid for Celsius and Fahrenheit but not checked. Floating-point precision issues may occur."
+}

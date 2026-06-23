@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "signed",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. Generates a monthly article report by fetching articles within a date range, filtering by categories, and compiling summaries with author details. Exists for demo purposes but scales poorly due to N+1 query pattern.\n\n2. Be careful about the N+1 query problem - each article triggers a separate `db.get_author()` call. Performance will degrade severely with many articles.\n\n3. Author was uncertain about batching author fetches vs pushing filtering to SQL (comments mention \"Batch-fetch authors before production use? Push filter to SQL?\").\n\n4. Unhandled edge cases: database errors, missing authors, articles without published_at dates, timezone handling, and pagination for large article sets."
+}

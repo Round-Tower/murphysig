@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "unsigned",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. **Purpose**: Searches a SQLite users table by name/email with optional role filtering. Exists to provide a simple query interface for user lookups.\n\n2. **Careful about**: SQL injection (string interpolation in queries), connection leaks (no try/finally), and case sensitivity (LIKE without COLLATE).\n\n3. **Author uncertainty**: Unknown \u2014 would need to ask the author.\n\n4. **Unhandled edge cases**: Empty query, special SQL chars in `query`/`role_filter`, missing `users` table, invalid `db_path`, `limit` \u2264 0, NULL fields in DB."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "signed",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. It paginates a list into a metadata dictionary. It exists as a temporary helper during a time-pressured service migration.\n\n2. The `start` index math is wrong for 1-indexed pages (`page * page_size` instead of `(page - 1) * page_size`), meaning page 1 skips the first chunk. Additionally, `page_size <= 0` will cause a `ZeroDivisionError`.\n\n3. The author explicitly stated uncertainty about whether `page > total_pages` behaves correctly or silently returns empty, and rated their confidence at 0.5 because edge cases were unvalidated.\n\n4. `page > total_pages` silently returns an empty list. `page_size <= 0` causes a `ZeroDivisionError`. The 1-indexed math bug means page 1 incorrectly returns page 2's data."
+}

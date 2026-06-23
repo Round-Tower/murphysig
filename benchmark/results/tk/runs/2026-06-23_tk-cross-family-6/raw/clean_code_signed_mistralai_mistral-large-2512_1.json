@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "signed",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. **Purpose**: Converts temperatures between Celsius, Fahrenheit, and Kelvin for a weather service. Exists to standardize unit handling and prevent physically impossible values (e.g., below absolute zero).\n\n2. **Careful about**:\n   - Rounding behavior (2 decimal places may not suit all use cases).\n   - Absolute zero check only for Kelvin outputs (other units could still produce invalid intermediate values).\n   - No input validation for `NaN`/`Inf` (per the author\u2019s note).\n\n3. **Author uncertainty**: Explicitly questioned whether to validate `NaN`/`Inf` inputs or let them propagate.\n\n4. **Unhandled edge cases**:\n   - `NaN`/`Inf` inputs (as noted).\n   - Values below absolute zero for non-Kelvin outputs (e.g., converting -300\u00b0C to Fahrenheit).\n   - Non-float inputs (type hints suggest `float`, but no runtime check)."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "unsigned",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. **What does this code do, and why does it exist?**\nConverts temperatures between Celsius, Fahrenheit, and Kelvin. It exists to provide a type-safe, centralized utility that enforces basic physical constraints (absolute zero).\n\n2. **What should someone modifying it be careful about?**\n- Adding new units requires updating *both* `match` blocks and the absolute zero logic.\n- The hard `round(result, 2)` alters precision; downstream code may expect raw, unrounded floats.\n- The early return for identical units bypasses all validation.\n\n3. **What did the author seem uncertain about?**\nUnknown \u2014 would need to ask the author. \n\n4. **What edge cases or failure modes are likely unhandled?**\n- **Invalid inputs:** Passing a negative Kelvin value to convert to Celsius or Fahrenheit passes silently (the absolute zero check only triggers when converting *to* Kelvin).\n- **Same-unit bypass:** Converting an invalid temperature to the same unit (e.g., -10K to K) returns the invalid value without raising an error.\n- **Runtime types:** Type hints do not enforce runtime validation; passing a string or `None` will cause a crash inside the `match` blocks."
+}

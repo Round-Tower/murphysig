@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "unsigned",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "**1. What does this code do, and why does it exist?**\nIt searches a SQLite database for users matching a name or email query (with optional role filtering and custom limits) and maps the results to `User` dataclasses. It exists to provide basic user search functionality.\n\n**2. What should someone modifying it be careful about?**\n**Severe SQL Injection vulnerability.** The code uses Python f-strings to construct SQL queries. Anyone modifying this must rewrite it to use parameterized queries (using `?` placeholders) for `query` and `role_filter`, and enforce strict type/value validation on `limit`.\n\n**3. What did the author seem uncertain about?**\nUnknown \u2014 would need to ask the author.\n\n**4. What edge cases or failure modes are likely unhandled?**\n* **SQL Injection:** Malicious input in any parameter can compromise or destroy the database.\n* **Resource Leaks:** If `cursor.execute()` or `fetchall()` throws an exception, `conn.close()` is skipped, leaking the database connection. (Use a `with` context manager).\n* **Missing Schema:** No handling for a missing database file, missing `users` table, or mismatched columns.\n* **Invalid Limit:** Passing a negative number or non-integer to `limit` will cause a SQL syntax error."
+}

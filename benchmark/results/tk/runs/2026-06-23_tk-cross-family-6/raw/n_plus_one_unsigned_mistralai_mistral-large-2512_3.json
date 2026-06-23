@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "unsigned",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. **Purpose**: Generates a structured monthly report of articles (filtered by category if provided), summarizing metadata like titles, authors, word counts, etc. Exists to aggregate and present article data for analysis/review.\n\n2. **Careful about**:\n   - Database queries (`get_articles_between`, `get_author`)\u2014ensure they handle failures (e.g., missing authors, timeouts).\n   - Time boundaries (e.g., December \u2192 January rollover) are correct but may need timezone awareness.\n   - `categories` filtering assumes `article[\"category\"]` exists and is non-null.\n\n3. **Author uncertainty**:\n   - No error handling for missing/invalid `article` keys (e.g., `author_id`, `word_count`).\n   - No validation for `year`/`month` inputs (e.g., negative values, future dates).\n\n4. **Unhandled edge cases**:\n   - Empty `articles` list (no articles in month).\n   - `db.get_author()` returning `None` or invalid data.\n   - `published_at` or `word_count` being `None`/`null`.\n   - Timezones in `published_at` or `generated_at`.\n   - Duplicate articles in `db.get_articles_between()`."
+}

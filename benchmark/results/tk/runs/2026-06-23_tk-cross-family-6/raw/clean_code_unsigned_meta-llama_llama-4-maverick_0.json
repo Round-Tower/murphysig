@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "unsigned",
+  "model": "meta-llama/llama-4-maverick",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. This code converts temperature values between Celsius, Fahrenheit, and Kelvin units. It exists to provide a standardized temperature conversion function.\n\n2. Someone modifying it should be careful about maintaining the correct conversion formulas and ensuring that the absolute zero check is accurate and comprehensive for all unit conversions.\n\n3. The author seemed uncertain about whether to round the result to a specific number of decimal places (they chose 2).\n\n4. Likely unhandled edge cases or failure modes include non-finite input values (e.g., NaN, infinity) and extreme input values that may cause numerical instability or overflow."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "unsigned",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. **Purpose**: Paginates a list of items, returning a subset (page) with metadata (current page, total pages, etc.). Exists to split large datasets into manageable chunks for APIs/UI.\n\n2. **Careful about**:\n   - **1-based indexing**: `page` starts at 1, not 0.\n   - **Negative/zero `page`**: Silently defaults to 1 (may hide bugs).\n   - **Empty `items`**: Works but may need special handling in calling code.\n   - **Large `page` values**: No upper bound; could return empty `items` if `page > total_pages`.\n\n3. **Author uncertainty**:\n   - Whether to silently clamp `page` to 1 or raise an error (current behavior suggests uncertainty).\n   - Unknown \u2014 would need to ask the author.\n\n4. **Unhandled edge cases**:\n   - `page_size <= 0`: Will cause division by zero or incorrect slicing.\n   - `items` is `None` or not a list: Will raise `TypeError`.\n   - `page` is a float/non-integer: Will raise `TypeError` (but type hints suggest intent for `int`).\n   - No validation for `page > total_pages` (returns empty `items` but no warning)."
+}

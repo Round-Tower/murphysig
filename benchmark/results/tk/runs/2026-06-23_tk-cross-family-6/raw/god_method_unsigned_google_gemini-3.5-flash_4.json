@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "unsigned",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "**1. What does this code do, and why does it exist?**\nIt processes an e-commerce order end-to-end: it validates items and stock, calculates totals (applying item-level discount codes, tax, and shipping), records the order in the database, decrements inventory, and sends a confirmation email. \n\n**2. What should someone modifying it be careful about?**\n* **Lack of transactions:** Database writes (inserting the order, decrementing stock) and the SMTP email send are not atomic. If a downstream step fails, the database is left in an inconsistent state.\n* **Race conditions:** Stock availability is checked at the beginning but not decremented until the end, allowing concurrent orders to oversell.\n* **Floating-point math:** Currency calculations use floats instead of `Decimal`, risking rounding errors.\n\n**3. What did the author seem uncertain about?**\nUnknown \u2014 would need to ask the author. (There are no comments, TODOs, or codeside indicators of uncertainty).\n\n**4. What edge cases or failure modes are likely unhandled?**\n* **Network/SMTP failures:** If the email server is down, the entire function crashes after the order is already placed.\n* **Missing data:** If a customer does not exist, has no email, or SMTP config keys are missing, it will raise unhandled `KeyError` or `TypeError` exceptions.\n* **Timezone mismatches:** Discount expiration checks use timezone-naive `datetime.now()`.\n* **Database queries:** Redundant `db.get_product` calls are made in loops instead of batching."
+}

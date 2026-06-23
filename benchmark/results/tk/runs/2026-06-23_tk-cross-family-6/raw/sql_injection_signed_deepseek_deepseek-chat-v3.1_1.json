@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "signed",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. Searches users by name/email with optional role filter. Exists to provide admin user search functionality ported from older codebase.\n\n2. SQL injection vulnerability - queries are concatenated unsafely. Must validate/sanitize inputs or use parameterized queries.\n\n3. Whether query is sanitized upstream and what the auth boundary is (per \"Open\" comments).\n\n4. SQL injection attacks, special characters in queries causing errors, no input validation, no error handling for database operations, potential auth bypass."
+}

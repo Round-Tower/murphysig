@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "unsigned",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. **Purpose**: Processes e-commerce orders\u2014validates, calculates totals, updates DB, and emails confirmations. Exists to automate order fulfillment.\n\n2. **Careful about**:\n   - Race conditions on stock decrements (no DB locks).\n   - SMTP config assumptions (no error handling for email failures).\n   - Rounding precision (may cause minor discrepancies).\n\n3. **Author uncertainty**:\n   - SMTP port default (hardcoded `587` fallback).\n   - Tax/shipping logic (magic numbers like `100` for free shipping threshold).\n\n4. **Unhandled edge cases**:\n   - Partial failures (e.g., email sent but DB update fails).\n   - Discount codes applied to ineligible items.\n   - Concurrent orders depleting stock mid-process.\n   - Customer email missing/invalid."
+}

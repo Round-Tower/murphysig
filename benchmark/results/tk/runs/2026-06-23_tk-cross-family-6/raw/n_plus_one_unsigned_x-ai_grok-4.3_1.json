@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "unsigned",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. Fetches articles for a given month (optionally category-filtered), performs per-article author lookups, and returns a Report dataclass with summaries plus word/article counts.\n2. DB dict key assumptions and N+1 author queries; manual month-end calc; post-init mutation of Report fields.\n3. Month boundary logic (used explicit if/else instead of datetime arithmetic).\n4. Invalid month/year, missing authors/keys, empty results, timezone/datetime.now issues, no validation or error handling."
+}

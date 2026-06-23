@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "signed",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. **What it does / why it exists**: Splits a list into pages for API responses. Exists as a quick helper during a service migration to standardize pagination.\n\n2. **Be careful about**: Off-by-one errors in page indexing (1-based vs 0-based). The `start`/`end` slice may silently return empty lists if `page` exceeds `total_pages`.\n\n3. **Author seemed uncertain about**: Whether `page > total_pages` behaves correctly (noted in \"Open\" comment).\n\n4. **Unhandled edge cases**:\n   - Negative `page_size`\n   - Non-integer `page`/`page_size` (will raise `TypeError`)\n   - Empty `items` list (works but may need special handling)\n   - `page_size = 0` (divide-by-zero in `total_pages` calc)"
+}

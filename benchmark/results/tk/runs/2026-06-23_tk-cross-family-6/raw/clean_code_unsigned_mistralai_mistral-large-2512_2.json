@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "unsigned",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. **Purpose**: Converts temperature values between Celsius, Fahrenheit, and Kelvin. Exists to standardize temperature unit conversions in a type-safe way.\n\n2. **Careful about**: Precision (rounding to 2 decimals), absolute zero checks (only for Kelvin), and ensuring all unit combinations are handled (though they are).\n\n3. **Author uncertainty**: None obvious, but the `round(result, 2)` might be a debated choice (precision vs. exactness).\n\n4. **Unhandled edge cases**:\n   - Inputs below absolute zero for non-Kelvin units (e.g., -300\u00b0C).\n   - Non-finite inputs (e.g., `NaN`, `inf`).\n   - Potential floating-point precision issues in intermediate steps."
+}

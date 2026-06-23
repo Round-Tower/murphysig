@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "signed",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. **What it does and why:** Processes an order end-to-end (validates inventory, calculates totals, saves to the database, decrements stock, and emails a receipt). It exists as intentional, temporary tech debt to meet a strict deadline.\n\n2. **What to be careful about:** Zero atomicity. There are no database transactions. If the stock decrement or email fails, the database and inventory will be left in an inconsistent state. It is also a monolithic \"god method,\" meaning changes have a wide blast radius.\n\n3. **Author's uncertainty:** The architecture and reliability. The header explicitly questions whether to split the function into separate services, add database transactions, or implement an Outbox pattern for the email.\n\n4. **Unhandled edge cases:** Concurrency race conditions on inventory (stock is checked, then decremented later without locks). Partial failures (database commits successfully, but email fails, leaving the order \"confirmed\" without a receipt). SMTP timeouts blocking the request thread."
+}

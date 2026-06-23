@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "signed",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. **What it does/why it exists**: Paginates a list of items into pages with metadata (current page, totals, navigation flags). Exists as a quick helper during a service migration to standardize pagination responses.\n\n2. **Be careful about**: Off-by-one errors in slicing (`start`/`end` indices). The `page` is 1-indexed but Python slicing is 0-indexed. Also, `page > total_pages` may return an empty slice rather than raising an error.\n\n3. **Author uncertainty**: Whether `page > total_pages` behaves correctly (e.g., silently returns empty list vs. error). Explicitly noted in the \"Open\" comment.\n\n4. **Unhandled edge cases**:\n   - Negative `page_size` (will cause incorrect `total_pages`).\n   - `page_size = 0` (division by zero in `total_pages`).\n   - Non-integer `page` or `page_size` (type errors).\n   - Empty `items` list (works but may need explicit handling).\n   - Very large `page` values (could cause `start` to exceed list bounds silently)."
+}

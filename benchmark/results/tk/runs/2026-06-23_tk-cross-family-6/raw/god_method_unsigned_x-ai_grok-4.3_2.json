@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "unsigned",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. Validates order (IDs, items, stock, qty>0), computes subtotal+tax+shipping (w/ per-item discounts), inserts order, decrements stock, sends SMTP confirmation. Exists as the core end-to-end order handler.\n2. Non-atomic side effects (DB writes then email); no transactions/rollback; stock races; assumes many config keys exist; naive datetime compare.\n3. Unknown \u2014 would need to ask the author.\n4. Email or later DB failures after partial commit; concurrent stock/orders; missing customer; timezone/datetime issues; bad SMTP creds; duplicate SKUs; discount edge dates."
+}

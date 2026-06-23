@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "signed",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. **What it does, why it exists:** Fetches articles for a given month via `db.get_articles_between`, optionally filters by category in Python, then does an N+1 lookup for each author to build `ArticleSummary` objects and aggregate word counts into a `Report`. Shipped for a demo; the header notes it \"scaled badly.\"\n\n2. **What to be careful about:** The N+1 (`get_author` inside the loop) will dominate cost at scale. The Dec\u2192Jan boundary logic is brittle. Filtering happens post-fetch, so large date ranges waste work. No handling if an author lookup fails.\n\n3. **Author uncertainty:** Whether to batch-fetch authors before production use, and whether to push the category filter into the SQL query instead of doing it in Python (both flagged in the header comments).\n\n4. **Unhandled edge cases:** Invalid month (0 or 13) causes `datetime` to raise. Missing or null `author_id` will crash on lookup. Empty list vs `None` for `categories` may behave unexpectedly. No timezone handling; `datetime.now()` is naive."
+}

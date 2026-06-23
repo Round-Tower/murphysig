@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "unsigned",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. **What it does & why it exists**: Processes e-commerce orders\u2014validates, calculates totals, updates stock, saves to DB, and emails a confirmation. Exists to automate order fulfillment.\n\n2. **Be careful about**: DB transactions (stock updates/inserts must be atomic), email delivery failures (no retries), and config validation (missing keys will crash).\n\n3. **Author seemed uncertain about**: SMTP port (defaulted to 587), tax/shipping logic (hardcoded fallbacks), and discount expiration (no timezone handling).\n\n4. **Unhandled edge cases**: Network failures (SMTP/DB), concurrent stock updates, invalid discount codes, missing customer email, or malformed `order_data` beyond basic checks."
+}

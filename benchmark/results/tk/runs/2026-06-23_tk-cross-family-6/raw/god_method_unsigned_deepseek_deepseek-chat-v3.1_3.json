@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "unsigned",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. Processes an e-commerce order: validates items/stock, calculates pricing, saves order, updates inventory, and sends confirmation email.\n\n2. Database operations and email sending aren't transactional - order could be saved but email fail. Discount logic applies per item rather than order-level.\n\n3. Unknown \u2014 would need to ask the author.\n\n4. SMTP failures, database connection issues, race conditions on stock updates, invalid customer email addresses, missing config keys (tax_rate, smtp_*)."
+}

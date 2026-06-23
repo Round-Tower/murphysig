@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "unsigned",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. **What it does / why it exists**: Splits a list into pages for UI/API pagination, returning metadata like current page, total pages, and navigation flags (`has_next`, `has_prev`).\n\n2. **Be careful about**:\n   - Off-by-one errors in slicing (`start`/`end`).\n   - Negative or zero `page` values (though it clamps `page < 1` to 1).\n   - Empty `items` list (handled, but verify edge cases).\n   - `page_size` of 0 (would cause division by zero in `total_pages`).\n\n3. **Author uncertainty**:\n   - No explicit handling for `page_size <= 0` (silent failure mode).\n   - No type hints for the return dict\u2019s values (e.g., `total_pages: int`).\n\n4. **Unhandled edge cases**:\n   - `page_size = 0` (crashes).\n   - `page` exceeds `total_pages` (returns empty slice, but no warning).\n   - Non-integer `page` or `page_size` (type hints exist, but runtime checks missing).\n   - Very large `page` (could cause `start` to exceed list bounds, though Python slicing handles it)."
+}

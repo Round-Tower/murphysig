@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "unsigned",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. **Purpose**: Converts temperatures between Celsius, Fahrenheit, and Kelvin. Exists to standardize temperature unit conversions in a type-safe way.\n\n2. **Careful about**: Rounding behavior (2 decimal places), absolute zero validation (only checked for Kelvin), and ensuring `from_unit`/`to_unit` are valid `TemperatureUnit` enums (not raw strings).\n\n3. **Author uncertainty**: Unknown \u2014 would need to ask the author. (No clear signs of uncertainty in the code.)\n\n4. **Unhandled edge cases**:\n   - Input `value` is `NaN` or `inf`.\n   - `from_unit` or `to_unit` is not a `TemperatureUnit` (e.g., string).\n   - Absolute zero checks for Celsius/Fahrenheit (e.g., -273.15\u00b0C or -459.67\u00b0F).\n   - Precision loss from rounding intermediate values."
+}

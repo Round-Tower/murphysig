@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "signed",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. Converts temps between C/F/K (via Celsius) + rounds to 2dp; exists for weather-service unit conversion. Only errors on sub-0K Kelvin output.\n2. Absolute-zero check applies only to Kelvin output (not input or other units); NaN/Inf handling; round-trip precision after rounding.\n3. Explicit NaN/Inf validation vs. letting them propagate.\n4. Sub-absolute-zero inputs in C/F; non-Kelvin outputs that should be invalid; float edge cases (Inf/NaN propagation, precision)."
+}

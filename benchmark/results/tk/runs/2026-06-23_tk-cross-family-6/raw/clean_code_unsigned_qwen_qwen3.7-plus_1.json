@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "unsigned",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. Converts temperatures between Celsius, Fahrenheit, and Kelvin. Exists to provide a type-safe, centralized conversion utility with standardized rounding.\n\n2. The absolute zero check only triggers for Kelvin targets. Adding a unit requires updating the Enum, both `match` blocks, and the absolute zero condition. The hardcoded `round(result, 2)` also truncates precision.\n\n3. Unknown \u2014 would need to ask the author.\n\n4. \n- Absolute zero is only validated for Kelvin targets (invalid source temps like -300\u00b0C converting to \u00b0F will succeed).\n- Passing non-Enum values for units causes an `UnboundLocalError` because the `match` statements lack a default/wildcard case.\n- No runtime type validation for the `value` parameter."
+}

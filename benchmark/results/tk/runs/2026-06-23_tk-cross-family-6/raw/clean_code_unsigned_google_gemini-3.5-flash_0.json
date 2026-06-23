@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "unsigned",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "**1. What does this code do, and why does it exist?**\nIt converts temperatures between Celsius, Fahrenheit, and Kelvin, rounding the result to two decimal places. It exists to provide a standard utility for temperature conversion with basic physical boundary validation.\n\n**2. What should someone modifying it be careful about?**\n* **Incomplete validation:** The absolute zero check is only enforced if the *target* unit is Kelvin. \n* **Eager rounding:** The function returns a rounded float, which can introduce precision loss if the output is used in further calculations.\n\n**3. What did the author seem uncertain about?**\nUnknown \u2014 would need to ask the author. (The code contains no comments, TODOs, or structures indicating uncertainty).\n\n**4. What edge cases or failure modes are likely unhandled?**\n* **Invalid inputs:** Temperatures below absolute zero are allowed as inputs (e.g., converting `-500` Kelvin to Celsius will not raise an error).\n* **Invalid non-Kelvin outputs:** Converting to Celsius or Fahrenheit values that are below absolute zero (e.g., -300\u00b0C) will not raise an error.\n* **Type errors:** Passing non-numeric types to `value` will crash at runtime."
+}

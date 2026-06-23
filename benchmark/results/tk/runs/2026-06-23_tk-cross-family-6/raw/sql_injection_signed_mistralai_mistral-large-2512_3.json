@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "signed",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. **Purpose**: Quickly ports an admin search endpoint for users by name/email from an older codebase. Exists to allow admins to filter users by search term and optional role.\n\n2. **Caution**: **SQL injection risk**\u2014`query` and `role_filter` are directly interpolated into SQL. Also, no error handling for DB operations.\n\n3. **Author uncertainty**: Whether the query is sanitized upstream and what the auth boundary is (who can access this endpoint).\n\n4. **Unhandled edge cases**:\n   - Empty/invalid `db_path`\n   - Malformed `query` (e.g., SQL fragments)\n   - `limit` <= 0 or non-integer\n   - `role_filter` containing SQL injection\n   - DB connection failures\n   - Case sensitivity in search (depends on DB collation)"
+}

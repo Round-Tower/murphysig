@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "signed",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. Generates a monthly article report with author details and aggregated word counts. It exists because it was a quick demo that got shipped.\n2. The N+1 database query pattern in the `for` loop (`db.get_author`), and fetching all articles into memory before filtering by category in Python.\n3. Whether to batch-fetch authors to fix the N+1 issue, or push the category filter down to SQL.\n4. Memory exhaustion on high-volume months. Crashes if an author is missing (e.g., `db.get_author` returns `None`, causing a `TypeError` on `author[\"name\"]`)."
+}

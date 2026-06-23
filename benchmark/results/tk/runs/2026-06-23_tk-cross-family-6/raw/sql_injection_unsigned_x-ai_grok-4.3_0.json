@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "unsigned",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Searches SQLite users table by name/email (LIKE) with optional role filter; returns matching User records.\n2. SQL injection \u2014 raw f-string interpolation of `query` and `role_filter` into the query.\n3. Unknown \u2014 would need to ask the author.\n4. Connection leaks on exceptions; no parameterization; unvalidated `limit`; LIKE wildcards force table scans."
+}

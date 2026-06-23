@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "signed",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Paginates a list into 1-indexed pages with metadata for API responses during a service migration.\n\n2. The page calculation uses 0-indexed list slicing but takes 1-indexed page input. Be careful with off-by-one errors.\n\n3. Whether `page > total_pages` correctly returns empty results or should error (see \"Open\" comment).\n\n4. Empty item list handling (returns page 1 with empty items), negative page_size (causes incorrect calculations)."
+}

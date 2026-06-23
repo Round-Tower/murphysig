@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "unsigned",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. It processes an e-commerce order end-to-end: validates inputs, calculates totals (applying discounts, tax, and shipping), persists the order, decrements inventory, and sends a confirmation email. It exists to execute the core checkout transaction.\n\n2. Transactional integrity. Order insertion, stock decrement, and email sending are not atomic. If the email fails, stock is already decremented and the order is saved. Additionally, `db.get_product` is queried twice per item (once for validation, once for pricing), causing unnecessary duplicate database hits.\n\n3. Unknown \u2014 would need to ask the author.\n\n4. \n- Race conditions: Stock is validated early but decremented late; concurrent checkouts can oversell.\n- Timezone crashes: `datetime.now()` is naive; comparing it to a timezone-aware `expires_at` will raise a `TypeError`.\n- Missing data: `customer[\"email\"]` raises a `KeyError` if the customer record lacks an email field.\n- Floating-point drift: Line-item prices are multiplied and summed without intermediate rounding, causing precision errors before the final `round()`."
+}

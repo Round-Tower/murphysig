@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "unsigned",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. Searches a SQLite user table by name/email substring and optional role filter. Exists for quick user lookup.\n2. **Critical: The code is vulnerable to SQL injection via `query` and `role_filter`.** Use parameters instead of string formatting.\n3. Unknown \u2014 would need to ask the author.\n4. Unhandled: SQL injection; no escaping of `%`/`_` in LIKE; no input validation; no error handling (e.g., missing table, DB errors); `limit` could be negative or extremely large."
+}

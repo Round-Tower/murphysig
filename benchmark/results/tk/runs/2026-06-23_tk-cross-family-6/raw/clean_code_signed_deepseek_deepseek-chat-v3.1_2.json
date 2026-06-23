@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "signed",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. Converts temperature values between Celsius, Fahrenheit, and Kelvin via intermediate Celsius conversion. Exists for weather service unit needs.\n\n2. Maintain consistent rounding to 2 decimal places. Ensure absolute-zero validation remains correct for all unit combinations (currently only checks Kelvin results).\n\n3. Whether to explicitly validate NaN/Infinity inputs or let them propagate (see Open comment).\n\n4. NaN/Infinity inputs unhandled. Absolute zero only validated for Kelvin outputs, not for other units. Negative Celsius/Fahrenheit values allowed even if below absolute zero."
+}

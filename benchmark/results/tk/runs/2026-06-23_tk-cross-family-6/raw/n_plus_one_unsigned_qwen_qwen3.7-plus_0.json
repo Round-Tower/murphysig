@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "unsigned",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Generates a structured monthly report of articles (including author names, word counts, and categories) from a database, optionally filtered by category. It exists to aggregate and format article metrics for a specific month.\n\n2. The N+1 query problem: `db.get_author()` is called inside the loop for every single article. Also, ensure DB records and `datetime.now()` share the same timezone context, as naive datetimes are used everywhere.\n\n3. Timezones and date math. The author uses naive datetimes throughout and manually calculates the next month's boundary (`if month == 12...`) instead of using standard tools like `calendar.monthrange` or `dateutil`.\n\n4. Unhandled: `db.get_author()` returning `None` or missing the `\"name\"` key; articles missing the `\"category\"` key when the category filter is applied; invalid `month` inputs (raises `ValueError`); and timezone mismatches between the naive query boundaries and potentially timezone-aware DB records."
+}

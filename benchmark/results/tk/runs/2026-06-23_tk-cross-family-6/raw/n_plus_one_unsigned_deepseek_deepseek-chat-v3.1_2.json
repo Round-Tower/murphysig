@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "unsigned",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. Produces a monthly summary of articles from a database, filtering by optional categories. It exists to aggregate article data for reporting.\n\n2. The `db` parameter\u2019s interface (`get_articles_between`, `get_author`) is assumed but not defined here; changing data access could break it. Month\u2011end date logic is manual (handles December specially).\n\n3. Unknown \u2014 would need to ask the author.\n\n4. Missing timezone handling for `datetime.now()` vs. stored datetimes; `db.get_articles_between` may raise exceptions on invalid inputs; `article[\"category\"]` could be missing if categories filtered later; empty `articles` list yields a report with zero values but no explicit handling."
+}

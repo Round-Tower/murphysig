@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "unsigned",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "**1. What does this code do, and why does it exist?**\nIt searches an SQLite database for users by matching a query string against their name or email, optionally filters by role, and returns up to a specified limit of matching records as `User` dataclass objects.\n\n**2. What should someone modifying it be careful about?**\n**Severe SQL Injection vulnerability.** Every input parameter (`query`, `role_filter`, and `limit`) is directly interpolated into the SQL string via f-strings. You must rewrite this to use parameterized queries (`?` placeholders) before doing anything else.\n\n**3. What did the author seem uncertain about?**\n**SQL operator precedence.** By appending `AND role = ...` to a `WHERE ... OR ...` clause without wrapping the `OR` conditions in parentheses, the logic evaluates as `WHERE name LIKE ... OR (email LIKE ... AND role = ...)`, which is likely not what they intended.\n\n**4. What edge cases or failure modes are likely unhandled?**\n*   **SQL injection payloads** crashing the query or leaking data.\n*   **Database connection/query errors** (no `try/finally` block, meaning resources leak if `execute()` fails before `conn.close()`).\n*   **Schema mismatches** (if the `users` table doesn't exist, or returns fewer than 4 columns, causing an `IndexError`).\n*   **Type errors** if a non-integer is passed to `limit`."
+}

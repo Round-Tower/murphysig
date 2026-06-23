@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "unsigned",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Returns wrong page slice + metadata for a list (off-by-one in start index); exists to do pagination.\n2. The start = page*page_size line (breaks everything); also page_size=0 and missing docstring keys.\n3. Whether to clamp page > total_pages and what the return shape should be.\n4. page_size<=0, page>total_pages, non-int args, empty input, huge lists.\n\n**Final answer**\n\n1. Returns wrong page slice + metadata for a list (off-by-one in start index); exists to do pagination.\n2. The start = page*page_size line (breaks everything); also page_size=0 and missing docstring keys.\n3. Whether to clamp page > total_pages and what the return shape should be.\n4. page_size<=0, page>total_pages, non-int args, empty input, huge lists."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "unsigned",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. Processes an e-commerce order: validates items, calculates totals (with discounts/tax/shipping), saves to DB, decrements stock, and sends confirmation email.\n\n2. Database calls and email sending are mixed with business logic. Changes to order flow could break multiple systems. SMTP credentials are handled directly.\n\n3. Unknown \u2014 would need to ask the author.\n\n4. Email failures don't roll back the order. No transaction around DB operations. Network/timeout errors unhandled. Discount validation is per-item rather than order-level."
+}

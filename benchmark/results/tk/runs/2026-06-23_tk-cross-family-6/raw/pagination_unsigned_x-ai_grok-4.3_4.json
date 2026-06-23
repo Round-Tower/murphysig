@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "unsigned",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. Returns a dict with a page slice of `items` plus pagination metadata. Exists to implement list pagination (e.g. for APIs/UI).\n\n2. Off-by-one bug: `start = page * page_size` skips the first page and most results. Docstring also omits `has_next`/`has_prev`.\n\n3. The return shape (extra keys present but undocumented).\n\n4. `page_size <= 0` (div-by-zero or nonsense), non-int inputs, `page >> total_pages`, and empty `items`."
+}

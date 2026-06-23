@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "unsigned",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. Generates a monthly Report of ArticleSummaries (with word totals) from DB articles in [year,month], optionally filtered by category. Exists to produce aggregated publication stats.\n\n2. DB schema/keys + author lookups; month=12 boundary; post-init mutation of Report counters; datetime.now() tz-na\u00efve.\n\n3. Unknown \u2014 would need to ask the author.\n\n4. Bad year/month; missing DB rows/keys; author fetch failure; empty input; negative/None word_count."
+}

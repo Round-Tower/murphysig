@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "unsigned",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Validates, calculates pricing (tax, discounts, shipping), persists the order, decrements inventory, and emails a confirmation. It is the core checkout transaction handler.\n\n2. It lacks database transactions. If the SMTP call fails after DB writes, stock is decremented but the customer isn't notified, leaving an inconsistent state. It also redundantly fetches product data from the DB twice per item.\n\n3. Unknown \u2014 would need to ask the author.\n\n4. \n- TOCTOU race conditions on stock (validated first, then decremented later).\n- No DB transaction rollback: SMTP failure leaves stock decremented and order saved.\n- `TypeError` if `discount[\"expires_at\"]` is returned as a string instead of a datetime object.\n- SMTP failure if `smtp_port` is configured to 465 (requires `SMTP_SSL`, not `starttls()`)."
+}

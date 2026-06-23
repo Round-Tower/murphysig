@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "unsigned",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. Converts a temperature value between Celsius, Fahrenheit, and Kelvin. It exists to provide a reusable, type-safe conversion utility.\n\n2. Be careful about the order of operations: all inputs are first converted to Celsius, then to the target unit. Changing formulas must keep this two-step pattern.\n\n3. Unknown \u2014 would need to ask the author.\n\n4. Absolute zero check is only performed for Kelvin outputs, not for equivalent coldness in other units. Also, very large inputs could cause floating-point issues."
+}

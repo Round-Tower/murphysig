@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "signed",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. **What it does & why it exists**: Processes an order end-to-end (validation, pricing, stock, DB updates, email confirmation) in one function due to a deadline. Exists to handle the entire order pipeline quickly.\n\n2. **Be careful about**: Tight coupling (DB, email, logic mixed), no transactions (partial failures could corrupt state), and no retry logic for email/smtp failures.\n\n3. **Author\u2019s uncertainty**: Whether to split into services, add transactions, or use an outbox pattern for emails (noted in comments).\n\n4. **Unhandled edge cases/failures**:\n   - SMTP failures (no retry/fallback).\n   - DB failures mid-transaction (e.g., stock decremented but order not inserted).\n   - Race conditions on stock (no locks).\n   - Discount code conflicts (e.g., expired during processing).\n   - Rounding errors in currency (minor but possible)."
+}

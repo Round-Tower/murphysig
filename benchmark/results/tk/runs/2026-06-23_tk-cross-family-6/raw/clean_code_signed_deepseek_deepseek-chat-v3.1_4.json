@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "signed",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. Converts temperature values between Celsius, Fahrenheit, and Kelvin. It exists to provide unit conversion for a weather service.\n\n2. Maintaining the conversion formulas' accuracy and ensuring the absolute zero check logic remains correct when modifying units or formulas.\n\n3. Whether to explicitly validate NaN/Infinity inputs or let them propagate (mentioned in the Open comment).\n\n4. NaN/Infinity inputs and negative values for Kelvin conversion (only Kelvin has an absolute zero check)."
+}

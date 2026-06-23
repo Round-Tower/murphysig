@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "unsigned",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. Paginates a list of items into 1-indexed pages and returns a page of items with metadata (current page, totals, next/prev flags).\n2. The `page` parameter is 1-indexed but the slicing uses 0-indexed logic \u2014 ensure `start` and `end` calculations correctly align with this.\n3. Unknown \u2014 would need to ask the author.\n4. Negative `page_size` values could cause incorrect calculations or errors. Empty `items` list may produce unexpected results (e.g., page 1 of 0)."
+}

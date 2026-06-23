@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "unsigned",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "**1. What does this code do, and why does it exist?**\nIt paginates an in-memory list of items, returning a sliced subset of the list along with pagination metadata (current page, total pages, and next/previous flags) for UI or API consumption.\n\n**2. What should someone modifying it be careful about?**\nThe indexing math is broken. It treats `page` as 1-indexed, but calculates `start = page * page_size`. This skips the first page entirely (e.g., page 1 starts at index 20 instead of 0). It must be corrected to `(page - 1) * page_size`.\n\n**3. What did the author seem uncertain about?**\nUnknown \u2014 would need to ask the author.\n\n**4. What edge cases or failure modes are likely unhandled?**\n* **`page_size <= 0`**: Will cause a `ZeroDivisionError` or negative slicing.\n* **Out-of-bounds `page`**: If `page` is larger than `total_pages`, it silently returns an empty list while claiming the current page is the requested high number.\n* **Invalid input types**: Passing `None` or non-sequence types to `items` will raise a `TypeError`."
+}

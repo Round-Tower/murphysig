@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "unsigned",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "**1. What does this code do, and why does it exist?**\nIt processes e-commerce orders. It validates items and stock, calculates pricing, discounts, taxes, and shipping, saves the order to the database, decrements inventory, and sends a confirmation email.\n\n**2. What should someone modifying it be careful about?**\n* **Lack of database transactions:** Database writes (inserting the order and decrementing stock) and external API calls (SMTP) are not atomic. If the email send fails, the database modifications are not rolled back.\n* **Performance (N+1 queries):** It queries `db.get_product` multiple times in loops, once for validation and again for pricing.\n\n**3. What did the author seem uncertain about?**\nUnknown \u2014 would need to ask the author.\n\n**4. What edge cases or failure modes are likely unhandled?**\n* **Race conditions:** Concurrent orders can read the same stock level before decrementing it, leading to overselling.\n* **SMTP failures:** If the mail server is down, the entire function crashes *after* the order is saved and stock is decremented.\n* **Float precision errors:** Using floats instead of `Decimal` for financial calculations.\n* **Timezone mismatches:** Comparing naive `datetime.now()` against `discount[\"expires_at\"]`."
+}

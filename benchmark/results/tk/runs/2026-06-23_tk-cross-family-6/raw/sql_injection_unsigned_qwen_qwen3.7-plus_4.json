@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "unsigned",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. It searches a SQLite database for users matching a substring in their name or email, optionally filtered by role, returning a list of `User` dataclasses. It exists to provide basic user search functionality.\n\n2. **SQL injection and connection leaks.** The query uses f-strings to interpolate `query`, `role_filter`, and `limit`. You must use parameterized queries (`?`). Additionally, the connection lacks a `try...finally` or `with` block; an exception during execution will leak the database connection.\n\n3. Unknown \u2014 would need to ask the author.\n\n4. \n- **Unescaped LIKE wildcards:** If `query` contains `%` or `_`, they will be treated as SQL wildcards, not literal characters.\n- **Database/Schema errors:** No error handling for missing tables, locked database files, or schema mismatches.\n- **Invalid limits:** No runtime validation to ensure `limit` is a positive integer."
+}

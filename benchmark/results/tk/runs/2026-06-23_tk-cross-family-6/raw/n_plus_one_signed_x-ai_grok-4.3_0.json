@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "signed",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Fetches articles for a given month, optionally filters by category in Python, then builds a Report of ArticleSummaries (each doing a per-article author lookup). Exists for a demo; noted as having scaled poorly due to classic N+1.\n\n2. The loop calling db.get_author on every article; category filter runs after fetch; Dec year rollover date math; mutation of the returned Report object; any DB exceptions.\n\n3. Batch-fetching authors and pushing the category filter into SQL (both flagged in the header comments).\n\n4. Missing authors, bad/missing article fields, DB connection or query failures, empty input, very large result sets, timezone or datetime edge cases."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "signed",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. **What it does:** Admin search endpoint that queries SQLite for users by name/email substring (LIKE), with optional role filter, returning `User` dataclass rows. Ported from older codebase.\n\n2. **Careful about:** SQL injection. Query and `role_filter` are interpolated directly into SQL with no escaping or parameterization. Also: no exception handling around DB ops, connection not closed on error.\n\n3. **Author uncertainty:** Explicitly flagged in comments: whether `query` is sanitized upstream, and what the auth boundary is for this endpoint.\n\n4. **Unhandled cases:** SQL injection (most critical); LIKE metacharacters (`%`, `_`) in query treated as wildcards; negative/zero `limit`; DB errors (connect, query, fetch) uncaught; connection leak if `execute()` or `fetchall()` raises."
+}

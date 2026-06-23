@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "signed",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "**1. What does this code do, and why does it exist?**\nIt processes an incoming order end-to-end (validates stock, calculates totals/discounts, saves the order, decrements inventory, and sends a confirmation email). It exists as a single, combined function because it was rushed to meet a deadline.\n\n**2. What should someone modifying it be careful about?**\n* **Lack of atomicity:** There are no database transactions. If the code crashes midway (e.g., during stock decrement or email sending), the database will be left in a corrupted, inconsistent state.\n* **Performance bottlenecks:** It makes blocking, synchronous SMTP network calls and redundant database queries (e.g., fetching the same product twice per item). \n\n**3. What did the author seem uncertain about?**\nThe author explicitly flagged uncertainty about:\n* Whether to split this \"god-method\" into separate microservices.\n* Whether to implement database transactions.\n* Whether to use an outbox pattern for email delivery instead of synchronous SMTP.\n\n**4. What edge cases or failure modes are likely unhandled?**\n* **Race conditions:** Stock is checked at the beginning but decremented at the end; concurrent orders can cause overselling.\n* **SMTP/Network failures:** If the email server is slow or down, the entire request will hang or crash after the order is already saved.\n* **Timezone issues:** Uses naive `datetime.now()` for discount expiration and creation timestamps.\n* **Missing data crashes:** Throws unhandled `KeyError` exceptions if config values or the customer record are missing."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "signed",
+  "model": "meta-llama/llama-4-maverick",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. This code performs a search on a SQLite database for users matching a given query string in their name or email, with optional filtering by role and a limit on the number of results. It exists to support an admin search endpoint.\n\n2. Someone modifying it should be careful about SQL injection vulnerabilities, as the query, role_filter, and limit parameters are directly interpolated into the SQL query without proper sanitization.\n\n3. The author seemed uncertain about whether the query is sanitized upstream and the authentication boundary for this endpoint.\n\n4. Likely unhandled edge cases or failure modes include database connection failures, malformed or missing database files, and invalid or malicious input (e.g., SQL injection attempts) in the query, role_filter, or limit parameters."
+}

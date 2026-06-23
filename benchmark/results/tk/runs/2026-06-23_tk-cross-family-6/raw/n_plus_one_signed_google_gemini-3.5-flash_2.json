@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "signed",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "**1. What does this code do, and why does it exist?**\nIt generates a monthly article report (summarizing titles, authors, and word counts) filtered by category. It was quickly shipped for a demo but scales poorly.\n\n**2. What should someone modifying it be careful about?**\nPerformance and database load. It contains a classic N+1 query bug, calling `db.get_author` individually inside a loop for every article.\n\n**3. What did the author seem uncertain about?**\nWhether to batch-fetch authors before production use, and whether to push the category filtering down to the SQL/database layer instead of doing it in Python.\n\n**4. What edge cases or failure modes are likely unhandled?**\n* **Missing authors:** If `db.get_author` returns `None` (e.g., deleted user), the code will crash on `author[\"name\"]`.\n* **Timezone issues:** It uses naive `datetime` objects, which may cause off-by-one-day filtering errors depending on database timezone settings.\n* **Scale failure:** Large volume months will cause database timeouts or memory exhaustion due to the N+1 queries and in-memory filtering."
+}

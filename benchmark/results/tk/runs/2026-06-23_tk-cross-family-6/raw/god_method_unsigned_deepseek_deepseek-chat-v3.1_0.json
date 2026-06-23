@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "unsigned",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Validates, prices, and inserts an order; updates stock; emails confirmation. Exists to process orders end-to-end.\n2. Ensure database operations and email sending are atomic/transactional; careful with config key assumptions.\n3. Unknown \u2014 would need to ask the author.\n4. Partial stock decrement on later failure; SMTP errors; missing config keys; currency rounding; concurrent stock updates."
+}

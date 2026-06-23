@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "unsigned",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. It generates a monthly summary report of articles (optionally filtered by category), aggregating total word counts and article counts, and compiling individual article summaries with author names.\n\n2. The N+1 database query problem: `db.get_author()` is called inside the article loop. Also, be careful with the date boundary logic (inclusive start, exclusive end) to ensure `db.get_articles_between` strictly respects those datetime boundaries.\n\n3. Unknown \u2014 would need to ask the author.\n\n4. Timezone mismatches (uses naive datetimes), missing authors (if `db.get_author` returns `None`, `author[\"name\"]` raises a `TypeError`), missing keys in DB dictionary returns (`KeyError`), and case-sensitivity or exact-match failures in the `categories` filter."
+}

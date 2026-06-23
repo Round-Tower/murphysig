@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "unsigned",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. **Purpose**: Paginates a list of items into chunks (`page_size`), returning a dict with the current page's items and metadata (page count, next/prev flags). Exists to split large datasets for UI/API consumption.\n\n2. **Careful about**:\n   - **Off-by-one errors**: `page` is 1-indexed; ensure callers use 1+.\n   - **Empty lists**: Works but returns empty `items` and `total_pages=0`.\n   - **Negative/zero `page_size`**: Unhandled (will cause division issues).\n   - **Immutable input**: Doesn\u2019t modify `items` but assumes it\u2019s stable.\n\n3. **Author uncertainty**:\n   - No explicit handling for `page > total_pages` (returns empty `items` but no warning).\n   - No validation for `page_size <= 0` (silent failure).\n   - Unclear if `items` is expected to be pre-sorted.\n\n4. **Unhandled edge cases**:\n   - `page_size = 0` (division by zero in `total_pages`).\n   - `page_size < 0` (logical error, same as above).\n   - `page > total_pages` (returns empty `items`; may confuse callers).\n   - Non-integer `page`/`page_size` (type hints don\u2019t enforce runtime checks).\n   - `items` is `None` or not a list (will raise `TypeError`)."
+}

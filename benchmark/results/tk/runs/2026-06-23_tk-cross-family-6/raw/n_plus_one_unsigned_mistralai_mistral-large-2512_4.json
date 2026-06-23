@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "unsigned",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. **Purpose**: Generates a monthly report of articles (filtered by category if provided), summarizing metadata like title, author, word count, etc. Exists to aggregate and present publishing activity for a given month.\n\n2. **Modification caution**: DB query assumptions (`get_articles_between`, `get_author` return dicts with specific keys), timezone handling in `published_at`, and `datetime.now()` (may not be timezone-aware). Also, `total_words`/`article_count` must stay in sync with `summaries`.\n\n3. **Author uncertainty**: Whether `db.get_author()` can fail or return `None` (no null checks). Also, whether `published_at` is timezone-aware (code treats it as naive).\n\n4. **Unhandled edge cases**:\n   - Empty/invalid `year`/`month` (e.g., month=13).\n   - `categories` containing non-existent categories (no validation).\n   - DB query failures (no error handling).\n   - `author_id` missing or invalid (would crash on `author[\"name\"]`).\n   - `word_count` negative or missing (no validation)."
+}

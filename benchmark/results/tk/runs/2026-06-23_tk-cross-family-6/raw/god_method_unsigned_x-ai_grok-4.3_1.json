@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "unsigned",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. Validates order data, computes totals (with discounts/tax/shipping), persists to DB, decrements stock, and sends confirmation email. Exists to encapsulate end-to-end order fulfillment.\n\n2. Non-transactional DB ops + email after insert (partial failure risk); no SMTP error handling; stock race conditions; direct config[\"key\"] access will raise if missing.\n\n3. Discount expiry comparison and datetime handling (naive now(), no tz); whether discount fetch failure should be silent.\n\n4. SMTP/config failures after order is written; concurrent overselling; bad emails; missing config keys; negative/overflow totals; duplicate SKUs in one order."
+}

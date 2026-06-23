@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "signed",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. Paginates a list into 1-indexed pages; exists for a service migration needing quick pagination.\n2. The `start` index is wrong\u2014it should be `(page - 1) * page_size`, not `page * page_size`. This will skip items.\n3. The author was uncertain about `page > total_pages` behavior (see Open comment).\n4. Page numbers beyond `total_pages` produce empty slices (likely unintended). Negative `page_size` could break."
+}

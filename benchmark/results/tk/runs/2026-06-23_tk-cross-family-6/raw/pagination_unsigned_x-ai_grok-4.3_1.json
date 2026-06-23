@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "unsigned",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. **What it does**: Slices a list into pages (1-indexed) and returns items + metadata (`total_pages`, `has_next`, etc.). Exists to do simple in-memory pagination.\n\n2. **Careful about**: The line `start = page * page_size` is off-by-one (should be `(page-1) * page_size`). Also silently clamps `page < 1` and omits `has_next`/`has_prev` from the docstring.\n\n3. **Author uncertainty**: Whether `has_next`/`has_prev` belonged in the return value (they're missing from the docstring).\n\n4. **Unhandled cases**: `page_size <= 0`, `page > total_pages`, negative page numbers beyond the clamp, and the fact that it always returns empty results due to the start-index bug."
+}

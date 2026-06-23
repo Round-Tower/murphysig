@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "signed",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. **Purpose**: Processes an e-commerce order end-to-end (validation, pricing, stock, DB updates, email confirmation). Exists as a rushed, monolithic function to meet a deadline.\n\n2. **Caution**: Avoid adding more logic\u2014it\u2019s already a god-method. Changes risk breaking atomicity (e.g., stock decrement after order insert but before email). Test DB rollback on failure.\n\n3. **Author uncertainty**: Whether to split into services, add transactions, or use an outbox pattern for emails (see `# Open` comments).\n\n4. **Unhandled edge cases**:\n   - SMTP failures (no retry/fallback).\n   - DB failures mid-execution (no rollback).\n   - Race conditions on stock decrements.\n   - Discount code expiration race (checked at calculation, not at use).\n   - No validation for `config` keys (e.g., missing `smtp_user`).\n   - No handling for `customer[\"email\"]` missing."
+}

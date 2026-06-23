@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "signed",
+  "model": "meta-llama/llama-4-maverick",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. This code processes an incoming order end-to-end, validating the order data, calculating the total cost, saving the order to the database, decrementing stock, and sending a confirmation email to the customer. It exists as part of an order pipeline.\n\n2. Someone modifying it should be careful about maintaining the end-to-end functionality while being aware of the acknowledged technical debt (e.g., god-method anti-pattern) and potential issues like transactional integrity and failure handling.\n\n3. The author seemed uncertain about splitting the functionality into separate services, adding a transaction, and implementing an outbox for email, as indicated by the \"Open\" comments.\n\n4. Likely unhandled edge cases or failure modes include database failures, email sending failures, and issues related to transactional integrity (e.g., stock decrement failing after order insertion)."
+}

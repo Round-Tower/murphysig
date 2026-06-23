@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "signed",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. **What it does:** `search_users` runs a LIKE-based substring search on `users.name`/`email` (with optional role filter and row limit), returning `User` rows. Exists as a quick port of an admin search endpoint.\n\n2. **Careful about:** SQL injection\u2014the query and `role_filter` are interpolated directly into the SQL string with no parameterization or escaping.\n\n3. **Author uncertainty:** Whether `query` is sanitized upstream and where the auth boundary is (explicitly flagged in the header).\n\n4. **Unhandled cases:** SQL injection; unescaped `%`/`_` in query breaking the pattern match; DB errors/connection failures; negative/zero `limit`; missing `conn.close()` on execute failure."
+}

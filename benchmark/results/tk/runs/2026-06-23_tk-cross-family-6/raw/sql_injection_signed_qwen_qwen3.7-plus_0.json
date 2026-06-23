@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "signed",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Searches an SQLite database for users by name or email (with optional role filtering) for an admin endpoint. It exists as a quick port from an older codebase.\n\n2. Severe SQL injection: `query`, `role_filter`, and `limit` are interpolated directly via f-strings. Use parameterized queries (`?`). Additionally, connections will leak if `execute()` throws an exception because `conn.close()` is bypassed; use a context manager (`with`).\n\n3. Whether inputs are sanitized upstream, what the authentication boundary is, and whether the copied SQL pattern is actually valid (Confidence: 0.4).\n\n4. Unescaped single quotes in inputs breaking SQL syntax or enabling injection. Database connection leaks on execution errors. Unvalidated `limit` parameter (e.g., negative numbers or memory-exhausting values)."
+}

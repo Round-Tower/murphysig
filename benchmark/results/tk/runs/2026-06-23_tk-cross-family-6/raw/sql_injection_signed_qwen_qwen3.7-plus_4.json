@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "signed",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. Queries an SQLite database for users by name or email with optional role filtering, returning a list of `User` objects. It exists as a quick port of a legacy admin search endpoint.\n\n2. It has critical SQL injection vulnerabilities. `query`, `role_filter`, and `limit` are directly interpolated via f-strings instead of using parameterized queries. Additionally, the database connection lacks a context manager, causing connection leaks if an exception occurs.\n\n3. The metadata explicitly states they were unsure if the query is sanitized upstream and what the authentication boundary is. The low confidence score (0.4) and \"not validated\" heuristic show they knew the implementation was a rushed port.\n\n4. Silent creation of an empty database file if `db_path` doesn't exist, which will subsequently crash when querying the missing `users` table. Unvalidated `limit` values (e.g., negative numbers or non-integers passed at runtime). Connection leaks on execution errors."
+}

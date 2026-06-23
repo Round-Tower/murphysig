@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "signed",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "**1. What does this code do, and why does it exist?**\nIt processes an e-commerce order end-to-end (validates items, calculates totals/discounts, saves to the database, decrements stock, and sends a confirmation email). It exists as a single, tightly-coupled \"god-method\" because it was rushed to meet a deadline.\n\n**2. What should someone modifying it be careful about?**\nThe lack of database transactions. Because operations are executed sequentially and lack rollback logic, a failure midway (e.g., during stock decrement or SMTP email sending) will leave the system in an inconsistent state (e.g., order created but stock not updated).\n\n**3. What did the author seem uncertain about?**\nWhether to split the code into separate services, add database transactions, or implement an transactional outbox pattern for sending emails.\n\n**4. What edge cases or failure modes are likely unhandled?**\n*   **Race conditions:** Stock is checked at the beginning of the function but not decremented until the end, allowing over-selling.\n*   **Blocking SMTP calls:** Email is sent synchronously; if the SMTP server is slow or down, the entire request hangs or crashes after database writes.\n*   **Floating-point precision:** Currency calculations use floats instead of decimals, risking rounding errors.\n*   **Timezone issues:** Uses naive `datetime.now()` which can cause inconsistencies depending on server location."
+}

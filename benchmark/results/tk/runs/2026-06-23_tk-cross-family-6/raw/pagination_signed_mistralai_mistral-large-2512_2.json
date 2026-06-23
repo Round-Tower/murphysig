@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "signed",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. **What it does & why it exists**: Paginates a list of items, returning a dict with a slice of items and metadata (current page, total pages, etc.). Exists as a quick helper during a service migration to standardize pagination responses.\n\n2. **Be careful about**: Off-by-one errors in pagination math (e.g., `start`/`end` indices). The `page` is 1-indexed, but list slicing is 0-indexed. Also, `page_size` defaults to 20\u2014ensure this aligns with callers' expectations.\n\n3. **Author\u2019s uncertainty**: Whether `page > total_pages` behaves correctly (it returns an empty slice, which may or may not be desired). See the \"Open\" comment.\n\n4. **Unhandled edge cases**:\n   - Empty `items` list (works but may need explicit handling).\n   - Negative `page_size` (crashes).\n   - Non-integer `page`/`page_size` (crashes).\n   - `page_size = 0` (divide-by-zero in `total_pages`).\n   - Very large `page` (unbounded, could return empty slice silently)."
+}

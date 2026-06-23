@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "signed",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. **What it does and why it exists:** It validates, prices, saves, decrements inventory for, and emails a confirmation for an e-commerce order. It exists as an intentional \"god-method\" hack to meet a strict deadline.\n\n2. **What to be careful about:** There are no database transactions. If the stock decrement or email sending fails *after* `db.insert_order`, the system enters an inconsistent state (order confirmed, but stock/email incomplete). Additionally, it queries the database for the exact same product twice per item (once to validate, once to price).\n\n3. **What the author seemed uncertain about:** The system's architecture and reliability. The header explicitly questions whether to split this into separate services, add database transactions, or implement an outbox pattern for the email.\n\n4. **Unhandled edge cases or failure modes:**\n   * **Race conditions on inventory:** Stock is validated, then decremented much later without database locks or transactions.\n   * **Late-stage crashes:** SMTP failures or missing customer emails will throw unhandled exceptions *after* the order is persisted and stock is already decremented.\n   * **Timezone bugs:** Comparing local server `datetime.now()` against DB-stored discount expiration times.\n   * **Floating-point accumulation:** Math is done on floats and only rounded at the very end, rather than per line-item."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "signed",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. SQL search on users by name/email (opt. role filter + limit); returns User list. Quick port for admin search endpoint.\n\n2. SQL injection (raw f-string interpolation); no upstream sanitization guaranteed; conn not auto-closed on error; no auth here.\n\n3. Query sanitization upstream + auth boundary.\n\n4. Injection, DB errors, missing indexes, LIKE perf/escaping, negative/zero limit, empty query, role case sensitivity."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "signed",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. **Purpose**: Processes an order end-to-end\u2014validates, calculates totals, updates stock, inserts into DB, and sends a confirmation email. Exists to handle the entire order flow in one place due to a deadline.\n\n2. **Caution**: Avoid adding more logic\u2014it\u2019s already a god-method. Watch for side effects (stock updates, email) that aren\u2019t transactional. Test stock decrements and email failures.\n\n3. **Author uncertainty**: Whether to split into services, add transactions, or use an outbox for emails (noted in the MurphySig).\n\n4. **Unhandled edge cases**:\n   - Email failures (no retry/rollback).\n   - Concurrent stock updates (race conditions).\n   - Network/db failures during stock updates or order insertion.\n   - Missing/invalid `config` keys (e.g., `smtp_host`).\n   - Discount code expiration during processing.\n   - Negative prices after discounts."
+}

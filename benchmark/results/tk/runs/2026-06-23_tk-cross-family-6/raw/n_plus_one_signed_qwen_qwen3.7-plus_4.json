@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "signed",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. It generates a monthly article report (including author names and word counts) for a specific month/year and optional categories. It exists as a quick demo that was shipped but never optimized for scale.\n\n2. The N+1 database query problem (`db.get_author` inside the article loop). Also, memory and performance limits: it fetches all monthly articles into memory and filters categories in Python instead of pushing the filter to SQL.\n\n3. The header comments explicitly question whether to batch-fetch authors or push the category filter to SQL before production use, and note a low confidence score (0.5) regarding its scalability.\n\n4. 1) `KeyError` crashes if `db.get_author()` returns `None` (e.g., a deleted author). 2) Out-of-memory (OOM) failures if a single month has too many articles, since they are loaded entirely into a Python list. 3) Timezone bugs, as `datetime.now()` is naive but `published_at` might be timezone-aware."
+}

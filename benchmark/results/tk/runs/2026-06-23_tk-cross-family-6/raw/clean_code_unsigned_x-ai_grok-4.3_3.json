@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "unsigned",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. **What it does**: Converts temperatures between Celsius, Fahrenheit, and Kelvin; exists as a utility with absolute zero validation for Kelvin outputs.\n2. **Careful about**: Absolute zero check only validates Kelvin *outputs*, not inputs. Converting negative Kelvin values to Celsius/Fahrenheit silently produces physically impossible results.\n3. **Author uncertainty**: Whether to initialize `celsius` and `result` variables before the match statements (left as bare annotations).\n4. **Unhandled edges**: Negative Kelvin inputs aren't validated when `to_unit` is Celsius or Fahrenheit; docstring claims to prevent results \"below absolute zero\" but only enforces this for Kelvin outputs."
+}

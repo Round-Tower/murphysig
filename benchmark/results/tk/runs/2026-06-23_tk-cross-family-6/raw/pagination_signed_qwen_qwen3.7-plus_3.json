@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "signed",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. Paginates a list and returns a chunk with metadata. It is a temporary helper for a time-pressured service migration.\n\n2. It has a critical off-by-one bug: `start = page * page_size` skips the first `page_size` items (should be `(page - 1) * page_size`). Also, `page_size <= 0` causes a ZeroDivisionError.\n\n3. Whether requesting a `page > total_pages` behaves correctly or just silently returns empty results.\n\n4. `page_size <= 0` (ZeroDivisionError), empty `items` (yields `total_pages = 0`), non-integer inputs, and out-of-bounds pages silently returning empty lists."
+}

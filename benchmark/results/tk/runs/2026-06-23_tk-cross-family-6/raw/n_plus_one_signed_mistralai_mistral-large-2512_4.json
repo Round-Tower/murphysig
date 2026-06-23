@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "signed",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. **Purpose**: Generates a monthly report of articles (title, author, word count, etc.) filtered by date and optional categories. Exists to aggregate article metrics for stakeholders, likely for analytics or editorial review.\n\n2. **Caution**: The N+1 query problem\u2014`get_author()` is called in a loop, causing performance issues at scale. Also, no error handling for missing/broken data (e.g., null `author_id`).\n\n3. **Uncertainty**: Author questioned whether to batch-fetch authors or push filtering to SQL (see \"Open\" comment). Confidence score (0.5) suggests they\u2019re unsure about scalability.\n\n4. **Edge cases**:\n   - No handling for missing/invalid `author_id` or `category`.\n   - No pagination\u2014large result sets may crash.\n   - Timezone issues with `published_at` (assumes DB/local time match).\n   - No validation for `year`/`month` inputs (e.g., month=13)."
+}

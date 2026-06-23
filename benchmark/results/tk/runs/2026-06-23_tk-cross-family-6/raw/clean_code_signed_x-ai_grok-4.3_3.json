@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "signed",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. Converts float temps between C/F/K (via Celsius) for a weather service; rounds to 2 decimals and rejects only Kelvin results below 0 K.\n\n2. Absolute-zero check applies only to Kelvin output (not inputs or other units); NaN/Inf and negative inputs propagate or produce odd results.\n\n3. Whether to validate NaN/Inf inputs or let them pass through.\n\n4. Inputs below absolute zero; non-finite values; direct Kelvin-to-Kelvin negative values; rounding-induced precision loss on round-trip conversions."
+}

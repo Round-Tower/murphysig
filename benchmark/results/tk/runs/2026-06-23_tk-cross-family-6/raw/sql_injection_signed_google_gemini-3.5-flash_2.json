@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "signed",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "**1. What does this code do, and why does it exist?**\nIt searches a SQLite database for users by name or email (with optional role filtering and limits). It exists as a quickly ported admin search endpoint from an older codebase.\n\n**2. What should someone modifying it be careful about?**\n**Severe SQL injection vulnerabilities.** The `query`, `role_filter`, and `limit` variables are interpolated directly into the SQL string using f-strings. You must refactor this to use parameterized queries (`?` placeholders).\n\n**3. What did the author seem uncertain about?**\nWhether the search query is sanitized upstream, and what the authorization boundary is for this endpoint.\n\n**4. What edge cases or failure modes are likely unhandled?**\n*   SQL injection exploits or syntax errors caused by special characters (e.g., `'`) in user inputs.\n*   Database connection leaks if an exception occurs before `conn.close()` (no `try/finally` block).\n*   SQL syntax errors if `limit` is passed as a non-integer or malicious string."
+}

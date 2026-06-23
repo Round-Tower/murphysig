@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "signed",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. Converts \u00b0C/\u00b0F/K temps via Celsius intermediate (with 2-decimal round) and rejects results below 0 K; exists for weather-service unit conversion.\n2. Absolute-zero check applies only to K output; inputs below 0 K can silently produce invalid \u00b0C/\u00b0F; floating-point/rounding behavior; enum extension.\n3. Whether to validate NaN/Inf inputs (see \"Open\" comment).\n4. Sub-0 K inputs that don't target K; NaN/Inf; non-finite arithmetic; missing absolute-zero check on input values."
+}

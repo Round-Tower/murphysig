@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "unsigned",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Queries a DB for articles in a given month (optionally category-filtered), builds a Report with per-article summaries + aggregates (total_words, article_count). Exists to produce structured monthly analytics output.\n2. DB method contracts + data shapes; missing authors; N+1 cost in the loop; Dec rollover; mutation of Report after construction.\n3. Unknown \u2014 would need to ask the author.\n4. Invalid month/year; absent authors; timezone/datetime edge cases; category match sensitivity; large result sets."
+}

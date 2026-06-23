@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "signed",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. Validates/prices/persists/emails an order end-to-end. Exists as deliberate tech debt to meet a deadline.\n\n2. No transactions (partial failure risk), side effects everywhere, SMTP in main path, duplicate DB lookups, mutable shared state.\n\n3. Whether to split services, add transactions, or use outbox for email (explicitly listed as open).\n\n4. SMTP or DB failures after insert, stock races, expired/missing discounts, missing config keys, customer email absent, no retries or idempotency."
+}

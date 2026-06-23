@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "unsigned",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. Generates a monthly summary report of articles from a database, filtering by optional categories. It exists to aggregate article data.\n2. The `db` parameter's interface (`.get_articles_between`, `.get_author`) is implicit; changing DB structure risks breaking it. Also, timezone handling in datetime objects is unspecified.\n3. Unknown \u2014 would need to ask the author.\n4. Timezone mismatches between datetimes, missing authors (`.get_author` may fail), and large article lists causing performance issues. Input validation (e.g., invalid month) is absent."
+}

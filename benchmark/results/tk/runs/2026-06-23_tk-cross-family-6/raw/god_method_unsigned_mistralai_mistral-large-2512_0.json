@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "unsigned",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. **What it does & why it exists**: Processes e-commerce orders\u2014validates input, calculates totals, updates stock, saves to DB, and emails a confirmation. Exists to automate the order fulfillment pipeline.\n\n2. **Be careful about**:\n   - Race conditions in stock updates (no transaction/locking).\n   - Email delivery failures (no retries/fallback).\n   - Floating-point rounding errors in financial calculations.\n   - SMTP config defaults (e.g., `smtp_port` assumes 587 if missing).\n\n3. **Author\u2019s uncertainty**:\n   - SMTP port default (used `config.get(\"smtp_port\", 587)`).\n   - Free shipping threshold (hardcoded fallback `100`).\n   - Whether discount codes can stack (no explicit check).\n\n4. **Unhandled edge cases**:\n   - Network failures during DB/SMTP ops (no retries/rollback).\n   - Invalid customer email (no validation).\n   - Discount codes applied to out-of-stock items (checked *after* discount).\n   - Negative prices from discounts (no floor check).\n   - Concurrent orders overselling stock (no atomicity)."
+}

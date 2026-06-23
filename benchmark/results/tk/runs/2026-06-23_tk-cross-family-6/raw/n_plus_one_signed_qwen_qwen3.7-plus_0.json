@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "signed",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Generates a monthly report of articles with author details and aggregated word counts. It exists as a quick demo feature that was shipped.\n\n2. The N+1 database query pattern (fetching authors one-by-one in a loop) and in-memory category filtering. Modifying it requires batching author fetches and pushing the filter to SQL. Also, `datetime.now()` is timezone-naive.\n\n3. Whether to batch-fetch authors and push the category filter to SQL before production use (explicitly noted in the header comments).\n\n4. Missing authors (crashing on `author[\"name\"]`), memory exhaustion from loading all monthly articles into memory at once, timezone mismatches (naive `datetime.now()` vs potentially aware DB dates), and invalid `year`/`month` inputs."
+}

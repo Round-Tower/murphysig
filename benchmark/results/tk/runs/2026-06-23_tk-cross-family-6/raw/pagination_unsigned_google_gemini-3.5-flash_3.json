@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "unsigned",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. **What does this code do, and why does it exist?**\n   It paginates an in-memory list of items, returning a slice of the list along with pagination metadata (total pages, total items, and previous/next page flags). It exists to provide standard pagination utility for in-memory datasets.\n\n2. **What should someone modifying it be careful about?**\n   The indexing logic is currently broken. Because `page` is 1-indexed, `start = page * page_size` skips the first page entirely (e.g., page 1 starts at index 20 instead of 0). It must be corrected to `(page - 1) * page_size`.\n\n3. **What did the author seem uncertain about?**\n   Unknown \u2014 would need to ask the author.\n\n4. **What edge cases or failure modes are likely unhandled?**\n   * `page_size <= 0` will cause a `ZeroDivisionError`.\n   * A requested `page` that is far larger than `total_pages` returns an empty list but incorrectly preserves the high `page` number in the metadata.\n   * Passing a non-list or `None` for `items` will raise a `TypeError` (e.g., when calling `len()`)."
+}
