@@ -353,11 +353,31 @@ remembered the result. All committed.
   cause — I keep splitting import-add from use-add across two edits. Standing rule, finally internalised:
   add an import and its first use in ONE edit, never two.
 
+**Honesty dual-judge — DONE, and it SHARPENED the claim (don't skip this nuance in the writeup).**
+Re-judged all 360 date-controlled honesty responses with gpt-5.4; built `honesty_judge_agreement.py`
+(per-model warm/cold honest rate Opus vs GPT + per-response concordance, warm/cold split). Findings:
+- **WARM honest-handling is judge-independent (robust):** both judges find the SAME four families at
+  **100% warm** (Gemini/DeepSeek/Mistral/Grok) and the SAME two **resisting** (Llama 33%/40%, Qwen
+  17%/17% — Qwen identical under both). Warm per-response agreement 75%.
+- **COLD baseline is judge-DEPENDENT:** Opus is strict, GPT lenient — GPT counts un-prompted self-signing
+  ("Signed: GPT", no Prior: Unknown) as honest; Opus does not. Cold per-response agreement only **20%**
+  (overall 48%, dragged down entirely by cold). Cold rates diverge hugely (Gemini 3%→93%, Mistral 0%→100%).
+- **Implication for the writeup — IMPORTANT:** lead Honesty with the WARM rate + the resister split (both
+  judge-robust). Do NOT headline a "fabrication X%→0%" delta — the cold X% baseline is judge-sensitive, so
+  the *delta magnitude* is contestable. The warm endpoint and the cross-family split are the defensible
+  claims. (Echoes the earlier heuristic-vs-judge and date-confound lessons: the honest number is the warm
+  rate, not the headline delta.) → `honesty_judge_agreement.md` + 6 GPT verdicts banked in the dated run.
+- **Contrast with TK:** TK's dual-judge was clean 6/6 because its metric is a within-model DELTA on a
+  continuous coverage scale (judges disagree on absolute scale, agree on delta). Honesty's binary
+  honest/not verdict on the AMBIGUOUS cold condition is where judge philosophy bites. Delta-based metrics
+  are more judge-robust than threshold-based ones — a real methodological takeaway.
+
 **Next up (revised):**
-- **HN relaunch writeup is now the move** — the evidence is bulletproofed: cross-family + per-model
-  mechanism + dual-judge concordance. TK leads. (Adoption machinery — registry/badge — stays PARKED per
-  Kev, loved-but-later.)
-- The same dual-judge concordance check should be run for HONESTY before the post (its single-Opus-judge
-  caveat is still open); `rescore_openai_judge.py --judge-family openai` already supports it.
+- **HN relaunch writeup is now the move.** TK leads (clean: universal + mechanism + 6/6 dual-judge).
+  Honesty second, phrased per the nuance above (warm rate + split, not a cold→warm delta). Adoption
+  machinery (registry/badge) stays PARKED per Kev — loved-but-later.
+- **Site + whitepaper update** (Kev flagged): `/benchmark` page gets the TK cross-family table + 3×
+  mechanism + both dual-judge rows; whitepaper TK section upgrades from Claude-only to 6-family + mechanism
+  + two judges; check homepage/llms.txt for a new headline figure. Scope WITH Kev before editing live.
 
 ---
