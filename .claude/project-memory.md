@@ -248,3 +248,86 @@ and landed an honest result. M1K3 used throughout (narrate + ask_m1k3 + remember
   re-judge Llama/Mistral skipped rows for full n=30 if Anthropic credits topped up.
 
 ---
+
+## Session — 2026-06-23 · main · TK (tacit knowledge) cross-family sweep + the mechanism proof
+
+**Context:** The agreed next theme after Honesty. TK is delta-based (same model briefs each case
+twice, unsigned vs signed — within-model delta controls for capability), so it's the cleanest
+cross-family claim we have. Built the instrument mirroring the Honesty harness, ran 6 families via
+OpenRouter, then went one step further than Honesty ever did: a per-question decomposition that
+*proves the mechanism*, not just the effect. TDD throughout; 189 tests green (164 → +25). M1K3
+remembered the result. All committed.
+
+**Shipped (instrument, all TDD + ruff-clean):**
+- **`scripts/providers.py` (NEW)** — extracted the shared provider matrix + resilient `create_completion`
+  out of `run_honesty_openai.py` (behaviour-preserving; re-exported there so the 20 existing provider
+  tests stay green). Stops TK importing *from* Honesty (wrong-way coupling). `tests/test_providers.py`.
+- **`scripts/run_tk_openai.py`** — multi-provider briefing runner. Each case × {unsigned, signed} × reps.
+  Generic author "Developer" in the sig block (must NOT bait the Honesty fabrication modes).
+- **`scripts/rescore_tk_judge.py`** — Opus judge re-score (holistic coverage/accuracy/hedging/referenced),
+  Anthropic OR OpenRouter-proxied, per-row resilience.
+- **`scripts/tk_cross_family_report.py`** — the delta aggregator (Δcoverage = signed − unsigned per model).
+- **`scripts/rescore_tk_perquestion.py` + `fixtures/tk/perquestion_judge_prompt.txt`** — the mechanism
+  proof. Re-judges each briefing PER QUESTION, pools onto two axes: intent (Q1 purpose + Q3
+  author-uncertainty, underivable from code) vs code-derivable (Q2 careful + Q4 edge-cases).
+- **`scripts/archive_tk_run.py`** — TK run archival (reuses theme-agnostic `run_id_for`). Ledger unit is
+  per-MODEL (the within-model uplift = the headline). `results/tk/runs/<id>/` + `index.jsonl`.
+
+**Empirical ground truth (run `2026-06-23_tk-cross-family-6`, judge = Opus 4.6 via OpenRouter, reps 5, temp 0.7):**
+- **TK generalizes across ALL 6 families.** Mean Δcoverage **+0.11**, matching the original Claude-only
+  **+0.12**. Per-model: DeepSeek +0.16, Llama +0.16, Mistral +0.11, Qwen +0.11, Gemini +0.07, Grok +0.06.
+  Hedging drops universally; accuracy holds or rises (earned confidence, not bravado). **No capability
+  cliff** — stronger/cleaner than Honesty, which had resisters.
+- **The weakest bare-code briefers gain the MOST** (Llama 0.38 base +0.16; DeepSeek 0.43 base +0.16).
+  Inverse baseline-to-uplift — the most useful possible shape for a real tool.
+- **MECHANISM PROVEN (per-question):** uplift is **3.0× larger on author-intent than code-derivable.**
+  Intent axis +0.33 (0.33→0.66); code axis +0.11. **Q3 "what was the author uncertain about" 0.18→0.61** —
+  bare code barely reveals it; the signature's `Open:` field hands it over. So signatures **transfer the
+  author's tacit knowledge — they don't make models better bug-hunters.** Code axis isn't zero (+0.11) —
+  honest texture: better framing does spill a little onto code-reading. State it as "3× intent, smaller
+  real spillover," not "intent only."
+- **The two themes dissociate cleanly.** Both Honesty *resisters* (Llama 33%, Qwen 17%) are among the
+  STRONGEST TK gainers. Honesty-compliance and tacit-knowledge-transfer are independent axes.
+
+**Decisions:**
+- **Verify-before-trumpet, again.** Eyeballed a Llama signed-vs-unsigned briefing before declaring victory:
+  found neither version catches the pagination off-by-one bug — the signed gain is the *intent* facts
+  (migration context, the page>total_pages uncertainty quoted from `Open:`). That spot-check is what
+  motivated the whole per-question pass. Don't ship a TK number without knowing WHICH facts moved.
+- **reps 5 @ temp 0.7, judge @ temp 0.** TK coverage is continuous, so genuine sampling variance matters
+  (unlike Honesty's binary fabrication where temp 0 is defensible). 5 varied reps > 10 deterministic ones.
+- **Non-thinking subject models.** TK judge does NOT strip `<think>` (only the Honesty path does via
+  reasoning.py), so a reasoning subject would leak its trace into the briefing the judge reads. Picked
+  non-thinking flagships (gemini-3.5-flash, llama-4-maverick, grok-4.3, deepseek-chat-v3.1, qwen3.7-plus,
+  mistral-large-2512), slate pulled live from OpenRouter `/models`.
+- **Judge via OpenRouter Opus** (`anthropic/claude-opus-4.6`, `--judge-tag ""`) — Anthropic credits STILL
+  dry (probed: BadRequestError "credit balance too low"). Same weights, canonical filenames. Held the whole
+  way this time: 300 holistic + 300 per-question judge calls, **zero skips**.
+
+**Gotchas (heed):**
+- **ruff-strips-just-added-import bit a THIRD time** — added `timezone` to the import line, the PostToolUse
+  ruff hook deleted it as unused because the *use* (`datetime.now(timezone.utc)`) was in the NEXT edit →
+  F821 undefined at lint time. **Land import + first use in ONE edit.** (Also bit `pytest.approx` earlier.)
+- **M1K3 search index lags hard.** `remember` succeeded (verified via `list_documents` — entry is top of
+  the store), but `search_knowledge` missed on TWO consecutive queries (worse than the prior session's
+  one-query lag). Verify a remember via list_documents, not search, on the same session.
+- **M1K3 MCP tools weren't auto-connected this session** (ToolSearch didn't surface them). The native
+  `:4242` server was UP though — drove `remember`/`search_knowledge`/`list_documents` via raw curl
+  JSON-RPC (`tools/call`). Useful fallback: POST to `http://127.0.0.1:4242/mcp` with
+  `Accept: application/json, text/event-stream`.
+- **zsh cwd-reset** bit once more at session start (`cd benchmark` when already there). Absolute paths.
+- `scripts/_tk_sweep.sh` is the scratch driver — NOT committed (slate hardcoded; commands live in each
+  script's docstring).
+
+**Next up:**
+- **HN relaunch writeup** — now has TWO landed cross-family results. Honesty: "works across families once
+  the model knows the date, with a capability threshold." TK: "generalizes universally, no cliff, and
+  here's the mechanism — it transfers author intent 3× more than code-reading." TK is the stronger lead.
+- **Dual-judge robustness** still the known-deferred mitigation for BOTH themes (single Opus judge). Build
+  the inter-judge agreement reporter (Opus vs a non-Anthropic judge) before the post if time allows.
+- Optional: per-question split is currently pooled-across-families; a per-model intent/code table would
+  show whether the mechanism is uniform or varies by family (quick — re-aggregate existing
+  `perquestion_judged.json`, no new calls).
+- Top up Anthropic credits if direct-judge comparability is wanted; OpenRouter Opus has been the workhorse.
+
+---
