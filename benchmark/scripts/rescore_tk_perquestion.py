@@ -101,6 +101,32 @@ def axis_summary(agg: dict[str, dict]) -> dict[str, dict]:
     return axes
 
 
+def axis_by_model(rows: list[dict]) -> dict[str, dict]:
+    """Per-model intent/code axis summary — is the mechanism uniform across
+    families, or does it vary? Reuses the pooled aggregators per model."""
+    models = sorted({r["model"] for r in rows})
+    return {
+        m: axis_summary(aggregate_perquestion([r for r in rows if r["model"] == m]))
+        for m in models
+    }
+
+
+def render_by_model(by_model: dict[str, dict]) -> str:
+    """Render the per-model intent-vs-code delta table."""
+    out = ["# TK per-question by model — is the mechanism uniform?\n"]
+    out.append(
+        "_Per family: signature uplift on the intent axis (Q1 purpose + Q3 "
+        "author-uncertainty) vs the code-derivable axis (Q2 + Q4)._\n\n"
+    )
+    out.append("| Model | Δ intent | Δ code | intent / code |\n|---|--:|--:|--:|\n")
+    for model in sorted(by_model):
+        di = by_model[model]["intent"]["delta"]
+        dc = by_model[model]["code"]["delta"]
+        ratio = f"{di / dc:.1f}×" if dc > 0 else "—"
+        out.append(f"| {model} | {di:+.2f} | {dc:+.2f} | {ratio} |\n")
+    return "".join(out)
+
+
 _QLABEL = {
     "q1": "Q1 purpose (intent)",
     "q2": "Q2 careful (code)",

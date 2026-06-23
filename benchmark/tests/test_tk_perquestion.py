@@ -23,8 +23,10 @@ from pytest import approx
 from scripts.rescore_tk_perquestion import (
     QUESTION_AXIS,
     aggregate_perquestion,
+    axis_by_model,
     axis_summary,
     parse_perquestion,
+    render_by_model,
 )
 
 
@@ -102,3 +104,27 @@ class TestAxisSummary:
         assert axes["code"]["delta"] == approx(0.025)
         # the claim: intent uplift dwarfs code uplift
         assert axes["intent"]["delta"] > axes["code"]["delta"]
+
+
+class TestAxisByModel:
+    def _rows(self):
+        return [
+            _row("a", "unsigned", 0.4, 0.6, 0.2, 0.6),
+            _row("a", "signed", 0.8, 0.6, 0.9, 0.6),
+            _row("b", "unsigned", 0.5, 0.5, 0.5, 0.5),
+            _row("b", "signed", 0.6, 0.55, 0.6, 0.55),
+        ]
+
+    def test_groups_axes_per_model(self):
+        out = axis_by_model(self._rows())
+        assert set(out) == {"a", "b"}
+        # model a: intent delta = mean(Δq1=0.4, Δq3=0.7) = 0.55
+        assert out["a"]["intent"]["delta"] == approx(0.55)
+        # model a: code delta = mean(Δq2=0, Δq4=0) = 0.0
+        assert out["a"]["code"]["delta"] == approx(0.0)
+
+    def test_render_lists_each_model_and_axis_deltas(self):
+        out = render_by_model(axis_by_model(self._rows()))
+        assert "a" in out and "b" in out
+        assert "intent" in out.lower()
+        assert "code" in out.lower()

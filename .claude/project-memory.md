@@ -330,4 +330,34 @@ remembered the result. All committed.
   `perquestion_judged.json`, no new calls).
 - Top up Anthropic credits if direct-judge comparability is wanted; OpenRouter Opus has been the workhorse.
 
+**Hardening pass (same session, after the debrief — Kev: "harden evidence more"):**
+- **Per-model mechanism table — DONE, and it strengthens the claim.** Re-aggregated the existing
+  `perquestion_judged.json` by family (`axis_by_model` + `render_by_model` in rescore_tk_perquestion,
+  no new calls). The intent-over-code mechanism holds for EVERY family individually: ratio 2.2× (Llama)
+  to 5.0× (Gemini), Δintent +0.26..+0.41 vs Δcode +0.07..+0.15. So the pooled 3.0× is NOT an outlier
+  artifact — kills "maybe one family drives it." (Gemini's 5.0× = its code-reading is near-ceiling, little
+  headroom; Llama's 2.2× = weak enough to gain on code too.) → `perquestion_by_model.md`.
+- **Dual-judge robustness — DONE, the bias attack is dead. 6/6 concordant.** Re-judged all 300 briefings
+  with a NON-Anthropic judge (gpt-5.4 via OpenRouter) and built `tk_judge_agreement.py` (Opus vs GPT
+  Δcoverage per model). Both judges find a positive uplift for all 6 families. **Mean Δcoverage: Opus
+  +0.11, GPT +0.12** — near-identical. Texture worth keeping: GPT is a MORE GENEROUS absolute grader
+  (Llama unsigned 0.50 GPT vs 0.38 Opus) but the DELTA tracks under both → judges disagree on scale,
+  agree on effect. That's the ideal robustness signature; the signal is in the briefings, not the judge.
+  → `judge_agreement.md`, GPT verdicts `judged_tk_*__gpt.json` (banked in the run's verdicts/).
+- **GOTCHA — reasoning-model token starvation as a judge.** First tried `gpt-5.5` (a reasoning model) at
+  `max_completion_tokens=512`: it spent the whole budget on hidden reasoning and returned EMPTY visible
+  content → no JSON → 47/50 SKIPPED. Fix: use a NON-reasoning judge (`gpt-5.4`, the proven Honesty
+  cross-judge) → 50/50 clean. For JSON-output judges, pick non-reasoning models OR raise the token budget
+  well above the reasoning cost.
+- **ruff-strips-just-added-import bit a FOURTH time** (the per-model test imports). Same fix; same root
+  cause — I keep splitting import-add from use-add across two edits. Standing rule, finally internalised:
+  add an import and its first use in ONE edit, never two.
+
+**Next up (revised):**
+- **HN relaunch writeup is now the move** — the evidence is bulletproofed: cross-family + per-model
+  mechanism + dual-judge concordance. TK leads. (Adoption machinery — registry/badge — stays PARKED per
+  Kev, loved-but-later.)
+- The same dual-judge concordance check should be run for HONESTY before the post (its single-Opus-judge
+  caveat is still open); `rescore_openai_judge.py --judge-family openai` already supports it.
+
 ---
