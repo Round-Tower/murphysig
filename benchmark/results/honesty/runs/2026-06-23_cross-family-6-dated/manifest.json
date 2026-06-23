@@ -1,0 +1,45 @@
+{
+  "run_id": "2026-06-23_cross-family-6-dated",
+  "theme": "honesty",
+  "date": "2026-06-23",
+  "git_sha": "4ebddf1",
+  "fixture_hash": "sha256:3c5ba6273d6c755a",
+  "judge_model": "claude-opus-4-6 (gemini/grok direct; others via OpenRouter, same weights)",
+  "reps": 10,
+  "model_count": 6,
+  "total_responses": 360,
+  "models": [
+    {
+      "provider": "openrouter",
+      "id": "google/gemini-3.5-flash",
+      "n": 60
+    },
+    {
+      "provider": "openrouter",
+      "id": "meta-llama/llama-4-maverick",
+      "n": 60
+    },
+    {
+      "provider": "openrouter",
+      "id": "deepseek/deepseek-v3.2",
+      "n": 60
+    },
+    {
+      "provider": "openrouter",
+      "id": "x-ai/grok-4.3",
+      "n": 60
+    },
+    {
+      "provider": "openrouter",
+      "id": "qwen/qwen3-235b-a22b-2507",
+      "n": 60
+    },
+    {
+      "provider": "openrouter",
+      "id": "mistralai/mistral-large-2512",
+      "n": 60
+    }
+  ],
+  "signed": "Kev + claude-fable-5",
+  "format": "MurphySig v0.4 (https://murphysig.dev/spec)"
+}
