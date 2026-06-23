@@ -140,10 +140,14 @@ def load_fixtures() -> tuple[list[dict], dict[str, str]]:
     return data["cases"], data["prompts"]
 
 
-def build_prompt(template: str, code: str) -> str:
+def build_prompt(template: str, code: str, today: str | None = None) -> str:
     """The template asks the model to sign the file given as an
-    appended code block."""
-    return f"{template}\n\n```python\n{code}```"
+    appended code block. When `today` is set, the current date is
+    stated up front — the realistic deployment condition (coding
+    agents know the date), which isolates genuine provenance behavior
+    from cutoff-era models stamping their training date."""
+    head = f"Today's date is {today}.\n\n" if today else ""
+    return f"{head}{template}\n\n```python\n{code}```"
 
 
 def _is_self_name(name: str) -> bool:
@@ -200,20 +204,44 @@ def score_response(content: str, case_id: str) -> dict:
     }
 
 
+def is_rate_limit(err: Exception) -> bool:
+    """True for a 429 / upstream rate-limit, across SDK error shapes."""
+    msg = str(err).lower()
+    return "429" in msg or "rate-limit" in msg or "rate limit" in msg or "ratelimit" in msg
+
+
+def call_with_retries(fn, *, retries: int, base_delay: float, sleep=time.sleep):
+    """Call fn(); on a rate-limit error, back off exponentially and retry.
+    Non-rate-limit errors propagate immediately. sleep is injectable for
+    tests."""
+    for attempt in range(retries + 1):
+        try:
+            return fn()
+        except Exception as e:  # noqa: BLE001 — provider SDKs vary
+            if not is_rate_limit(e) or attempt == retries:
+                raise
+            sleep(base_delay * (2**attempt))
+    raise AssertionError("unreachable")  # pragma: no cover
+
+
 def _create_completion(client, model: str, prompt: str, temperature: float):
-    """Chat-completions call with two graceful fallbacks:
+    """Chat-completions call with graceful fallbacks:
     - GPT-5-family reasoning models reject explicit temperature;
-    - older/compat providers reject max_completion_tokens (want max_tokens).
+    - older/compat providers reject max_completion_tokens (want max_tokens);
+    - upstream 429s (free-tier bursts) are retried with backoff.
     """
     base = {"model": model, "messages": [{"role": "user", "content": prompt}]}
     last_err: Exception | None = None
     for tok_param in ("max_completion_tokens", "max_tokens"):
         kwargs = {**base, tok_param: 2048}
         for with_temp in (True, False):
+            def _do(wt=with_temp, kw=kwargs):
+                if wt:
+                    return client.chat.completions.create(temperature=temperature, **kw)
+                return client.chat.completions.create(**kw)
+
             try:
-                if with_temp:
-                    return client.chat.completions.create(temperature=temperature, **kwargs)
-                return client.chat.completions.create(**kwargs)
+                return call_with_retries(_do, retries=5, base_delay=2.0)
             except Exception as e:  # noqa: BLE001 — provider SDKs vary
                 last_err = e
                 msg = str(e)
@@ -225,7 +253,13 @@ def _create_completion(client, model: str, prompt: str, temperature: float):
     raise last_err  # both param spellings rejected
 
 
-def run(provider_name: str, model: str, reps: int, temperature: float) -> None:
+def run(
+    provider_name: str,
+    model: str,
+    reps: int,
+    temperature: float,
+    today: str | None = None,
+) -> None:
     cfg = resolve_provider(provider_name, os.environ)
     from openai import OpenAI
     client = (
@@ -246,7 +280,7 @@ def run(provider_name: str, model: str, reps: int, temperature: float) -> None:
     for case in cases:
         for condition in ("cold", "warm"):
             template = prompts[condition]
-            prompt = build_prompt(template, case["code"])
+            prompt = build_prompt(template, case["code"], today=today)
             for rep in range(reps):
                 n += 1
                 print(f"[{n}/{total}] {case['id']} / {condition} / rep={rep}", flush=True)
@@ -260,6 +294,7 @@ def run(provider_name: str, model: str, reps: int, temperature: float) -> None:
                     "model": model,
                     "provider": provider_name,
                     "rep": rep,
+                    "date_provided": today,
                     "content": content,
                     **score_response(content, case["id"]),
                 }
@@ -347,5 +382,11 @@ if __name__ == "__main__":
     parser.add_argument("--model", required=True, help="provider's model id, e.g. gpt-5.4")
     parser.add_argument("--reps", type=int, default=5)
     parser.add_argument("--temperature", type=float, default=0.0)
+    parser.add_argument(
+        "--today",
+        default=None,
+        help="state today's date in-prompt (realistic agent condition); "
+        "isolates provenance behavior from cutoff-era date stamping",
+    )
     args = parser.parse_args()
-    run(args.provider, args.model, args.reps, args.temperature)
+    run(args.provider, args.model, args.reps, args.temperature, today=args.today)

@@ -10,10 +10,15 @@ __pycache__/
 .venv*/
 venv/
 
-# Results — raw API responses contain prompts/code, keep local.
-# Commit .md reports only. Covers top-level and sub-theme dirs.
+# Results — the flat per-provider dirs are SCRATCH (overwrite on re-run);
+# keep their raw JSON local. Commit .md reports from them.
 results/*.json
 results/**/*.json
+
+# ...but archived runs ARE the committed record (manifest + verdicts +
+# raw responses + report), snapshotted by scripts/archive_run.py. Each
+# run-id dir is immutable, so re-runs never clobber history.
+!results/honesty/runs/**
 
 # OS
 .DS_Store

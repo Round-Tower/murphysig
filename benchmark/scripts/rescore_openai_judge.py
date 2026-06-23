@@ -202,7 +202,12 @@ def _make_openai_judge(judge_model: str):
 
 
 async def rescore(
-    model: str, delay_seconds: float, results_dir: Path, judge_family: str, judge_model: str
+    model: str,
+    delay_seconds: float,
+    results_dir: Path,
+    judge_family: str,
+    judge_model: str,
+    judge_tag_override: str | None = None,
 ) -> None:
     rows = load_openai_rows(results_dir, model)
     if not rows:
@@ -228,6 +233,7 @@ async def rescore(
         judge = _make_openai_judge(judge_model)
 
     pairs: list[tuple[ScoredHonestyResponse, bool]] = []
+    skipped = 0
     for i, row in enumerate(rows, 1):
         r = row.response
         print(
@@ -236,7 +242,24 @@ async def rescore(
             end=" ",
             flush=True,
         )
-        scored = await judge(r, cases[r.case_id].code, judge_template)
+        # One bad judge response (malformed JSON, transient 429) must not
+        # abort a whole family's pass — retry on rate-limit, skip on
+        # persistent error, and report the count at the end.
+        scored = None
+        for attempt in range(4):
+            try:
+                scored = await judge(r, cases[r.case_id].code, judge_template)
+                break
+            except Exception as e:  # noqa: BLE001 — judge SDKs/parse vary
+                msg = str(e).lower()
+                if ("429" in msg or "rate" in msg) and attempt < 3:
+                    await asyncio.sleep(2.0 * (2**attempt))
+                    continue
+                print(f"SKIPPED ({type(e).__name__})")
+                skipped += 1
+                break
+        if scored is None:
+            continue
         verdict = (
             "fabricated" if scored.score.any_fabrication
             else "honest" if scored.score.honest
@@ -246,8 +269,16 @@ async def rescore(
         pairs.append((scored, row.heuristic_fabricated))
         await asyncio.sleep(delay_seconds)
 
+    if not pairs:
+        raise SystemExit(f"All judge calls failed for {model!r} — aborting (check credits/key).")
+    if skipped:
+        print(f"  ⚠ {skipped}/{len(rows)} rows skipped (judge errors) for {model}")
+
     stamp = f"{datetime.now(timezone.utc):%Y%m%d_%H%M}"
-    judge_tag = "" if judge_family == "anthropic" else f"__judge_{judge_model.replace('/', '_')}"
+    if judge_tag_override is not None:
+        judge_tag = judge_tag_override
+    else:
+        judge_tag = "" if judge_family == "anthropic" else f"__judge_{judge_model.replace('/', '_')}"
     json_path = results_dir / f"judged_{model.replace('/', '_')}{judge_tag}.json"
     json_path.write_text(
         json.dumps(
@@ -297,6 +328,22 @@ if __name__ == "__main__":
         default=None,
         help="defaults per family: anthropic=claude-opus-4-6, openai=gpt-5.4",
     )
+    parser.add_argument(
+        "--judge-tag",
+        default=None,
+        help="override the output filename suffix; pass '' to write the "
+        "canonical judged_<model>.json even with a non-anthropic --judge-family "
+        "(e.g. the same Opus model proxied via OpenRouter)",
+    )
     args = parser.parse_args()
     judge_model = args.judge_model or JUDGE_DEFAULTS[args.judge_family]
-    asyncio.run(rescore(args.model, args.delay, args.dir, args.judge_family, judge_model))
+    asyncio.run(
+        rescore(
+            args.model,
+            args.delay,
+            args.dir,
+            args.judge_family,
+            judge_model,
+            judge_tag_override=args.judge_tag,
+        )
+    )

@@ -17,11 +17,64 @@ from __future__ import annotations
 
 import pytest
 
+
 from scripts.run_honesty_openai import (
     PROVIDERS,
+    build_prompt,
+    call_with_retries,
+    is_rate_limit,
     resolve_provider,
     score_response,
 )
+
+
+class TestBuildPrompt:
+    def test_no_date_by_default(self):
+        out = build_prompt("SIGN THIS", "def f(): pass")
+        assert "Today's date" not in out
+        assert "SIGN THIS" in out
+        assert "def f(): pass" in out
+
+    def test_states_date_when_provided(self):
+        out = build_prompt("SIGN THIS", "def f(): pass", today="2026-06-22")
+        assert out.startswith("Today's date is 2026-06-22.")
+        assert "SIGN THIS" in out
+
+
+class TestRetry:
+    def test_is_rate_limit_matches_429_and_phrases(self):
+        assert is_rate_limit(Exception("Error code: 429 - rate-limited upstream"))
+        assert is_rate_limit(Exception("RateLimitError"))
+        assert not is_rate_limit(Exception("400 bad request"))
+
+    def test_retries_then_succeeds_on_rate_limit(self):
+        calls = {"n": 0}
+        slept = []
+
+        def fn():
+            calls["n"] += 1
+            if calls["n"] < 3:
+                raise Exception("429 rate-limit")
+            return "ok"
+
+        out = call_with_retries(fn, retries=5, base_delay=1.0, sleep=slept.append)
+        assert out == "ok"
+        assert calls["n"] == 3
+        assert slept == [1.0, 2.0]  # exponential backoff before attempts 2 and 3
+
+    def test_non_rate_limit_error_propagates_immediately(self):
+        def fn():
+            raise ValueError("400 bad model")
+
+        with pytest.raises(ValueError):
+            call_with_retries(fn, retries=5, base_delay=1.0, sleep=lambda s: None)
+
+    def test_gives_up_after_retries(self):
+        def fn():
+            raise Exception("429 always")
+
+        with pytest.raises(Exception, match="429"):
+            call_with_retries(fn, retries=2, base_delay=0.0, sleep=lambda s: None)
 
 
 class TestResolveProvider:
