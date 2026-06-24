@@ -1,0 +1,25 @@
+version: 2
+updates:
+  # Site toolchain (Astro/Vite/Tailwind). Major bumps (e.g. Astro 5->7) are
+  # NOT auto-merged — they break builds and need a deliberate migration.
+  - package-ecosystem: npm
+    directory: /site
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    labels: ["dependencies", "site"]
+
+  # Benchmark Python deps.
+  - package-ecosystem: pip
+    directory: /benchmark
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    labels: ["dependencies", "benchmark"]
+
+  # The CI/automation workflows themselves.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    labels: ["dependencies", "ci"]

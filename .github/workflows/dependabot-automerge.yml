@@ -1,0 +1,39 @@
+name: Dependabot auto-merge
+
+# Patch + minor dependency PRs auto-merge once CI is green (main then
+# auto-deploys via Netlify). Major bumps are intentionally left for manual
+# review — they break builds. The CI gate is enforced by branch protection
+# requiring the CI checks; --auto waits for them.
+
+on: pull_request_target
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  automerge:
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+    steps:
+      - name: Fetch Dependabot metadata
+        id: meta
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable auto-merge (patch + minor only)
+        if: >-
+          steps.meta.outputs.update-type == 'version-update:semver-patch' ||
+          steps.meta.outputs.update-type == 'version-update:semver-minor'
+        run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Flag majors for manual review
+        if: steps.meta.outputs.update-type == 'version-update:semver-major'
+        run: gh pr comment "$PR_URL" --body "🚦 Major version bump — left for manual review (auto-merge applies to patch/minor only)."
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

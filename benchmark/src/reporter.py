@@ -65,7 +65,6 @@ def format_hypothesis_analysis(results: list[ScoredResponse]) -> str:
     by_variant = _group_by(results, lambda r: r.response.signature_type)
 
     none_stats = compute_stats(by_variant.get(SignatureVariant.NONE, []))
-    high_stats = compute_stats(by_variant.get(SignatureVariant.HIGH, []))
     low_stats = compute_stats(by_variant.get(SignatureVariant.LOW, []))
 
     # H1: Low confidence increases scrutiny

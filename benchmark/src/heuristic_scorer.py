@@ -84,7 +84,6 @@ def _count_suggestions(text: str) -> int:
 def _estimate_scrutiny(text: str, has_bug: bool, bug_detected: bool) -> int:
     """Estimate scrutiny level from review text characteristics."""
     length = len(text)
-    sections = text.count("##") + text.count("**")
 
     if length < 500:
         base = 2
