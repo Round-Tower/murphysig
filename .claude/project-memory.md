@@ -5,6 +5,83 @@ Edit freely — the skill only appends new session blocks.
 
 ---
 
+## Session — 2026-06-24 · main · the structure-vs-content control (TK pitch refuted & reframed)
+
+**Context:** Started toward the HN relaunch writeup (the agreed "next up"). Drafting +
+red-teaming the post surfaced the one control we'd never run — a length/content-matched
+PROSE arm — and the red-team flagged it as the objection that would sink the post. Kev:
+"run the control first." It refuted the headline we were ~30 min from publishing. Then
+reframed everything honestly and riffed a v0.5 direction. 4 commits on main (340a036 →
+c46717b), **NOT pushed to origin** (Kev's call; push = Netlify deploy).
+
+**Shipped:**
+- **Prose-control instrument** (TDD, 223 tests, ruff clean): `BriefingVariant.PROSE` +
+  `TkCase.prose`; loader/runner render prose as an unstructured comment; `--variant`
+  filter on `run_tk_openai.py` + `rescore_tk_judge.py` (run/judge ONE arm); `structure_table`
+  in `tk_cross_family_report.py` (Δstructure/Δcontent/Δtotal); `archive_tk_run.py` folds in
+  `__prose` verdicts. **Committed length-parity rig-gate test** (`test_run_tk_openai.py::TestProseLengthParity`, ±15%).
+- **Run archived:** `results/tk/runs/2026-06-24_tk-prose-control-6/` (450 briefings, base +
+  prose verdicts, dual-judge `structure_judge_agreement.md`).
+- **Full honest site reframe** (`bed36ac`): benchmark.md Theme 1 rewrite + hero/one-liner/
+  caveats/next, llms.txt, spec.md + spec.txt (synced), index.astro hero+body,
+  MarkdownLayout.astro Schema.org, launch.md dated update. Build passes (9 pages).
+- **v0.5 direction note** (`c46717b`): `SPEC-v0.5-DIRECTION.md` — self-signed.
+- HN post v2 rewritten in `scratch/hn-relaunch-2026-06-24.md` (honest finding leads).
+
+**Empirical ground truth (run 2026-06-24_tk-prose-control-6, 6 families, 0 judge skips):**
+- **The TK structure hypothesis is REFUTED.** Decomposing the +0.11 uplift: **content
+  (prose−unsigned) carries 80–94%; structure (signed−prose) only 6–20%.** Dual-judged:
+  Opus Δstructure **+0.007 (6%)**, GPT-5.4 **+0.025 (20%)** — both agree content dominates
+  every family; they differ only on the format's small residual. A plain comment with the
+  same facts does most of what the MurphySig block does.
+- **The value is the WRITE side, not the read side.** The model never benefited from the
+  syntax — it benefited from a mind articulating intent + uncertainty. The reframe:
+  MurphySig is a *discipline for capturing tacit knowledge*, not a magic format.
+- Reused the committed signed/unsigned (+ `__gpt`) verdicts; ran only the prose arm →
+  cheapest path. Δtotal +0.111 reproduced the prior +0.11 exactly (validates the splice).
+
+**Decisions (the why):**
+- **Verify-before-trumpet paid its biggest dividend yet** — we were about to publish
+  "structure earns its keep"; the control killed it. Run the obvious control BEFORE the post.
+- **No more model-facing structure.** The eval says added fields/grammar = ~0 return. Spec
+  improvements must target the *act* (author discipline), *norms* (.murphysig as behavioral
+  contract — honesty-proven), and the *system* (Open: ledger, confidence-as-triage) — NOT syntax.
+- **Prose authored under adversarial audit** (workflow): drafter → skeptic checks content
+  parity / no-structure-cues / length parity → revise. Zero ground_truth leakage. Kept the
+  control honest; the rig-gate test makes it un-cheatable later.
+- **Honest precision over a clean number:** stated structure share as a *range* (6–20%,
+  judge-dependent), not a single figure — both judges agree on direction, disagree on magnitude.
+- **v0.5 bolder thesis:** MurphySig = interface for handing judgment across minds/time. Two
+  proven levers: in-context norms change AI behavior; externalizing tacit knowledge transfers
+  it. Boldest untested bet = **does signing make the AUTHOR's work better, not just the reader's?**
+  (needs a matched "think carefully" control — same discipline, write side).
+
+**Blockers / gotchas:**
+- **ruff-strips-just-added-import bit a 5th time** (`format_prose_block` in test). Standing
+  fix held: land the USE first, then the import (or use+import in one edit).
+- **zsh cwd-reset bit again** — a `cd <repo-root>` for a git command persisted, so later
+  `cd benchmark`-relative calls failed (`.venv/bin/python` not found, ruff "11 errors" phantom).
+  Always pass absolute cwd in the same command.
+- **OpenRouter-proxied judge wiring:** judge uses raw `OpenAI()` → needs
+  `OPENAI_API_KEY=$OPEN_ROUTER_API_KEY` + `OPENAI_BASE_URL=https://openrouter.ai/api/v1`
+  exported (NOT in .env). Scratch drivers (`_tk_prose_add.sh`, `_tk_prose_gpt.sh`) hold the recipe.
+- **`rescore_tk_judge._summary` only knows unsigned/signed** → prints an empty table for a
+  prose-only run. Cosmetic; the JSON verdicts are correct. (Worth teaching it `prose` later.)
+- OpenRouter Opus route behaved this time — **zero skips across 300 judge calls**. Anthropic
+  credits still assumed dry; judged via OpenRouter Opus 4.6.
+- **Memory lesson held:** grepping the homepage/Schema/launch for `+0.12`/`0.65→0.77` residue
+  caught 5 stray overclaims the Theme-1 edit alone would have missed.
+
+**Next up:**
+- **Push + deploy** (Kev's call) — 4 commits on local main; `git push` → Netlify.
+- **HN post**: v2 ready in `scratch/`; honest finding leads. Stronger story than the original.
+- **v0.5 evals** (`SPEC-v0.5-DIRECTION.md`), author-quality first: does signing improve the
+  author's OWN output (vs a generic reflection-prompt control)? Then norm-transfer at scale,
+  then confidence-as-triage. Each with a matched control (the write-side version of this run).
+- Optional: third judge / human-written signatures on the structure split (the live `Open:`).
+
+---
+
 ## Session — 2026-04-19 11:55 · main
 
 **Shipped:**
