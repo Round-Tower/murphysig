@@ -1,18 +1,19 @@
-name: Dependabot auto-merge
+name: Dependabot triage
 
-# Patch + minor dependency PRs auto-merge once CI is green (main then
-# auto-deploys via Netlify). Major bumps are intentionally left for manual
-# review — they break builds. The CI gate is enforced by branch protection
-# requiring the CI checks; --auto waits for them.
+# Step 1 of 2 (gating happens in automerge-on-green.yml). On a Dependabot PR:
+# label patch/minor with `automerge`; leave majors for manual review. The
+# actual merge only happens AFTER CI passes — see automerge-on-green.yml. This
+# avoids branch protection (which would block the registry bot's direct push).
 
 on: pull_request_target
 
 permissions:
-  contents: write
+  contents: read
   pull-requests: write
+  issues: write
 
 jobs:
-  automerge:
+  triage:
     runs-on: ubuntu-latest
     if: github.actor == 'dependabot[bot]'
     steps:
@@ -22,11 +23,11 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Enable auto-merge (patch + minor only)
+      - name: Label patch/minor for auto-merge
         if: >-
           steps.meta.outputs.update-type == 'version-update:semver-patch' ||
           steps.meta.outputs.update-type == 'version-update:semver-minor'
-        run: gh pr merge --auto --squash "$PR_URL"
+        run: gh pr edit "$PR_URL" --add-label automerge
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
