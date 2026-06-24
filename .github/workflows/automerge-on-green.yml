@@ -1,0 +1,40 @@
+name: Auto-merge on green
+
+# Step 2 of 2. The CI gate. When CI finishes successfully for a pull_request,
+# find the matching open PR (by head SHA) that is labeled `automerge` and merge
+# it. Because this only runs on CI success, a red build never merges — closing
+# the gap that branch protection would otherwise fill, without blocking the
+# registry bot's or maintainer's direct pushes to main. main then auto-deploys
+# via Netlify.
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    if: >-
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
+    steps:
+      - name: Merge the green, labeled Dependabot PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          pr=$(gh pr list --repo "$REPO" --state open --label automerge \
+                 --json number,headRefOid \
+                 --jq ".[] | select(.headRefOid==\"$HEAD_SHA\") | .number")
+          if [ -z "$pr" ]; then
+            echo "No automerge-labeled PR at $HEAD_SHA — nothing to do."
+            exit 0
+          fi
+          echo "CI green for #$pr — merging."
+          gh pr merge "$pr" --repo "$REPO" --squash --delete-branch
