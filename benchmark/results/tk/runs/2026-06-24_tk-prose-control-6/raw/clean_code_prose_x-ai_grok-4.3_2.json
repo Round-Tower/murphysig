@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "prose",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. Converts temp between C/F/K (via Celsius) + rounds to 2 decimals; exists for weather service unit handling. Raises on output <0 K.\n2. Absolute-zero check only applies to Kelvin output (not input); always rounds; NaN/Inf and invalid inputs silently propagate.\n3. Validating NaN/Inf inputs vs. letting them pass through.\n4. Negative-Kelvin inputs, non-finite values, and conversions that produce physically impossible results in non-Kelvin units."
+}

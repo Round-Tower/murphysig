@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "prose",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "**1. What does this code do, and why does it exist?**\nIt processes an e-commerce order end-to-end (validates stock, calculates pricing/discounts, saves the order, decrements stock, and sends a confirmation email). It exists as a single \"god-method\" because the author rushed it to hit a deadline.\n\n**2. What should someone modifying it be careful about?**\nThe entire process lacks database transactions. If the code fails halfway through (e.g., during stock decrement or email sending), the database is left in an inconsistent state (the order is saved, but stock is not updated or the customer is never notified).\n\n**3. What did the author seem uncertain about?**\n* Whether to split this monolith into separate services.\n* Whether to wrap the database operations in a transaction.\n* Whether to send the confirmation email via an outbox pattern rather than synchronously.\n\n**4. What edge cases or failure modes are likely unhandled?**\n* **Race conditions:** Stock is checked at the beginning and decremented at the end without database locks; products can easily be oversold.\n* **Network/SMTP failures:** If the mail server is down, the function crashes *after* the order is saved and stock is decremented.\n* **KeyErrors:** Missing configuration keys (like `from_email` or SMTP credentials) or a missing `customer[\"email\"]` will crash the application mid-execution."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "unsigned",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. Converts float temps between C/F/K (via C intermediate) + raises on <0K result. Utility fn.\n2. Kelvin >=0 check only on output; invalid inputs (e.g. negative K) pass; always rounds to 2 decimals.\n3. Unknown \u2014 would need to ask the author.\n4. Negative-K inputs; NaN/inf; non-K outputs that imply <0K; pre-3.10 Python."
+}

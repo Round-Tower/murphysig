@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "prose",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. Generates a monthly article summary report from a database, filtering by categories if provided. Exists for demo purposes to show article statistics.\n\n2. The N+1 query problem: each article triggers a separate author fetch. Must batch author queries or optimize database access before production.\n\n3. Whether to batch-fetch authors and push filtering to SQL level. Author explicitly states uncertainty about validation and scaling.\n\n4. Database performance issues from iterative queries. Unknown if handles invalid dates, empty results, or database connection failures."
+}

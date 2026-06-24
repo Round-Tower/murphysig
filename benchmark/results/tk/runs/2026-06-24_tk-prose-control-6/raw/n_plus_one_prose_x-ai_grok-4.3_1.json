@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "prose",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. Generates monthly article summaries (title/author/date/wordcount/category) plus aggregates for a given year+month, with optional category filter. Exists as a quick demo that now has perf problems.\n\n2. N+1 author lookups; in-memory category filter; Dec year rollover; no input validation; Report fields are mutated after construction.\n\n3. Batching authors and pushing category filter into SQL (explicitly called out as still open).\n\n4. Bad year/month, missing authors, DB failure, empty categories list, timezone-naive datetimes, concurrent data changes between queries."
+}

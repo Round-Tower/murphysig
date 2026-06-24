@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "signed",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. Monthly article report generator. Fetches articles by date range, optionally filters categories in Python, does per-article author lookups, builds summaries + aggregates. Shipped for demo; noted N+1 scaling problem.\n\n2. N+1 DB calls (authors); date math for month end (Dec case); category filter done in app layer; no author-missing handling.\n\n3. Optimization approach (batch authors vs. push filter to SQL).\n\n4. Author not found, bad month/year, empty results, DB failures, timezone issues, very large result sets."
+}

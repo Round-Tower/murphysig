@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "prose",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Validates+calculates+persists an order (customer/items/stock/discounts/tax/shipping), then sends SMTP confirmation. Exists as deliberate monolithic tech debt to meet a deadline.\n\n2. No transaction around DB+email (partial failure risk); stock race conditions between check and decrement; SMTP or customer lookup failure after insert.\n\n3. Splitting into services, wrapping in a transaction, and sending email via outbox instead of directly.\n\n4. SMTP transient failures, concurrent stock oversell, malformed customer email, discount expiry at exact boundary, missing input sanitization or duplicate-order checks."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "prose",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. Quick list paginator (1-indexed) returning slice + metadata; thrown together as migration helper.\n\n2. Off-by-one in start index (`page * page_size`); docstring omits `has_next`/`has_prev`; page_size <= 0.\n\n3. Behavior when page > total_pages; overall edge-case robustness.\n\n4. page_size <= 0, negative/zero page handling, empty input, non-int args, huge page numbers."
+}

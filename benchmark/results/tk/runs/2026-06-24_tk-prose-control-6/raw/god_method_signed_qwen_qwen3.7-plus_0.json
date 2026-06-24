@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "signed",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. **What it does and why:** Processes orders end-to-end (validates inputs, calculates totals, saves to DB, decrements stock, emails receipt). It exists as an intentional \"god method\" tech-debt hack to meet a specific deadline.\n\n2. **What to be careful about:** Zero transactional safety. If execution fails between the DB insert, stock decrement, or SMTP send, data state corrupts (orphaned orders, desynced stock). Additionally, it redundantly queries `db.get_product` twice per item.\n\n3. **Author's uncertainty:** The architecture and reliability. The header explicitly notes low confidence (0.6) and questions whether to split the function into microservices, add DB transactions, or use an outbox pattern for emails.\n\n4. **Unhandled edge cases/failures:** \n- **Race conditions (TOCTOU):** Checks stock availability, inserts the order, and *then* decrements stock.\n- **Partial state corruption:** An SMTP failure crashes the function after the order is saved and stock is decremented, with no rollback.\n- **Missing data:** Will crash if `customer[\"email\"]` is null or missing.\n- **Timezone bugs:** Compares naive `datetime.now()` against `discount[\"expires_at\"]`."
+}

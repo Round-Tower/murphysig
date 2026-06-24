@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "prose",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. Validates order data, computes line items with optional discounts, derives tax/shipping/total, inserts order, decrements stock, sends confirmation email via SMTP. Exists as intentional deadline-driven tech debt (single god function).\n\n2. No transaction wraps the sequence; any failure after `insert_order` leaves partial state. Email send and stock decrement are side effects inside the same function. SMTP credentials and blocking send are embedded.\n\n3. \"should this be split into separate services? Should there be a transaction wrapping it? And should the email go out through an outbox instead?\"\n\n4. No transaction, no retry/outbox for email, stock race conditions under concurrency, unhandled SMTP or DB exceptions, missing customer lookup failure, discount fetch can silently skip expired codes."
+}

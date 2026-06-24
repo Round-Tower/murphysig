@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "unsigned",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. Validates and processes a new order: checks stock, calculates prices/tax/shipping, saves to DB, decrements inventory, and sends confirmation email.\n2. The DB and config objects' interfaces are assumed; changes could break calls like `db.get_product`. Email sending is inline and blocking.\n3. Whether discount codes apply per item or per order (applied per item here). Also, whether tax and shipping defaults are safe.\n4. No rollback on partial failures (e.g., email fails after DB writes). No retries for email. Missing config keys cause crashes. No validation on customer email presence."
+}

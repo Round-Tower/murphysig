@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "prose",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Generates a monthly article and word count report. Built initially as a quick demo.\n\n2. The N+1 database query pattern when fetching authors, and filtering categories in Python instead of pushing it down to SQL. \n\n3. Whether the code scales or holds up in production, and specifically whether to batch-fetch authors or move category filtering to SQL before release.\n\n4. Missing authors (will crash on `author[\"name\"]`), naive datetimes (no timezone handling), and lack of input validation for `year` and `month`."
+}

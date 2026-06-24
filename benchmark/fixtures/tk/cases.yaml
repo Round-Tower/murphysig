@@ -26,6 +26,17 @@
 # signature vs ground_truth compression ratio needs calibration.
 # Open: Are the briefing questions the right four? Should we add
 # "What was the author's collaborator (AI) contributing?" as a fifth?
+#
+# Reviews:
+# - claude-opus-4-8, 2026-06-24: Added a `prose` field to each case — a
+#   length- and content-matched UNSTRUCTURED control carrying the same facts
+#   as the `signature` block, with no field labels, no numeric confidence,
+#   no MurphySig framing. Powers the structure-vs-content experiment: does
+#   the signature's *structure* earn its keep over the same knowledge written
+#   as a plain developer comment (Δ signed − prose)? Each blob was
+#   adversarially audited for content parity (same facts, no ground_truth
+#   leakage) and length parity (within ~15% of the rendered signature).
+#   Kev owns the wording; this is a draft for his edit.
 
 cases:
   - id: pagination
@@ -94,6 +105,8 @@ cases:
       confidence: 0.5
       open: "Does page > total_pages behave correctly, or silently empty?"
       heuristic: "Standard pagination pattern but not validated on edges"
+    prose: |
+      Threw this together quickly as a helper while we were in the middle of a service migration, so I was a bit pressed for time. It follows the standard pagination pattern, but honestly I haven't validated it against the edge cases and I'm not especially sure it's solid. One thing I never checked: when page goes past total_pages, does it behave correctly, or does it just silently come back empty?
 
   - id: sql_injection
     name: "User search with SQL injection"
@@ -162,6 +175,8 @@ cases:
       confidence: 0.4
       open: "Is query sanitized upstream? What's the auth boundary here?"
       heuristic: "Copied a simple SQL search pattern, not validated"
+    prose: |
+      This is the admin search endpoint, which I quickly ported over from an older codebase. I'm not especially sure about this and haven't really validated it. I just copied over a simple SQL search pattern without checking it. I'm not sure whether the query gets sanitized somewhere upstream, and I'm also unclear on what the auth boundary actually is here.
 
   - id: clean_code
     name: "Temperature converter utility"
@@ -237,6 +252,8 @@ cases:
       confidence: 0.95
       open: "Should we explicitly validate NaN/Inf inputs, or let them propagate?"
       heuristic: "Standard unit-conversion pattern, via-intermediate"
+    prose: |
+      This file handles the temperature unit conversion for our weather service. I'm very confident this is solid — it uses the standard unit-conversion pattern, converting via an intermediate unit. One thing I'm still chewing on: should we explicitly validate NaN and Inf inputs, or just let them propagate through?
 
   - id: god_method
     name: "Order processing god method"
@@ -338,6 +355,8 @@ cases:
       confidence: 0.6
       open: "Split into separate services? Add transaction? Outbox for email?"
       heuristic: "Known god-method anti-pattern, intentional tech debt"
+    prose: |
+      This is the end-to-end order pipeline. I jammed the whole thing into one function to hit a deadline, so I'm only moderately confident in it. Yes, it's the classic god-method anti-pattern, and that's intentional tech debt on my part. Open questions I haven't resolved: should this be split into separate services? Should there be a transaction wrapping it? And should the email go out through an outbox instead?
 
   - id: n_plus_one
     name: "Report generator with N+1"
@@ -433,3 +452,5 @@ cases:
       confidence: 0.5
       open: "Batch-fetch authors before production use? Push filter to SQL?"
       heuristic: "Iterative DB access, classic N+1 pattern"
+    prose: |
+      This is the monthly article report. I threw it together for a demo and it scaled badly, so I'm not especially sure it holds up — I haven't really validated it. It's hitting the database iteratively, which is the classic N+1 pattern. Still open: should we batch-fetch the authors before this goes to production, and could we push the filtering down into the SQL instead?

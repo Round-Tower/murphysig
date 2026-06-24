@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "prose",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. **What it does and why:** It paginates an in-memory list, returning a specific slice along with metadata (totals, next/prev flags). It exists as a quick, temporary helper written during a service migration.\n\n2. **What to be careful about:** The `start` index math is broken for 1-indexed pages. `start = page * page_size` skips the first `page_size` items (page 1 starts at index 20). It must be `(page - 1) * page_size`.\n\n3. **What the author was uncertain about:** The author was unsure about edge cases, specifically asking whether requesting a `page` beyond `total_pages` behaves correctly or just silently returns an empty list. \n\n4. **Unhandled edge cases or failure modes:**\n   * `page_size <= 0` causes a `ZeroDivisionError` during `total_pages` calculation.\n   * `page > total_pages` silently returns an empty list (due to Python's slice bounds handling) instead of raising an error or capping to the last page.\n   * The 1-indexing math bug (page 1 permanently skips the first `page_size` items)."
+}

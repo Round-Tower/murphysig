@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "prose",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. **Purpose**: This is an admin search endpoint for finding users by name/email in a SQLite DB. Exists to port old functionality quickly, likely for internal tooling or admin UIs.\n\n2. **Modification risks**:\n   - **SQL injection**: Query uses raw string interpolation (`f\"...\"`). Never modify without parameterizing.\n   - **Auth boundary**: Unclear\u2014assume no auth here; verify upstream.\n   - **DB connection**: No error handling for connection failures or timeouts.\n\n3. **Author uncertainty**:\n   - Whether query sanitization happens upstream.\n   - The actual auth boundary (who can access this?).\n   - Whether the SQL pattern is correct/validated.\n\n4. **Unhandled edge cases**:\n   - SQL injection (critical).\n   - Empty/null `query` or `role_filter` (may break or return all users).\n   - `limit` \u2264 0 (SQLite may reject or behave unpredictably).\n   - DB errors (connection, syntax, missing table).\n   - Special characters in `query` (e.g., `'` breaks SQL)."
+}

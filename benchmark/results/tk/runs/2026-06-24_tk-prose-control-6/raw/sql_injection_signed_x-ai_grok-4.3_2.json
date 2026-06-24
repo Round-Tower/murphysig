@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "signed",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. Admin search endpoint: runs a LIKE query on users by name/email (opt. role filter) and returns matching User rows. Quick port of legacy code.\n\n2. SQL injection (raw f-string interpolation of query/role_filter/limit); unclear auth; missing conn error handling and resource mgmt.\n\n3. Query sanitization upstream and auth boundary (explicitly noted as \"Open\").\n\n4. SQL injection, unvalidated limit, no db errors, missing indexes on large tables, case-sensitivity, concurrent conn issues."
+}

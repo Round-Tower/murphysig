@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "signed",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Converts \u00b0C/\u00b0F/K temps (via \u00b0C intermediate), rounds to 2 dp, rejects results <0 K. Exists for weather-service unit conversion.\n\n2. Absolute-zero check applies only to Kelvin output; extending the enum or altering formulas will break the match blocks.\n\n3. Whether to add explicit NaN/Inf guards (see \"Open\" note).\n\n4. NaN/Inf propagation, inputs already <0 K when source is K, non-numeric values, and future enum members."
+}

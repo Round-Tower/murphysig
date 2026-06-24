@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "prose",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. Converts temp between C/F/K (via Celsius intermediate) + round(2); exists for weather service unit handling.\n2. Absolute-zero check only triggers on K output (allows invalid negatives otherwise); adding units will break match; float edge behavior.\n3. Whether to explicitly validate NaN/Inf inputs.\n4. Negative-absolute inputs (except K result), NaN/Inf, non-numeric args, new enum values, precision loss before round."
+}

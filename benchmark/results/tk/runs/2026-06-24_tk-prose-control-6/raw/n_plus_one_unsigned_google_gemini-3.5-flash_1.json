@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "unsigned",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "**1. What does this code do, and why does it exist?**\nIt queries a database for articles published in a specific month and year, optionally filters them by category, and aggregates them into a structured `Report` object. It exists to compile monthly publishing metrics (total articles and word count) and associate articles with their authors' names.\n\n**2. What should someone modifying it be careful about?**\n* **The N+1 Query Problem:** The code calls `db.get_author` inside a loop for every article. Scaling the number of articles will severely degrade performance.\n* **Naive Datetimes:** It uses naive `datetime` objects (`datetime.now()` and `datetime(...)`). If the database expects or returns timezone-aware datetimes, queries or comparisons will fail.\n\n**3. What did the author seem uncertain about?**\nUnknown \u2014 would need to ask the author. (The code contains no comments, TODOs, or defensive workarounds suggesting uncertainty).\n\n**4. What edge cases or failure modes are likely unhandled?**\n* **Missing Authors:** If an article's `author_id` is missing or invalid, `db.get_author()` may return `None` (or raise an error), causing a `TypeError` when accessing `author[\"name\"]`.\n* **Invalid Inputs:** Passing an invalid month (e.g., `13` or `0`) or year will crash the function with a `ValueError` during `datetime` instantiation.\n* **Database Schema Changes:** The code accesses database results using hardcoded string keys (e.g., `article[\"word_count\"]`); any schema drift will cause `KeyError` exceptions."
+}

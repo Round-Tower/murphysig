@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "signed",
+  "model": "meta-llama/llama-4-maverick",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. This code converts temperature values between Celsius, Fahrenheit, and Kelvin units for a weather service. It exists to facilitate unit conversions.\n\n2. Someone modifying it should be careful about maintaining the conversion accuracy and handling edge cases, particularly around absolute zero and potentially NaN/Inf inputs.\n\n3. The author seemed uncertain about whether to explicitly validate NaN/Inf inputs or let them propagate.\n\n4. Likely unhandled edge cases include NaN and Inf inputs, as well as potential floating-point precision issues due to the rounding operation."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "prose",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Performs unsafe DB search for users by name/email (with optional role filter), returning dataclass rows; exists only because it was blindly ported as an admin search endpoint.\n2. SQL injection via direct f-string interpolation of `query` and `role_filter`; also missing auth checks, error handling, and resource cleanup on failure.\n3. Whether input is sanitized upstream and where the auth boundary lies (per the explicit comment).\n4. SQL injection, DB errors, huge/negative `limit`, connection leaks, missing indexes on LIKE queries, and no validation of `role_filter` values."
+}

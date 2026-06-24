@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "prose",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. Fetches articles for a given month (optional category filter), joins authors via per-row queries, builds a Report of ArticleSummaries with word/article aggregates. Exists only as a quick unscalable demo.\n\n2. N+1 queries on authors; post-fetch Python filtering; fragile month-end date math; mutation of input dicts from db.\n\n3. Batch-fetching authors and pushing category filter into SQL before production use.\n\n4. Invalid month (1-12), missing author rows or dict keys, datetime timezone/precision issues, empty result sets, large data volumes."
+}

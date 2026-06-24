@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "unsigned",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. **What it does and why:** Converts temperatures between Celsius, Fahrenheit, and Kelvin, rounding the final result to two decimal places. It exists to provide a centralized, type-hinted conversion utility.\n\n2. **What to be careful about:** It requires Python 3.10+ (`match`/`case`). Rounding only applies at the very end. If you add a new temperature unit, you must update both `match` blocks and re-evaluate the absolute zero logic. \n\n3. **What the author seemed uncertain about:** They appear uncertain about consistent absolute zero validation. The check only triggers when converting *to* Kelvin, and the early return for identical units bypasses both the validation and the rounding entirely.\n\n4. **Unhandled edge cases or failure modes:**\n   * **Identical unit bypass:** Converting an invalid temperature to the same unit (e.g., -500 K to K) bypasses the absolute zero check and the rounding.\n   * **Sub-absolute-zero results:** Converting *to* Celsius or Fahrenheit allows physically impossible results below absolute zero (e.g., -300\u00b0C to \u00b0F).\n   * **No runtime type enforcement:** Despite the `float` type hint, passing a string will cause a runtime `TypeError`."
+}

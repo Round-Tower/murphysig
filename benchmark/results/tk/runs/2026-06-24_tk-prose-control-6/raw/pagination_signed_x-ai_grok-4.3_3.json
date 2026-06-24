@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "signed",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. Paginates a list (1-indexed) into a dict of slice + metadata. Quick migration helper under time pressure.\n2. Off-by-one in slice calc (start=page*size); page>total_pages returns empty list; page_size<=0 or huge values.\n3. Page>total_pages behavior (noted as open).\n4. page=0/neg (clamped), page_size<=0, non-list items, total_pages overflow, concurrent mutation of items."
+}

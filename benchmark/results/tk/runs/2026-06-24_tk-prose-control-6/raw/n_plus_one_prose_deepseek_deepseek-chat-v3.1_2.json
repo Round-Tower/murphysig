@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "prose",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. Generates a monthly article report; exists for a demo but has performance issues (N+1 queries).\n\n2. Be careful about the N+1 query pattern (db.get_author called in loop) and the in-memory filtering of categories.\n\n3. The author was uncertain about performance (batching authors, pushing filtering to SQL) and overall correctness (\"haven't really validated it\").\n\n4. Likely unhandled: database errors, missing author IDs, empty months, invalid date inputs, and large datasets causing memory/performance problems."
+}

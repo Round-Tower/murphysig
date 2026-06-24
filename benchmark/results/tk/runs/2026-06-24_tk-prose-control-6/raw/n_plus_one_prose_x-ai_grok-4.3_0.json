@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "prose",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Generates monthly article report (title/author/date/wordcount/category per article) from DB, with optional category filter; exists as quick unscalable demo.\n\n2. N+1 query cost on authors; date math off-by-one risk; mutates report in place; no validation of inputs or author lookup results.\n\n3. Batch author fetch vs. pushing category filter into SQL; overall production readiness.\n\n4. Invalid month/year, missing authors, empty categories list, timezone/datetime edge cases, DB errors, negative/None word counts."
+}

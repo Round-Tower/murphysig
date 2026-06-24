@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "prose",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. Generates a monthly summary report of articles (including author details and word counts). It exists as a quick, unvalidated demo/prototype.\n\n2. The N+1 database query pattern. It executes a separate `db.get_author` query for every article inside the loop. It also fetches all articles for the month and filters categories in Python memory rather than in SQL.\n\n3. Whether the code will hold up in production. Specifically, they are unsure if they should batch-fetch authors to fix the N+1 issue and whether category filtering should be pushed down into the SQL.\n\n4. \n- **Missing authors:** If `db.get_author` returns `None`, `author[\"name\"]` will crash.\n- **Missing dictionary keys:** Assumes `article` and `author` dicts contain all expected fields without checking.\n- **Timezone mismatches:** Uses naive `datetime` objects, which may fail if the database uses timezone-aware datetimes.\n- **Invalid inputs:** Lacks validation for `month` (e.g., 13) or `year`."
+}

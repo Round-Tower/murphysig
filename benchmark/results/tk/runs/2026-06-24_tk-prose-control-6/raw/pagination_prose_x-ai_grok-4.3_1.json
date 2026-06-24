@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "prose",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. Quick helper (written during a service migration) that slices a Python list into a 1-indexed page and returns it with total_pages/total_items/has_next/has_prev metadata.\n\n2. The start index is computed as `page * page_size` (should be `(page-1)*page_size`); it will always skip the first page of results. Also page_size=0 will raise ZeroDivisionError.\n\n3. Whether page > total_pages returns an empty list or should be treated as an error.\n\n4. page_size \u2264 0, negative page_size, empty input list, page=0, extremely large page values, non-integer inputs, and the fact that it never raises on out-of-range pages."
+}

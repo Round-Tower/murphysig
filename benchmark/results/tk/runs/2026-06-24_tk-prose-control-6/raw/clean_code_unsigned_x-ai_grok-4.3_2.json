@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "unsigned",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. Converts temps between C/F/K (via Celsius pivot) + rounds to 2 decimals; raises only on sub-zero Kelvin output. Exists to do unit conversion with a basic physics guard.\n\n2. Input Kelvin/Fahrenheit values are never validated against absolute zero; only the final Kelvin result is checked. Also watch the two-stage match and the unconditional round.\n\n3. Declaring `celsius: float` and `result: float` before the match arms (unusual in Python).\n\n4. Negative-Kelvin inputs, sub-absolute-zero Celsius/Fahrenheit inputs, float edge cases near 0 K, and any future enum members."
+}

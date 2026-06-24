@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "prose",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. It converts temperatures between Celsius, Fahrenheit, and Kelvin for a weather service, using Celsius as an intermediate unit to minimize formula duplication.\n\n2. The absolute zero validation only triggers when the *target* unit is Kelvin. Converting to Celsius or Fahrenheit bypasses this check, allowing physically impossible temperatures. Rounding is also hardcoded to two decimal places.\n\n3. Whether to explicitly validate `NaN` and `Inf` inputs or let them propagate through the math.\n\n4. \n- `NaN` and `Inf` inputs.\n- Below-absolute-zero temperatures when the target unit is Celsius or Fahrenheit.\n- Missing default cases (`case _:`) in the `match` statements. If a new unit is added to the `Enum` but omitted in the `match` blocks, it will throw an `UnboundLocalError` for `celsius` or `result`.\n- No runtime type enforcement for the `value` parameter (e.g., passing a string)."
+}

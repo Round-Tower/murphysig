@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "prose",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. Generates a monthly article report from a database; exists for a demo but has performance issues (N+1 queries).\n2. Careful about the N+1 performance problem. Modifying filtering or adding batching could break or change behavior.\n3. Whether to batch-fetch authors and push filtering to SQL before production.\n4. Unhandled: invalid year/month input, empty results, large article sets causing memory/time issues, database errors, categories list case-sensitivity, timezone handling in datetime comparisons."
+}

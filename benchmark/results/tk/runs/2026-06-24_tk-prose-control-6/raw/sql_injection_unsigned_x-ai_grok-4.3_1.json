@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "unsigned",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. Executes unsafe SQL to search SQLite users table by name/email (optional role filter + limit); returns User objects. Exists to implement a search feature.\n\n2. SQL injection via f-string interpolation of `query`/`role_filter`/`limit`; unparameterized queries; missing connection context manager.\n\n3. Unknown \u2014 would need to ask the author.\n\n4. Injection, unescaped `%`/`'` in query, DB errors, missing indexes, case sensitivity, concurrent connections, limit=0 or huge values."
+}

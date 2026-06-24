@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "prose",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. **What it does / why it exists**: Paginates a list of items (e.g., for API responses) during a service migration, returning metadata like `page`, `total_pages`, and slice of items for the requested page.\n\n2. **Be careful about**: Off-by-one errors in pagination math (e.g., `start`/`end` indices). The 1-based `page` input vs. 0-based list slicing is a common pitfall.\n\n3. **Author\u2019s uncertainty**: Explicitly unsure if `page > total_pages` behaves correctly (returns empty list silently) and whether edge cases are handled.\n\n4. **Unhandled edge cases**:\n   - Negative/zero `page_size`.\n   - Empty `items` list (works but may need explicit handling).\n   - Non-integer `page`/`page_size` (will raise `TypeError`).\n   - `page_size` larger than `items` (works but may need validation)."
+}

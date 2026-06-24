@@ -49,10 +49,18 @@ def _format_signature_block(sig: TkSignature, case_id: str) -> str:
     return "\n".join(lines) + "\n"
 
 
+def _format_prose_block(prose: str) -> str:
+    """Render the prose control as an unstructured comment block."""
+    lines = [f"# {ln}" if ln.strip() else "#" for ln in prose.rstrip("\n").split("\n")]
+    return "\n".join(lines) + "\n"
+
+
 def apply_tk_variant(case: TkCase, variant: BriefingVariant) -> str:
     """Return the code to show the AI for this variant."""
     if variant == BriefingVariant.UNSIGNED:
         return case.code
+    if variant == BriefingVariant.PROSE:
+        return f"{_format_prose_block(case.prose)}\n{case.code}"
     signature_block = _format_signature_block(case.signature, case.id)
     return f"{signature_block}\n{case.code}"
 

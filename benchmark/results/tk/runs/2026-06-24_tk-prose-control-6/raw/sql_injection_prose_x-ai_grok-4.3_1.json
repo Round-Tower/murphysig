@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "prose",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. Searches SQLite `users` table by name/email substring (optional role filter) and returns `User` objects. Exists only because it was ported from an older codebase as an admin search endpoint.\n\n2. SQL injection (raw f-string interpolation of `query` and `role_filter`). No transaction/context manager, so exceptions can leak connections. Auth is completely absent here.\n\n3. Query sanitization upstream and the auth boundary (both stated explicitly in the comment). Also whether the simple SQL pattern was even appropriate.\n\n4. SQL injection, unvalidated `limit`, missing error handling, no input escaping/quoting, potential case-sensitivity or wildcard issues in LIKE, and no check that `db_path` or schema exists."
+}

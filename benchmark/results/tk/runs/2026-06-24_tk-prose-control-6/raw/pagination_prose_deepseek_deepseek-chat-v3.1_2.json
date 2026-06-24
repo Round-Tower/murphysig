@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "prose",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. Paginates a list into 1-indexed pages and returns a page slice with metadata; exists to support a service migration.\n2. Must ensure `page` is 1-indexed (not 0-indexed) and that the slice logic correctly handles out-of-range pages.\n3. Author was uncertain about behavior when `page` exceeds `total_pages` (whether it returns empty silently).\n4. Edge cases: page far past total_pages may produce invalid slice indices; negative page sizes or non-integer inputs unhandled."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "prose",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. Searches SQLite users table by substring match on name/email (with optional role filter) and returns dataclass rows. Exists only because author quickly ported an old admin search without rewriting it.\n\n2. Direct string interpolation into SQL (injection risk); no upstream sanitization is guaranteed; auth is unclear; resource leaks or exceptions if DB ops fail.\n\n3. Query sanitization upstream and the auth boundary (explicitly stated in the comment).\n\n4. SQL injection, missing error handling, no DB locking/concurrency, LIMIT injection, LIKE wildcards or NULLs, connection leaks on exceptions."
+}

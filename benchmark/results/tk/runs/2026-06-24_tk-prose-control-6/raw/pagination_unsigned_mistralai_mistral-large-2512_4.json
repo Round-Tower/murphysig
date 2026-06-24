@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "unsigned",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. **What it does / why it exists**: Paginates a list of items, returning a slice of the list plus metadata (current page, total pages, etc.) for UI/API pagination controls.\n\n2. **Be careful about**:\n   - Off-by-one errors in `start`/`end` (current code is correct but subtle).\n   - Negative `page_size` (unhandled).\n   - Empty `items` list (handled, but worth noting).\n   - `page` exceeding `total_pages` (returns empty slice, may not be desired).\n\n3. **Author uncertainty**: Unknown \u2014 would need to ask the author.\n\n4. **Unhandled edge cases**:\n   - `page_size` \u2264 0 (crashes or returns full list).\n   - `page` > `total_pages` (returns empty slice, no warning).\n   - Non-integer `page` or `page_size` (type hints suggest `int`, but runtime checks missing).\n   - Very large `page` (could cause `start`/`end` to exceed list bounds, but Python handles it)."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "unsigned",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. Validates/prices/persists order (with per-item discounts), decrements stock, sends confirmation email. Exists as the core end-to-end order handler.\n\n2. No transaction wraps DB+email (email failure leaves order+stock changed); stock races possible; discount silently skipped if missing/expired; SMTP creds/config errors crash after DB writes.\n\n3. Discount expiry comparison (strict `>`, no tz); whether discounts apply before/after tax; several config defaults.\n\n4. SMTP transient failures, duplicate SKUs, concurrent stock, missing customer email, rounding edge cases, malformed order_data beyond basic checks."
+}

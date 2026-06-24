@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "prose",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. Raw SQL search over SQLite users table by name/email (with optional role filter); exists only because it was hastily ported from an old codebase as an admin endpoint.\n2. Direct f-string interpolation into SQL (injection risk); lack of connection context manager or error handling; unknown upstream sanitization or auth checks.\n3. Query sanitization upstream and the auth boundary.\n4. SQL injection, DB errors/unclosed connections, huge/unbounded LIMITs, missing indexes, and malformed inputs."
+}

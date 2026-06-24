@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "signed",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. **Purpose**: Processes an e-commerce order end-to-end (validation, pricing, stock, DB updates, email confirmation). Exists to consolidate the order pipeline under a deadline, likely for MVP/urgent delivery.\n\n2. **Modification risks**:\n   - No transactions: stock decrement and order insert aren\u2019t atomic.\n   - Email failure could leave DB in inconsistent state.\n   - Hardcoded rounding (2 decimal places) may not fit all currencies.\n   - Tight coupling to `db` and `config` interfaces.\n\n3. **Author uncertainty**:\n   - Splitting into services (noted in \"Open\").\n   - Adding transactions or an outbox pattern for email reliability.\n   - Tech debt acknowledgment (\"god-method anti-pattern\").\n\n4. **Unhandled edge cases**:\n   - SMTP failures (no retry/rollback).\n   - Concurrent stock updates (race conditions).\n   - Discount code collisions (e.g., same code used twice).\n   - Customer email delivery failures (bounces, spam).\n   - Partial failures (e.g., stock decrement succeeds but order insert fails).\n   - Timezone issues in `datetime.now()` for `created_at`."
+}

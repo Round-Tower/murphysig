@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "prose",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. **Purpose**: Generates a monthly report of articles (title, author, word count, etc.) filtered by date and optional categories. Exists to aggregate and summarize article data for a given month, likely for analytics or stakeholder review.\n\n2. **Caution**: Avoid the N+1 query problem (iteratively fetching authors). Performance will degrade with more articles. Filtering is done in Python, not SQL, which is inefficient.\n\n3. **Author uncertainty**: Whether to batch-fetch authors or push filtering into SQL before production. Also unsure if the code is validated/scalable.\n\n4. **Edge cases/unhandled**:\n   - Empty `articles` list (handled, but may produce a report with zero values).\n   - Missing/invalid `author_id` in articles (will crash on `db.get_author`).\n   - `categories` containing non-string values (will silently skip articles).\n   - Timezone handling in `published_at` (assumes naive datetimes).\n   - No error handling for DB failures."
+}

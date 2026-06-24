@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "unsigned",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "**1. What does this code do, and why does it exist?**\nIt converts temperature values between Celsius, Fahrenheit, and Kelvin. It exists to provide a standard utility for temperature conversions with basic physical validation.\n\n**2. What should someone modifying it be careful about?**\n* **Incomplete validation:** The absolute zero check only triggers if the target unit is Kelvin.\n* **Early exit:** If `from_unit == to_unit`, the value is returned immediately without physical validation.\n* **Precision loss:** The function hardcodes rounding to 2 decimal places.\n\n**3. What did the author seem uncertain about?**\nUnknown \u2014 would need to ask the author.\n\n**4. What edge cases or failure modes are likely unhandled?**\n* **Physically impossible inputs:** You can pass values below absolute zero (e.g., `-500\u00b0C` or `-50K`) and get a successful conversion, as long as the destination unit is not Kelvin.\n* **Type errors:** Passing non-numeric types into `value` will cause a runtime crash."
+}

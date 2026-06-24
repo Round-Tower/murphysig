@@ -45,7 +45,15 @@ ROOT = Path(__file__).resolve().parent.parent
 FIXTURES = ROOT / "fixtures" / "tk"
 RESULTS_ROOT = ROOT / "results" / "tk"
 
-VARIANTS = ("unsigned", "signed")
+VARIANTS = ("unsigned", "signed", "prose")
+
+
+def resolve_variants(arg: str) -> tuple[str, ...]:
+    """Map a --variant choice to the variants to run. 'all' runs every
+    arm; a single name isolates it (e.g. the prose-only add)."""
+    if arg == "all":
+        return VARIANTS
+    return (arg,)
 
 
 def load_tk_fixtures() -> tuple[list[dict], str]:
@@ -77,10 +85,27 @@ def format_signature_block(sig: dict, today: str) -> str:
     return "\n".join(lines) + "\n"
 
 
+def format_prose_block(prose: str) -> str:
+    """Render the prose control as an unstructured comment block.
+
+    The structure-vs-content control: the same facts as the signature,
+    with no field labels, no numeric confidence, no MurphySig framing —
+    just a plain developer comment. Comparing the signed variant against
+    this isolates whether the signature's *structure* earns its keep.
+    """
+    lines = [
+        f"# {ln}" if ln.strip() else "#"
+        for ln in prose.rstrip("\n").split("\n")
+    ]
+    return "\n".join(lines) + "\n"
+
+
 def apply_variant(case: dict, variant: str, today: str) -> str:
     """Return the code to show the model for this variant."""
     if variant == "unsigned":
         return case["code"]
+    if variant == "prose":
+        return f"{format_prose_block(case['prose'])}\n{case['code']}"
     block = format_signature_block(case["signature"], today=today)
     return f"{block}\n{case['code']}"
 
@@ -91,7 +116,13 @@ def build_briefing_prompt(template: str, code: str) -> str:
     return template.replace("{code}", code)
 
 
-def run(provider_name: str, model: str, reps: int, temperature: float) -> None:
+def run(
+    provider_name: str,
+    model: str,
+    reps: int,
+    temperature: float,
+    variants: tuple[str, ...] = VARIANTS,
+) -> None:
     cfg = resolve_provider(provider_name, os.environ)
     client = make_client(cfg)
 
@@ -101,11 +132,11 @@ def run(provider_name: str, model: str, reps: int, temperature: float) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     rows = []
-    total = len(cases) * len(VARIANTS) * reps
+    total = len(cases) * len(variants) * reps
     n = 0
 
     for case in cases:
-        for variant in VARIANTS:
+        for variant in variants:
             code = apply_variant(case, variant, today=today)
             prompt = build_briefing_prompt(template, code)
             for rep in range(reps):
@@ -150,5 +181,17 @@ if __name__ == "__main__":
     parser.add_argument("--model", required=True, help="provider's model id")
     parser.add_argument("--reps", type=int, default=10)
     parser.add_argument("--temperature", type=float, default=0.0)
+    parser.add_argument(
+        "--variant",
+        choices=("all", *VARIANTS),
+        default="all",
+        help="run a single arm (e.g. 'prose') instead of all three",
+    )
     args = parser.parse_args()
-    run(args.provider, args.model, args.reps, args.temperature)
+    run(
+        args.provider,
+        args.model,
+        args.reps,
+        args.temperature,
+        variants=resolve_variants(args.variant),
+    )

@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "prose",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. SQL search for users by name/email substring (w/ optional role filter); returns User rows. Quick port of admin search from old codebase.\n2. SQL injection (raw f-string interpolation); unclear auth; no upstream sanitization guarantee; resource leaks on errors.\n3. Query sanitization upstream; auth boundary.\n4. SQL injection; DB errors; huge `limit`; missing parameterization; no input validation."
+}

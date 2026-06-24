@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "signed",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. Converts temperatures between Celsius, Fahrenheit, and Kelvin via an intermediate Celsius step for a weather service.\n\n2. The identical-unit early return bypasses rounding and the absolute-zero check. The absolute-zero validation only applies to Kelvin outputs, ignoring physically impossible Celsius/Fahrenheit inputs. Adding new units requires updating both `match` statements.\n\n3. Whether to explicitly validate `NaN` and `Inf` inputs or let them propagate (stated in the `Open` header).\n\n4. `NaN`/`Inf` inputs. Invalid temperatures below absolute zero when converting between Celsius and Fahrenheit (e.g., -500\u00b0C successfully converts to -932\u00b0F). Identical-unit conversions bypass rounding and absolute-zero validation (e.g., passing -500 K returns -500 K)."
+}

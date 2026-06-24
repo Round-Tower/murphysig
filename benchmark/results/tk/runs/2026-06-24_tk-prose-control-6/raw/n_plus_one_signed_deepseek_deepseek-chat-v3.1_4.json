@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "signed",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. Generates a monthly article summary report from a database. Exists for a demo but scales poorly (N+1 queries).\n2. Avoid N+1 pattern: batch-fetch authors. Push category filtering to SQL. Performance degrades with more articles.\n3. Whether to batch-fetch authors or push filter to SQL (see \"Open:\" comment).\n4. Missing authors cause KeyError. Empty month or no matching categories produce empty report. Month/year validation is minimal (e.g., month 13)."
+}

@@ -42,7 +42,11 @@ from scripts.rescore_tk_perquestion import (
     aggregate_perquestion,
     axis_summary,
 )
-from scripts.tk_cross_family_report import aggregate_tk, delta_table
+from scripts.tk_cross_family_report import (
+    aggregate_tk,
+    delta_table,
+    structure_table,
+)
 
 ROOT = Path(__file__).resolve().parent.parent
 FIXTURES = ROOT / "fixtures" / "tk"
@@ -161,6 +165,12 @@ def archive(
         if judged.exists():
             shutil.copy2(judged, run_dir / "verdicts" / judged.name)
             verdict_rows.extend(json.loads(judged.read_text()))
+        # The prose control arm (structure-vs-content), if present, lives in
+        # a separate __prose verdict file so it never clobbers the base rows.
+        prose_judged = working / f"judged_tk_{slug}__prose.json"
+        if prose_judged.exists():
+            shutil.copy2(prose_judged, run_dir / "verdicts" / prose_judged.name)
+            verdict_rows.extend(json.loads(prose_judged.read_text()))
         model_meta.append({"provider": provider, "id": model, "n": len(raw_files)})
 
     # Per-question decomposition (pooled) → the intent/code axis headline.
@@ -193,6 +203,8 @@ def archive(
         f"{manifest['model_count']} models, reps={reps}, temp={temperature}. "
         f"git {manifest['git_sha']}, fixtures {manifest['fixture_hash']}._\n\n"
         + delta_table(agg)
+        + "\n"
+        + structure_table(agg)
     )
     if axis_delta:
         report += (

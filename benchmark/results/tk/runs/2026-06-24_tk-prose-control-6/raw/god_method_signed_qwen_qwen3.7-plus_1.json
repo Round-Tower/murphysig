@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "signed",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. Processes e-commerce orders end-to-end (validates items/stock, calculates totals, saves to DB, decrements inventory, emails receipt). Exists as an intentional, rushed \"god-method\" to meet a strict deadline.\n\n2. It lacks database transactions, meaning DB writes, stock decrements, and email sends are not atomic. Mid-execution failures (like SMTP timeouts) will leave the database and inventory in an inconsistent state. Also beware the TOCTOU race condition between stock validation and decrement.\n\n3. The header explicitly states uncertainty about architectural next steps: whether to split it into separate services, wrap it in a database transaction, or use an outbox pattern for the email.\n\n4. - Partial failures: SMTP crashes after DB insert and stock decrement.\n- Concurrency: Race conditions between stock check and decrement.\n- Missing data: Crashes if `customer[\"email\"]` or `item[\"sku\"]` is missing/null.\n- Datetime bugs: Naive `datetime.now()` compared to potentially timezone-aware `expires_at`.\n- Boundary logic: Free shipping uses `>` instead of `>=` for the threshold."
+}

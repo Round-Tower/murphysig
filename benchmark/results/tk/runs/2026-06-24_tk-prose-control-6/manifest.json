@@ -1,0 +1,50 @@
+{
+  "run_id": "2026-06-24_tk-prose-control-6",
+  "theme": "tk",
+  "date": "2026-06-24",
+  "git_sha": "6e9d829",
+  "fixture_hash": "sha256:fd23cc8d647c6575",
+  "judge_model": "anthropic/claude-opus-4.6",
+  "reps": 5,
+  "temperature": 0.7,
+  "model_count": 6,
+  "total_responses": 450,
+  "models": [
+    {
+      "provider": "openrouter",
+      "id": "google/gemini-3.5-flash",
+      "n": 75
+    },
+    {
+      "provider": "openrouter",
+      "id": "meta-llama/llama-4-maverick",
+      "n": 75
+    },
+    {
+      "provider": "openrouter",
+      "id": "x-ai/grok-4.3",
+      "n": 75
+    },
+    {
+      "provider": "openrouter",
+      "id": "deepseek/deepseek-chat-v3.1",
+      "n": 75
+    },
+    {
+      "provider": "openrouter",
+      "id": "qwen/qwen3.7-plus",
+      "n": 75
+    },
+    {
+      "provider": "openrouter",
+      "id": "mistralai/mistral-large-2512",
+      "n": 75
+    }
+  ],
+  "axis_delta": {
+    "intent": 0.3308,
+    "code": 0.112
+  },
+  "signed": "Kev + claude-opus-4-8",
+  "format": "MurphySig v0.4 (https://murphysig.dev/spec)"
+}

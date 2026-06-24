@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "unsigned",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. **Purpose**: Processes e-commerce orders\u2014validates, calculates totals (subtotal, tax, shipping), updates stock, saves to DB, and emails a confirmation. Exists to automate order fulfillment.\n\n2. **Caution**: DB transactions (stock updates/inserts should be atomic), email delivery failures (no retry), and floating-point rounding (use `decimal` for currency if precision matters).\n\n3. **Uncertainty**: Author may be unsure about:\n   - SMTP error handling (no retries/logging).\n   - Whether `discount_code` expiry check (`> datetime.now()`) is correct (should it be `>=`?).\n   - Hardcoded free-shipping threshold fallback (`100`).\n\n4. **Unhandled edge cases**:\n   - Concurrent stock updates (race condition).\n   - Missing `config` keys (e.g., `smtp_host`, `from_email`).\n   - Invalid `customer[\"email\"]` (no validation).\n   - Discounts applied to out-of-stock items (checked *after* discount logic).\n   - Negative prices (discounts > 100%).\n   - Network failures during DB/email operations."
+}

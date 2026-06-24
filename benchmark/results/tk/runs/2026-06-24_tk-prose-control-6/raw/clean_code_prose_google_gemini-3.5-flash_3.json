@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "prose",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. **What does this code do, and why does it exist?**\nConverts temperatures between Celsius, Fahrenheit, and Kelvin for a weather service, using Celsius as an intermediate conversion unit.\n\n2. **What should someone modifying it be careful about?**\nThe absolute zero check only triggers when the *destination* unit is Kelvin. Converting to Celsius or Fahrenheit below absolute zero will bypass this check. Also, all outputs are rounded to 2 decimal places.\n\n3. **What did the author seem uncertain about?**\nWhether they should explicitly validate and handle `NaN` and `Inf` inputs, or let them propagate.\n\n4. **What edge cases or failure modes are likely unhandled?**\n* **Invalid inputs:** `NaN` and `Inf` values are not validated.\n* **Incomplete absolute zero validation:** Inputs below absolute zero (e.g., negative Kelvin inputs) or results below absolute zero in Celsius/Fahrenheit are not caught.\n* **Precision loss:** Hardcoded rounding to 2 decimal places may break high-precision use cases."
+}

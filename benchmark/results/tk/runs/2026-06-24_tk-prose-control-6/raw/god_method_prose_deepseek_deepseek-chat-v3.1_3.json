@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "prose",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. Processes an order end-to-end: validates, calculates pricing, saves to DB, updates inventory, sends confirmation email. Exists as a monolithic function due to a deadline.\n\n2. Modifying one step may break others; it's tightly coupled. Changing validation, pricing, DB writes, or email logic affects the whole function.\n\n3. Author was uncertain about: splitting into services, wrapping in a transaction, and whether email should use an outbox.\n\n4. Likely unhandled: network/DB failures mid-process (no rollback), email failures, race conditions on stock, duplicate order handling, malformed config keys."
+}

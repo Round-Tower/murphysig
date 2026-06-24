@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "prose",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. **Purpose**: Admin search endpoint for users by name/email, likely for internal tooling. Exists to port old functionality quickly.\n\n2. **Careful about**: SQL injection (no parameterization), auth boundary (unknown access controls), and upstream sanitization (assumed but unverified).\n\n3. **Author uncertainty**: Query sanitization, auth boundary, and whether the SQL pattern is correct/safe.\n\n4. **Unhandled edge cases**: SQL injection, malformed `query`/`role_filter`, `limit` \u2264 0, empty results, DB connection errors, and role-based access validation."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "signed",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. Processes orders end-to-end: validates, calculates totals, deducts stock, sends confirmation email. Exists as a rushed deadline solution combining multiple concerns.\n\n2. Database operations and email sending aren't transactional - failures can leave inconsistent state. Also, modifying one step might affect others due to tight coupling.\n\n3. Whether to split into services, add transactions, or implement an outbox pattern for email (per comments).\n\n4. Unknown - would need to ask the author. (No specific edge cases listed in comments)"
+}

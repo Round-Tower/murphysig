@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "signed",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. It queries a SQLite database to find users by name or email (with optional role filtering) for an admin search endpoint. It exists as a quick, unvalidated port from an older codebase.\n\n2. **SQL Injection.** The code uses f-strings to interpolate `query`, `role_filter`, and `limit` directly into the SQL string. You must rewrite this using parameterized queries (`?`). Additionally, the DB connection lacks a context manager or `try/finally`, meaning it will leak if an exception occurs before `conn.close()`.\n\n3. The author explicitly states uncertainty about whether the query is sanitized upstream and what the authentication boundary is. They also note a low confidence score (0.4) and that the SQL pattern is \"not validated.\"\n\n4. \n- **Connection leaks:** Exceptions during execution will bypass `conn.close()`, leaving the database connection open.\n- **Syntax crashes:** Unescaped single quotes in `query` or `role_filter` will break the SQL string and crash the execution.\n- **Silent DB creation:** If `db_path` does not exist, SQLite will silently create an empty file instead of failing.\n- **Invalid limits:** `limit` is not validated; passing zero or negative numbers yields unexpected SQLite behavior."
+}

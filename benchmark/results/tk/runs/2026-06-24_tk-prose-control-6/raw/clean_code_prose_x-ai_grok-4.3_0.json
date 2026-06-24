@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "prose",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Converts temps between C/F/K (via Celsius intermediate) with Kelvin absolute-zero guard; used by weather service.\n2. Incomplete absolute-zero logic (only checks Kelvin output; allows invalid negative inputs/results in C/F); round(2) after possible FP error.\n3. Whether to validate NaN/Inf inputs.\n4. Negative-Kelvin inputs, below-zero conversions to C/F, non-finite values, added enum members."
+}

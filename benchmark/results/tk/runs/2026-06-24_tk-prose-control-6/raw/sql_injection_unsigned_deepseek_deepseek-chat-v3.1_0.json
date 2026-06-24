@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "unsigned",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Searches a SQLite users table by name or email with optional role filtering. Exists to find users with partial matches.\n\n2. SQL injection vulnerability \u2014 never use f-strings for query parameters. Use parameterized queries.\n\n3. Unknown \u2014 would need to ask the author.\n\n4. SQL injection, special characters in query breaking LIKE, performance issues with leading wildcards, database connection failures."
+}

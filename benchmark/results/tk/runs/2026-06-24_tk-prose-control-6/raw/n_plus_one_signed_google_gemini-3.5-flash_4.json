@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "signed",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. **What does this code do, and why does it exist?**  \n   It generates a monthly summary report of articles and their authors. It was rapidly shipped for a demo but scales poorly.\n\n2. **What should someone modifying it be careful about?**  \n   Performance and database load. It suffers from a classic N+1 query pattern (fetching each author individually in a loop) and filters categories in memory rather than in the database.\n\n3. **What did the author seem uncertain about?**  \n   Whether to batch-fetch authors before production use, and whether to push the category filtering logic down to the SQL/database layer.\n\n4. **What edge cases or failure modes are likely unhandled?**  \n   * Missing authors (will crash with a `TypeError` or `KeyError` on `author[\"name\"]` if `db.get_author` returns `None`).\n   * Naive datetime handling (timezone mismatches).\n   * Invalid `month` inputs (outside 1\u201312 range).\n   * Database timeouts/exhaustion on large datasets due to the N+1 loop."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "prose",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. **What it does and why:** Searches an SQLite database for users by name or email (with optional role filtering) to serve as a quickly ported admin search endpoint.\n\n2. **What to be careful about:** \n* **SQL Injection:** It builds SQL via f-strings. You *must* refactor to use parameterized queries (`?`). \n* **Resource leaks:** The database connection is not closed if an exception occurs; wrap it in a `with` context manager.\n\n3. **What the author seemed uncertain about:** Whether upstream sanitization exists (it doesn't, based on the code), what the actual authentication boundary is, and whether the ported search logic is even correct.\n\n4. **Unhandled edge cases or failure modes:** Malicious input (SQLi), database errors (missing tables, locked files), connection leaks on crashes, and invalid `limit` values (e.g., negative or zero)."
+}

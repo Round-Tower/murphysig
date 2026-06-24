@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "prose",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. End-to-end order processing: validates, calculates totals, saves to DB, updates stock, sends confirmation email. Exists as a deadline-driven single-function solution.\n2. Changes affect everything: validation, pricing, DB writes, stock updates, email. Must maintain atomicity where possible.\n3. Whether to split into services, wrap in a transaction, or use an outbox for email.\n4. No transaction (partial updates possible), email failures corrupt order state, no retries, network/DB failures unhandled."
+}

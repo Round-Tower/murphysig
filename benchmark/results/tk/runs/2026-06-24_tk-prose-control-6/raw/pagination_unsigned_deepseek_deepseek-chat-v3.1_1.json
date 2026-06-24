@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "unsigned",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. Paginates a list into 1-indexed pages; exists to provide a simple client-side pagination helper.\n2. The `start` calculation uses `page` directly (should be `(page-1) * page_size`). This is a bug.\n3. Unknown \u2014 would need to ask the author.\n4. Negative `page_size`, empty `items` list, `page` far beyond `total_pages` (returns empty slice), non-integer inputs."
+}

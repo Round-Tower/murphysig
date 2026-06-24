@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "unsigned",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. Converts a float temperature between C/F/K (via intermediate Celsius), erroring only on sub-zero Kelvin output; exists as a small shared utility for such conversions.\n2. Absolute-zero validation applies only to direct Kelvin outputs (not equivalent negative inputs in other units); adding Enum members will break the match statements at runtime.\n3. Variable annotations (\"celsius: float\", \"result: float\") without initializers before the match blocks.\n4. Sub-absolute-zero inputs (e.g., -1 K), NaN/inf, exhaustive match coverage for future Enum values, and precision loss from the unconditional round.\n\n(The \"why\" and intent behind the zero-check placement remain Unknown \u2014 would need to ask the author.)"
+}

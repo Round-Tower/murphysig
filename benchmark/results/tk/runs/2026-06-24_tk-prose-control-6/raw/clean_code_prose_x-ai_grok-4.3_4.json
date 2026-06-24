@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "prose",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. Converts temps between C/F/K (via C intermediate) for a weather service; raises on <0K results.\n2. Absolute-zero check only applies to K outputs (misses invalid inputs like negative K); `round(2)` and float math.\n3. Whether to explicitly reject NaN/Inf inputs.\n4. Negative-K inputs, non-finite values, and new enum members.\n\n**Final answer**\n\n1. Converts temps between C/F/K (via C intermediate) for a weather service; raises on <0K results.\n2. Absolute-zero check only applies to K outputs (misses invalid inputs like negative K); `round(2)` and float math.\n3. Whether to explicitly reject NaN/Inf inputs.\n4. Negative-K inputs, non-finite values, and new enum members."
+}

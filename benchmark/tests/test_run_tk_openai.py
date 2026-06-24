@@ -18,6 +18,7 @@ from __future__ import annotations
 from scripts.run_tk_openai import (
     apply_variant,
     build_briefing_prompt,
+    format_prose_block,
     format_signature_block,
     load_tk_fixtures,
 )
@@ -94,3 +95,78 @@ class TestLoadFixtures:
             assert "code" in c
             assert "signature" in c
         assert "{code}" in template
+
+
+class TestFormatProseBlock:
+    def test_renders_as_comment_without_structure(self):
+        prose = "Quick helper from a migration; not validated on edges."
+        block = format_prose_block(prose)
+        # Every non-blank line is a Python comment...
+        for line in block.splitlines():
+            assert line.startswith("#")
+        # ...but it carries NONE of the MurphySig structure.
+        for token in ("Signed:", "Context:", "Confidence:", "Open:", "MurphySig"):
+            assert token not in block
+        assert "Quick helper from a migration" in block
+
+
+class TestProseVariant:
+    def _case(self):
+        return {
+            "id": "pagination",
+            "code": "def paginate(): pass\n",
+            "signature": {"context": "ctx", "confidence": 0.5, "open": "q"},
+            "prose": "A plain note: quick helper, not validated on edges.",
+        }
+
+    def test_prose_prepends_unstructured_comment(self):
+        out = apply_variant(self._case(), "prose", today="2026-06-23")
+        assert "A plain note: quick helper" in out
+        assert out.rstrip().endswith("def paginate(): pass")
+        # the prose variant must NOT contain signature structure
+        assert "Signed:" not in out
+        assert "Confidence:" not in out
+
+    def test_prose_differs_from_both_other_variants(self):
+        case = self._case()
+        unsigned = apply_variant(case, "unsigned", today="2026-06-23")
+        signed = apply_variant(case, "signed", today="2026-06-23")
+        prose = apply_variant(case, "prose", today="2026-06-23")
+        assert prose != unsigned
+        assert prose != signed
+
+
+class TestResolveVariants:
+    def test_all_returns_three_variants(self):
+        from scripts.run_tk_openai import resolve_variants
+
+        assert resolve_variants("all") == ("unsigned", "signed", "prose")
+
+    def test_single_variant_isolates_one_arm(self):
+        from scripts.run_tk_openai import resolve_variants
+
+        # The prose-only add: run just the prose arm for a model.
+        assert resolve_variants("prose") == ("prose",)
+        assert resolve_variants("signed") == ("signed",)
+
+
+class TestProseLengthParity:
+    """The rig gate. If the prose control is much shorter than the
+    signature, 'signed beats prose' could be a length artifact rather than
+    a structure effect. Keep them within tolerance — committed so the
+    experiment can't silently drift unfair."""
+
+    TOLERANCE = 0.15
+
+    def test_prose_block_matches_signature_length(self):
+        cases, _ = load_tk_fixtures()
+        today = "2026-06-24"
+        for c in cases:
+            sig_block = format_signature_block(c["signature"], today=today)
+            prose_block = format_prose_block(c["prose"])
+            ratio = len(prose_block) / len(sig_block)
+            assert abs(1 - ratio) <= self.TOLERANCE, (
+                f"{c['id']}: prose {len(prose_block)} vs sig "
+                f"{len(sig_block)} chars (ratio {ratio:.2f}) exceeds "
+                f"+/-{self.TOLERANCE:.0%} parity"
+            )

@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "signed",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. Attempts to paginate a list (returns slice + metadata). Quick migration helper under time pressure.\n\n2. Slice indices are wrong: `start = page * page_size` skips items (should be `(page-1) * page_size`). Also `has_next`/`has_prev` aren't in the docstring.\n\n3. Whether `page > total_pages` behaves correctly or silently returns empty results.\n\n4. Empty input (total_pages=0), page exceeding total_pages, page_size=0 (ZeroDivisionError), and the off-by-one slice bug itself."
+}

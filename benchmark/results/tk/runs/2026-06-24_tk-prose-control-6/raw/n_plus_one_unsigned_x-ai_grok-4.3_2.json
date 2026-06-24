@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "unsigned",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. Generates a monthly article summary report (with author lookups) from a DB, optionally filtered by category. Exists to produce structured analytics output for a given year/month.\n\n2. N+1 author queries; implicit DB schema/keys; naive datetime math and now(); mutation of Report after init; no validation of inputs.\n\n3. Date boundary calculation (explicit Dec handling) and whether to accept None vs [] for categories.\n\n4. Bad year/month values; missing DB keys or authors; timezones; empty/large result sets; concurrent report mutation.\n\nUnknown \u2014 would need to ask the author."
+}

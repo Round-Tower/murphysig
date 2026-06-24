@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "prose",
+  "model": "meta-llama/llama-4-maverick",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "Here are the answers to the four questions:\n\n1. This code implements an admin search endpoint that allows searching for users by name or email, with optional filtering by role and a limit on the number of results. It exists to provide a way for administrators to search for users.\n2. Someone modifying it should be careful about SQL injection vulnerabilities, as the code directly interpolates user-provided input into SQL queries.\n3. The author seemed uncertain about whether the query gets sanitized upstream and the auth boundary for this endpoint.\n4. Likely unhandled edge cases include: invalid or missing `db_path`, malformed or missing `query`, invalid `limit` or `role_filter` values, database connection errors, and cases where the `users` table is missing or has an unexpected schema."
+}

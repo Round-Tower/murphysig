@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "prose",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. **What it does and why:** Validates inventory, calculates totals, saves the order, decrements stock, and emails a receipt. It exists as intentional, rushed tech debt to meet a strict deadline.\n\n2. **What to be careful about:** There are no database transactions. If stock decrement or email sending fails after `insert_order`, the database and inventory will be inconsistent. Additionally, products are fetched twice (once for validation, once for pricing), risking stale data.\n\n3. **What the author was uncertain about:** They explicitly questioned whether to split the logic into separate services, wrap the database operations in a transaction, and use an outbox pattern for the email.\n\n4. **Unhandled edge cases and failure modes:**\n   * **Race conditions:** Stock is validated, then priced, then decremented. Concurrent orders can oversell inventory.\n   * **Floating-point math:** Currency calculations use floats, risking precision errors before the final `round()`.\n   * **SMTP failures:** Email errors will crash the function after the DB commit, leaving the order \"confirmed\" but the receipt undelivered.\n   * **Discount flaws:** No validation for missing `percentage`, values >100, or timezone-naive vs. aware `datetime` mismatches."
+}

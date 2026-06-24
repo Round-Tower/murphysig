@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "unsigned",
+  "model": "meta-llama/llama-4-maverick",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. This code searches a SQLite database for users by name or email, with optional filtering by role and a limit on the number of results. It exists to provide a data access function for user search functionality.\n\n2. Someone modifying it should be careful about SQL injection vulnerabilities, as the code directly interpolates user-provided input into SQL queries.\n\n3. The author seemed uncertain about the type of `role_filter`, as it's annotated as `str | None`, which was introduced in Python 3.10; the author likely wasn't sure if the code would be used in an earlier Python version, but this is just a guess \u2014 the uncertainty is more likely about whether `role_filter` should allow other types or not, or if it is correctly handling `None`. However, a more plausible interpretation is that the author is simply using a modern Python feature. A more certain answer is that the author is aware of SQL injection risks but hasn't mitigated them.\n\n4. Likely unhandled edge cases or failure modes include database connection failures, malformed or missing database files, and SQL syntax errors due to the aforementioned SQL injection vulnerabilities. Additionally, it doesn't handle cases where the `limit` is negative or extremely large."
+}

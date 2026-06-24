@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "signed",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. **Purpose**: Paginates a list of items, returning a slice with metadata (page number, totals, next/prev flags). Exists to split large datasets for API/UI consumption during a service migration.\n\n2. **Careful about**:\n   - **1-based indexing**: `page` starts at 1, not 0.\n   - **Bounds handling**: `start`/`end` may exceed list length (silently returns empty slice).\n   - **Time pressure**: No input validation (e.g., negative `page_size`).\n\n3. **Author uncertainty**:\n   - Explicitly questions if `page > total_pages` behaves correctly (it silently returns empty `items`).\n   - Low confidence (0.5) due to rushed implementation.\n\n4. **Unhandled edge cases**:\n   - Empty `items` list (works but may not be intentional).\n   - Negative/zero `page_size`.\n   - Non-integer `page`/`page_size`.\n   - `items` not a list (type error)."
+}

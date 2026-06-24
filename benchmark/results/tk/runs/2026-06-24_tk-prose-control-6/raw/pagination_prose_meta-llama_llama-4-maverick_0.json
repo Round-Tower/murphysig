@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "prose",
+  "model": "meta-llama/llama-4-maverick",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. This code paginates a list of items, returning a dictionary with the requested page of items and pagination metadata. It exists as a helper during a service migration.\n\n2. Someone modifying it should be careful about correctly handling edge cases, particularly around page numbering and indexing, as the code already contains a potential issue with page clamping.\n\n3. The author seemed uncertain about the behavior when the requested page exceeds the total number of pages.\n\n4. Likely unhandled edge cases include: an empty `items` list; a non-integer or non-positive `page_size`; and a `page` value beyond `total_pages`, although the author already expressed uncertainty about this case."
+}

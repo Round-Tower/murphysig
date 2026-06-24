@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "signed",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. Validates order data, computes totals (incl. discounts/tax/shipping), inserts order, decrements stock, and sends confirmation email via SMTP. Exists as intentional tech debt to meet a deadline.\n\n2. No transaction wraps DB writes + email, so partial failure leaves inconsistent state. Also watch repeated DB lookups, missing config keys, and SMTP blocking.\n\n3. How to split the god method, whether to add transactions, and whether to use an outbox for email (see \"Open\" comment).\n\n4. SMTP or email failure after DB commit; stock race conditions; missing/expired discounts; TZ issues on `datetime.now()`; absent config keys; no duplicate-order or concurrent-order handling."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "prose",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. Provides admin user search by name or email, with optional role filter. Exists to quickly port an old search pattern.\n\n2. SQL injection vulnerability \u2014 `query` and `role_filter` are unsafely interpolated. Also, lacks input validation and proper authorization.\n\n3. Author was uncertain about input sanitization (whether done upstream) and the auth boundary.\n\n4. SQL injection; missing auth checks; no escaping of `%` or `_` in LIKE patterns; no handling of missing DB file; `limit` unrestricted and could be abused."
+}

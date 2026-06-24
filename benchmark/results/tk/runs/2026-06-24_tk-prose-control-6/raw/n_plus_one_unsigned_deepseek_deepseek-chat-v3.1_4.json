@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "unsigned",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. Generates a monthly report of articles from a DB, filtered by optional categories, with aggregated stats and summaries.\n2. The `db` interface is assumed; modifying must match its `get_articles_between` and `get_author` return schemas.\n3. Unknown \u2014 would need to ask the author.\n4. Empty month handling (total_words, article_count default to 0, but report still produced). Timezone-naive datetimes. Invalid year/month combos (e.g., month=13) will crash at `datetime()` creation."
+}

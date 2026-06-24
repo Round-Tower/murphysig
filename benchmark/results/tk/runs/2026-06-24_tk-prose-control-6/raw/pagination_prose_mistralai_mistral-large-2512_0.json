@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "prose",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. **Purpose**: Paginates a list of items, returning a subset for a given page with metadata (current page, total pages, etc.). Exists to split large datasets into manageable chunks during a service migration.\n\n2. **Careful about**:\n   - **Off-by-one errors**: `start`/`end` indices may exceed list bounds (e.g., `page * page_size` when `page` is large).\n   - **1-indexing**: Assumes `page` starts at 1 (not 0).\n   - **Empty lists**: May return empty `items` without clear failure signaling.\n\n3. **Author\u2019s uncertainty**:\n   - Behavior when `page > total_pages` (silently returns empty `items` vs. error).\n   - Overall robustness (explicitly unvalidated edge cases).\n\n4. **Unhandled edge cases**:\n   - `items` is empty (returns `total_pages=0`, but `page` could still be > 0).\n   - `page_size=0` (divide-by-zero in `total_pages` calculation).\n   - `page` or `page_size` as non-integers (type errors).\n   - Negative `page_size` (logical error, no validation)."
+}

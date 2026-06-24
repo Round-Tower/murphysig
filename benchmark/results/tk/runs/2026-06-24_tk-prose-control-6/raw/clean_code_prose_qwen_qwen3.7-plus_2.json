@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "prose",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. Converts temperatures between Celsius, Fahrenheit, and Kelvin for the weather service. It centralizes this logic using a standard intermediate-unit pattern.\n\n2. The absolute zero validation *only* triggers when converting *to* Kelvin. Converting invalid sub-absolute-zero inputs to Celsius or Fahrenheit will silently succeed. Additionally, adding new units requires updating both `match` blocks and the absolute zero logic.\n\n3. Whether to explicitly validate `NaN` and `Inf` inputs or let them propagate through the calculations.\n\n4. Sub-absolute-zero inputs when converting to Celsius or Fahrenheit; `NaN` and `Inf` inputs; and non-Enum unit inputs causing an `UnboundLocalError` because the `match` blocks lack a default `_` case."
+}

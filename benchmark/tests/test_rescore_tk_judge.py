@@ -64,6 +64,21 @@ class TestLoadTkRows:
             ("pagination", "unsigned", 0),
         ]
 
+    def test_variant_filter_judges_one_arm_only(self, tmp_path):
+        # The prose-only add: judge just the prose rows without re-scoring
+        # (and paying for) the already-judged signed/unsigned arms.
+        _write_row(tmp_path, "pagination", "signed", "m", 0)
+        _write_row(tmp_path, "pagination", "unsigned", "m", 0)
+        _write_row(tmp_path, "pagination", "prose", "m", 0)
+        rows = load_tk_rows(tmp_path, "m", variant="prose")
+        assert len(rows) == 1
+        assert rows[0].variant == "prose"
+
+    def test_no_variant_filter_loads_all(self, tmp_path):
+        _write_row(tmp_path, "pagination", "signed", "m", 0)
+        _write_row(tmp_path, "pagination", "prose", "m", 0)
+        assert len(load_tk_rows(tmp_path, "m")) == 2
+
 
 class TestFillTkJudgePrompt:
     def test_fills_all_four_slots(self):

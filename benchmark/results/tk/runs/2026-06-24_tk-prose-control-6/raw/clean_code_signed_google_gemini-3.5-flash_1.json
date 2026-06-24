@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "signed",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "**1. What does this code do, and why does it exist?**\nIt converts temperature values between Celsius, Fahrenheit, and Kelvin, rounding the output to two decimal places. It exists as a utility for a weather service.\n\n**2. What should someone modifying it be careful about?**\n* **Inconsistent Validation:** The absolute zero check only triggers when converting *to* Kelvin. \n* **Hardcoded Rounding:** It rounds all final results to 2 decimal places, which may cause precision loss.\n\n**3. What did the author seem uncertain about?**\nWhether to explicitly validate and handle `NaN`/`Inf` float inputs or let them propagate.\n\n**4. What edge cases or failure modes are likely unhandled?**\n* **Invalid Inputs:** It does not validate if the *input* temperature is below absolute zero (e.g., inputting -1000K).\n* **Incomplete Output Validation:** It allows physically impossible outputs (below absolute zero) when converting to Celsius or Fahrenheit.\n* **Special Floats:** `NaN` and `Infinity` inputs are not handled."
+}

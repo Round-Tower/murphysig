@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "prose",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. Searches users by name/email, optionally filtered by role. Exists to provide admin user lookup.\n\n2. SQL injection \u2014 query and role_filter are unsafely interpolated. Also no input validation or sanitization shown.\n\n3. Whether query gets sanitized upstream and what the auth boundary is.\n\n4. SQL injection, missing input validation, no escaping of wildcards, no error handling, and unclear authentication/authorization."
+}

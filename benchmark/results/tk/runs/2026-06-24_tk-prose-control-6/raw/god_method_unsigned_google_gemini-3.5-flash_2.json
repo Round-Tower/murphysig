@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "unsigned",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. **What does this code do, and why does it exist?**\n   It processes e-commerce orders end-to-end. It validates stock, calculates totals (applying discounts, tax, and shipping), writes the order to the database, decrements inventory, and sends a confirmation email.\n\n2. **What should someone modifying it be careful about?**\n   * **Lack of transactions:** There is no rollback mechanism. If the database updates succeed but the SMTP email fails, the order is left in a half-processed state.\n   * **Race conditions:** Stock is verified in an early loop and decremented in a later loop, allowing stock to be oversold under concurrent load.\n   * **Floating-point math:** It uses Python `float` instead of `Decimal` for currency calculations, which will introduce rounding errors.\n\n3. **What did the author seem uncertain about?**\n   Unknown \u2014 would need to ask the author. (There are no comments or TODOs, though they coded default fallbacks for SMTP ports, tax rates, and shipping thresholds).\n\n4. **What edge cases or failure modes are likely unhandled?**\n   * **SMTP downtime:** Network timeouts or authentication failures in `smtplib` will crash the function *after* the database has already been updated.\n   * **Timezone mismatches:** It uses timezone-naive `datetime.now()` to check discount expirations, which will fail if the database stores UTC timestamps.\n   * **Missing dictionary keys:** `customer[\"email\"]` and several `config` keys (like `from_email`) have no fallbacks and will raise unhandled `KeyError`s if missing."
+}

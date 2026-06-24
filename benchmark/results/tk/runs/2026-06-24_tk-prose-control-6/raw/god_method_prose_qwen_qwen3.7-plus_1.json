@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "prose",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. Validates inputs and inventory, calculates totals (discounts, tax, shipping), saves the order, decrements stock, and emails a confirmation. It exists as intentional tech debt to hit a deadline.\n\n2. There are no database transactions; if stock decrement or email fails, the system is left in an inconsistent state. It also fetches product data twice (validation, then pricing), creating race conditions and inefficiency.\n\n3. Whether to split the logic into separate services, wrap the database operations in a transaction, and use an outbox pattern for the email.\n\n4. SMTP failure leaves the order saved and stock decremented with no rollback or retry. Concurrency allows overselling between the initial stock check and the decrement. `customer[\"email\"]` will throw a `KeyError` if the customer record is missing or lacks an email. It uses standard floats instead of `Decimal` for currency calculations."
+}

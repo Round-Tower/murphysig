@@ -40,4 +40,5 @@ def _parse_case(raw: dict) -> TkCase:
         code=raw["code"],
         ground_truth=raw["ground_truth"],
         signature=signature,
+        prose=raw.get("prose", ""),
     )

@@ -31,11 +31,35 @@ class TestTkCase:
         assert c.id == "t"
         assert c.signature.confidence == 0.5
 
+    def test_carries_prose_control(self):
+        sig = TkSignature(context="c", confidence=0.5, open="q")
+        c = TkCase(
+            id="t",
+            name="T",
+            code="x=1",
+            ground_truth="gt",
+            signature=sig,
+            prose="a plain comment carrying the same facts",
+        )
+        assert c.prose == "a plain comment carrying the same facts"
+
 
 class TestBriefingVariant:
     def test_values(self):
         assert BriefingVariant.UNSIGNED.value == "unsigned"
         assert BriefingVariant.SIGNED.value == "signed"
+
+    def test_prose_control_variant(self):
+        # The prose control isolates structure from content: same facts as
+        # the signature, written as an unstructured developer comment.
+        assert BriefingVariant.PROSE.value == "prose"
+
+    def test_three_variants(self):
+        assert {v.value for v in BriefingVariant} == {
+            "unsigned",
+            "signed",
+            "prose",
+        }
 
 
 class TestBriefingScore:

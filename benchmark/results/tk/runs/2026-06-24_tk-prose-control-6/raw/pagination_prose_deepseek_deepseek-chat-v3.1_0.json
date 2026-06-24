@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "prose",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Paginates a list into 1-indexed pages with metadata; exists for service migration.\n2. Be careful: the `start` index uses 1-indexed `page`, causing off-by-one errors (should be `(page-1)*page_size`).\n3. Uncertain about behavior when `page` exceeds `total_pages` (silent empty return?).\n4. Unhandled: negative `page_size`, non-integer inputs; `page` exceeding `total_pages` returns empty slice without error."
+}

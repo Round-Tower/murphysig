@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "prose",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Paginates a list (1-indexed) and returns a metadata dict. Quick migration helper.\n\n2. `start = page * page_size` is wrong (off-by-one; skips first page of items). Doesn't clamp `page` to `[1, total_pages]`.\n\n3. Behavior when `page > total_pages` (author explicitly called it out).\n\n4. Negative/zero `page_size`, non-int inputs, `page > total_pages` returning an inflated page number, empty input list."
+}

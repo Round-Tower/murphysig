@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "prose",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. Converts temperatures between Celsius, Fahrenheit, and Kelvin for the weather service, using Celsius as an intermediate unit.\n\n2. The absolute zero validation is flawed: it only checks if the *target* unit is Kelvin. It misses invalid inputs (e.g., -10 K) when converting to C/F, and the `from == to` short-circuit bypasses validation entirely. \n\n3. Whether to explicitly validate `NaN` and `Inf` inputs or let them propagate.\n\n4. `NaN` and `Inf` inputs; sub-absolute-zero inputs when converting to C/F or when `from == to`; non-float inputs (no runtime type enforcement)."
+}

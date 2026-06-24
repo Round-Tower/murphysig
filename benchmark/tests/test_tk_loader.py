@@ -48,3 +48,41 @@ class TestLoadTkCases:
     def test_missing_file_raises(self, tmp_path: Path):
         with pytest.raises(FileNotFoundError):
             load_tk_cases(tmp_path / "missing.yaml")
+
+
+class TestProseControl:
+    """The prose control is the structure-vs-content experiment's crux: it
+    must carry the signature's facts WITHOUT any structural framing."""
+
+    def test_every_case_has_non_empty_prose(self):
+        cases = load_tk_cases(FIXTURES / "cases.yaml")
+        for c in cases:
+            assert c.prose.strip(), f"Case {c.id} has empty prose control"
+
+    def test_prose_has_no_structure_cues(self):
+        # No MurphySig field labels, branding, or numeric confidence — else
+        # it isn't an *unstructured* control and the experiment is rigged.
+        banned = [
+            "Signed:",
+            "Context:",
+            "Confidence:",
+            "Open:",
+            "Heuristic:",
+            "MurphySig",
+            "Format:",
+        ]
+        cases = load_tk_cases(FIXTURES / "cases.yaml")
+        for c in cases:
+            for token in banned:
+                assert token not in c.prose, (
+                    f"Case {c.id} prose leaks structure cue {token!r}"
+                )
+
+    def test_prose_has_no_numeric_confidence(self):
+        import re
+
+        cases = load_tk_cases(FIXTURES / "cases.yaml")
+        for c in cases:
+            assert not re.search(r"0\.\d", c.prose), (
+                f"Case {c.id} prose leaks a numeric confidence value"
+            )

@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "unsigned",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "**1. What does this code do, and why does it exist?**\nIt processes an e-commerce order: validates stock, calculates totals (with discounts, tax, and shipping), saves the order to the database, decrements stock, and emails a confirmation. It exists as the end-to-end checkout transaction handler.\n\n**2. What should someone modifying it be careful about?**\n* **Lack of Atomicity:** Database writes, stock decrementing, and emailing are not grouped in a transaction. If a downstream step (like SMTP) fails, prior database changes are not rolled back.\n* **Performance/Redundant Queries:** It queries the database for the same product details twice (once for validation, once for pricing).\n\n**3. What did the author seem uncertain about?**\nUnknown \u2014 would need to ask the author. (There are no comments, TODOs, or code structures indicating uncertainty).\n\n**4. What edge cases or failure modes are likely unhandled?**\n* **Race Conditions (Overselling):** Stock is checked at the start but decremented at the end. Concurrent orders can bypass the stock check and oversell.\n* **Uncaught Exceptions:** SMTP connection failures or database errors will crash the function midway, leaving the database in a partial state.\n* **Float Precision:** Uses floats instead of `Decimal` for currency calculations, risking rounding errors.\n* **KeyErrors:** Accesses dictionary keys (e.g., `product[\"price\"]`, `customer[\"email\"]`) directly; if these fields are missing in the DB, the code will crash.\n* **Timezone Mismatch:** Compares naive `datetime.now()` with discount expiration dates, which may cause timezone errors."
+}

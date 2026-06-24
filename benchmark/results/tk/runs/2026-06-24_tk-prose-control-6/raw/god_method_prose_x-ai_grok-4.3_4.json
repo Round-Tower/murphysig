@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "prose",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. Validates order (cust/items/quantities/stock), computes totals+discounts+tax+shipping, inserts order, decrements stock, sends SMTP confirmation. Exists as deliberate single-function tech debt to ship fast.\n\n2. No transaction, so partial failure (insert succeeds, email or stock decrement fails) leaves inconsistent state. Also: repeated DB lookups, SMTP in hot path, no retries/rollback.\n\n3. Splitting into services, adding a transaction, and using an outbox for email.\n\n4. Concurrent stock races, SMTP or email failures after DB writes, missing customer record, bad/missing config keys, floating-point/rounding drift, expired discount race, no idempotency."
+}

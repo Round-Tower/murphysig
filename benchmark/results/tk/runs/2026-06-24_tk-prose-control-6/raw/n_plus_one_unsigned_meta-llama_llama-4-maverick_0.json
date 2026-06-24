@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "unsigned",
+  "model": "meta-llama/llama-4-maverick",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. This code generates a monthly report of articles, summarizing their title, author, publication date, word count, and category. It exists to provide a structured summary of articles published within a specific month.\n\n2. Someone modifying it should be careful about maintaining the integrity of the `Report` object, particularly ensuring that `total_words` and `article_count` remain consistent with the `summaries` list.\n\n3. The author seemed uncertain about handling database interactions (`db.get_articles_between`, `db.get_author`), as the code assumes the database returns data in a specific format without any error handling.\n\n4. Likely unhandled edge cases include: \n- Database query failures or returns incorrect data.\n- Articles or authors missing required fields (e.g., `title`, `author_id`, `name`).\n- Invalid or out-of-range `year` or `month` inputs.\n- `categories` containing non-string values or an empty list."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "unsigned",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. It slices an in-memory list and returns the subset with pagination metadata. It exists to format list data for paginated API or UI responses.\n\n2. The slicing math is broken for 1-indexed pages. `start = page * page_size` makes page 1 start at index 20, skipping the first chunk. It must be `start = (page - 1) * page_size`.\n\n3. The docstring lists 4 return keys, but the code returns 6 (omitting `has_next` and `has_prev` in the doc). They likely added those fields later and forgot to update the documentation.\n\n4. `page_size <= 0` causes a `ZeroDivisionError`. The 1-indexed bug makes the first page's data completely inaccessible. Requesting a `page` greater than `total_pages` returns empty items but doesn't clamp the returned `page` value to `total_pages`."
+}

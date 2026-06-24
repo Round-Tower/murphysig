@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "prose",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. Processes an order end\u2011to\u2011end: validates items, computes pricing, saves to DB, updates stock, sends confirmation email. Exists because it was rushed into a single function to hit a deadline.\n\n2. Be careful about:\n   - No transaction around DB operations (stock updated even if email fails).\n   - Changing any step may break others due to tight coupling.\n   - SMTP failures crash the whole process.\n\n3. Author was uncertain about:\n   - Splitting into separate services.\n   - Wrapping in a transaction.\n   - Using an outbox for email.\n\n4. Likely unhandled edge cases:\n   - Concurrent stock updates (race condition).\n   - Customer email missing or invalid.\n   - SMTP server unavailable or slow.\n   - Discount expiration timezone issues.\n   - Database connection failures mid\u2011process."
+}

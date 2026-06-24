@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "signed",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. Validates stock, calculates totals, saves the order, decrements inventory, and emails the customer. Exists as an intentional \"god-method\" tech-debt shortcut to meet a deadline.\n\n2. The lack of transactions and async boundaries. If the DB insert succeeds but the stock decrement or email fails, the system enters an inconsistent state. Beware of stock race conditions.\n\n3. Architecture and reliability. The metadata explicitly questions whether to split into microservices, add database transactions, or use an outbox pattern for email.\n\n4. \n- Stock race conditions (TOCTOU between the validation check and the decrement).\n- Partial failures (no DB transaction; an email failure crashes the function post-insert).\n- Infinite discount reuse (discount codes are read, never consumed/invalidated).\n- Floating-point math for currency instead of `Decimal`.\n- `KeyError` if `customer[\"email\"]` is missing (occurs *after* the DB insert)."
+}

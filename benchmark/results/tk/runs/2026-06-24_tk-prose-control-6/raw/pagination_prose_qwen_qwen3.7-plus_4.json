@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "prose",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. Slices a list into pages and returns pagination metadata. Built as a quick, temporary helper during a service migration.\n\n2. The 1-indexed math is broken: `start = page * page_size` skips the first page's items (it should be `(page - 1) * page_size`). Additionally, `page_size=0` causes a `ZeroDivisionError`.\n\n3. They doubted the code's solidity, hadn't validated edge cases, and specifically didn't know the behavior when `page` exceeds `total_pages`.\n\n4. `page_size <= 0` causes a `ZeroDivisionError`. `page > total_pages` silently returns an empty list (confirming the author's suspicion). Negative `page_size` yields unpredictable list slicing."
+}

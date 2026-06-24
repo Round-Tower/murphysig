@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "prose",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. **Purpose**: Paginates a list of items, returning a subset (page) with metadata (page number, total pages, etc.). Exists to split large lists into manageable chunks for APIs/UI during a service migration.\n\n2. **Careful about**:\n   - **Off-by-one errors**: `start`/`end` indices assume 1-based `page` but Python uses 0-based slicing.\n   - **Negative/zero `page_size`**: Unchecked, could cause division by zero or incorrect `total_pages`.\n   - **Immutable input**: Modifying `items` after calling could corrupt results.\n\n3. **Author uncertainty**:\n   - Behavior when `page > total_pages` (empty list vs. last page).\n   - Overall robustness (explicitly unvalidated edge cases).\n\n4. **Unhandled edge cases**:\n   - `page_size` \u2264 0 (division by zero in `total_pages`).\n   - `items` is empty (returns empty page but may not be expected).\n   - `page` is 0 or negative (clamped to 1, but no warning).\n   - Non-integer `page`/`page_size` (type errors).\n   - Very large `page` (could cause `start` to overflow)."
+}

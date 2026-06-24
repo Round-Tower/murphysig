@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "prose",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. **What/Why:** It slices a full list to return a specific page of items alongside pagination metadata. It exists as a quick helper to implement standard pagination during a service migration.\n\n2. **Modifying care:** **Critical bug:** The start index math is wrong. `start = page * page_size` skips the first page (page 1 starts at index 20, not 0). It must be `(page - 1) * page_size`. Also, passing `page_size=0` will cause a `ZeroDivisionError`.\n\n3. **Author uncertainty:** The author was uncertain about edge cases, overall robustness, and specifically what happens when the requested `page` exceeds `total_pages`.\n\n4. **Unhandled edge cases:** `page_size <= 0` (crashes). When `page > total_pages`, it silently returns empty items but incorrectly reports `has_prev: True` (if page > 1). It also lacks type validation for `page` and `page_size`."
+}

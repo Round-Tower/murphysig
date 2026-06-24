@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "prose",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. It queries a SQLite database for users matching a name or email substring, optionally filtered by role, up to a specified limit. It exists to power an admin user search endpoint.\n\n2. **SQL Injection:** It uses f-strings to build the query for `query`, `role_filter`, and `limit` instead of using parameterized queries. **Resource Leaks:** The database connection lacks a context manager (`with`) or `try...finally` block, meaning the connection will leak if an exception occurs during execution.\n\n3. Whether inputs are sanitized upstream, what the authentication/authorization boundary is, and whether the ported search logic is actually correct.\n\n4. Single quotes in `query` or `role_filter` will crash the application with a SQL syntax error. An invalid `db_path` will silently create a new, empty database file instead of failing. Missing `users` tables or columns will throw unhandled `sqlite3.OperationalError` exceptions."
+}

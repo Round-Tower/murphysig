@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "signed",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Generates a monthly article summary report from a database. Exists for a demo but scales poorly due to N+1 queries.\n2. Avoid making it worse: batch the author fetches (`db.get_author` calls) and push the category filter to the database.\n3. Whether to batch-fetch authors and push the filter to SQL (mentioned in the `Open:` comment).\n4. Large result sets causing memory/perf issues; invalid month/year inputs; `db.get_author` failing for an ID; `categories` list could be large for in-memory filtering."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "signed",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. Paginates a list into 1-indexed pages with metadata; exists for a service migration quick helper.\n2. The start index calculation is wrong (should be `(page-1) * page_size`). Also, page > total_pages may cause empty slices.\n3. Author was uncertain about behavior when `page > total_pages` (see Open comment).\n4. Edge cases: page > total_pages returns empty items list incorrectly, negative page_size unhandled, empty input list."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "prose",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. It searches a SQLite database for users matching a name/email substring and optional role filter, returning `User` objects. It exists as a ported admin search endpoint.\n\n2. SQL injection. The `query`, `role_filter`, and `limit` variables are concatenated directly into the SQL string via f-strings instead of using parameterized queries. Additionally, database connection leaks will occur if an exception is raised before `conn.close()`.\n\n3. Whether input is sanitized upstream, what the authentication/authorization boundary is, and whether the ported logic is actually correct.\n\n4. Unescaped SQL wildcards (`%`, `_`) in `query` altering search results. Connection leaks if `execute` or `fetchall` throws an exception. Unhandled `sqlite3.OperationalError` if the database or table is missing. Runtime bypass of the `limit: int` type hint, allowing string injection."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "unsigned",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. Defines `User` dataclass + `search_users` that runs a SQLite query matching a substring in name/email (optionally filtered by role) and returns up to `limit` rows. Exists to implement a simple user search over a DB file.\n\n2. Direct string interpolation into SQL (severe injection risk); also raw `connect`/`close` without context manager or transaction handling.\n\n3. Unknown \u2014 would need to ask the author.\n\n4. SQL injection, missing DB errors, absent table/columns, empty or special-char queries, connection leaks under exceptions, no sanitization of `limit`/`role_filter`."
+}

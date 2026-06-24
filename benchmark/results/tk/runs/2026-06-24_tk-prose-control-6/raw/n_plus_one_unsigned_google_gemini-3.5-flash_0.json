@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "unsigned",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "**1. What does this code do, and why does it exist?**\nIt generates a monthly summary report of articles (optionally filtered by category) from a database. It exists to aggregate article metadata, fetch author names, and calculate total article and word counts for a given month.\n\n**2. What should someone modifying it be careful about?**\nThe N+1 query bottleneck: it queries the database for the author (`db.get_author`) individually inside a loop for every single article. If the article count is high, this will severely degrade performance.\n\n**3. What did the author seem uncertain about?**\nUnknown \u2014 would need to ask the author.\n\n**4. What edge cases or failure modes are likely unhandled?**\n*   **Missing authors:** If `db.get_author()` returns `None` (e.g., if an author was deleted), the code will crash with a `TypeError`.\n*   **Invalid dates:** Passing an invalid month (e.g., 13) or year will crash `datetime(...)` with a `ValueError`.\n*   **Timezone offsets:** The code uses timezone-naive datetimes, which will cause incorrect monthly boundaries if the database stores timestamps in UTC or a different timezone."
+}

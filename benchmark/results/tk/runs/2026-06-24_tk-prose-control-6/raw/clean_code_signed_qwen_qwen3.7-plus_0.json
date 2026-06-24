@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "signed",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Converts temperatures between Celsius, Fahrenheit, and Kelvin via a Celsius intermediate. It provides unit conversion for a weather service.\n\n2. The `from_unit == to_unit` short-circuit bypasses both rounding and absolute zero validation. Furthermore, the absolute zero check only applies when converting *to* Kelvin, allowing invalid sub-absolute-zero values to pass if the target unit is Celsius or Fahrenheit.\n\n3. Whether to explicitly validate `NaN`/`Inf` inputs or let them propagate (stated in the file metadata).\n\n4. `NaN`/`Inf` inputs, sub-absolute-zero temperatures when targeting Celsius/Fahrenheit, unrounded/unvalidated returns from the same-unit short-circuit, and non-numeric inputs (relies solely on type hints with no runtime enforcement)."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "prose",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. It converts temperatures between Celsius, Fahrenheit, and Kelvin for a weather service, using an intermediate Celsius conversion step.\n\n2. The absolute zero check only triggers if `to_unit` is KELVIN. The `from_unit == to_unit` early return also bypasses the check entirely. Additionally, results are strictly rounded to 2 decimal places.\n\n3. Whether to explicitly validate `NaN` and `Inf` inputs or let them propagate through the math.\n\n4. Absolute zero violations when `to_unit` is CELSIUS or FAHRENHEIT; absolute zero violations when `from_unit == to_unit` (early return bypasses validation); `NaN` and `Inf` inputs; and non-float inputs (Python type hints are not enforced at runtime)."
+}

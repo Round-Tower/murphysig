@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "prose",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. It validates, calculates totals, saves to the database, decrements inventory, and sends a confirmation email for an e-commerce order. It exists as intentional \"god-method\" tech debt to meet a strict deadline.\n\n2. The lack of a database transaction and the synchronous SMTP call. Modifying DB logic risks partial writes. Modifying the email logic risks blocking the pipeline or leaving the database in an inconsistent state if the SMTP server fails. \n\n3. The author explicitly stated uncertainty about three architectural decisions: whether to split the function into separate services, whether to wrap the operations in a database transaction, and whether to use an outbox pattern for the email.\n\n4. \n- Partial state mutations: No DB transaction means a failed stock decrement leaves a confirmed order without reserved inventory.\n- TOCTOU race conditions: Inventory is checked, then decremented later, allowing overselling under concurrent load.\n- SMTP failures: An email error throws an exception *after* DB mutations, leaving the order confirmed and stock decremented without notifying the user.\n- Missing keys: `customer[\"email\"]` will throw a KeyError if the fetched customer record lacks an email address."
+}

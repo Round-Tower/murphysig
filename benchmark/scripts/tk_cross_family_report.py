@@ -94,6 +94,43 @@ def delta_table(agg: dict[str, dict]) -> str:
     return "".join(out)
 
 
+def structure_table(agg: dict[str, dict]) -> str:
+    """Render the structure-vs-content decomposition.
+
+    The headline is Δstructure = signed − prose: does the signature's
+    *structure* earn its keep over the same facts written as an
+    unstructured developer comment? Δcontent = prose − unsigned isolates
+    the effect of the information alone; Δtotal = signed − unsigned is the
+    full uplift. A model missing the prose variant renders '—' for the
+    structure/content columns (delta undefined without that arm)."""
+    out = ["# TK structure vs content — does the signature's *form* matter?\n"]
+    out.append(
+        "_Δstructure = signed − prose (same facts, structured vs plain prose) "
+        "is the headline. Δcontent = prose − unsigned (the information alone). "
+        "Δtotal = signed − unsigned._\n\n"
+    )
+    out.append(
+        "| Model | n (u/p/s) | Coverage u/p/s | Δstructure | Δcontent | Δtotal |\n"
+        "|---|---|---|--:|--:|--:|\n"
+    )
+    for model in sorted(agg):
+        u = agg[model].get("unsigned")
+        p = agg[model].get("prose")
+        s = agg[model].get("signed")
+        ncol = f"{u['n'] if u else 0}/{p['n'] if p else 0}/{s['n'] if s else 0}"
+        covcol = "/".join(
+            f"{c['coverage']:.2f}" if c else "—" for c in (u, p, s)
+        )
+        d_struct = _fmt_delta(s["coverage"] - p["coverage"]) if (s and p) else "—"
+        d_content = _fmt_delta(p["coverage"] - u["coverage"]) if (p and u) else "—"
+        d_total = _fmt_delta(s["coverage"] - u["coverage"]) if (s and u) else "—"
+        out.append(
+            f"| {model} | {ncol} | {covcol} | "
+            f"{d_struct} | {d_content} | {d_total} |\n"
+        )
+    return "".join(out)
+
+
 def load_judged_rows(results_root: Path) -> list[dict]:
     """Read every judged_tk_*.json under results/tk/**."""
     rows: list[dict] = []
@@ -114,5 +151,6 @@ if __name__ == "__main__":
     rows = load_judged_rows(args.dir)
     if not rows:
         raise SystemExit(f"No judged_tk_*.json found under {args.dir}")
-    table = delta_table(aggregate_tk(rows))
-    print(table)
+    agg = aggregate_tk(rows)
+    print(delta_table(agg))
+    print(structure_table(agg))

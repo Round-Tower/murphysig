@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "signed",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. Returns a dict with a slice of the input list plus pagination metadata. Quick helper written during a service migration.\n\n2. The line `start = page * page_size` is off-by-one (should be `(page-1)*page_size`). Also watch the silent clamp of page<1 and behavior when page>total_pages.\n\n3. Whether page > total_pages is handled correctly or just returns an empty list; overall edge-case behavior.\n\n4. page_size \u2264 0, page > total_pages, non-integer inputs, and the incorrect start index."
+}

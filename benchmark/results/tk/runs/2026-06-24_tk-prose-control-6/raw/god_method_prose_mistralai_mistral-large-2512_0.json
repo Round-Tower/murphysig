@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "prose",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. **What it does & why it exists**\n   End-to-end order processing: validates input, calculates totals, persists the order, decrements stock, and emails the customer. Exists to centralize the entire flow in one place (intentionally, as tech debt).\n\n2. **What to be careful about**\n   - No transactions; partial failures (e.g., stock decremented but email fails) leave the system inconsistent.\n   - Hard-coded SMTP logic; network/email failures crash the whole pipeline.\n   - Rounding errors in financial calculations (e.g., `round(subtotal, 2)` may not match exact accounting rules).\n\n3. **Author\u2019s uncertainty**\n   - Whether to split into separate services.\n   - Whether to wrap in a transaction.\n   - Whether to use an outbox pattern for emails.\n\n4. **Unhandled edge cases**\n   - Network/SMTP failures after stock is decremented.\n   - Concurrent orders causing overselling (no row-level locks).\n   - Discount codes applied after expiration (timezone issues in `expires_at` check).\n   - Negative prices from invalid discounts (e.g., >100% off).\n   - Missing `config` keys (e.g., `smtp_host`) causing `KeyError`."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "prose",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. Validates order data, calculates totals (with discounts/tax/shipping), inserts order, decrements stock, sends email. Exists as intentional tech-debt monolith to hit a deadline.\n2. Side effects (DB writes + email) have no transaction; concurrent stock races, partial failure, and SMTP errors can leave inconsistent state.\n3. Splitting into services, adding a transaction, and using an outbox for email.\n4. No transaction, no duplicate-order guard, email failure after DB changes, SMTP/login errors, negative totals, timezone issues on discounts, and missing retries/timeouts."
+}

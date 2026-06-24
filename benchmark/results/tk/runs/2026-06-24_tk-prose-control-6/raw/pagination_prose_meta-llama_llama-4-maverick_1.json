@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "prose",
+  "model": "meta-llama/llama-4-maverick",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. This code paginates a list of items and returns a dictionary with the paginated items and metadata. It exists as a helper during a service migration.\n2. Someone modifying it should be careful about correctly handling edge cases, such as out-of-range page numbers and potentially large input lists.\n3. The author seemed uncertain about the behavior when the page number exceeds the total number of pages.\n4. Likely unhandled edge cases include: page_size being less than or equal to 0, items being None, and non-integer or non-positive page/page_size inputs (though the function is typed to prevent the latter)."
+}

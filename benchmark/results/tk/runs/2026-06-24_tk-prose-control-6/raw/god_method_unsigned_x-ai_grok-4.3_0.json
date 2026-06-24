@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "unsigned",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Validates+prices an order (stock, per-item discounts), persists it+stock deltas, emails confirmation. Exists as the core e-commerce order pipeline.\n2. All side-effects (DB writes, email) lack a transaction or try/finally; partial failure leaves inconsistent state. Also watch KeyError on required config keys and SMTP exceptions after order is already saved.\n3. Unknown \u2014 would need to ask the author.\n4. No stock race protection, email failure after commit, missing customer email, non-atomic multi-item updates, config KeyErrors, timezone-naive expiry checks."
+}

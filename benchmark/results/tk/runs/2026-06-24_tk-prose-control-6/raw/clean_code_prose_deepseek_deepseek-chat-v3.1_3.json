@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "prose",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. Converts temperature values between Celsius, Fahrenheit, and Kelvin. It exists to provide standard unit conversion for a weather service.\n2. Be careful about the absolute-zero check only applying for Kelvin output; ensure conversion logic remains symmetric if adding units.\n3. Whether to explicitly validate NaN and Infinity inputs.\n4. NaN, Infinity inputs propagate unhandled. Negative Kelvin results from Celsius/Fahrenheit inputs aren't caught (only output check)."
+}

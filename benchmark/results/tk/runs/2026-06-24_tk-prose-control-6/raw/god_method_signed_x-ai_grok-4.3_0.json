@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "signed",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Validates/prices/persists an order, decrements stock, sends email. Exists as deliberate tech debt (deadline god-method).\n\n2. No transactions or outbox; any failure after insert leaves inconsistent state. Also SMTP, repeated DB calls, and missing customer lookup.\n\n3. Refactoring approach (split services, transactions, outbox for email) per the \"Open\" note and 0.6 confidence.\n\n4. SMTP or email failures, stock races, missing customer, config KeyErrors, timezone/expiry edge cases, partial discount application."
+}

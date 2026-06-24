@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "signed",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Processes an e-commerce order end-to-end: validates items, calculates pricing, creates order record, updates inventory, and sends confirmation email. Exists as a temporary monolithic solution due to deadline constraints.\n\n2. Modifying one part (e.g., pricing) could break others (e.g., inventory). Must maintain atomicity - partial failures could leave inconsistent state. Changing validation logic requires checking all dependent steps.\n\n3. Transaction safety - no rollback mechanism if email fails after DB commits. Whether to split into services. How to handle discount expiration timezones.\n\n4. Database transaction failures after partial execution. SMTP failures after DB changes. Race conditions on inventory. Invalid customer email addresses. Timezone issues with discount expiration. Network timeouts during email sending."
+}

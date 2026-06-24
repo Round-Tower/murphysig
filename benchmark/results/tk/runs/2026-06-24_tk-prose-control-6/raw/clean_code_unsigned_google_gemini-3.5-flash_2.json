@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "unsigned",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "Here is your 30-second briefing:\n\n### 1. What does this code do, and why does it exist?\nIt converts temperature values between Celsius, Fahrenheit, and Kelvin, rounding the output to two decimal places. It exists to provide a standardized conversion utility with a safety check against physically impossible temperatures (absolute zero).\n\n### 2. What should someone modifying it be careful about?\n* **Adding units:** If you add a new unit, you must update the `TemperatureUnit` Enum and **both** `match` blocks.\n* **Rounding side-effects:** It returns a rounded float. If this function is chained or used in high-precision calculations, it will introduce compounding rounding errors.\n\n### 3. What did the author seem uncertain about?\n**Unknown \u2014 would need to ask the author.** There are no comments, TODOs, or open questions in the code. However, the incomplete absolute zero logic (see Q4) suggests they may have been unsure how to handle physical limits holistically.\n\n### 4. What edge cases or failure modes are likely unhandled?\n* **Bypassed absolute zero checks:** The absolute zero check *only* runs if `to_unit` is Kelvin. You can successfully convert to physically impossible temperatures below absolute zero in Celsius (e.g., converting -500 K to Celsius yields -773.15\u00b0C without raising an error).\n* **Inconsistent rounding:** If `from_unit == to_unit`, the function returns the raw, unrounded input immediately. If they differ, it returns a rounded value."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "prose",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. **Purpose**: Admin search endpoint for users by name/email. Exists to quickly port old functionality, likely for internal tooling or admin dashboards.\n\n2. **Caution**: **SQL injection risk**\u2014query is unsanitized. Also, auth boundary is unclear; may expose sensitive data if misconfigured.\n\n3. **Author uncertainty**: Query sanitization (upstream?), auth boundary, and whether the SQL pattern is correct/validated.\n\n4. **Unhandled edge cases**:\n   - SQL injection (no parameterization).\n   - `query`/`role_filter` containing quotes/escape sequences.\n   - `limit` as negative/zero/non-integer.\n   - DB connection failures (no error handling).\n   - Empty/null `query` or `role_filter`.\n   - Case sensitivity in LIKE clauses (depends on DB collation)."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "unsigned",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. Validates, prices, and saves an e-commerce order to the database, decrements inventory, and emails a customer confirmation.\n\n2. 1) Financial math uses floats instead of `Decimal` (precision loss). 2) No DB transactions; order insertion and stock decrement are not atomic. 3) Synchronous SMTP occurs *after* the DB commit; an email failure will crash the function without rolling back the saved order or restored stock.\n\n3. Unknown \u2014 would need to ask the author.\n\n4. 1) Concurrency: No row-level locking; race conditions can cause overselling (negative stock). 2) Partial failures: SMTP errors leave orphaned orders in the DB. 3) Idempotency: Retrying the request creates duplicate orders. 4) Type mismatch: `discount[\"expires_at\"] > datetime.now()` will crash if the database returns a string instead of a datetime object."
+}

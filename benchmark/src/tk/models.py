@@ -14,10 +14,17 @@ from enum import Enum
 
 
 class BriefingVariant(Enum):
-    """Whether the code is shown to the AI with or without a signature."""
+    """How the code is shown to the AI.
+
+    PROSE is the structure-vs-content control: the same facts as the
+    signature, written as an unstructured developer comment. Comparing
+    SIGNED against PROSE isolates whether the signature's *structure*
+    earns its keep over the same knowledge in plain prose.
+    """
 
     UNSIGNED = "unsigned"
     SIGNED = "signed"
+    PROSE = "prose"
 
 
 @dataclass(frozen=True)
@@ -32,13 +39,15 @@ class TkSignature:
 
 @dataclass(frozen=True)
 class TkCase:
-    """A TK test case: code + gold-standard briefing + signature."""
+    """A TK test case: code + gold-standard briefing + signature + the
+    length/content-matched prose control."""
 
     id: str
     name: str
     code: str
     ground_truth: str
     signature: TkSignature
+    prose: str = ""
 
 
 @dataclass(frozen=True)

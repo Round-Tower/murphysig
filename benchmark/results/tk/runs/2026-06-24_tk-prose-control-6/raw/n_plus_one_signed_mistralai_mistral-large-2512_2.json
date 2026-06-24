@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "signed",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. **What it does / why it exists**: Generates a monthly report of articles (title, author, word count, etc.) for a given month/year, optionally filtered by category. Exists to provide a demo-ready summary of article activity.\n\n2. **Be careful about**: N+1 query problem (iterative `db.get_author` calls). Performance will degrade with more articles. Also, timezones in `published_at` if DB and app differ.\n\n3. **Author\u2019s uncertainty**: Whether to batch-fetch authors or push filtering to SQL (see `# Open` comments). Confidence score (0.5) suggests they\u2019re unsure about scalability.\n\n4. **Unhandled edge cases**:\n   - Empty result sets (no articles).\n   - Missing/invalid `author_id` in articles.\n   - `categories` list with invalid values.\n   - Timezone handling in `published_at`.\n   - `word_count` as negative/zero.\n   - `db.get_*()` failures (no error handling)."
+}

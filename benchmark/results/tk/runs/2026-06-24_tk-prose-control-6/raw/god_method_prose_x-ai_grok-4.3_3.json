@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "prose",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. Validates order data, calculates subtotal (with conditional discounts), tax, and shipping, inserts order, decrements stock, and sends a confirmation email. Exists as deliberate tech debt to meet a deadline.\n\n2. No transaction wraps the DB + email sequence; failure after insert leaves partial state. Stock checks and decrements are not atomic. SMTP errors or config key misses will crash after DB changes.\n\n3. Splitting into services, wrapping operations in a transaction, and routing email through an outbox.\n\n4. Email delivery failures after DB writes, concurrent orders racing on stock, missing config keys, silent skip on invalid discounts, rounding/precision drift, and lack of input sanitization or idempotency."
+}

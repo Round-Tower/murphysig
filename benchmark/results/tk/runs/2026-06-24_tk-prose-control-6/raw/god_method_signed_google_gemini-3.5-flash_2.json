@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "signed",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "**1. What does this code do, and why does it exist?**\nIt handles the entire end-to-end order process: validation, pricing, database insertion, stock decrementing, and email confirmation. It exists as a single \"god-method\" because it was rushed to meet a tight deadline.\n\n**2. What should someone modifying it be careful about?**\nThe entire flow is tightly coupled and non-atomic. Modifying any step can easily break others, and network calls (SMTP) are mixed directly with database writes. \n\n**3. What did the author seem uncertain about?**\nWhether to split the pipeline into separate services, whether to wrap the database operations in a transaction, and whether to use an outbox pattern for sending emails.\n\n**4. What edge cases or failure modes are likely unhandled?**\n* **No transactions/rollback:** If the email send fails, the order is already saved and stock is decremented, leaving the system in an inconsistent state.\n* **Race conditions:** Stock is checked at the beginning but decremented at the end; concurrent orders can cause overselling.\n* **Missing data crashes:** If `db.get_customer()` or `db.get_discount()` returns `None`, the code will crash with a `TypeError`.\n* **Blocking SMTP:** A slow mail server will block the entire checkout process."
+}

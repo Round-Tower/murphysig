@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "prose",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. Generates a monthly article report with summaries and totals; exists for a demo but has performance issues.\n2. Be careful about the N+1 database query pattern \u2014 each article triggers a separate author fetch.\n3. Whether to batch-fetch authors and push filtering to SQL before production.\n4. Unknown \u2014 would need to ask the author. (No visible error handling for invalid dates, missing authors, or database failures.)"
+}

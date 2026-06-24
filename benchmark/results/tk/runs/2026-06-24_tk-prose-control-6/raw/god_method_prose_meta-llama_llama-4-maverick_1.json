@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "prose",
+  "model": "meta-llama/llama-4-maverick",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. What does this code do, and why does it exist? \nThis code processes an incoming order end-to-end, validating the order data, calculating the total cost, saving the order to the database, updating stock levels, and sending a confirmation email to the customer. It exists to handle the entire order pipeline in a single function.\n\n2. What should someone modifying it be careful about? \nSomeone modifying this code should be careful about maintaining the existing validation and calculation logic, ensuring database operations are correctly ordered, and preserving the email sending functionality. They should also be aware of the god-method anti-pattern and potential tech debt.\n\n3. What did the author seem uncertain about? \nThe author seemed uncertain about whether this function should be split into separate services, whether it should be wrapped in a transaction, and whether the email should be sent through an outbox instead of directly.\n\n4. What edge cases or failure modes are likely unhandled? \nEdge cases or failure modes that are likely unhandled include database operation failures (e.g., connection issues, insert failures), email sending failures (e.g., SMTP server issues, authentication failures), and potential issues with concurrent stock updates or order processing."
+}

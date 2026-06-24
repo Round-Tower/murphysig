@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "signed",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. **What it does & why it exists**: Splits a list into pages for API responses, returning metadata (current page, total pages, etc.). Exists to standardize pagination during a service migration under time pressure.\n\n2. **Be careful about**: Off-by-one errors (1-indexed `page`), negative/zero `page` handling (clamped to 1), and `page_size` validation (no checks for \u22640). Also, `start`/`end` indices may exceed list bounds (silent empty slices).\n\n3. **Author\u2019s uncertainty**: Whether `page > total_pages` behaves correctly (it returns empty `items` but metadata may mislead). Confidence score (0.5) and \"Open\" note confirm this.\n\n4. **Unhandled edge cases**:\n   - `page_size` \u2264 0 (would cause division issues in `total_pages`).\n   - `items` is empty (works but may need explicit handling).\n   - `items` is not a list (type safety missing).\n   - `page` is non-integer (no validation).\n   - Silent empty slices when `page` is too large (may hide bugs)."
+}

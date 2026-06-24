@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "unsigned",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. Searches SQLite users table by substring match on name/email (opt. role filter + limit); returns list[User]. Exists to implement basic user lookup.\n\n2. SQL injection via direct f-string interpolation of `query`/`role_filter`/`limit`; unparameterized queries; raw conn/cursor without contextlib or error handling.\n\n3. How to safely construct dynamic SQL (author used string concat instead of placeholders).\n\n4. Injection, LIKE wildcards (`%`/`_` in query), missing DB file, concurrent writes, non-UTF8 data, limit<=0, role_filter containing quotes."
+}

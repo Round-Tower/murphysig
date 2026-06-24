@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "prose",
+  "model": "meta-llama/llama-4-maverick",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. This code implements an admin search endpoint that searches for users in a SQLite database by name or email. It exists to provide a way to query the user database.\n\n2. Someone modifying it should be careful about SQL injection vulnerabilities, as the code directly interpolates user-provided input into SQL queries.\n\n3. The author seemed uncertain about whether the query gets sanitized upstream, the auth boundary, and whether the copied SQL search pattern is correct.\n\n4. Likely unhandled edge cases or failure modes include database connection failures, malformed or missing database files, and invalid or malicious input (e.g., SQL injection)."
+}

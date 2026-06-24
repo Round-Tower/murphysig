@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "prose",
+  "model": "meta-llama/llama-4-maverick",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. This code converts temperature values between Celsius, Fahrenheit, and Kelvin units for a weather service, using Celsius as an intermediate unit. It exists to provide a standardized temperature unit conversion functionality.\n\n2. Someone modifying it should be careful about maintaining the conversion accuracy, ensuring that the intermediate unit (Celsius) is used consistently, and preserving the check for absolute zero when converting to Kelvin.\n\n3. The author seemed uncertain about whether to explicitly validate NaN and Inf inputs or let them propagate through the conversion.\n\n4. Likely unhandled edge cases or failure modes include NaN and Inf inputs, as well as potential floating-point precision issues due to the rounding of results to 2 decimal places."
+}

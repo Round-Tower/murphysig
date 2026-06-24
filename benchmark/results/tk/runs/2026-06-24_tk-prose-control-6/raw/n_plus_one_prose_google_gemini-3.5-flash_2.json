@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "prose",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "**1. What does this code do, and why does it exist?**\nIt generates a monthly summary report of articles (optionally filtered by category). It was written as a quick proof-of-concept demo and needs to be refactored for production.\n\n**2. What should someone modifying it be careful about?**\nPerformance and database load. It has a classic $N+1$ query vulnerability (fetching each author individually inside a loop) and performs category filtering in-memory instead of in the database.\n\n**3. What did the author seem uncertain about?**\nWhether the code \"holds up\" (it is unvalidated), whether they should batch-fetch authors before production, and whether they should push the category filtering down into the SQL query.\n\n**4. What edge cases or failure modes are likely unhandled?**\n* **Missing Authors:** If `db.get_author` returns `None` or raises an error for a missing ID, the code will crash (`TypeError`).\n* **Timezone Offsets:** Naive `datetime` boundaries may miss articles or include duplicates depending on database timezone handling.\n* **Database Timeouts:** Scale-induced timeouts due to the iterative $N+1$ queries."
+}

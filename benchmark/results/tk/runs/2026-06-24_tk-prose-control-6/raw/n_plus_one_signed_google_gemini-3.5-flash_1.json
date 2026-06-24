@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "signed",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "**1. What does this code do, and why does it exist?**\nIt generates a summary report of articles and word counts for a given month. It was quickly shipped for a demo but scales poorly.\n\n**2. What should someone modifying it be careful about?**\n* **The N+1 query pattern:** It queries the database for every single author inside a loop (`db.get_author`).\n* **In-memory filtering:** Category filtering is done in Python instead of the database.\n\n**3. What did the author seem uncertain about?**\n* Whether to batch-fetch authors before production use.\n* Whether to push the category filtering to SQL.\n* Overall confidence is low (0.5).\n\n**4. What edge cases or failure modes are likely unhandled?**\n* **Missing authors:** If `db.get_author` returns `None` or raises an exception, the loop will crash.\n* **Naive datetimes:** Uses timezone-naive `datetime`, which will cause bugs depending on database and system timezone settings.\n* **Invalid dates:** No validation on `year` or `month` inputs (e.g., `month=13`).\n* **Database timeouts:** High article counts will trigger hundreds of sequential DB connections, likely timing out."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "prose",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. Converts temps between C/F/K (via C intermediate) + rejects sub-0K results; used by weather service.\n2. Absolute-zero check only runs for Kelvin output; NaN/Inf handling is undecided; no input validation.\n3. Whether to validate NaN/Inf inputs vs. letting them propagate.\n4. Below-abs-zero inputs for C/F outputs; non-finite values; enum misuse; rounding side-effects."
+}

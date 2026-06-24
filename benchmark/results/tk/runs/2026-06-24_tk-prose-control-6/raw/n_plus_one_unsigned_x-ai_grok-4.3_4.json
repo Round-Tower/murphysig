@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "unsigned",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. Generates a monthly Report of ArticleSummary objects (with totals) by fetching articles from `db` for a given year/month, optionally filtering categories. Exists to produce aggregated monthly reporting data.\n\n2. Date boundary logic (esp. Dec), N+1 `get_author` calls, assumed dict keys/structure from db, mutation of Report after construction, and lack of validation on year/month.\n\n3. How to initialize `article_count`/`total_words` (manually set post-loop instead of computed or using `__post_init__`).\n\n4. Invalid month/year, missing db keys or authors, empty categories list, large result sets, and naive datetimes."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "prose",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "**1. What does this code do, and why does it exist?**\nIt processes an e-commerce order end-to-end (validates inputs, calculates totals/discounts, saves the order, decrements stock, and sends a confirmation email). It exists as a single-function \"god-method\" rushed out to meet a tight deadline.\n\n**2. What should someone modifying it be careful about?**\nThe lack of transactional integrity. If any step fails late in the function (like email sending or halfway through stock decrementing), the database is left in a partially updated, inconsistent state with no rollback mechanism.\n\n**3. What did the author seem uncertain about?**\n* Whether to split the function into separate services.\n* Whether to wrap the operations in a database transaction.\n* Whether to send the confirmation email via an outbox pattern instead of inline SMTP.\n\n**4. What edge cases or failure modes are likely unhandled?**\n* **SMTP/Network failures:** If the email server is down, the function crashes *after* the order is written and stock is decremented.\n* **Race conditions:** Stock is checked at the beginning but not locked, allowing overselling if concurrent orders occur.\n* **Partial DB failures:** If `decrement_stock` fails midway through the items loop, some stock is decremented and some is not.\n* **Missing data crashes:** If `db.get_customer()` returns `None`, or if `config` is missing expected keys, it will raise unhandled exceptions.\n* **Timezone bugs:** Discount expiration checks use naive `datetime.now()`."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "signed",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. It paginates a list into chunks and returns the chunk along with pagination metadata. It exists as a temporary, time-pressured helper for a service migration.\n\n2. The `start` index is miscalculated for 1-indexed pages (`page * page_size` instead of `(page - 1) * page_size`), which skips the first page's items. Additionally, passing `page_size <= 0` will cause a `ZeroDivisionError`.\n\n3. The author explicitly noted uncertainty in the header comments regarding whether requesting a `page > total_pages` behaves correctly or just returns silently empty.\n\n4. 1) `page_size <= 0` triggers a `ZeroDivisionError`. 2) The 1-indexing calculation bug skips the first page's items. 3) Requesting `page > total_pages` returns empty items but incorrectly sets `has_prev: True`. 4) An empty input list results in `total_pages: 0` while `page` is clamped to 1."
+}

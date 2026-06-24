@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "signed",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. Converts temp between C/F/K (via Celsius) for a weather service; rejects results below 0 K.\n2. Absolute-zero check applies only to Kelvin output; inputs below 0 K are accepted; round(2) and float edge cases.\n3. NaN/Inf handling (see \"Open\" comment).\n4. Invalid inputs (NaN/Inf, <0 K in C/F paths), large-magnitude floats, missing input validation.\n\n**Note:** The check only guards Kelvin *output*; other physically impossible values pass."
+}

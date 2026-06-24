@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "unsigned",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "**1. What does this code do, and why does it exist?**\nIt searches a SQLite database for users by name or email (with optional role filtering and limits) and returns them as `User` dataclass objects. It exists to provide basic user-search functionality.\n\n**2. What should someone modifying it be careful about?**\n**Severe SQL Injection vulnerability.** The code uses f-strings to interpolate `query`, `role_filter`, and `limit` directly into the SQL statement. You must refactor this to use parameterized queries (`?` placeholders).\n\n**3. What did the author seem uncertain about?**\nUnknown \u2014 would need to ask the author.\n\n**4. What edge cases or failure modes are likely unhandled?**\n* **SQL Injection:** Malicious inputs can drop tables or bypass authentication.\n* **Resource Leaks:** If the query fails, `conn.close()` is bypassed. It should use `with sqlite3.connect(...) as conn:`.\n* **Wildcard Exploitation:** Input containing `%` or `_` will act as SQL wildcards rather than literal search characters.\n* **Missing Database/Table:** No error handling if the file at `db_path` is missing, locked, or doesn't contain a `users` table."
+}

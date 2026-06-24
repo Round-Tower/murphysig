@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "prose",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Generates a monthly article report from a database, filtering by optional categories. Exists for a demo but has performance issues.\n\n2. The N+1 query pattern (fetching authors inside a loop) will cause severe slowdowns at scale. Modifications must avoid iterative database calls.\n\n3. Whether to batch-fetch authors and push filtering into SQL. Also uncertain about general code correctness (\u201chaven\u2019t really validated it\u201d).\n\n4. Database errors unhandled; month/year validation missing (e.g., invalid month > 12, invalid categories list); empty categories list filters out all articles; timezone issues with datetime comparisons."
+}

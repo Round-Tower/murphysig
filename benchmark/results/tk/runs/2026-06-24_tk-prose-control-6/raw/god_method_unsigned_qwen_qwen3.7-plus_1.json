@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "unsigned",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. Validates inventory, calculates final pricing (including discounts, tax, and shipping), persists the order, decrements stock, and emails a receipt. It exists to execute the complete backend transaction for a submitted e-commerce order.\n\n2. 1) No database transactions: if the email or stock update fails, the order is already saved. 2) Redundant DB queries: it fetches product details twice per item. 3) Float math: uses standard floats for currency calculations, risking precision/rounding errors.\n\n3. Unknown \u2014 would need to ask the author.\n\n4. 1) Race conditions: stock is checked, then decremented later, allowing overselling under concurrent load. 2) Partial failures: SMTP errors leave stock decremented and the order saved without notifying the customer. 3) KeyErrors: crashes if the customer record lacks an `email` key. 4) Timezones: uses local `datetime.now()` instead of UTC for discount expiration."
+}

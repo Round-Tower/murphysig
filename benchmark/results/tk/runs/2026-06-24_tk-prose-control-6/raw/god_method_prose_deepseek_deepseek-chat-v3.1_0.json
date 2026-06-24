@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "prose",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Processes an incoming order end-to-end: validates items, calculates pricing, applies discounts, saves to DB, updates stock, and sends confirmation email. Exists to handle the complete order flow quickly for a deadline.\n\n2. Be careful about: the lack of transaction safety (DB operations and email are not atomic), potential silent failures (e.g., email errors), and tight coupling between concerns (DB, business logic, email).\n\n3. Author was uncertain about: whether to split into separate services, whether to wrap in a transaction, and whether to use an outbox pattern for emails.\n\n4. Likely unhandled: network/timeouts during DB operations or email, concurrent stock updates, invalid customer email, SMTP authentication failures, and duplicate order processing."
+}

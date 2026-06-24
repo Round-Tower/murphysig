@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "signed",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. Generates a monthly article report filtered by date and categories. It exists as a shipped demo, not production code.\n\n2. The N+1 database query pattern (`db.get_author` inside the loop) and in-memory category filtering. Both will cause severe performance and memory issues at scale.\n\n3. The header explicitly questions whether to batch-fetch authors and push the category filter to SQL. The 0.5 confidence score also reflects uncertainty about its production viability.\n\n4. Missing authors (crashes on `author[\"name\"]` if `db.get_author` returns `None`), invalid month inputs (Python's `datetime` rolls over silently instead of validating), and timezone-naive datetime handling."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "signed",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. **What it does / why it exists**: End-to-end order processing\u2014validates input, calculates totals, updates stock, persists order, and emails confirmation. Exists as a single function due to deadline pressure.\n\n2. **Be careful about**: Atomicity (stock updates + order insert + email must all succeed or fail together). Also, tight coupling to `db` and `config`; changes may break multiple steps.\n\n3. **Author\u2019s uncertainty**: Whether to split into services, add transactions, or use an outbox pattern for email (noted in comments).\n\n4. **Unhandled edge cases**:\n   - SMTP failures (no retry/fallback).\n   - Race conditions on stock (no locking).\n   - Discounts with min/max constraints.\n   - Customer email missing or invalid.\n   - Rounding errors in currency.\n   - Network/db timeouts during operations."
+}

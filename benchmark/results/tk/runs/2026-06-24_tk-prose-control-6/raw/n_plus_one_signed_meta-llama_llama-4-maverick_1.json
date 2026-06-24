@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "signed",
+  "model": "meta-llama/llama-4-maverick",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. This code generates a monthly report of articles, including their title, author, publication date, word count, and category. It exists to produce a summary report for a given month.\n\n2. Someone modifying it should be careful about the N+1 query pattern in the `generate_monthly_report` function, where it fetches authors one by one from the database.\n\n3. The author seemed uncertain about scaling and performance, specifically the N+1 query pattern and potentially pushing the filter to SQL.\n\n4. Likely unhandled edge cases or failure modes include: handling an empty database, dealing with missing or malformed data (e.g., articles without authors), and potential date-related edge cases (e.g., invalid month or year inputs)."
+}

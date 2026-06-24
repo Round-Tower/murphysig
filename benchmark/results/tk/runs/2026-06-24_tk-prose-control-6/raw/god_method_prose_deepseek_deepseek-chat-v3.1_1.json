@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "prose",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. Processes an order end\u2011to\u2011end: validates items and stock, calculates pricing, stores the order, reduces inventory, sends a confirmation email. It exists because it was a quick way to meet a deadline.\n\n2. Be careful about the lack of transaction/rollback (partial updates possible), the email being sent synchronously, and the monolithic structure making changes risky.\n\n3. Whether to split into separate services, wrap in a transaction, or send email via an outbox.\n\n4. Partial failures (e.g., email fails after DB commits), concurrent stock updates, missing config keys, customer email missing, network/timeout issues."
+}

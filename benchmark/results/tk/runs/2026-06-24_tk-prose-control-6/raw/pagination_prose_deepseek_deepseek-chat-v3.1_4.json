@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "prose",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. Paginates a list into 1\u2011indexed pages and returns a slice with metadata; exists to support a service migration quickly.\n\n2. Be careful that `page` is 1\u2011indexed but `start` uses `page * page_size` (off\u2011by\u2011one error \u2014 likely should be `(page-1) * page_size`). Also, input list is fully in memory; not suitable for large datasets.\n\n3. Author was uncertain about behavior when `page` exceeds `total_pages` and whether edge cases are solid.\n\n4. The off\u2011by\u2011one bug means items on page 1 are wrong; page\u2011past\u2011total may return empty slice incorrectly; negative/zero `page_size` breaks total\u2011pages calculation; `items` being sliced with out\u2011of\u2011range indices is fine but metadata may be misleading."
+}

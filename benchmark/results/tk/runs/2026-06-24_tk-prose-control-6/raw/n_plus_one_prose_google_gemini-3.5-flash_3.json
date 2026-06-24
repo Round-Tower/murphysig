@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "prose",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "**1. What does this code do, and why does it exist?**\nIt generates a monthly summary report of articles (including author names and word counts) for a given month and category. It exists as a quick prototype thrown together for a demo.\n\n**2. What should someone modifying it be careful about?**\n* **N+1 Query Performance:** It queries the database for the author of *every single* article individually inside a loop.\n* **In-Memory Filtering:** It fetches all articles for the month first, then filters by category in Python memory rather than in the database.\n\n**3. What did the author seem uncertain about?**\n* Whether the code holds up or scales (it is unvalidated).\n* Whether they should batch-fetch authors before moving to production.\n* Whether they should push the category filtering down into the SQL query.\n\n**4. What edge cases or failure modes are likely unhandled?**\n* **Missing Authors:** If `db.get_author()` returns `None` or fails, the code will crash on `author[\"name\"]`.\n* **Timezone Mismatches:** It generates naive datetimes (`datetime(year, month, 1)`) which may cause issues if the database expects timezone-aware values.\n* **Missing Dictionary Keys:** It assumes `article` and `author` dictionaries always contain the expected keys (e.g., `author_id`, `category`, `name`)."
+}

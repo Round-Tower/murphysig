@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "signed",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. Validates order (customer/items/stock/quantities), computes subtotal+discounts+tax+shipping, inserts order, decrements stock, sends confirmation email via SMTP. Exists as intentional deadline-driven monolith (\"god-method anti-pattern\").\n\n2. No transactions or outbox, so DB changes + email are not atomic. Multiple side effects in one function; touching pricing, stock, or email risks breaking others. Config and discount lookups can throw or silently skip.\n\n3. How to split it, whether to add transactions, and how to handle email reliably (explicitly flagged as open questions + 0.6 confidence).\n\n4. SMTP or email failure after DB writes; no customer lookup guard; race conditions on stock; missing config keys; repeated datetime.now(); unhandled exceptions on any DB/SMTP call; partial discount application without rollback."
+}

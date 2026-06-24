@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "signed",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. Generates a monthly summary of articles (titles, authors, word counts, categories), optionally filtered by category. It exists as a quick demo that was shipped prematurely and scales poorly.\n\n2. The severe N+1 database query pattern (fetching the author individually inside the loop) and the in-memory Python filtering of articles. Any data growth will cause massive performance degradation.\n\n3. How to properly scale it for production. The author explicitly noted low confidence (0.5) and asked open questions about whether to batch-fetch authors or push the category filter to SQL.\n\n4. Missing authors in the database (will crash when accessing `author[\"name\"]`), timezone mismatches between `datetime.now()` and `published_at`, and a lack of validation for invalid `year` or `month` inputs."
+}

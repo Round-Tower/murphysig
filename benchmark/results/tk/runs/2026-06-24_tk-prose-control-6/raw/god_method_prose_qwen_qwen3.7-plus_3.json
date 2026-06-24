@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "prose",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. **What it does and why:** Validates inventory, calculates totals, saves the order, decrements stock, and emails the customer. It exists as a rushed, intentional \"god-method\" shortcut to meet a deadline.\n\n2. **What to be careful about:** The total lack of database transactions. If stock decrement or SMTP fails after `insert_order`, the system enters an inconsistent state. It also redundantly queries the database for products twice.\n\n3. **What the author was uncertain about:** They explicitly questioned whether to split the logic into separate services, wrap it in a database transaction, or use an outbox pattern for the email.\n\n4. **Unhandled edge cases or failure modes:**\n- **Race conditions:** Stock is validated, then decremented later without row locks or transactions; concurrent orders can oversell inventory.\n- **Partial failures:** SMTP failure leaves a confirmed order and decremented stock but sends no email (and has no retry mechanism).\n- **Post-commit crashes:** If `get_customer` fails or the customer record lacks an `email` key, the script crashes *after* the order is already saved and stock is decremented."
+}

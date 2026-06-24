@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "unsigned",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. Searches SQLite users table by substring match on name/email (opt. role filter), returns dataclass rows. Exists to implement basic user lookup.\n\n2. SQL injection via f-string/concat; refactor to parameterized queries + contextlib closing.\n\n3. Unknown \u2014 would need to ask the author.\n\n4. DB errors, injection payloads, missing indexes, LIKE wildcards/case, conn leaks, limit=0/neg."
+}

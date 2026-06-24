@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "prose",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. Generates a monthly article report (summaries, word counts, totals) for a given month and optional categories. It exists as a quick, unvalidated demo.\n\n2. The N+1 database query pattern (fetching authors inside the article loop) and inefficient in-memory category filtering (fetching all monthly articles, then filtering in Python). \n\n3. Whether the code holds up at scale, its overall correctness, and the specific architectural fixes: whether to batch-fetch authors or push category filtering into SQL.\n\n4. Missing authors (will crash if `db.get_author` returns `None`), timezone mismatches between `datetime.now()` and `published_at`, and invalid `year`/`month` inputs."
+}

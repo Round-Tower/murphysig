@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "signed",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. **What does this code do, and why does it exist?**\n   It paginates an in-memory list of items and returns a slice with metadata. It was created as a quick helper under time pressure during a service migration.\n\n2. **What should someone modifying it be careful about?**\n   **The indexing logic is broken.** Because page is 1-indexed, `start = page * page_size` skips the first page entirely (e.g., page 1 starts at index 20 instead of 0). It must be corrected to `(page - 1) * page_size`.\n\n3. **What did the author seem uncertain about?**\n   Whether requesting a page number greater than the total pages (`page > total_pages`) behaves correctly or silently returns an empty list.\n\n4. **What edge cases or failure modes are likely unhandled?**\n   * `page_size <= 0` (causes a `ZeroDivisionError`).\n   * Empty input list (results in `total_pages = 0` and incorrect `has_prev`/`has_next` states).\n   * Out-of-bounds page numbers (`page > total_pages`)."
+}

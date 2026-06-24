@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "prose",
+  "model": "meta-llama/llama-4-maverick",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. This code processes an incoming order end-to-end, validating the order data, calculating the total cost, saving the order to the database, updating stock levels, and sending a confirmation email to the customer. It exists to handle the entire order pipeline in a single function.\n2. Someone modifying it should be careful about maintaining the existing validation and calculation logic, as well as ensuring that database operations (inserting the order, decrementing stock) are correctly executed. They should also be aware of the email sending functionality and its reliance on SMTP configuration.\n3. The author seemed uncertain about whether this function should be split into separate services, whether it should be wrapped in a transaction, and whether the email should be sent through an outbox instead of directly via SMTP.\n4. Likely unhandled edge cases or failure modes include database connection failures, SMTP connection failures or authentication issues, cases where the customer or product data is missing or malformed in the database, and potential issues with concurrent modifications to stock levels."
+}

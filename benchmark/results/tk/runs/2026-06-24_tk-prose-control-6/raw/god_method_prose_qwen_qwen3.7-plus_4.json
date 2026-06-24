@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "prose",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. **What it does and why:** It validates, prices, saves, decrements inventory for, and emails a confirmation for an order. It exists as an intentional, rushed \"god-method\" to meet a deadline.\n\n2. **Modification risks:** The lack of DB transactions and the synchronous email send at the very end. If the email or stock decrement fails, the order is already committed to the DB, creating an inconsistent state. It also queries the DB for products twice unnecessarily.\n\n3. **Author's uncertainty:** The author explicitly questions: 1) splitting it into separate services, 2) wrapping it in a DB transaction, and 3) using an outbox pattern for the email.\n\n4. **Unhandled edge cases and failure modes:**\n   * **Race conditions:** Stock is validated in the first loop, then decremented in the second. Concurrent orders can oversell inventory.\n   * **Partial failures:** Without a transaction, a crash during stock decrement or email leaves a \"confirmed\" order in the DB with un-decremented stock.\n   * **SMTP failures:** Email errors throw exceptions *after* the DB commit, failing the request to the client while the order remains silently saved in the database.\n   * **Discount logic:** Only checks the expiration date; ignores usage limits, minimum cart values, or whether the code actually applies to the items."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "signed",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. Processes an end-to-end e-commerce order: validates items, calculates pricing, applies discounts, creates a database record, decrements inventory, and sends a confirmation email. Exists as a rushed, monolithic implementation to meet a deadline.\n\n2. Be careful about the lack of transaction boundaries - database operations and email sending aren't atomic. Modifying pricing logic or inventory management could introduce inconsistencies.\n\n3. The author seemed uncertain about error handling (no try/catch), transaction safety, and whether to split into services (comments mention \"god-method anti-pattern\" and \"intentional tech debt\").\n\n4. Likely unhandled: SMTP failures, database connection issues, partial failures between order creation and inventory update, concurrent order conflicts, and customer email validation."
+}

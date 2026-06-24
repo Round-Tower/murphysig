@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "prose",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. Generates monthly article summaries (with author names and aggregates) for a given year/month, optionally filtered by category. It was a quick demo that hit production scaling limits.\n\n2. N+1 author lookups; Python-side category filtering after loading every article; no error handling around DB calls or missing authors.\n\n3. Batch-fetching authors and pushing category filtering into SQL before production; overall validation and scalability.\n\n4. Missing authors, query/DB failures, timezone/datetime edge cases, empty result sets, and concurrent data changes."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "sql_injection",
+  "variant": "unsigned",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "**1. What does this code do, and why does it exist?**\nIt searches a SQLite database's `users` table for records matching a substring query in the name or email (with optional role filtering and limits) and returns them as `User` dataclass objects. It exists to provide a basic user search feature.\n\n**2. What should someone modifying it be careful about?**\n* **SQL Injection:** The query is built using raw f-strings. You must refactored this to use parameterized queries (`?` placeholders) immediately.\n* **Connection Leaks:** If `execute` or `fetchall` raises an exception, `conn.close()` is skipped. Use a `with sqlite3.connect(...)` context manager.\n\n**3. What did the author seem uncertain about?**\nUnknown \u2014 would need to ask the author. There are no comments, TODOs, or architectural hesitations in the code.\n\n**4. What edge cases or failure modes are likely unhandled?**\n* **SQL Injection / Syntax Errors:** Malicious input, quotes in the `query`/`role_filter`, or a non-integer `limit` will crash or exploit the database.\n* **Database/Schema Errors:** Missing database file, missing `users` table, or column mismatches will throw unhandled `sqlite3` exceptions.\n* **Empty/Missing Results:** If the query returns unexpected column counts, the index mapping (`r[0]`, `r[1]`, etc.) will throw an `IndexError`."
+}

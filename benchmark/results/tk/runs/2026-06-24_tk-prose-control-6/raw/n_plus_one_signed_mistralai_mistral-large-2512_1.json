@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "signed",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. **Purpose**: Generates a monthly report of articles (filtered by category if provided). Exists to aggregate article data for analytics/demos, but scales poorly due to N+1 DB queries.\n\n2. **Modification risks**:\n   - Performance: N+1 queries (one per article to fetch authors).\n   - Data consistency: No error handling for missing authors/articles.\n   - Filtering: In-memory category filtering (inefficient for large datasets).\n\n3. **Author uncertainty**:\n   - Whether to batch-fetch authors (noted in \"Open\").\n   - Whether to push category filtering to SQL (noted in \"Open\").\n   - Confidence score (0.5) suggests low certainty about scalability.\n\n4. **Unhandled edge cases**:\n   - Missing/invalid `author_id` in articles.\n   - `published_at` outside the queried date range (no validation).\n   - Empty/None `categories` list (though handled, may be inefficient).\n   - DB connection failures or timeouts.\n   - Timezone issues in date comparisons."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "unsigned",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. Generates a monthly report of articles (optionally filtered by category) from a database, calculating total word counts and article counts.\n\n2. The N+1 database query: it calls `db.get_author` inside the loop for every article. The manual in-loop updates to `total_words` risk desynchronization if the loop logic changes. Additionally, `datetime.now()` is timezone-naive.\n\n3. The manual month-boundary logic (`if month == 12...`) and inconsistent aggregation (in-loop `+=` for words vs. end-of-loop `len()` for count) suggest uncertainty about standard Python libraries (like `calendar`) and clean aggregate computation. \n\n4. Missing authors: `db.get_author` will crash on orphaned `author_id`s. Timezone mismatches: naive datetimes may fail or return wrong data if the DB expects timezone-aware UTC. Missing dictionary keys (e.g., `word_count`) will throw a `KeyError`."
+}

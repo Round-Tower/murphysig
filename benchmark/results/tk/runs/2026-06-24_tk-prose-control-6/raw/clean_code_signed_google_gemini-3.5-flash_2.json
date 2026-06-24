@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "signed",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "**1. What does this code do, and why does it exist?**\nIt converts temperatures between Celsius, Fahrenheit, and Kelvin (using Celsius as an intermediate step) for a weather service.\n\n**2. What should someone modifying it be careful about?**\n* **Incomplete Validation:** The absolute zero check only runs if the target unit is Kelvin (`to_unit == KELVIN`).\n* **Precision Loss:** The function rounds the final result to 2 decimal places and routes all conversions through Celsius, which can introduce floating-point inaccuracies.\n\n**3. What did the author seem uncertain about?**\nWhether to explicitly validate `NaN` and `Inf` inputs or let them propagate.\n\n**4. What edge cases or failure modes are likely unhandled?**\n* **Invalid Temperatures (Non-Kelvin):** Inputs below absolute zero will not raise an error if the target unit is Celsius (below -273.15\u00b0C) or Fahrenheit (below -459.67\u00b0F).\n* **Special Floats:** `float(\"nan\")` and `float(\"inf\")` are not handled and will propagate or cause comparison failures."
+}

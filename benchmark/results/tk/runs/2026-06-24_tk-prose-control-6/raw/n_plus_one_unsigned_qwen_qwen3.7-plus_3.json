@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "unsigned",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. **What it does and why:** It queries a database for articles published in a specific month (optionally filtered by categories) to generate a structured `Report` object containing individual article summaries and aggregated word counts.\n\n2. **What to be careful about:** The **N+1 query problem**: `db.get_author()` is called inside the loop for every single article. Also, be careful modifying the manual month-boundary logic (the `if month == 12` check). \n\n3. **Author uncertainty:** Unknown \u2014 would need to ask the author. *(Note: The manual `if month == 12` date math and manual `total_words` accumulation strongly suggest they were unsure how to use `dateutil.relativedelta` or Python's `sum()` function, but I am guessing their exact intent).*\n\n4. **Unhandled edge cases/failures:**\n   * **Generator exhaustion:** If `db.get_articles_between` returns a generator instead of a list, the `categories` list comprehension will consume it, leaving the final `for` loop completely empty.\n   * **Missing data:** `db.get_author()` returning `None` (causes a `TypeError` on `author[\"name\"]`), or articles missing expected dictionary keys.\n   * **Timezone mismatches:** `start` and `end` are naive datetimes, which will crash if the database returns timezone-aware `published_at` datetimes.\n   * **Invalid inputs:** No validation for out-of-bounds `month` (e.g., 0 or 13) or `year` values."
+}

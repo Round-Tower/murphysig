@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "prose",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "content": "1. Generates monthly Report of ArticleSummaries (with authors) for articles in [year, month], optionally filtered by category; aggregates word counts. Exists as unoptimized demo.\n\n2. N+1 queries on authors; Python filtering (not SQL); fragile month-end date math; mutation of input list; no validation.\n\n3. Batch author fetch, moving filter into SQL, and overall production readiness/validation.\n\n4. Unknown \u2014 would need to ask the author."
+}

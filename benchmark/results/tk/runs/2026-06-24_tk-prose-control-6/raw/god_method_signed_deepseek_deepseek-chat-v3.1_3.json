@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "signed",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. Processes an incoming order end-to-end: validates, calculates totals, persists, updates stock, and emails confirmation. Exists as a deadline-driven god-method integrating the entire pipeline.\n\n2. Ensuring database consistency (no transaction); not breaking the order of operations (validation \u2192 insert \u2192 stock update \u2192 email); preserving the exact rounding behavior; not breaking the email flow if config changes.\n\n3. Whether to split into services, add a transaction, or use an outbox for email (per the comments). Also, whether the discount logic per item (not order) is correct.\n\n4. No transaction \u2192 partial failures cause inconsistency (e.g., stock decremented but email fails). SMTP failures crash the function. Race conditions on stock. No idempotency or retry. No validation of customer email presence."
+}

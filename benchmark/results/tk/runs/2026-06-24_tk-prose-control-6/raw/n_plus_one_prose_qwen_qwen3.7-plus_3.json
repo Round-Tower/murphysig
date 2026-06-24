@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "prose",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. Generates a monthly article report with author names, word counts, and totals. It was built as a quick, unvalidated demo.\n\n2. The N+1 database query pattern for fetching authors, and the in-memory Python filtering for categories. Both will cause severe performance degradation at scale.\n\n3. Whether the code holds up in production, whether to batch-fetch authors, and whether to push the category filtering down into the SQL.\n\n4. `TypeError` if `db.get_articles_between` or `db.get_author` returns `None`, and `KeyError` if an article dictionary lacks a `\"category\"` key during the list comprehension."
+}

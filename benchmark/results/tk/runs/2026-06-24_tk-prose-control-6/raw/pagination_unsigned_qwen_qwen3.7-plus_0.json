@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "unsigned",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. It slices an in-memory list and returns the requested chunk with pagination metadata. It exists to serve paginated API or UI responses without transmitting the entire dataset at once.\n\n2. The `start` index calculation is buggy (`page * page_size` instead of `(page - 1) * page_size`), meaning it currently skips the first page of items. Additionally, it requires the entire dataset in memory; scaling it requires changing the input from a `list` to a lazy iterable or database queryset.\n\n3. The docstring doesn't match the code (it omits `has_next` and `has_prev` from the return description). The author also used `Any` for all item types instead of a `TypeVar`, avoiding strict generic typing.\n\n4. `page_size <= 0` causes a `ZeroDivisionError`. Requesting a `page` greater than `total_pages` silently returns an empty list instead of clamping to the last page or raising an error. Passing a massive list will cause an Out-Of-Memory crash since it evaluates the whole list upfront."
+}

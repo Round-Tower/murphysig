@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "unsigned",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 0,
+  "content": "1. Paginates a list into 1-indexed pages; exists to provide standard pagination metadata.\n2. Be careful: the `start` index calculation is wrong \u2014 it should be `(page-1) * page_size`.\n3. Unknown \u2014 would need to ask the author.\n4. Empty list works but `page` adjustment may still be wrong; negative `page_size` not checked; large `page` causes empty slice."
+}

@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "prose",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. **What it does/why it exists**: Processes an e-commerce order end-to-end (validation, pricing, stock updates, DB writes, email confirmation). Exists to centralize order flow in one place, likely for speed during a deadline.\n\n2. **Be careful about**: Atomicity (stock updates + order insert aren\u2019t transactional), error recovery (partial failures leave DB inconsistent), and tight coupling (email, DB, and logic mixed). Also, hardcoded SMTP assumptions (e.g., `starttls`).\n\n3. **Author\u2019s uncertainty**: Whether to split into services, wrap in a transaction, or use an outbox pattern for emails (as noted in the comment).\n\n4. **Unhandled edge cases/failures**:\n   - SMTP/network failures (email lost, no retry).\n   - Race conditions (stock checked but not reserved before decrement).\n   - Discount code conflicts (no locking).\n   - Rounding errors (floats used for currency).\n   - Customer email missing/invalid (no validation).\n   - SMTP config missing (e.g., `smtp_port` default may not match server)."
+}

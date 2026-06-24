@@ -1,0 +1,8 @@
+{
+  "case_id": "god_method",
+  "variant": "signed",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "**1. What does this code do, and why does it exist?**\nIt processes an end-to-end order pipeline: validating inputs/stock, calculating prices/discounts, inserting the order, decrementing stock, and sending a confirmation email. It exists as a single \"god-method\" because it was rushed to meet a deadline.\n\n**2. What should someone modifying it be careful about?**\nThe lack of database transactions. Because validation, insertion, stock decrement, and email dispatch happen sequentially without a transaction, any failure midway will leave the system in an inconsistent state (e.g., order created but stock not decremented, or stock decremented but email failed).\n\n**3. What did the author seem uncertain about?**\nAccording to the metadata, the author was uncertain about:\n* Whether to split the pipeline into separate services.\n* Whether to add database transactions.\n* Whether to use an outbox pattern for email delivery.\n\n**4. What edge cases or failure modes are likely unhandled?**\n* **Distributed/Concurrent Stock updates:** Race conditions can occur between checking stock and decrementing it.\n* **Partial Failures:** No rollback mechanism if SMTP or stock decrement fails after the order is saved.\n* **Network/SMTP Failures:** No error handling or retries for the blocking mail server connection.\n* **Float Precision:** Currency calculations use floats instead of `Decimal`, risking rounding errors.\n* **Timezones:** Uses naive `datetime.now()` for discount expiration and order creation."
+}

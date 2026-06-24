@@ -1,0 +1,8 @@
+{
+  "case_id": "pagination",
+  "variant": "unsigned",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. Paginates a list into 1\u2011indexed pages; exists to provide a consistent pagination response format.\n2. The `page` is 1\u2011indexed but `start` is `page * page_size` (off\u2011by\u2011one error).\n3. Whether to clamp `page` to valid range \u2014 only fixed `page < 1`.\n4. Negative `page_size`, empty `items`, `page` beyond `total_pages` (returns empty slice), non\u2011integer `page`."
+}

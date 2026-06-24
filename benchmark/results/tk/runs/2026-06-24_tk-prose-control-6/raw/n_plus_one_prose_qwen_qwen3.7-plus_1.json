@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "prose",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "1. Generates a monthly article summary report for a specific month and optional categories. It exists as a quick, unvalidated demo.\n\n2. The N+1 database query pattern for fetching authors. Also, in-memory category filtering (which loads all monthly articles before filtering) and the manual December-to-January date boundary logic.\n\n3. Whether the code holds up in production, specifically whether to batch-fetch authors and push category filtering down into the SQL.\n\n4. Missing authors causing a crash on `author[\"name\"]`, and memory exhaustion from loading all articles into memory before applying category filters."
+}

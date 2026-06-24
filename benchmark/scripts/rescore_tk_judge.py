@@ -60,9 +60,13 @@ class TkRow:
     content: str
 
 
-def load_tk_rows(dir_: Path, model: str) -> list[TkRow]:
+def load_tk_rows(
+    dir_: Path, model: str, variant: str | None = None
+) -> list[TkRow]:
     """Load saved TK briefing rows for one model, skipping non-row files
-    (run logs, judged outputs)."""
+    (run logs, judged outputs). When `variant` is given, load only that
+    arm — used by the prose-only add to avoid re-judging (and re-paying
+    for) the already-scored signed/unsigned arms."""
     rows: list[TkRow] = []
     for path in sorted(dir_.glob("*.json")):
         try:
@@ -72,6 +76,8 @@ def load_tk_rows(dir_: Path, model: str) -> list[TkRow]:
         if not isinstance(data, dict) or not ROW_KEYS <= data.keys():
             continue
         if data["model"] != model:
+            continue
+        if variant is not None and data["variant"] != variant:
             continue
         rows.append(
             TkRow(
@@ -162,8 +168,9 @@ async def rescore(
     judge_family: str,
     judge_model: str,
     judge_tag_override: str | None = None,
+    variant: str | None = None,
 ) -> None:
-    rows = load_tk_rows(results_dir, model)
+    rows = load_tk_rows(results_dir, model, variant=variant)
     if not rows:
         raise SystemExit(f"No saved TK rows for model {model!r} in {results_dir}")
 
@@ -268,6 +275,13 @@ if __name__ == "__main__":
         "canonical judged_tk_<model>.json even with a non-anthropic judge "
         "(e.g. the same Opus model proxied via OpenRouter)",
     )
+    parser.add_argument(
+        "--variant",
+        default=None,
+        choices=("unsigned", "signed", "prose"),
+        help="judge only this arm (e.g. 'prose') — the prose-only add, so "
+        "the already-judged signed/unsigned arms aren't re-scored",
+    )
     args = parser.parse_args()
     judge_model = args.judge_model or JUDGE_DEFAULTS[args.judge_family]
     asyncio.run(
@@ -278,5 +292,6 @@ if __name__ == "__main__":
             args.judge_family,
             judge_model,
             judge_tag_override=args.judge_tag,
+            variant=args.variant,
         )
     )

@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "prose",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 1,
+  "content": "**1. What does this code do, and why does it exist?**\nIt generates a monthly summary report of articles, aggregating totals like article count and word count. It exists as a prototype put together for a demo.\n\n**2. What should someone modifying it be careful about?**\nPerformance and scaling. It has a severe N+1 query defect, hitting the database to fetch the author details individually inside a loop for every article.\n\n**3. What did the author seem uncertain about?**\nWhether the code holds up under load (it is unvalidated), whether they should batch-fetch authors, and whether they should push the category filtering down into the SQL query instead of doing it in Python.\n\n**4. What edge cases or failure modes are likely unhandled?**\n*   **Missing Authors:** If `get_author` returns `None` (e.g., deleted users), it will crash with a `TypeError` on `None[\"name\"]`.\n*   **Invalid Inputs:** Passing an invalid month (e.g., `13`) or year will cause `datetime` instantiation to crash.\n*   **Missing Keys:** It assumes dictionary-like objects and will raise a `KeyError` if any expected fields (like `category` or `author_id`) are missing.\n*   **Timezones:** It uses naive datetimes, which can cause boundary mismatches depending on database configuration."
+}

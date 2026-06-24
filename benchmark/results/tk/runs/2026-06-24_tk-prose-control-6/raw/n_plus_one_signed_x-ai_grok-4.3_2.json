@@ -1,0 +1,8 @@
+{
+  "case_id": "n_plus_one",
+  "variant": "signed",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "content": "1. Generates monthly article summaries (incl. author names) with aggregates; shipped for a demo despite known N+1 scaling flaw.\n2. N+1 author fetches; in-memory category filter; naive month-end calc; mutation of input list.\n3. Batching authors vs pushing filter to SQL (see \"Open\" note).\n4. Missing authors, DB errors/failures, timezone/datetime edge cases, huge result sets, invalid month/year inputs."
+}

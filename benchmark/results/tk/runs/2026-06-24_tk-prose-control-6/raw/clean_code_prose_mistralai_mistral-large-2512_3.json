@@ -1,0 +1,8 @@
+{
+  "case_id": "clean_code",
+  "variant": "prose",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 3,
+  "content": "1. **What it does**: Converts temperatures between Celsius, Fahrenheit, and Kelvin. Exists to standardize temperature data in a weather service.\n\n2. **Be careful about**: Rounding behavior (2 decimal places), absolute zero validation (only checked for Kelvin), and the unhandled `NaN`/`Inf` cases the author mentioned.\n\n3. **Author\u2019s uncertainty**: Whether to explicitly validate `NaN` and `Inf` inputs or let them propagate.\n\n4. **Unhandled edge cases**: `NaN`/`Inf` inputs, values below absolute zero for non-Kelvin outputs (e.g., -300\u00b0C \u2192 Fahrenheit), and potential floating-point precision issues."
+}

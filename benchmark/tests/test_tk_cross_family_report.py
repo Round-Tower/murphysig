@@ -87,3 +87,44 @@ class TestDeltaTable:
         out = delta_table(agg)
         assert "x" in out
         assert "—" in out  # no unsigned baseline → delta undefined
+
+
+class TestStructureTable:
+    """The structure-vs-content decomposition: signed − prose is the
+    headline (does the signature's structure beat the same facts as plain
+    prose?), prose − unsigned is the content effect."""
+
+    def _agg(self, *, unsigned, prose, signed):
+        def cell(cov):
+            return {"n": 5, "coverage": cov, "accuracy": 0.8,
+                    "hedging": 2.0, "referenced_signature": 0}
+        return {
+            "m": {
+                "unsigned": cell(unsigned),
+                "prose": cell(prose),
+                "signed": cell(signed),
+            }
+        }
+
+    def test_structure_delta_is_signed_minus_prose(self):
+        from scripts.tk_cross_family_report import structure_table
+
+        # unsigned 0.40, prose 0.55, signed 0.70
+        out = structure_table(self._agg(unsigned=0.40, prose=0.55, signed=0.70))
+        assert "+0.15" in out  # Δ structure = signed − prose = 0.70 − 0.55
+        assert "+0.30" in out  # Δ total = signed − unsigned = 0.70 − 0.40
+
+    def test_handles_missing_prose_variant(self):
+        from scripts.tk_cross_family_report import structure_table
+
+        agg = {
+            "m": {
+                "unsigned": {"n": 5, "coverage": 0.4, "accuracy": 0.8,
+                             "hedging": 2.0, "referenced_signature": 0},
+                "signed": {"n": 5, "coverage": 0.7, "accuracy": 0.8,
+                           "hedging": 2.0, "referenced_signature": 0},
+            }
+        }
+        out = structure_table(agg)  # must not crash without a prose row
+        assert "m" in out
+        assert "—" in out
