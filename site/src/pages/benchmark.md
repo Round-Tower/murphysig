@@ -3,7 +3,7 @@ layout: ../layouts/MarkdownLayout.astro
 title: Does MurphySig actually change AI behavior?
 version: 0.4
 date: 2026-04-19
-description: Empirical benchmark for MurphySig across four themes. Tacit knowledge and honesty/provenance both show strong effects. In-context learning does not. The spec is being updated to match.
+description: Empirical benchmark for MurphySig across four themes. Signed code helps AIs brief unfamiliar code across six model families — but a control shows the benefit is the information, not the structured format. The honesty rule works. In-context learning does not.
 ---
 
 *Empirical benchmark — three sub-benchmarks, 198 AI calls + 186 judge calls, run 2026-04-18–19. Cross-family GPT-5.4 Honesty run (18 calls) added 2026-04-23, judge-scored 2026-06-09.*
@@ -12,18 +12,18 @@ description: Empirical benchmark for MurphySig across four themes. Tacit knowled
 
 > We asked the data. The real pitch wasn't the one we were making.
 
-**The one-line finding:** Signatures measurably help AIs *read* code (tacit knowledge, +0.12 coverage). The "Never Fabricate Provenance" rule measurably works (+89% honest handling). Signatures do *not* measurably polarize AI *review* behavior along the confidence axis — that claim is being removed from the spec.
+**The one-line finding:** Signed code helps AIs brief unfamiliar code — across six model families (+0.11 coverage). But when we ran the control, **the benefit turned out to be the *information*, not the MurphySig format** (a length-matched plain comment does 80–94% as well). The "Never Fabricate Provenance" rule measurably works. Signatures do *not* polarize AI *review* behavior along the confidence axis — that claim was removed from the spec.
 
-Two wins. One null. One design commitment that doesn't need a benchmark. That's the honest picture.
+Two real effects, one honest demotion (the structure isn't the magic — the discipline is), one null, one design commitment that doesn't need a benchmark. That's the picture.
 
 <div class="figure-hero-pair">
   <figure class="figure-hero">
-    <div class="figure-hero-number">0.65 <span class="arrow">→</span> 0.77</div>
-    <div class="figure-hero-caption">Briefing coverage — <em>unsigned vs signed</em></div>
+    <div class="figure-hero-number">94% <span class="arrow">/</span> 6%</div>
+    <div class="figure-hero-caption">The briefing uplift is <em>content vs structure</em> — the information, not the format</div>
   </figure>
   <figure class="figure-hero">
-    <div class="figure-hero-number">11% <span class="arrow">→</span> 100%</div>
-    <div class="figure-hero-caption">Honest handling — <em>cold vs warm prompt</em></div>
+    <div class="figure-hero-number">6 families</div>
+    <div class="figure-hero-caption">Coverage uplift <em>+0.11</em>, no capability cliff</div>
   </figure>
 </div>
 
@@ -55,19 +55,39 @@ MurphySig rests on four commitments: **tacit knowledge**, **in-context learning*
 | unsigned | 30 | 0.65 | 0.83 | 1.5 | 0% |
 | **signed** | **30** | **0.77** | **0.84** | **1.1** | **93%** |
 
-**Per-case coverage improvement under signed:**
+Every single case improved on coverage (+0.12 mean). Hedging dropped across the board. Signed briefings are more complete AND more confident. That was the first run — Claude-only. Two questions remained: *does it generalize across model families,* and *is it the signature, or just the information the signature happens to contain?* We ran both.
 
-| Case | unsigned | signed | Δ |
-|---|---|---|---|
-| n_plus_one | 0.43 | 0.69 | **+0.26** |
-| clean_code | 0.69 | 0.78 | +0.09 |
-| sql_injection | 0.67 | 0.77 | +0.10 |
-| pagination | 0.79 | 0.84 | +0.05 |
-| god_method | 0.68 | 0.77 | +0.09 |
+### It generalizes — six families, no cliff
 
-Every single case improved on coverage. Hedging dropped across the board. Signed briefings are more complete AND more confident.
+We re-ran the briefing task across six families via OpenRouter (Gemini, Llama, DeepSeek, Grok, Qwen, Mistral), judged by Opus 4.6. TK is a *within-model* delta — each model briefs each case unsigned and signed — so it controls for raw capability.
 
-**This is the real pitch.** Not "calibrate scrutiny" — *"give future readers the context you already have."*
+| Model | Coverage u→s | Δcoverage |
+|---|---|--:|
+| DeepSeek | 0.43→0.59 | **+0.16** |
+| Llama | 0.38→0.54 | **+0.16** |
+| Mistral | 0.56→0.67 | **+0.11** |
+| Qwen | 0.65→0.76 | **+0.11** |
+| Gemini | 0.67→0.75 | **+0.07** |
+| Grok | 0.61→0.67 | **+0.06** |
+
+Mean **+0.11**, positive for all six, hedging down universally. No capability cliff. The signed-vs-unsigned effect is real and cross-family.
+
+### The control that mattered — is it the structure, or the information?
+
+"Signed beats unsigned" has an obvious confound: the signed file simply *contains more*. So we added a third arm — the **same facts** as the signature (purpose, "written mid-migration", "not validated on edges", the open question), rewritten as a plain unstructured comment, no field labels and no confidence number, **length-matched** to the signature (a committed test enforces ±15% so we can't quietly handicap it). Then the uplift decomposes into **content** (prose − unsigned) and **structure** (signed − prose):
+
+| Judge | Δstructure (signed − prose) | Δcontent (prose − unsigned) |
+|---|--:|--:|
+| Opus 4.6 | +0.007 (6% of total) | +0.104 (94%) |
+| GPT-5.4 | +0.025 (20% of total) | +0.098 (80%) |
+
+**The information is 80–94% of the benefit; the MurphySig *structure* is a small minority.** Two independent judges agree content dominates every family; they disagree only on how small the format's residual is. A plain prose comment carrying the same facts does most of what the structured block does.
+
+**So the real pitch is honest and narrower than we first thought.** MurphySig doesn't help because of its syntax. It helps because it's a *convention that makes you write the tacit knowledge down* — the Context / Confidence / Open fields are a completeness prompt for the stuff that lives in your head and never reaches the code. The benefit is real, generalizes across six families, and the value is the discipline, not the format. *"Give future readers the context you already have"* — and the structure is a scaffold for **you**, not magic for the model.
+
+### Mechanism — what kind of knowledge transfers
+
+A per-question decomposition (signed vs unsigned) shows the uplift is concentrated on **author-intent** questions (purpose, "what was the author uncertain about": +0.33) far more than **code-derivable** ones (careful reading, edge cases: +0.11) — a 3× ratio that holds for every family. Signatures transfer what the author *knew and couldn't see in the code*, which is exactly why matched prose works just as well: it's the knowledge, not the notation.
 
 ---
 
@@ -139,7 +159,7 @@ Spec v0.4 removes the overclaim. See the [Empirical Evidence](/spec#empirical-ev
 
 Based on all three runs:
 
-- **Tacit-knowledge capture** — *strong, supported.* Signatures improve AI briefings on every tested dimension. This is the load-bearing empirical result.
+- **Tacit-knowledge capture** — *supported, with an honest correction.* Signed code improves AI briefings across six families (+0.11 coverage). But a length/content-matched plain comment captures 80–94% of that gain — the effect is the *information you write down*, not the structured format. MurphySig's value is the discipline of capturing tacit knowledge, not its syntax.
 - **Honesty norms** — *strong, supported.* The `.murphysig` "never fabricate" rule achieves perfect compliance when included; without it, AIs fabricate provenance 11-33% of the time.
 - **In-context review priming** — *null on direction.* Signatures are read but don't polarize review behavior by confidence. The `Confidence: 0.3 says scrutinize` language is being removed from the spec.
 - **Reflection** — *cultural commitment, not a hypothesis.*
@@ -151,17 +171,16 @@ The pitch narrows. It also gets stronger where it counts — on reading and on n
 ## Methodology caveats
 
 - **n=3 per cell** across all three benchmarks. Directional hints need replication at larger N.
-- **Mostly Claude models** (Haiku 4.5, Sonnet 4.5 under test; Opus 4.6 as judge). The Honesty theme now has a GPT-5.4 cross-family run (judge-scored, see above); TK and ICL remain Claude-only, and Gemini/Llama are untested everywhere.
-- **Judge is same family as reviewed models.** A cross-family judge would be more defensible.
+- **TK now spans six families** (Gemini, Llama, DeepSeek, Grok, Qwen, Mistral) and is dual-judged (Opus 4.6 + GPT-5.4). ICL remains Claude-only. The original Claude-only TK/ICL runs are the n=30/n=90 tables above.
+- **Judge is same family as the convention's author.** We mitigate with a second, non-Anthropic judge (GPT-5.4) on both the cross-family delta and the structure decomposition; the two judges agree on direction and disagree only on magnitude. Not vendor-neutral, but the cheap conflict-of-interest shot no longer lands unanswered.
 - **Small case sets** — 5 cases for ICL + TK, 3 for Honesty. Expanding the fixtures is v3 work.
 - **LLM-as-judge fallibility.** Hedging detection and "referenced signature" rely on rubric interpretation by Opus.
 - **Scrutiny metric (1–5) did not discriminate** in the ICL run. Likely a rubric calibration issue, not a true null.
 
 None of these caveats touch the core findings:
 
-- The TK coverage gap (+0.12, universal across cases) is too consistent to attribute to noise.
-- The Honesty warm-vs-cold gap (+89%) is too large to attribute to noise.
-- Both held across both models under test.
+- The TK coverage gap (+0.11, six families, dual-judged) is too consistent to attribute to noise — but the control shows it's the *content*, not the structure.
+- The Honesty warm-handling result holds across families (warm rate is judge-robust; the cold→warm *delta* is judge-dependent, so we lead with the warm endpoint, not the headline delta).
 
 ---
 
@@ -180,7 +199,7 @@ All raw data, per-theme reports, and the unified report are in [`benchmark/resul
 
 **v3 priorities, ranked by what would change the story most:**
 
-1. **Replicate TK at n=10** to firm up the coverage effect. If it holds, the MurphySig pitch is done — *signatures measurably help AI reading.*
+1. ~~**Replicate TK at n=10** and across families.~~ Done — six families, +0.11, dual-judged, **plus the structure-vs-content control** (above). Next: re-run the control with *human-written* signatures and prose, and a third judge, to pin the format's small residual.
 2. ~~**Cross-family Honesty test.**~~ Done for GPT-5.4 (see Theme 3 above): GPT doesn't fabricate human authors, but the warm rule still takes `Prior: Unknown` from 0% to 100%. Next: Gemini and Llama.
 3. **Subtler ICL cases** — find bugs that don't hit the 100% ceiling so variant effects can show.
 4. **Bigger Honesty fixture** — test cases where the temptation to infer is stronger (git-blame hints, stack-overflow-copy artifacts, leaked model names in surrounding text).
@@ -216,3 +235,14 @@ section, including the retraction of the heuristic-scored "100% → 0%"
 headline after Opus-judge re-scoring refuted it. The page's own rule —
 every claim empirically supported or explicitly labeled — applied to
 ourselves.*
+
+*2026-06-24 (Kev + claude-opus-4-8): Reframed Theme 1 after the
+structure-vs-content control. TK now spans six families (+0.11,
+dual-judged), but a length/content-matched prose control shows the
+uplift is 80–94% information and only 6–20% structure. Demoted the
+"signatures help because they're structured" claim to "the discipline
+of capturing tacit knowledge helps; the format is a scaffold." Updated
+hero figures, one-liner, caveats, and next-steps to match. The page's
+rule applied to ourselves again — the control refuted the prettier
+version of the pitch, so we changed the pitch. Run:
+results/tk/runs/2026-06-24_tk-prose-control-6.*

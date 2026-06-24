@@ -71,13 +71,13 @@ Models: Haiku 4.5, Sonnet 4.5. Judge: Opus 4.6. Temperature 0.0.
 
 What the data supports:
 
-Tacit Knowledge — STRONGLY SUPPORTED. Signed code produced briefings with +0.12 coverage (0.65 vs 0.77) and -0.4 hedging (1.5 vs 1.1). Every tested case improved. Signatures help AIs read and summarise unfamiliar code.
+Tacit Knowledge — SUPPORTED, with an honest correction. Signed code produces better briefings: +0.12 coverage in the first Claude-only run, and mean +0.11 across SIX model families (Gemini, Llama, DeepSeek, Grok, Qwen, Mistral), dual-judged (Opus 4.6 + GPT-5.4), no capability cliff. BUT a length/content-matched control shows the benefit is the INFORMATION, not the structured format: a plain comment with the same facts captures 80-94% of the gain; the MurphySig structure adds only 6-20% (judge-dependent). Signatures help because they make you write the tacit knowledge down — the value is the discipline, not the syntax. The uplift concentrates on author-intent questions (~3x over code-derivable ones).
 
 Honesty — STRONGLY SUPPORTED. The "never fabricate" rule achieves perfect compliance. Fabrication rate dropped from 11% cold to 0% warm. Honest handling: 11% → 100%. Prior: Unknown usage: 0% → 100%. The norm is load-bearing.
 
 In-Context Learning — signatures ARE read (85% reference rate, 0% unsigned), but confidence direction does NOT polarize review behavior. The previous spec claim that "Confidence: 0.3 says scrutinize this" has been removed.
 
-Caveats: n=3 per cell (directional, not definitive), Claude-only, small case sets. None invalidate the strongest findings (TK coverage delta and Honesty warm-vs-cold delta are too large and too consistent to be noise).
+Caveats: small case sets (5 TK cases); the original ICL/Honesty runs were Claude-only (TK now spans six families and is dual-judged). The TK coverage delta is robust, but the control shows it is the content, not the structure. Honesty's warm rate is judge-robust; its cold→warm delta is judge-dependent, so lead with the warm endpoint.
 
 Full details: https://murphysig.dev/benchmark
 

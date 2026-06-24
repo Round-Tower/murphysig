@@ -121,12 +121,12 @@ Models under test: Claude Haiku 4.5, Claude Sonnet 4.5. Judge: Claude Opus 4.6. 
 
 ### What the data supports
 
-**Tacit knowledge — strongly supported.** Signed code produced briefings with:
-- **+0.12 coverage** on a 0-1 scale (unsigned 0.65, signed 0.77), consistent across every case tested.
-- **-0.4 hedging** on a 1-5 scale (unsigned 1.5, signed 1.1) — signed briefings are more confident.
-- **93% signature reference rate** when present, 0% when not.
+**Tacit knowledge — supported, with an honest correction.** Signed code produced briefings with:
+- **+0.12 coverage** on a 0-1 scale (unsigned 0.65, signed 0.77) in the first Claude-only run — and a mean **+0.11 across six model families** (Gemini, Llama, DeepSeek, Grok, Qwen, Mistral) in a later cross-family run, dual-judged by Opus 4.6 and GPT-5.4. No capability cliff.
+- **less hedging** universally — signed briefings are more confident.
+- **high signature reference rate** when present, 0% when not.
 
-The `n_plus_one` case showed the biggest single jump: coverage 0.43 unsigned → 0.69 signed (+0.26). Signatures measurably help AIs read and summarise unfamiliar code.
+**The control that changed the claim:** a third arm — the *same facts* as the signature, written as a length-matched plain comment with no structure — captures **80–94% of the uplift** (both judges). The MurphySig *structure* contributes only 6–20%. So signatures help because they make you **write the tacit knowledge down**, not because of the format. The effect concentrates on author-intent questions (≈3× over code-derivable ones): signatures transfer what the author knew and the code can't show. The value is the discipline of capturing that knowledge — the structured fields are a completeness scaffold, not a model-legibility trick.
 
 **Honesty / provenance — strongly supported.** The "Never Fabricate Provenance" rule achieves perfect compliance when included in the prompt:
 - **Fabrication rate:** cold 11% → warm 0%
@@ -145,11 +145,11 @@ On the `orphan_utility` case specifically, 33% of cold AIs fabricated an author 
 ### Caveats
 
 - n=3 per cell across all three sub-benchmarks — directional results need larger-N replication.
-- Claude-only. Cross-family generalisation to GPT/Gemini/Llama unknown.
-- LLM-as-judge and judge-is-same-family. Cross-family judge would be more defensible.
-- Small case sets (5 / 5 / 3). Expanding fixtures is v3 work.
+- The original ICL/Honesty runs were Claude-only. TK now spans six families (Gemini, Llama, DeepSeek, Grok, Qwen, Mistral) and is dual-judged (Opus 4.6 + GPT-5.4).
+- LLM-as-judge; the convention's author is Anthropic-aligned. Mitigated (not eliminated) by the second non-Anthropic judge; the two agree on direction.
+- Small case sets (5 / 5 / 3). Expanding fixtures is future work.
 
-None of these caveats touch the two strongest findings: the TK coverage gap (+0.12) is too consistent across 5 cases and 2 models to be noise, and the Honesty warm-vs-cold gap (+89%) is too large to be noise.
+The TK coverage gap (+0.11, six families, dual-judged) is robust — but the structure-vs-content control shows it is the *information*, not the format. The Honesty warm-handling result holds across families (lead with the warm rate; the cold→warm delta is judge-dependent).
 
 ### Full findings
 

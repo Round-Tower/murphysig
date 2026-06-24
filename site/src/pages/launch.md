@@ -45,6 +45,8 @@ Before going wider, I tested whether the convention actually changes AI behaviou
 
 **Tacit knowledge (a real but smaller effect):** Briefing coverage on unfamiliar signed code goes from **0.65 to 0.77** (+0.12), universal across 5 cases, with hedging dropping by 0.4 and reference rate at 93%. Models read signatures and use what they find.
 
+> **Update (2026-06-24):** this now replicates across six model families (mean +0.11), but I ran the control I should have run first — a length/content-matched *plain* comment with the same facts. It captures **80–94% of the gain**. The benefit is the information you write down, not the MurphySig structure (which adds only 6–20%, judge-dependent). See [/benchmark](/benchmark). I'd rather correct this in public than let the prettier version stand.
+
 **In-context learning (a null result that survived contact):** I had hypothesised that confidence direction (`0.3` vs `0.9`) would polarise AI review behaviour — making them more sceptical on low-confidence code, more trusting on high. It doesn't. Five cases, no measurable effect. I removed the claim from the spec in v0.4 ("The Narrowing"). It hurt.
 
 Two wins, one null, one design commitment (zero-friction adoption) that doesn't need a benchmark. That's the honest picture.
