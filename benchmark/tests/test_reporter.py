@@ -1,13 +1,11 @@
 """Tests for report generation — written first per TDD."""
 
-import pytest
 
 from src.models import Response, Score, ScoredResponse, SignatureVariant
 from src.reporter import (
     compute_stats,
     generate_report,
     format_hypothesis_analysis,
-    GroupStats,
 )
 
 
