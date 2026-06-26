@@ -29,6 +29,12 @@
  * cold under the judge rubric — GPT signs as itself rather than
  * inventing humans). Replaced with the judge-scored Prior: Unknown
  * 0% to 100% delta, which is the defensible cross-family number.
+ *
+ * 2026-06-24 (Kev + claude-opus-4-8): Added a third install path, "Or
+ * teach your AI to sign" — curl -sL murphysig.dev/sign >> CLAUDE.md.
+ * Surfaces the agent snippet served at /sign so the URL is discoverable,
+ * not just live. (Hero + TK copy were reframed earlier the same day for
+ * the structure-vs-content finding.)
  */
 
 import ArtLayout from '../layouts/ArtLayout.astro';
@@ -212,6 +218,25 @@ import ArtLayout from '../layouts/ArtLayout.astro';
             <p class="text-neutral-500 text-base">
                 Not a <code class="font-mono text-sm bg-gray-100 px-1.5 py-0.5 rounded">curl | bash</code> person? Grab <a href="/murphysig-template.txt" class="underline">the template</a> and paste it yourself.
                 Same result, zero dependencies either way.
+            </p>
+        </article>
+
+        <!-- 6. Teach the agent — the /sign snippet -->
+        <article class="prose prose-neutral max-w-none font-serif text-lg leading-relaxed">
+            <h2 class="text-xl font-sans font-medium mb-2 tracking-wide text-neutral-900 uppercase text-xs">Or teach your AI to sign</h2>
+            <p>
+                Want your assistant to sign its work in any project, with any model? Append the
+                convention straight to your agent instructions:
+            </p>
+        </article>
+
+        <div class="bg-gray-50 border border-neutral-200 p-6 md:p-10 rounded-sm font-mono text-sm md:text-base overflow-x-auto">
+            <span class="text-neutral-400 select-none">$ </span><span class="text-black">curl -sL murphysig.dev/sign &gt;&gt; CLAUDE.md</span>
+        </div>
+
+        <article class="prose prose-neutral max-w-none font-serif text-lg leading-relaxed">
+            <p class="text-neutral-500 text-base">
+                Adds a short, vendor-neutral block to <code class="font-mono text-sm bg-gray-100 px-1.5 py-0.5 rounded">CLAUDE.md</code> (or <code class="font-mono text-sm bg-gray-100 px-1.5 py-0.5 rounded">AGENTS.md</code>) that teaches the model to record intent, confidence, and open questions — and never fabricate provenance. Read it first at <a href="/sign" class="underline">/sign</a>.
             </p>
         </article>
 
