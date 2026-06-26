@@ -13,6 +13,15 @@
   status = 200
   force = true
 
+# /sign → /sign.md so users can `curl -sL https://murphysig.dev/sign >> CLAUDE.md`
+# (drop-in "AI agent, sign your work" instruction snippet; vendor-neutral name
+# avoids the macOS case-insensitive claude.md/CLAUDE.md collision)
+[[redirects]]
+  from = "/sign"
+  to = "/sign.md"
+  status = 200
+  force = true
+
 # Badge fallback: pre-rendered badges (real files at /badge/<owner>/<repo>.svg)
 # win because force is off; anything else gets the "not found" badge.
 # Never calls GitHub at request time — registry refresh is a nightly Action.
@@ -25,6 +34,13 @@
   for = "/init.sh"
   [headers.values]
     Content-Type = "text/x-shellscript; charset=utf-8"
+    Cache-Control = "public, max-age=300"
+
+# Serve the agent snippet as plain text so it displays in-browser and curls clean.
+[[headers]]
+  for = "/sign*"
+  [headers.values]
+    Content-Type = "text/plain; charset=utf-8"
     Cache-Control = "public, max-age=300"
 
 [[headers]]

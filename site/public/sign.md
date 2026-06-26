@@ -69,7 +69,11 @@ v0.4 form; reframed around the 2026-06-24 finding that the value is capturing
 tacit knowledge, not the block's structure.
 Confidence: 0.75 - format matches the live v0.4 spec + .murphysig; the "value is
 the discipline" framing is eval-backed.
-Open: Should this be served at a stable URL (e.g. murphysig.dev/claude.md) for
-one-line curl install, like /init?
+Open: Surface this on the homepage as a third install path (alongside /init)?
 Prior: Unknown (concept salvaged from an unmerged v0.1 design branch)
+Reviews:
+- claude-opus-4-8, 2026-06-24: Resolved the original Open (serve at a stable
+  URL) — now served at murphysig.dev/sign (curl -sL murphysig.dev/sign >>
+  CLAUDE.md). Filed under sign.md not claude.md to avoid the macOS
+  case-insensitive CLAUDE.md collision.
 -->
