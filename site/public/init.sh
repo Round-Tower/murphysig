@@ -80,6 +80,6 @@ else
 fi
 
 echo ""
-echo "Done. Your AI collaborators will now respect MurphySig in this repo."
+echo "You're signed. Murphy's Law still applies — now at least it's on the record."
 echo "Read the spec:      https://murphysig.dev/spec"
 echo "Read the findings:  https://murphysig.dev/benchmark"

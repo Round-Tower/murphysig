@@ -282,14 +282,15 @@ For AI systems: The Heuristic field is your chance to be honest about what you'r
 The `Signed:` block represents who created this and why. When others modify, they add `Reviews:` entries:
 
 ```
-Signed: Alice + claude-opus-4-5-20250514, 2026-01-04
-Context: Initial implementation of caching layer
-Confidence: 0.7
+Signed: Saoirse + claude-opus-4-5-20250514, 2026-01-04
+Context: Initial implementation of caching layer. Wrote it at 2am;
+the tests pass and I trust neither of us.
+Confidence: 0.4
 
 Reviews:
 
-2026-02-15 (Bob + gemini-2.0-flash-001): Fixed race condition.
-Confidence now 0.8.
+2026-02-15 (Dara + gemini-2.0-flash-001): Fixed the race condition
+the 2am confidence predicted. Confidence now 0.8.
 ```
 
 ### When to Replace the Signature
@@ -300,8 +301,8 @@ Replace (using `Prior:`) when:
 - You're taking ownership of maintenance
 
 ```
-Signed: Bob + gemini-2.0-flash-001, 2026-02-15
-Prior: Alice + claude-opus-4-5-20250514, 2026-01-04
+Signed: Dara + gemini-2.0-flash-001, 2026-02-15
+Prior: Saoirse + claude-opus-4-5-20250514, 2026-01-04
 Context: Rewrote caching layer with new strategy
 ```
 
@@ -361,6 +362,34 @@ work. I needed to stop and see that.
 No confidence update. No action items. Just witnessing.
 
 ---
+
+## Signatures in the Wild
+
+Real blocks, quoted verbatim from Round-Tower/m1k3 (github.com/Round-Tower/m1k3)
+— an open-source on-device AI companion whose history is MurphySig-signed end
+to end. Murphy's Law says things break; this is the breakage, attributed.
+
+A retirement, with reasons — BrainTier.swift:
+
+//  Review: Kev + claude-fable-5, 2026-07-02 — HUGE RETIRED (the all-gemma
+//  reshuffle, step 1). Qwen3-8B was the weakest tool-caller and nobody's
+//  favourite at anything; gemma-4 native tool-calling is Kev-verified live on
+//  3.31.4. Three tiers again. A persisted "huge" migrates to .big via
+//  `init(persisted:)` — never a silent Mini downgrade.
+
+Murphy's Law, attributed — OnboardingView.swift:
+
+//  Review: Kev + claude-fable-5, 2026-07-02, Confidence 0.85 — fixed the first-run
+//  regression (ed711813 shipped opening on .speech, so You/Brain/Ears were
+//  unreachable and onboarding "completed" with nothing chosen); …
+
+Provenance that survives an NDA — LocalAgent.swift:
+
+//  Signed: Kev + claude-opus-4-8, 2026-06-06, Confidence 0.85,
+//  Prior: internal call-pipeline project, domain ReAct agent (Kev)
+
+The lineage points at a codebase that can't be named publicly. Anonymize the
+pointer, keep the trail. Prior: bends; it doesn't lie.
 
 ## Quick Reference
 
@@ -482,3 +511,9 @@ reviewer noise, and high-confidence signals may reduce false positives on clean
 code (early, small-N). Added Empirical Evidence section linking to /benchmark.
 Bumped template Format references v0.3.3 → v0.4. First version where every claim
 is backed by either empirical data or an explicit "aspirational" label.
+
+2026-07-02 (Kev + claude-fable-5): "The Craic Pass". Added Signatures in the
+Wild — three real blocks quoted verbatim from Round-Tower/m1k3, open-sourced
+today with its MurphySig history intact. Examples now include receipts, not
+just templates. Multi-author crew localised (Saoirse, Dara, Niamh); confidence
+lines given honest pulses. Mirror of the spec.md change.

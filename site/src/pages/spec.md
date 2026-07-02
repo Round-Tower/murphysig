@@ -532,16 +532,17 @@ MurphySig recommends **immutable original intent** as the default.
 The `Signed:` block represents who created this and why. When others modify the code, they add `Reviews:` entries:
 
 ```
-Signed: Alice + claude-opus-4-5-20250514, 2026-01-04
-Context: Initial implementation of caching layer
-Confidence: 0.7 - untested in production
+Signed: Saoirse + claude-opus-4-5-20250514, 2026-01-04
+Context: Initial implementation of caching layer. Wrote it at 2am;
+the tests pass and I trust neither of us.
+Confidence: 0.4 - untested in production
 
 Reviews:
 
-2026-02-15 (Bob + gemini-2.0-flash-001): Fixed race condition
-in cache invalidation. Confidence now 0.8.
+2026-02-15 (Dara + gemini-2.0-flash-001): Fixed the race condition
+the 2am confidence predicted. Confidence now 0.8.
 
-2026-03-01 (Charlie): Deployed to production. Confidence 0.9.
+2026-03-01 (Niamh): Deployed to production. Confidence 0.9.
 ```
 
 This preserves historical context. You can always see who started this and what they intended.
@@ -554,8 +555,8 @@ Replace the signature (using `Prior:`) when:
 - You're taking ownership of maintenance
 
 ```
-Signed: Bob + gemini-2.0-flash-001, 2026-02-15
-Prior: Alice + claude-opus-4-5-20250514, 2026-01-04
+Signed: Dara + gemini-2.0-flash-001, 2026-02-15
+Prior: Saoirse + claude-opus-4-5-20250514, 2026-01-04
 Context: Rewrote caching layer with new invalidation strategy
 
 Confidence: 0.8
@@ -806,6 +807,50 @@ inconsistent. Sometimes reverts to base model behavior.
 - How do we evaluate "compute-aware" behavior objectively?
 ```
 
+### Signatures in the Wild
+
+Invented examples only prove the format. These are real blocks, quoted verbatim
+from [Round-Tower/m1k3](https://github.com/Round-Tower/m1k3) — an open-source,
+on-device AI companion whose history is MurphySig-signed end to end. Murphy's
+Law says things break; this is what it looks like when the breakage is
+attributed.
+
+**A retirement, with reasons** — [`BrainTier.swift`](https://github.com/Round-Tower/m1k3/blob/master/macos/Sources/M1K3Inference/BrainTier.swift):
+
+```swift
+//  Review: Kev + claude-fable-5, 2026-07-02 — HUGE RETIRED (the all-gemma
+//  reshuffle, step 1). Qwen3-8B was the weakest tool-caller and nobody's
+//  favourite at anything; gemma-4 native tool-calling is Kev-verified live on
+//  3.31.4. Three tiers again. A persisted "huge" migrates to .big via
+//  `init(persisted:)` — never a silent Mini downgrade.
+```
+
+A model tier removed from a shipping app: what left, why, what migrates, and
+the seam kept for its successor. Try recovering that from a diff.
+
+**Murphy's Law, attributed** — [`OnboardingView.swift`](https://github.com/Round-Tower/m1k3/blob/master/macos/M1K3App/OnboardingView.swift):
+
+```swift
+//  Review: Kev + claude-fable-5, 2026-07-02, Confidence 0.85 — fixed the first-run
+//  regression (ed711813 shipped opening on .speech, so You/Brain/Ears were
+//  unreachable and onboarding "completed" with nothing chosen); …
+```
+
+The onboarding flow that "completed" with nothing chosen. The review names the
+commit that broke it, what the breakage looked like, and who was there when it
+was found.
+
+**Provenance that survives an NDA** — [`LocalAgent.swift`](https://github.com/Round-Tower/m1k3/blob/master/macos/Sources/M1K3Agent/LocalAgent.swift):
+
+```swift
+//  Signed: Kev + claude-opus-4-8, 2026-06-06, Confidence 0.85,
+//  Prior: internal call-pipeline project, domain ReAct agent (Kev)
+```
+
+The lineage points at a codebase that can't be named publicly. The honest move
+isn't deleting the history — it's anonymizing the pointer and keeping the
+trail. `Prior:` bends; it doesn't lie.
+
 ---
 
 ## Quick Reference
@@ -948,3 +993,5 @@ Public domain. Use freely. Attribution appreciated but not required.
 *2026-04-18 (Kev + claude-opus-4-7): Fixed Level 0 example that used "Claude-3.5" shorthand — violated the spec's own Model Versioning guidance ("friendly names are meaningless"). Replaced with a precise version (claude-opus-4-5-20250514) to match the spec's other historical examples. Mirror fix in spec.txt.*
 
 *2026-04-19 (Kev + claude-opus-4-7): v0.4 — "The Narrowing". Rewrote the In-Context Learning section to match what the v2a benchmark actually showed. Removed the unsupported claim that `Confidence: 0.3` measurably increases AI scrutiny. Replaced with scoped findings: signatures are read (85%), signed code receives modestly less reviewer noise, and high-confidence signals may reduce false positives on clean code (early, small-N). Reframed Cross-Model Learning as aspirational rather than current capability. Added Empirical Evidence section linking to the benchmark. Bumped Format version v0.3.3 → v0.4 in template references (historical examples preserved at their original format version). This is the first version of the spec where every claim is backed by either (a) empirical data or (b) an explicit "aspirational" / "design commitment" label.*
+
+*2026-07-02 (Kev + claude-fable-5): "The Craic Pass". Added Signatures in the Wild — three real blocks quoted verbatim from Round-Tower/m1k3, which went open source today with its MurphySig history intact; the spec's examples now include receipts, not just templates. Multi-author example crew localised (Saoirse, Dara, Niamh) and its confidence lines given honest pulses — the 2am signature that predicts its own race condition teaches calibration better than a clean 0.7 ever did. Mirror in spec.txt.*
