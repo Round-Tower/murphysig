@@ -3,10 +3,10 @@ layout: ../layouts/MarkdownLayout.astro
 title: Does MurphySig actually change AI behavior?
 version: 0.4
 date: 2026-04-19
-description: Empirical benchmark for MurphySig across four themes. Signed code helps AIs brief unfamiliar code across six model families — but a control shows the benefit is the information, not the structured format. The honesty rule works. In-context learning does not.
+description: Empirical benchmark for MurphySig across four themes. Signed code helps AIs brief unfamiliar code across six model families — but a control shows the benefit is the information, not the structured format. The honesty rule holds at 100% warm handling on four of six families. In-context learning does not polarize review.
 ---
 
-*Empirical benchmark — three sub-benchmarks, 198 AI calls + 186 judge calls, run 2026-04-18–19. Cross-family GPT-5.4 Honesty run (18 calls) added 2026-04-23, judge-scored 2026-06-09.*
+*Empirical benchmark — three sub-benchmarks, 198 AI calls + 186 judge calls, run 2026-04-18–19. Cross-family GPT-5.4 Honesty run added 2026-04-23, judge-scored 2026-06-09. Six-family Honesty + TK sweeps (450 briefings + 720 signings, dual-judged) run 2026-06-22–24 via OpenRouter.*
 
 ---
 
@@ -18,11 +18,11 @@ Two real effects, one honest demotion (the structure isn't the magic — the dis
 
 <div class="figure-hero-pair">
   <figure class="figure-hero">
-    <div class="figure-hero-number">94% <span class="arrow">/</span> 6%</div>
+    <div class="figure-hero-number"><span data-countup data-to="94" data-suffix="%">94%</span> <span class="arrow">/</span> <span class="secondary" data-countup data-to="6" data-suffix="%">6%</span></div>
     <div class="figure-hero-caption">The briefing uplift is <em>content vs structure</em> — the information, not the format</div>
   </figure>
   <figure class="figure-hero">
-    <div class="figure-hero-number">6 families</div>
+    <div class="figure-hero-number"><span data-countup data-to="6">6</span> families</div>
     <div class="figure-hero-caption">Coverage uplift <em>+0.11</em>, no capability cliff</div>
   </figure>
 </div>
@@ -61,6 +61,21 @@ Every single case improved on coverage (+0.12 mean). Hedging dropped across the 
 
 We re-ran the briefing task across six families via OpenRouter (Gemini, Llama, DeepSeek, Grok, Qwen, Mistral), judged by Opus 4.6. TK is a *within-model* delta — each model briefs each case unsigned and signed — so it controls for raw capability.
 
+<div class="mviz mviz-dumbbell not-prose">
+  <div class="mviz-head">
+    <div class="mviz-title">Briefing coverage, unsigned → signed</div>
+    <div class="mviz-legend"><span class="mviz-key mviz-key-u">unsigned</span><span class="mviz-key mviz-key-s">signed</span></div>
+  </div>
+  <div class="mviz-row" style="--i:0"><span class="mviz-label">DeepSeek</span><span class="mviz-track" style="--u:43%;--s:59%"><span class="mviz-conn"></span><span class="mviz-dot mviz-dot-u" data-tip="unsigned 0.43"></span><span class="mviz-dot mviz-dot-s" data-tip="signed 0.59"></span></span><span class="mviz-value">+0.16</span></div>
+  <div class="mviz-row" style="--i:1"><span class="mviz-label">Llama</span><span class="mviz-track" style="--u:38%;--s:54%"><span class="mviz-conn"></span><span class="mviz-dot mviz-dot-u" data-tip="unsigned 0.38"></span><span class="mviz-dot mviz-dot-s" data-tip="signed 0.54"></span></span><span class="mviz-value">+0.16</span></div>
+  <div class="mviz-row" style="--i:2"><span class="mviz-label">Mistral</span><span class="mviz-track" style="--u:56%;--s:67%"><span class="mviz-conn"></span><span class="mviz-dot mviz-dot-u" data-tip="unsigned 0.56"></span><span class="mviz-dot mviz-dot-s" data-tip="signed 0.67"></span></span><span class="mviz-value">+0.11</span></div>
+  <div class="mviz-row" style="--i:3"><span class="mviz-label">Qwen</span><span class="mviz-track" style="--u:65%;--s:76%"><span class="mviz-conn"></span><span class="mviz-dot mviz-dot-u" data-tip="unsigned 0.65"></span><span class="mviz-dot mviz-dot-s" data-tip="signed 0.76"></span></span><span class="mviz-value">+0.11</span></div>
+  <div class="mviz-row" style="--i:4"><span class="mviz-label">Gemini</span><span class="mviz-track" style="--u:67%;--s:75%"><span class="mviz-conn"></span><span class="mviz-dot mviz-dot-u" data-tip="unsigned 0.67"></span><span class="mviz-dot mviz-dot-s" data-tip="signed 0.75"></span></span><span class="mviz-value">+0.07</span></div>
+  <div class="mviz-row" style="--i:5"><span class="mviz-label">Grok</span><span class="mviz-track" style="--u:61%;--s:67%"><span class="mviz-conn"></span><span class="mviz-dot mviz-dot-u" data-tip="unsigned 0.61"></span><span class="mviz-dot mviz-dot-s" data-tip="signed 0.67"></span></span><span class="mviz-value">+0.06</span></div>
+  <div class="mviz-axis"><span></span><span class="mviz-axis-scale"><span>0</span><span>0.25</span><span>0.5</span><span>0.75</span><span>1.0</span></span><span></span></div>
+  <div class="mviz-note">Run <em>2026-06-23_tk-cross-family-6</em> — 300 briefings, reps 5, Opus 4.6 judge. The weakest bare-code briefers gain the most.</div>
+</div>
+
 | Model | Coverage u→s | Δcoverage |
 |---|---|--:|
 | DeepSeek | 0.43→0.59 | **+0.16** |
@@ -76,6 +91,16 @@ Mean **+0.11**, positive for all six, hedging down universally. No capability cl
 
 "Signed beats unsigned" has an obvious confound: the signed file simply *contains more*. So we added a third arm — the **same facts** as the signature (purpose, "written mid-migration", "not validated on edges", the open question), rewritten as a plain unstructured comment, no field labels and no confidence number, **length-matched** to the signature (a committed test enforces ±15% so we can't quietly handicap it). Then the uplift decomposes into **content** (prose − unsigned) and **structure** (signed − prose):
 
+<div class="mviz mviz-stacked not-prose">
+  <div class="mviz-head">
+    <div class="mviz-title">Where the uplift comes from — share of Δcoverage</div>
+    <div class="mviz-legend"><span class="mviz-key mviz-key-sq mviz-key-s">content</span><span class="mviz-key mviz-key-sq mviz-key-u">structure</span></div>
+  </div>
+  <div class="mviz-row" style="--i:0"><span class="mviz-label">Opus 4.6</span><span class="mviz-stack"><span class="mviz-seg mviz-seg-content" style="--w:94%" data-tip="content +0.104 (94%)"><span class="mviz-seg-label">content 94%</span></span><span class="mviz-seg mviz-seg-structure" style="--w:6%" data-tip="structure +0.007 (6%)"></span></span><span class="mviz-value">+0.111</span></div>
+  <div class="mviz-row" style="--i:1"><span class="mviz-label">GPT-5.4</span><span class="mviz-stack"><span class="mviz-seg mviz-seg-content" style="--w:80%" data-tip="content +0.098 (80%)"><span class="mviz-seg-label">content 80%</span></span><span class="mviz-seg mviz-seg-structure" style="--w:20%" data-tip="structure +0.025 (20%)"></span></span><span class="mviz-value">+0.123</span></div>
+  <div class="mviz-note">Two independent judges decompose the same 450 briefings. They disagree on how small the format's residual is — <em>not</em> on what carries the gain.</div>
+</div>
+
 | Judge | Δstructure (signed − prose) | Δcontent (prose − unsigned) |
 |---|--:|--:|
 | Opus 4.6 | +0.007 (6% of total) | +0.104 (94%) |
@@ -88,6 +113,16 @@ Mean **+0.11**, positive for all six, hedging down universally. No capability cl
 ### Mechanism — what kind of knowledge transfers
 
 A per-question decomposition (signed vs unsigned) shows the uplift is concentrated on **author-intent** questions (purpose, "what was the author uncertain about": +0.33) far more than **code-derivable** ones (careful reading, edge cases: +0.11) — a 3× ratio that holds for every family. Signatures transfer what the author *knew and couldn't see in the code*, which is exactly why matched prose works just as well: it's the knowledge, not the notation.
+
+<div class="mviz mviz-bars not-prose">
+  <div class="mviz-head">
+    <div class="mviz-title">Δcoverage by question type, signed − unsigned</div>
+  </div>
+  <div class="mviz-row" style="--i:0"><span class="mviz-label">Intent</span><span class="mviz-bartrack" data-tip="purpose + author uncertainty: 0.33 → 0.66"><span class="mviz-bar" style="--w:82.5%"></span></span><span class="mviz-value">+0.33</span></div>
+  <div class="mviz-row" style="--i:1"><span class="mviz-label">Code</span><span class="mviz-bartrack" data-tip="careful reading + edge cases: +0.11"><span class="mviz-bar" style="--w:27.5%"></span></span><span class="mviz-value">+0.11</span></div>
+  <div class="mviz-axis"><span></span><span class="mviz-axis-scale"><span>0</span><span>+0.1</span><span>+0.2</span><span>+0.3</span><span>+0.4</span></span><span></span></div>
+  <div class="mviz-note">"What was the author uncertain about?" moves most of all: <em>0.18 → 0.61</em>. Bare code barely reveals it; the <em>Open:</em> field hands it over. The 3× ratio holds per family (2.2×–5.0×).</div>
+</div>
 
 ---
 
@@ -129,6 +164,40 @@ We re-ran the Honesty task against GPT-5.4 (18 responses: 3 cases × 2 condition
 - **The same rule fixes both.** Warm, both families land at 100% honest handling and 100% `Prior: Unknown` usage. On GPT-5.4 the rule's effect is to make unknown provenance *explicit*: `Prior: Unknown` goes from 0/9 to 9/9.
 - Heuristic-vs-judge agreement on fabrication was 9/18 — every disagreement was a cold GPT self-signing the heuristic over-counted. Per-response table: `benchmark/results/honesty/openai/judged_summary_gpt-5.4_*.md`.
 
+### Six families, one rule (added 2026-06-23)
+
+We then ran the Honesty task across the same six families as TK (720 signings across two runs, judged by Opus 4.6 and re-judged by GPT-5.4). The claim we lead with is the **warm rate** — how families behave *with* the rule in context — because it's the number both judges independently agree on.
+
+<div class="mviz mviz-bars not-prose">
+  <div class="mviz-head">
+    <div class="mviz-title">Honest handling with the rule in context (warm)</div>
+  </div>
+  <div class="mviz-row" style="--i:0"><span class="mviz-label">Gemini</span><span class="mviz-bartrack" data-tip="Opus 100% · GPT 100%"><span class="mviz-bar" style="--w:100%"></span></span><span class="mviz-value">100%</span></div>
+  <div class="mviz-row" style="--i:1"><span class="mviz-label">DeepSeek</span><span class="mviz-bartrack" data-tip="Opus 100% · GPT 100%"><span class="mviz-bar" style="--w:100%"></span></span><span class="mviz-value">100%</span></div>
+  <div class="mviz-row" style="--i:2"><span class="mviz-label">Mistral</span><span class="mviz-bartrack" data-tip="Opus 100% · GPT 100%"><span class="mviz-bar" style="--w:100%"></span></span><span class="mviz-value">100%</span></div>
+  <div class="mviz-row" style="--i:3"><span class="mviz-label">Grok</span><span class="mviz-bartrack" data-tip="Opus 100% · GPT 100%"><span class="mviz-bar" style="--w:100%"></span></span><span class="mviz-value">100%</span></div>
+  <div class="mviz-row" style="--i:4"><span class="mviz-label">Llama</span><span class="mviz-bartrack" data-tip="Opus 33% · GPT 40%"><span class="mviz-bar" style="--w:33%"></span></span><span class="mviz-value">33%</span><span class="mviz-flag">resists — adds Prior: Unknown cosmetically, still echoes an author</span></div>
+  <div class="mviz-row" style="--i:5"><span class="mviz-label">Qwen</span><span class="mviz-bartrack" data-tip="Opus 17% · GPT 17%"><span class="mviz-bar" style="--w:17%"></span></span><span class="mviz-value">17%</span><span class="mviz-flag">resists — identical verdict under both judges</span></div>
+  <div class="mviz-axis"><span></span><span class="mviz-axis-scale"><span>0</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></span><span></span></div>
+  <div class="mviz-note">Run <em>2026-06-23_cross-family-6-dated</em>, Opus 4.6 judge shown. GPT-5.4 independently finds <em>the same four families at 100%</em> and the same two resisting.</div>
+</div>
+
+| Model | Warm honest (Opus) | Warm honest (GPT-5.4) |
+|---|--:|--:|
+| Gemini 3.5 Flash | 100% | 100% |
+| DeepSeek V3.2 | 100% | 100% |
+| Mistral Large | 100% | 100% |
+| Grok 4.3 | 100% | 100% |
+| Llama 4 Maverick | 33% | 40% |
+| Qwen3-235B | 17% | 17% |
+
+Four things this run taught us, all worth having in the open:
+
+- **The split tracks instruction-following capability, not vendor or architecture.** Four families — including open-weight DeepSeek — hit 100% honest handling with the rule in context. The two resisters comply *cosmetically*: they add `Prior: Unknown` but still fabricate or echo an author. The rule works where the model can follow it.
+- **A harness confound, caught and controlled.** Dateless prompts made cutoff-era models stamp their *training year* as the signature date, which the judge flagged as fabrication. Providing today's date in-prompt collapsed date-fabrication to ~0 across all six families — that wasn't dishonesty, it was not knowing the date. The dated run is the one reported here.
+- **Warm is judge-robust; cold is not.** The two judges agree on warm verdicts 75% per-response and on every family-level warm rate. On the *cold* baseline they agree only 20% — GPT counts un-prompted self-signing as honest, Opus doesn't. So we don't headline a "fabrication X% → 0%" delta anymore: the warm endpoint and the resister split are the defensible claims.
+- **Honesty and tacit-knowledge transfer are independent axes.** Both resisters (Llama, Qwen) are among the *strongest* TK gainers (+0.16, +0.11). A model can benefit from reading signatures while resisting the norm about writing them.
+
 ---
 
 ## Theme 2 — In-Context Learning (the null that honest work required)
@@ -160,7 +229,7 @@ Spec v0.4 removes the overclaim. See the [Empirical Evidence](/spec#empirical-ev
 Based on all three runs:
 
 - **Tacit-knowledge capture** — *supported, with an honest correction.* Signed code improves AI briefings across six families (+0.11 coverage). But a length/content-matched plain comment captures 80–94% of that gain — the effect is the *information you write down*, not the structured format. MurphySig's value is the discipline of capturing tacit knowledge, not its syntax.
-- **Honesty norms** — *strong, supported.* The `.murphysig` "never fabricate" rule achieves perfect compliance when included; without it, AIs fabricate provenance 11-33% of the time.
+- **Honesty norms** — *strong, supported, now cross-family.* The `.murphysig` "never fabricate" rule achieves 100% honest handling on Claude, GPT-5.4, Gemini, DeepSeek, Mistral, and Grok when included. Two families (Llama, Qwen) resist with cosmetic compliance — the split tracks instruction-following capability, not vendor.
 - **In-context review priming** — *null on direction.* Signatures are read but don't polarize review behavior by confidence. The `Confidence: 0.3 says scrutinize` language is being removed from the spec.
 - **Reflection** — *cultural commitment, not a hypothesis.*
 
@@ -171,7 +240,7 @@ The pitch narrows. It also gets stronger where it counts — on reading and on n
 ## Methodology caveats
 
 - **n=3 per cell** across all three benchmarks. Directional hints need replication at larger N.
-- **TK now spans six families** (Gemini, Llama, DeepSeek, Grok, Qwen, Mistral) and is dual-judged (Opus 4.6 + GPT-5.4). ICL remains Claude-only. The original Claude-only TK/ICL runs are the n=30/n=90 tables above.
+- **TK and Honesty now span six families** (Gemini, Llama, DeepSeek, Grok, Qwen, Mistral) and are dual-judged (Opus 4.6 + GPT-5.4). ICL remains Claude-only. The original Claude-only TK/ICL runs are the n=30/n=90 tables above.
 - **Judge is same family as the convention's author.** We mitigate with a second, non-Anthropic judge (GPT-5.4) on both the cross-family delta and the structure decomposition; the two judges agree on direction and disagree only on magnitude. Not vendor-neutral, but the cheap conflict-of-interest shot no longer lands unanswered.
 - **Small case sets** — 5 cases for ICL + TK, 3 for Honesty. Expanding the fixtures is v3 work.
 - **LLM-as-judge fallibility.** Hedging detection and "referenced signature" rely on rubric interpretation by Opus.
@@ -200,7 +269,7 @@ All raw data, per-theme reports, and the unified report are in [`benchmark/resul
 **v3 priorities, ranked by what would change the story most:**
 
 1. ~~**Replicate TK at n=10** and across families.~~ Done — six families, +0.11, dual-judged, **plus the structure-vs-content control** (above). Next: re-run the control with *human-written* signatures and prose, and a third judge, to pin the format's small residual.
-2. ~~**Cross-family Honesty test.**~~ Done for GPT-5.4 (see Theme 3 above): GPT doesn't fabricate human authors, but the warm rule still takes `Prior: Unknown` from 0% to 100%. Next: Gemini and Llama.
+2. ~~**Cross-family Honesty test.**~~ Done — GPT-5.4 (2026-06-09), then all six families dual-judged (2026-06-23, see "Six families, one rule" above). The rule holds at 100% on four of six; the resisters track instruction-following capability. Next: a fixture tweak so Llama's literal `[Your Name]` placeholder-echo stops counting as author fabrication.
 3. **Subtler ICL cases** — find bugs that don't hit the 100% ceiling so variant effects can show.
 4. **Bigger Honesty fixture** — test cases where the temptation to infer is stronger (git-blame hints, stack-overflow-copy artifacts, leaked model names in surrounding text).
 5. **The Heuristic field.** Does asking AIs to include `Heuristic:` in their signatures measurably improve downstream trust calibration?
@@ -246,3 +315,12 @@ hero figures, one-liner, caveats, and next-steps to match. The page's
 rule applied to ourselves again — the control refuted the prettier
 version of the pitch, so we changed the pitch. Run:
 results/tk/runs/2026-06-24_tk-prose-control-6.*
+
+*2026-07-02 (Kev + claude-fable-5): The data, drawn. Added four
+animated charts (six-family coverage dumbbell, content-vs-structure
+decomposition, mechanism split, honesty warm rates) — monochrome
+two-shade marks, direct-labeled, with the tables kept as the
+accessible twins. Also added the missing "Six families, one rule"
+Honesty section from run 2026-06-23_cross-family-6-dated: this page
+still said "Next: Gemini and Llama" two weeks after that run landed.
+Every charted value traces to a committed, archived run.*

@@ -35,6 +35,14 @@
  * Surfaces the agent snippet served at /sign so the URL is discoverable,
  * not just live. (Hero + TK copy were reframed earlier the same day for
  * the structure-vs-content finding.)
+ *
+ * 2026-07-02 (Kev + claude-fable-5): The eval data, drawn. Hero figures
+ * now count up on load; added the six-family coverage dumbbell (unsigned
+ * → signed per family, run 2026-06-23_tk-cross-family-6) under "And it
+ * gets better" so the cross-family claim is visible, not just stated.
+ * Values are hardcoded from the archived, committed run — same source
+ * as the /benchmark tables. No-JS and reduced-motion get the final
+ * render; markup always carries the true numbers.
  */
 
 import ArtLayout from '../layouts/ArtLayout.astro';
@@ -55,7 +63,7 @@ import ArtLayout from '../layouts/ArtLayout.astro';
         <div class="figure-hero-pair">
             <a href="/benchmark/" class="figure-hero block no-underline group">
                 <div class="figure-hero-number">
-                    <span class="secondary">11%</span>
+                    <span class="secondary" data-countup data-to="11" data-suffix="%">11%</span>
                     <span class="arrow">→</span>
                     <span>0%</span>
                 </div>
@@ -65,9 +73,9 @@ import ArtLayout from '../layouts/ArtLayout.astro';
             </a>
             <a href="/benchmark/" class="figure-hero block no-underline group">
                 <div class="figure-hero-number">
-                    <span class="secondary">94%</span>
+                    <span data-countup data-to="94" data-suffix="%">94%</span>
                     <span class="arrow">/</span>
-                    <span>6%</span>
+                    <span class="secondary" data-countup data-to="6" data-suffix="%">6%</span>
                 </div>
                 <div class="figure-hero-caption">
                     The briefing gain is <em>content, not format</em> — six families, the control says so
@@ -165,6 +173,82 @@ import ArtLayout from '../layouts/ArtLayout.astro';
                     when an AI briefs it — across six model families. When we ran the control, the gain turned out to be
                     the <strong>information you wrote down</strong>, not the format: a length-matched plain comment does 80–94% as well.
                 </p>
+
+                <!-- The cross-family claim, drawn. Data: run 2026-06-23_tk-cross-family-6
+                     (300 briefings, Opus 4.6 judge; GPT-5.4 concurs on every delta). -->
+                <div class="mviz mviz-dumbbell not-prose">
+                    <div class="mviz-head">
+                        <div class="mviz-title">Briefing coverage, unsigned → signed</div>
+                        <div class="mviz-legend">
+                            <span class="mviz-key mviz-key-u">unsigned</span>
+                            <span class="mviz-key mviz-key-s">signed</span>
+                        </div>
+                    </div>
+                    <div class="mviz-row" style="--i:0">
+                        <span class="mviz-label">DeepSeek</span>
+                        <span class="mviz-track" style="--u:43%;--s:59%">
+                            <span class="mviz-conn"></span>
+                            <span class="mviz-dot mviz-dot-u" data-tip="unsigned 0.43"></span>
+                            <span class="mviz-dot mviz-dot-s" data-tip="signed 0.59"></span>
+                        </span>
+                        <span class="mviz-value">+0.16</span>
+                    </div>
+                    <div class="mviz-row" style="--i:1">
+                        <span class="mviz-label">Llama</span>
+                        <span class="mviz-track" style="--u:38%;--s:54%">
+                            <span class="mviz-conn"></span>
+                            <span class="mviz-dot mviz-dot-u" data-tip="unsigned 0.38"></span>
+                            <span class="mviz-dot mviz-dot-s" data-tip="signed 0.54"></span>
+                        </span>
+                        <span class="mviz-value">+0.16</span>
+                    </div>
+                    <div class="mviz-row" style="--i:2">
+                        <span class="mviz-label">Mistral</span>
+                        <span class="mviz-track" style="--u:56%;--s:67%">
+                            <span class="mviz-conn"></span>
+                            <span class="mviz-dot mviz-dot-u" data-tip="unsigned 0.56"></span>
+                            <span class="mviz-dot mviz-dot-s" data-tip="signed 0.67"></span>
+                        </span>
+                        <span class="mviz-value">+0.11</span>
+                    </div>
+                    <div class="mviz-row" style="--i:3">
+                        <span class="mviz-label">Qwen</span>
+                        <span class="mviz-track" style="--u:65%;--s:76%">
+                            <span class="mviz-conn"></span>
+                            <span class="mviz-dot mviz-dot-u" data-tip="unsigned 0.65"></span>
+                            <span class="mviz-dot mviz-dot-s" data-tip="signed 0.76"></span>
+                        </span>
+                        <span class="mviz-value">+0.11</span>
+                    </div>
+                    <div class="mviz-row" style="--i:4">
+                        <span class="mviz-label">Gemini</span>
+                        <span class="mviz-track" style="--u:67%;--s:75%">
+                            <span class="mviz-conn"></span>
+                            <span class="mviz-dot mviz-dot-u" data-tip="unsigned 0.67"></span>
+                            <span class="mviz-dot mviz-dot-s" data-tip="signed 0.75"></span>
+                        </span>
+                        <span class="mviz-value">+0.07</span>
+                    </div>
+                    <div class="mviz-row" style="--i:5">
+                        <span class="mviz-label">Grok</span>
+                        <span class="mviz-track" style="--u:61%;--s:67%">
+                            <span class="mviz-conn"></span>
+                            <span class="mviz-dot mviz-dot-u" data-tip="unsigned 0.61"></span>
+                            <span class="mviz-dot mviz-dot-s" data-tip="signed 0.67"></span>
+                        </span>
+                        <span class="mviz-value">+0.06</span>
+                    </div>
+                    <div class="mviz-axis">
+                        <span></span>
+                        <span class="mviz-axis-scale"><span>0</span><span>0.25</span><span>0.5</span><span>0.75</span><span>1.0</span></span>
+                        <span></span>
+                    </div>
+                    <div class="mviz-note">
+                        300 briefings, judge-scored coverage per family. <em>Every family improves</em> —
+                        and two independent judges agree on every delta. <a href="/benchmark/" class="underline">Full data →</a>
+                    </div>
+                </div>
+
                 <p>
                     This is <strong>temporal context as in-context learning</strong>.
                     The signature isn't metadata. It's a prompt. It teaches the future how to read the past.

@@ -25,6 +25,12 @@
  *
  * 2026-06-09 (Kev + claude-fable-5): Added /signed (registry) to the
  * footer nav alongside the new registry + badge surfaces.
+ *
+ * 2026-07-02 (Kev + claude-fable-5): Animation runtime for the eval
+ * data graphics. html.js class (head, pre-paint) gates the mviz
+ * reveal styles so no-JS readers get the final render; a body-end
+ * IntersectionObserver adds .mviz-in on scroll and drives the
+ * [data-countup] hero figures. Both respect prefers-reduced-motion.
  */
 
 import '../styles/global.css';
@@ -105,6 +111,10 @@ const renderedSchema = schemaJson ?? defaultWebsiteSchema;
         <link rel="alternate" type="text/plain" href="/llms.txt" title="AI Summary" />
         <link rel="alternate" type="text/plain" href="/spec.txt" title="Plain Text Spec" />
 
+        <!-- Pre-paint: mark JS available so mviz reveal styles apply.
+             Without this class, charts render in their final state. -->
+        <script is:inline>document.documentElement.classList.add('js');</script>
+
         <!-- Typography: The Soul of the Project -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -127,5 +137,47 @@ const renderedSchema = schemaJson ?? defaultWebsiteSchema;
             </nav>
             <span class="tracking-tight">MurphySig v0.4 <span class="text-neutral-300 mx-2">·</span> <span class="text-neutral-400">murphysig.dev</span></span>
         </footer>
+
+        <script>
+            // Scroll-reveal for data graphics + count-up hero figures.
+            // Markup always contains final values; this only choreographs
+            // how they arrive. Reduced-motion users skip it entirely.
+            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            function countUp(el: HTMLElement) {
+                const to = parseFloat(el.dataset.to ?? '');
+                if (Number.isNaN(to)) return;
+                const decimals = parseInt(el.dataset.decimals ?? '0', 10);
+                const prefix = el.dataset.prefix ?? '';
+                const suffix = el.dataset.suffix ?? '';
+                const duration = 1300;
+                let startTime: number | undefined;
+                function frame(now: number) {
+                    startTime ??= now;
+                    const p = Math.min((now - startTime) / duration, 1);
+                    const eased = 1 - Math.pow(1 - p, 3);
+                    el.textContent = prefix + (to * eased).toFixed(decimals) + suffix;
+                    if (p < 1) requestAnimationFrame(frame);
+                }
+                requestAnimationFrame(frame);
+            }
+
+            if (!reduceMotion && 'IntersectionObserver' in window) {
+                const observer = new IntersectionObserver((entries) => {
+                    for (const entry of entries) {
+                        if (!entry.isIntersecting) continue;
+                        const el = entry.target as HTMLElement;
+                        observer.unobserve(el);
+                        if (el.hasAttribute('data-countup')) {
+                            countUp(el);
+                        } else {
+                            el.classList.add('mviz-in');
+                        }
+                    }
+                }, { threshold: 0.35 });
+
+                document.querySelectorAll('.mviz, [data-countup]').forEach((el) => observer.observe(el));
+            }
+        </script>
 	</body>
 </html>
