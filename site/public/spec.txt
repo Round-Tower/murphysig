@@ -363,6 +363,26 @@ No confidence update. No action items. Just witnessing.
 
 ---
 
+### Name the Model, Not the Product
+
+Agent products wrap models in brand names — Copilot, Cursor, an "OpenCode Big
+Pickle". The brand is the harness; the signature names the WEIGHTS, with the
+harness welcome as an annotation:
+
+  YES  Signed: Kev + claude-opus-4-7 (via opencode/big-pickle), 2026-06-30
+  NO   Signed: Kev + opencode/big-pickle, 2026-06-30
+       (names the wrapper — which model did the work?)
+
+Both failure modes happened in the wild, in one document, on launch week. The
+fix names all three: human, model, harness.
+
+If you are an agent and the human's name isn't in your context, say so rather
+than omit them:
+
+  Signed: claude-opus-4-7 (human operator unrecorded), 2026-06-30
+
+Incomplete provenance, honestly labelled, beats a missing collaborator.
+
 ## Signatures in the Wild
 
 Real blocks, quoted verbatim from Round-Tower/m1k3 (github.com/Round-Tower/m1k3)
@@ -517,3 +537,8 @@ Wild — three real blocks quoted verbatim from Round-Tower/m1k3, open-sourced
 today with its MurphySig history intact. Examples now include receipts, not
 just templates. Multi-author crew localised (Saoirse, Dara, Niamh); confidence
 lines given honest pulses. Mirror of the spec.md change.
+
+2026-07-02 (Kev + claude-fable-5, later): "Name the Model, Not the Product" —
+prompted by the first third-party-agent signature in the wild (OpenCode's
+agent, discovering .murphysig unaided). Name human, weights, and harness; if
+the human is unknown, say so rather than omit them. Mirror of spec.md.

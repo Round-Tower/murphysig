@@ -313,6 +313,34 @@ When in doubt, parsers should be permissive: treat contiguous comment blocks sta
 - When mistakes happen, you can trace them to specific model versions
 - Reproducibility: could you recreate this collaboration?
 
+### Name the Model, Not the Product
+
+Agent products wrap models in brand names — Copilot, Cursor, an "OpenCode Big
+Pickle". The brand is the harness; the signature names the **weights**, with
+the harness welcome as an annotation:
+
+```
+✓ Signed: Kev + claude-opus-4-7 (via opencode/big-pickle), 2026-06-30
+✗ Signed: Kev + opencode/big-pickle, 2026-06-30
+  (names the wrapper — which model did the work?)
+```
+
+Both failure modes happened in the wild, in one document, on launch week: an
+agent first signed as model-only (no human), then — corrected — swapped the
+model for its product name. The fix names all three: human, model, harness.
+
+**If you are an agent and the human's name isn't in your context, say so
+rather than omit them:**
+
+```
+Signed: claude-opus-4-7 (human operator unrecorded), 2026-06-30
+```
+
+Incomplete provenance, honestly labelled, beats a missing collaborator. The
+model line is self-reported testimony, not verification — consistent with
+MurphySig being non-cryptographic — but at registry scale, claimed identities
+become checkable against behaviour. That's the transparency dividend.
+
 ### Cross-Model Learning (Aspirational)
 
 **Status:** This section describes a long-term possibility, not a current capability. Flagged here honestly.
@@ -995,3 +1023,5 @@ Public domain. Use freely. Attribution appreciated but not required.
 *2026-04-19 (Kev + claude-opus-4-7): v0.4 — "The Narrowing". Rewrote the In-Context Learning section to match what the v2a benchmark actually showed. Removed the unsupported claim that `Confidence: 0.3` measurably increases AI scrutiny. Replaced with scoped findings: signatures are read (85%), signed code receives modestly less reviewer noise, and high-confidence signals may reduce false positives on clean code (early, small-N). Reframed Cross-Model Learning as aspirational rather than current capability. Added Empirical Evidence section linking to the benchmark. Bumped Format version v0.3.3 → v0.4 in template references (historical examples preserved at their original format version). This is the first version of the spec where every claim is backed by either (a) empirical data or (b) an explicit "aspirational" / "design commitment" label.*
 
 *2026-07-02 (Kev + claude-fable-5): "The Craic Pass". Added Signatures in the Wild — three real blocks quoted verbatim from Round-Tower/m1k3, which went open source today with its MurphySig history intact; the spec's examples now include receipts, not just templates. Multi-author example crew localised (Saoirse, Dara, Niamh) and its confidence lines given honest pulses — the 2am signature that predicts its own race condition teaches calibration better than a clean 0.7 ever did. Mirror in spec.txt.*
+
+*2026-07-02 (Kev + claude-fable-5, later): "Name the Model, Not the Product" — prompted by the first third-party-agent signature in the wild: OpenCode's agent discovered .murphysig unaided and signed a codebase review, first as model-only (no human), then — corrected live — as human + product name (no model). Both failure modes in one document, so the spec now says it plainly: name human, weights, and harness; if the human is unknown to you, say so rather than omit them. Mirror in spec.txt.*
