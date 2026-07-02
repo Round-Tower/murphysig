@@ -37,8 +37,16 @@
     Cache-Control = "public, max-age=300"
 
 # Serve the agent snippet as plain text so it displays in-browser and curls clean.
+# EXACT paths only — the old glob "/sign*" also matched /signed/* and served the
+# whole registry section as text/plain (raw HTML in the browser, found 2026-07-02).
 [[headers]]
-  for = "/sign*"
+  for = "/sign"
+  [headers.values]
+    Content-Type = "text/plain; charset=utf-8"
+    Cache-Control = "public, max-age=300"
+
+[[headers]]
+  for = "/sign.md"
   [headers.values]
     Content-Type = "text/plain; charset=utf-8"
     Cache-Control = "public, max-age=300"
