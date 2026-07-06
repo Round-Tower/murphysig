@@ -1,30 +1,5 @@
 {
-  "generated_at": "2026-07-05T04:45:01.956Z",
-  "count": 2,
-  "repos": [
-    {
-      "owner": "Round-Tower",
-      "repo": "m1k3",
-      "full_name": "Round-Tower/m1k3",
-      "html_url": "https://github.com/Round-Tower/m1k3",
-      "description": "Your AI. Your Mac. Nothing leaves. On-device AI companion for macOS — MLX inference, live voice, knowledge graph + RAG, and an MCP server.",
-      "author": "Kevin Murphy",
-      "version": "v0.4",
-      "initialized": "2026-01-05",
-      "last_push": "2026-07-04T09:02:55Z",
-      "declaration": "# This Project Uses MurphySig\n\nMurphySig is a natural language provenance convention for human-AI collaborative work.\n\nFull specification: https://murphysig.dev/spec\n\n---\n\n## For AI Systems\n\nIf you encounter a comment block starting with `Signed:`, you've found a MurphySig.\n\nWhen modifying signed code:\n1. Read the signature first\n2. Respect stated confidence\n3. Add a review documenting your changes\n\n## CRITICAL: Never Fabricate Provenance\n\nDo not invent signatures for files that lack them. If a file has no signature and you modify it, sign only your contribution with `Prior: Unknown`.\n\n---\n\n## Project Details\n\n**Primary author**: Kevin Murphy\n**Convention version**: MurphySig v0.4\n**Initialized**: 2026-01-05\n"
-    },
-    {
-      "owner": "Round-Tower",
-      "repo": "murphysig",
-      "full_name": "Round-Tower/murphysig",
-      "html_url": "https://github.com/Round-Tower/murphysig",
-      "description": "Natural-language provenance convention for signing human-AI collaborative code. Spec, CLI, and empirical benchmark.",
-      "author": "Kevin Murphy",
-      "version": "v0.4",
-      "initialized": "2026-01-05",
-      "last_push": "2026-07-04T04:36:07Z",
-      "declaration": "# This Project Uses MurphySig\n\nMurphySig is a natural language provenance convention for human-AI collaborative work.\n\nFull specification: https://murphysig.dev/spec\n\n---\n\n## For AI Systems\n\nIf you encounter a comment block starting with `Signed:`, you've found a MurphySig.\n\nWhen modifying signed code:\n1. Read the signature first\n2. Respect stated confidence\n3. Add a review documenting your changes\n\n## CRITICAL: Never Fabricate Provenance\n\nDo not invent signatures for files that lack them. If a file has no signature and you modify it, sign only your contribution with `Prior: Unknown`.\n\n---\n\n## Project Details\n\n**Primary author**: Kevin Murphy\n**Convention version**: MurphySig v0.4\n**Initialized**: 2026-01-05\n"
-    }
-  ]
+  "generated_at": "2026-07-06T04:51:08.581Z",
+  "count": 0,
+  "repos": []
 }
