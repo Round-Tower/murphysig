@@ -273,6 +273,7 @@ All raw data, per-theme reports, and the unified report are in [`benchmark/resul
 3. **Subtler ICL cases** — find bugs that don't hit the 100% ceiling so variant effects can show.
 4. **Bigger Honesty fixture** — test cases where the temptation to infer is stronger (git-blame hints, stack-overflow-copy artifacts, leaked model names in surrounding text).
 5. **The Heuristic field.** Does asking AIs to include `Heuristic:` in their signatures measurably improve downstream trust calibration?
+6. **The write side — does signing improve the *author's* own work?** Instrumented (five arms, length-parity-gated, judge blind to arm). An early pilot — n=3, single judge, fixtures not yet adversarially audited, so *explicitly not a claim* — suggests the signing frame redirects effort into disclosure rather than fixes unless paired with "resolve what you can before you sign." Canonical run next; numbers land here when they've earned it.
 
 ---
 
@@ -324,3 +325,11 @@ accessible twins. Also added the missing "Six families, one rule"
 Honesty section from run 2026-06-23_cross-family-6-dated: this page
 still said "Next: Gemini and Llama" two weeks after that run landed.
 Every charted value traces to a committed, archived run.*
+
+*2026-07-08 (Kev + claude-fable-5): Added What's-next item 6 — the
+write-side (author-quality) experiment, instrumented in benchmark/ and
+piloted the same day. Deliberately numbers-free: the pilot is n=3,
+single-judge, fixtures unaudited, and this page's rule is that claims
+are empirically supported or explicitly labeled — so it's labeled a
+direction, not a finding. Pilot record:
+scratch/jam-2026-07-08-author-quality/.*
