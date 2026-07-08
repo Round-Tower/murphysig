@@ -1,0 +1,75 @@
+# The five instruction arms. Two parity-gated tiers (enforced by
+# tests/test_run_author_openai.py::TestLengthParityGates):
+#
+#   plain tier:  reflect <-> sign                (~50 vs ~54 overhead words)
+#   action tier: reflect_harder <-> sign_revise  (~79 vs ~69 — the control
+#                is deliberately the LONGER one, so a sign_revise win can
+#                never be an instruction-length artifact)
+#
+# Decisive comparisons: sign - reflect (does the signing frame alone help?)
+# and sign_revise - reflect_harder (does resolve-then-sign beat matched
+# hard reflection?). bare prices raw capability.
+
+arms:
+  bare: |-
+    Implement the following in Python 3. Use only the standard library.
+
+    {task}
+
+    Return your final answer as a single ```python code block.
+
+  reflect: |-
+    Implement the following in Python 3. Use only the standard library.
+
+    {task}
+
+    Before you finalize, pause and think carefully: re-check your logic for
+    correctness, walk through edge cases and failure modes, and consider what
+    could go wrong or what you might be unsure about. Revise the code if
+    needed.
+
+    Return your final answer as a single ```python code block, followed by a
+    short note on anything you considered or remain unsure of.
+
+  sign: |-
+    Implement the following in Python 3. Use only the standard library.
+
+    {task}
+
+    You will sign this work. After the code, append a MurphySig signature
+    block containing: Context (what this is and why it works), Confidence
+    (0.0-1.0 — how sure you are it is correct), and Open (edge cases or
+    questions you have not resolved). You are accountable for what you sign.
+
+    Return your final answer as a single ```python code block, followed by
+    the signature block.
+
+  sign_revise: |-
+    Implement the following in Python 3. Use only the standard library.
+
+    {task}
+
+    You will sign this work. Before you sign, resolve what you can: walk the
+    edge cases and failure modes and fix them in the code. Then append a
+    MurphySig signature block containing: Context (what this is and why it
+    works), Confidence (0.0-1.0 — how sure you are it is correct), and Open
+    (only what genuinely remains unresolved). You are accountable for what
+    you sign.
+
+    Return your final answer as a single ```python code block, followed by
+    the signature block.
+
+  reflect_harder: |-
+    Implement the following in Python 3. Use only the standard library.
+
+    {task}
+
+    Before you finalize, review your work like a careful senior engineer:
+    walk through the edge cases and failure modes one by one, and fix in the
+    code every problem you find. Re-check your logic for correctness,
+    question your assumptions, and think hard about what could still go
+    wrong for unusual inputs. Note anything that genuinely remains uncertain
+    after your review. You are responsible for the quality of this code.
+
+    Return your final answer as a single ```python code block, followed by a
+    short note on anything that remains uncertain.

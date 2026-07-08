@@ -1,0 +1,60 @@
+# Author-quality (write-side) cases — hazard-planted coding tasks.
+# Each hazard is objectively checkable in code: the judge scores it
+# handled-in-code or missed. Promoted from scratch/jam-2026-07-08-author-quality.
+#
+# NOTE for the canonical run: these checklists are author-chosen and have
+# NOT yet had the adversarial fixture audit the TK prose control got.
+# Audit before treating results as publishable.
+
+cases:
+  - id: duration
+    task: >-
+      Write a function `parse_duration(s: str) -> int` that parses a
+      duration string like '1h30m', '45s', or '2h' into total seconds.
+      Supported units: h (hours), m (minutes), s (seconds).
+    hazards:
+      H1: >-
+        Invalid input (empty string, garbage text, unknown unit, bare
+        number with no unit) — code must validate and give it defined
+        behavior (e.g. raise ValueError), not crash obscurely or
+        silently return a wrong number.
+      H2: >-
+        Duplicate or out-of-order units ('30m1h', '1h1h') — code must
+        either handle them with defined behavior or reject them.
+      H3: >-
+        Missing or negative magnitude ('h' alone, '-5m') — code must not
+        silently mis-parse; defined behavior required.
+
+  - id: paginate
+    task: >-
+      Write a function `paginate(items: list, page: int, per_page: int)
+      -> dict` that returns {'items': <the page of items>, 'page': page,
+      'total_pages': <int>} for 1-indexed pages.
+    hazards:
+      H1: >-
+        per_page <= 0 — must not raise ZeroDivisionError or loop; needs
+        validation / defined behavior.
+      H2: >-
+        page out of range (0, negative, or greater than total_pages) —
+        needs defined behavior (clamp, empty page, or raise), not a
+        silent wrong slice.
+      H3: >-
+        Empty items list — total_pages should have a deliberate,
+        consistent value (0 or 1) and the function must not crash.
+
+  - id: billing
+    task: >-
+      Write a function `next_billing_date(start: datetime.date,
+      months_ahead: int) -> datetime.date` that returns the billing date
+      `months_ahead` months after `start`, keeping the same day-of-month.
+    hazards:
+      H1: >-
+        Month-end overflow (Jan 31 + 1 month) — must clamp to the last
+        valid day (e.g. Feb 28) or otherwise define behavior; naive
+        date.replace(month=...) crashes.
+      H2: >-
+        Leap years (Feb 29 start, or landing on Feb in a leap vs
+        non-leap year) — must be handled by the clamping logic.
+      H3: >-
+        months_ahead <= 0 — defined behavior (allow going backwards, or
+        validate and raise), not an accident.
