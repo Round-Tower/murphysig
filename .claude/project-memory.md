@@ -458,3 +458,60 @@ Re-judged all 360 date-controlled honesty responses with gpt-5.4; built `honesty
   + two judges; check homepage/llms.txt for a new headline figure. Scope WITH Kev before editing live.
 
 ---
+## Session — 2026-07-08 · main · author-quality pilot (jam) → promoted to benchmark/
+
+**Context:** Kev: "riff pal, see what you can do." Picked SPEC-v0.5 experiment #1 (the
+write-side/author-quality eval — the boldest untested bet). Jam pilot first, then Kev:
+"promote this" → full TDD instrument in benchmark/.
+
+**Shipped:**
+- **Jam pilot** at `scratch/jam-2026-07-08-author-quality/` (author_pilot.py, FINDINGS.md,
+  results/): 4 families × 3 hazard-planted tasks × 4 arms, judge gpt-5.4 code-only blind
+  to arm. 144 generations, 0 errors, 0 judge skips, <$2 total.
+- **PROMOTED (uncommitted, Kev commits on request):** `benchmark/fixtures/author/{cases,arms}.yaml`,
+  `scripts/run_author_openai.py`, `scripts/rescore_author_judge.py`, `scripts/author_report.py`
+  + 3 test files. **253 tests green** (was 223), ruff clean. Mirrors the TK harness shape
+  (per-model CLI, results/author/<provider>/, judged_author_*.json, --judge/--judge-tag for dual-judge).
+
+**Empirical ground truth (pilot: n=3, single judge — signal, not proof):**
+- **Signing frame ALONE is refuted as a quality-forcing function.** Hazard-handled: bare 0.63,
+  sign 0.67, reflect 0.84 → sign−reflect **−0.18, negative in 4/4 families**.
+- **The deferral mechanism:** of hazards MISSED in code, sign confessed 67% in `Open:` vs
+  reflect's 41%. `Open:` is a deferral valve — effort flows to disclosure, not fixes.
+  Coherent with TK: the chain is capture→transfer, not improve.
+- **sign_revise ("resolve what you can before you sign") recovers everything:** 0.85 ≈ reflect
+  0.84; beats reflect on Gemini +0.07 and Llama +0.15; only 8 misses vs sign's 24.
+  Proposed v0.5 line validated at pilot scale: *"Resolve what you can before you sign.
+  Open: is for what genuinely remains — not for what you didn't feel like fixing."*
+- **Calibration texture:** 34/35 signatures stated Confidence ≥0.9 while missing ~0.9 hazards
+  each — write-time confidence miscalibrated upward (feeds the confidence-as-triage caution).
+- Both findings banked in M1K3 (`remember`, 2 entries dated 2026-07-08).
+
+**Decisions:**
+- **Promoted with a 5th arm the pilot lacked: `reflect_harder`,** length-matched to sign_revise
+  with the control deliberately LONGER (79 vs 69 overhead words) — a sign_revise win can never
+  be an instruction-length artifact. Parity gates committed as tests (TestLengthParityGates),
+  same pattern as the TK prose rig-gate.
+- **Judge prompts built by concatenation, not .replace/.format templating** — task text and
+  submitted code contain literal braces; a template pass mangles them (the scorer.py 2026-04-18
+  lesson — nearly repeated it tonight, caught pre-test).
+- **Hazard verdict parsing defaults missing keys to "missed" and returns None on garbage** —
+  never abort a sweep on one row (mirrors parse_honesty_judgment hardening).
+- Judge separation is the design's load-bearing wall: hazard pass sees ONLY code (blind to arm),
+  deferral pass sees ONLY the trailing note. That's what makes "fixes vs confessions" measurable.
+
+**Gotchas:**
+- Fixtures are author-chosen and NOT adversarially audited yet — required before a canonical
+  run (flagged in cases.yaml header). Don't publish numbers from unaudited fixtures.
+- The pilot's REPORT.md gets overwritten by its report command — deferral tables are re-appended
+  manually there; the promoted author_report.py renders everything in one pass instead.
+
+**Next up:**
+- **Canonical run:** adversarial fixture audit → n=5, 6 families, dual judge (gpt-5.4 default,
+  Opus via --judge --judge-tag) → archive (needs a trivial archive_author_run.py clone of
+  archive_tk_run.py). Cost estimate: low single-digit dollars.
+- If it replicates: v0.5 write-side spec section with the resolve-before-you-sign line.
+- HN v2 draft (scratch/hn-relaunch-2026-06-24.md) still unposted — this result strengthens it
+  or makes a follow-up; Kev's call.
+
+---
