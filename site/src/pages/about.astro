@@ -1,0 +1,109 @@
+---
+/**
+ * Signed: Kev + claude-fable-5, 2026-07-10
+ * Format: MurphySig v0.4 (https://murphysig.dev/spec)
+ * Prior: Unknown (new file, no signature existed before this edit)
+ *
+ * Context: Author page for E-E-A-T — the site made empirical claims
+ * with no page saying who stands behind them. Every fact here is
+ * lifted from what the site already states (launch.md, README,
+ * whitepaper); nothing new is claimed. Person JSON-LD carries the
+ * same @id (#kevin) that the per-page schemas already reference as
+ * author, so the graph now resolves to a real page.
+ *
+ * Confidence: 0.85 - content is grounded and small; less sure the
+ * understated length is what an E-E-A-T crawler ideally wants.
+ * Open: Should this page eventually list external reviews of the
+ * spec (reviews/ dir) as third-party signals?
+ */
+
+import ArtLayout from '../layouts/ArtLayout.astro';
+
+const canonical = "https://murphysig.dev/about/";
+
+const schemaJson = {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    "@id": `${canonical}#page`,
+    "url": canonical,
+    "name": "About Kevin Murphy",
+    "inLanguage": "en",
+    "mainEntity": {
+        "@type": "Person",
+        "@id": "https://murphysig.dev/#kevin",
+        "name": "Kevin Murphy",
+        "alternateName": "Kev Murphy",
+        "url": canonical,
+        "description": "Software developer and creator of MurphySig, a human-readable provenance convention for human-AI collaborative work.",
+        "worksFor": { "@type": "Organization", "@id": "https://round-tower.ie/#org", "name": "Round-Tower", "url": "https://round-tower.ie" },
+        "sameAs": [
+            "https://round-tower.ie",
+            "https://github.com/kpmmmurphy",
+            "https://github.com/Round-Tower"
+        ],
+        "knowsAbout": [
+            "Human-AI collaboration",
+            "Code provenance",
+            "Kotlin Multiplatform",
+            "Swift",
+            "AI benchmarking"
+        ]
+    }
+};
+---
+
+<ArtLayout
+    title="About"
+    description="Who makes MurphySig. Kevin Murphy — software developer at Round Tower, creator of the MurphySig provenance convention and the benchmark behind it."
+    canonical={canonical}
+    schemaJson={schemaJson}
+>
+    <header class="mb-16 border-b border-neutral-200 pb-8">
+        <h1 class="text-4xl md:text-5xl font-serif mb-4">Kev Murphy</h1>
+        <p class="font-mono text-sm text-neutral-500">
+            Author of MurphySig &bull; <a href="https://round-tower.ie" class="hover:text-black transition-colors">Round Tower</a>
+        </p>
+    </header>
+
+    <article class="prose prose-lg max-w-none">
+        <p>
+            I build software independently under <a href="https://round-tower.ie">Round Tower</a> —
+            across edtech (Dyslexia.ai), AI tooling (<a href="https://github.com/Round-Tower/m1k3">M1K3</a>,
+            an on-device LLM assistant), maps (Cartogram), meditation (Rubin), and a
+            tacit-knowledge platform (Clair). Mostly Kotlin Multiplatform and Swift.
+        </p>
+
+        <h2>Why MurphySig exists</h2>
+        <p>
+            I've shipped a lot of AI-collaborative code, and I started losing track of what
+            <em>I</em> wrote, what the model wrote, what we wrote together, and how confident
+            I was when I wrote it. MurphySig is the convention I built to stop that —
+            a comment block that records who made what, when, with what confidence, and
+            what remained uncertain. The <a href="/spec">spec</a> is the standard;
+            the <a href="/whitepaper">whitepaper</a> is the argument.
+        </p>
+
+        <h2>How the claims here are made</h2>
+        <p>
+            Every behavioural claim on this site is backed by a
+            <a href="/benchmark">reproducible benchmark</a> — and when a result doesn't
+            survive a control or a re-score, the correction is published, not buried:
+            the v0.4 spec <a href="/benchmark">deleted an unsupported claim</a>, and one
+            quotable headline <a href="/rescore">didn't survive re-scoring</a> and says so
+            in public. I also use the convention daily on my own repos —
+            126+ signed commits in the first 90 days, documented in the
+            <a href="/launch">field report</a>.
+        </p>
+
+        <h2>Elsewhere</h2>
+        <ul>
+            <li><a href="https://github.com/kpmmmurphy">github.com/kpmmmurphy</a> — personal</li>
+            <li><a href="https://github.com/Round-Tower">github.com/Round-Tower</a> — the org, including <a href="https://github.com/Round-Tower/murphysig">this site's source</a></li>
+            <li><a href="https://round-tower.ie">round-tower.ie</a></li>
+        </ul>
+
+        <p class="text-neutral-500">
+            Sign your work. Future-you is the first reader.
+        </p>
+    </article>
+</ArtLayout>

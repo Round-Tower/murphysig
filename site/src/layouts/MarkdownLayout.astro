@@ -9,6 +9,13 @@
  * generous spacing (line-height 1.8), proper header margins.
  *
  * Confidence: 0.9 - standard layout wrapper
+ *
+ * Reviews:
+ *
+ * 2026-07-10 (Kev + claude-fable-5): SEO backlog pass. Forwards
+ * frontmatter.ogType to ArtLayout (launch + whitepaper declare
+ * "article"); KEVIN Person url now points at /about/ so per-page
+ * schema author references resolve to the new author page.
  */
 
 import ArtLayout from './ArtLayout.astro';
@@ -17,7 +24,7 @@ const { frontmatter } = Astro.props;
 const path = Astro.url.pathname.replace(/\/$/, '');
 const canonical = `https://murphysig.dev${Astro.url.pathname}`;
 
-const KEVIN = { "@type": "Person", "@id": "https://murphysig.dev/#kevin", "name": "Kevin Murphy", "url": "https://murphysig.dev" };
+const KEVIN = { "@type": "Person", "@id": "https://murphysig.dev/#kevin", "name": "Kevin Murphy", "url": "https://murphysig.dev/about/" };
 const ROUND_TOWER = { "@type": "Organization", "@id": "https://round-tower.ie/#org", "name": "Round-Tower", "url": "https://round-tower.ie" };
 
 let schemaJson;
@@ -116,6 +123,7 @@ if (path === '/spec') {
     description={frontmatter.description}
     canonical={canonical}
     schemaJson={schemaJson}
+    ogType={frontmatter.ogType}
 >
     <header class="mb-16 border-b border-neutral-200 pb-8">
         <h1 class="text-4xl md:text-5xl font-serif mb-4">{frontmatter.title}</h1>
