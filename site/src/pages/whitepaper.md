@@ -4,6 +4,7 @@ title: "MurphySig: Foundational Whitepaper"
 version: 0.0.2
 date: 2026-02-12
 description: The foundational whitepaper for MurphySig - why legible provenance matters in the age of AI collaboration.
+ogType: article
 ---
 
 **Authors**: Kevin Murphy, Claude (claude-opus-4-6-20250610)

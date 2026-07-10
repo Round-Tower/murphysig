@@ -31,6 +31,10 @@
  * reveal styles so no-JS readers get the final render; a body-end
  * IntersectionObserver adds .mviz-in on scroll and drives the
  * [data-countup] hero figures. Both respect prefers-reduced-motion.
+ *
+ * 2026-07-10 (Kev + claude-fable-5): SEO backlog pass. New optional
+ * ogType prop (defaults to "website") so long-form posts can declare
+ * og:type=article per page. Added /about to the footer nav.
  */
 
 import '../styles/global.css';
@@ -47,13 +51,16 @@ interface Props {
      * than a duplicated WebSite stub on every URL.
      */
     schemaJson?: object;
+    /** Open Graph object type. "article" for long-form posts; defaults to "website". */
+    ogType?: string;
 }
 
 const {
     title,
     description = "A human-readable provenance standard for creative work.",
     canonical = "https://murphysig.dev",
-    schemaJson
+    schemaJson,
+    ogType = "website"
 } = Astro.props;
 
 const siteTitle = "MurphySig";
@@ -87,7 +94,7 @@ const renderedSchema = schemaJson ?? defaultWebsiteSchema;
         <link rel="canonical" href={canonical} />
 
         <!-- Open Graph / Facebook -->
-        <meta property="og:type" content="website" />
+        <meta property="og:type" content={ogType} />
         <meta property="og:url" content={canonical} />
         <meta property="og:title" content={fullTitle} />
         <meta property="og:description" content={description} />
@@ -132,6 +139,7 @@ const renderedSchema = schemaJson ?? defaultWebsiteSchema;
                 <a href="/benchmark" class="hover:text-black transition-colors">Benchmark</a>
                 <a href="/signed" class="hover:text-black transition-colors">Registry</a>
                 <a href="/whitepaper" class="hover:text-black transition-colors">Whitepaper</a>
+                <a href="/about" class="hover:text-black transition-colors">About</a>
                 <a href="https://github.com/Round-Tower/murphysig" class="hover:text-black transition-colors">GitHub</a>
                 <a href="https://github.com/kpmmmurphy" class="hover:text-black transition-colors">@kpmmmurphy</a>
             </nav>
