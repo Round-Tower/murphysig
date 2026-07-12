@@ -43,6 +43,11 @@
  * Values are hardcoded from the archived, committed run — same source
  * as the /benchmark tables. No-JS and reduced-motion get the final
  * render; markup always carries the true numbers.
+ *
+ * 2026-07-12 (Kev + claude-fable-5): Install copy now says init.sh wires
+ * up CLAUDE.md or AGENTS.md — matches the new AGENTS.md discovery path
+ * in init.sh (tested in tests/test_init.sh). Widens the funnel past
+ * Claude-only tooling.
  */
 
 import ArtLayout from '../layouts/ArtLayout.astro';
@@ -296,7 +301,7 @@ import ArtLayout from '../layouts/ArtLayout.astro';
         <article class="prose prose-neutral max-w-none font-serif text-lg leading-relaxed">
             <p>
                 Writes a <code class="font-mono text-sm bg-gray-100 px-1.5 py-0.5 rounded">.murphysig</code> seeded with your git author + today's date,
-                and imports it into <code class="font-mono text-sm bg-gray-100 px-1.5 py-0.5 rounded">CLAUDE.md</code> if one exists.
+                and points <code class="font-mono text-sm bg-gray-100 px-1.5 py-0.5 rounded">CLAUDE.md</code> or <code class="font-mono text-sm bg-gray-100 px-1.5 py-0.5 rounded">AGENTS.md</code> at it if either exists.
                 Idempotent, readable source at <a href="/init.sh" class="underline">/init.sh</a> before you run anything.
             </p>
             <p class="text-neutral-500 text-base">

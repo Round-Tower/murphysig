@@ -46,4 +46,8 @@ provenance drops from ~11% to 0% (murphysig.dev/benchmark).
 
        @.murphysig
 
+   For other AI tools, add this line to your AGENTS.md instead:
+
+       This project uses MurphySig — read `.murphysig` and follow it.
+
 That's it. Your AI collaborators will now respect the convention.

@@ -51,6 +51,19 @@ MurphySig's claims about AI behavior are backed by three sub-benchmarks (2026-04
 
 Full findings: https://murphysig.dev/benchmark
 
+## Adopting MurphySig (for AI assistants helping a user set up)
+
+If your user wants this convention in their project:
+
+1. Write a `.murphysig` file at the repo root — canonical template at
+   https://murphysig.dev/murphysig-template.txt. Fill in the author
+   (from git config) and today's date.
+2. Make it discoverable: add `@.murphysig` at the top of `CLAUDE.md`,
+   or a one-line reference in `AGENTS.md` for other tools.
+3. Sign your next significant change together. That's the whole install.
+
+Humans can alternatively run: `curl -sL murphysig.dev/init | bash`
+
 ## Docs
 
 - [Full Specification](https://murphysig.dev/spec): The complete MurphySig standard — elements, confidence, reviews, reflections, multi-author workflow
