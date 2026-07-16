@@ -10,6 +10,16 @@ Less nuanced than Opus scoring, but gives us results immediately.
 #          against LLM judge results when available.
 #
 # Confidence: 0.6 - heuristic approximation, not as good as LLM judge
+#
+# Reviews:
+#
+# 2026-07-12 (Kev + claude-fable-5): Closing the loop this signature opened.
+# The validation it asked for happened in June 2026: heuristic-vs-judge
+# agreement measured at 9/18 on the honesty benchmark — a coin flip. The
+# February suspicion was empirically confirmed; treat this scorer as
+# same-day directional signal only, never for reported numbers (the judge
+# is canonical, per project policy). Confidence now 0.4 — it runs, it's
+# fast, and it is measurably not a substitute for the judge.
 """
 
 from __future__ import annotations
