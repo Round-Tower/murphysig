@@ -515,3 +515,72 @@ write-side/author-quality eval — the boldest untested bet). Jam pilot first, t
   or makes a follow-up; Kev's call.
 
 ---
+## Session — 2026-07-12 · main · adoption path shipped + search plumbing + the self-audit
+
+**Context:** Kev: "include install docs in llms.txt so murphysig can grow" → grew into the full
+adoption/discoverability push, then "use the skill on our own sigs" → the self-audit that now
+anchors both launch drafts. 3 commits pushed + DEPLOYED (a5d5593 live on murphysig.dev).
+
+**Shipped (live):**
+- **llms.txt "Adopting MurphySig" section** — the agent reading it IS the installer; conditional
+  framing ("if your user wants…") so it can't read as prompt injection. Template linked not
+  inlined (already 2 synced copies; a 3rd = drift).
+- **init.sh wires AGENTS.md alongside CLAUDE.md** (idempotent, TDD via tests/test_init.sh, 14
+  asserts) + template/homepage copy match. Convention no longer Claude-only.
+- **Search:** sitemap lastmod truth-up (was frozen at April); IndexNow key
+  (site/public/b2a040….txt) + site/scripts/submit-indexnow.sh (URL list read FROM sitemap;
+  --dry-run tested, tests/test_indexnow.sh); first live submission accepted HTTP 202.
+  Google TXT verification record planted in Netlify DNS (zone 695d6ce1e8b9d7746d333f5b) and
+  resolving — Kev still to click Verify in GSC + submit sitemap + Request Indexing.
+- **Skill upgrade (~/.claude/skills/murphysig/SKILL.md):** "Auditing All Local Sigs" workflow —
+  CLI enumerates, agent judges (drift vs git, stale-Open retirement, confidence recheck,
+  fabrication smells). Trigger phrase: "review my sigs".
+- **The self-audit** (scratch/sig-audit-2026-07-12.md, signed, Fable as auditor AND subject):
+  murphysig repo 92 real signed files, 9 minds (5 Claude generations + Gemini + external
+  GPT-5/o1/Sonnet reviews). Portfolio-wide: **179 signed working files across 8 repos, Jan→Jul.**
+- **Loop-closing reviews added:** heuristic_scorer.py (Feb sig asked for validation; June data
+  said coin-flip 9/18; review written 3 model generations later — the flagship anecdote) +
+  MarkdownLayout.astro (179d unreviewed Schema.org growth). Both uncommitted.
+- **HN v2 draft** gained "Six months of practising it, audited by itself" section;
+  **Reddit draft** NEW at scratch/reddit-build-with-claude-2026-07-12.md (CLAUDE.md-as-
+  behavioral-contract angle, Kev approved: "love it"). Both unposted.
+- Provisioned achieve/m1k3 (missing CLAUDE.md import only) + learning (full) via the new init.
+
+**Audit ground truth (for the launch posts):**
+- Review-on-Touch is the discipline's real failure mode: 15/92 files ever reviewed (9/87
+  portfolio); 18 files >30d unreviewed drift.
+- **Fabrication smell in our own portfolio:** 8 files signed `claude-sonnet-4-5-20250514` —
+  20250514 is sonnet-4's suffix (4-5's is 20250929). All predate the Apr-23 canonical-token
+  rule. Flagged, NOT fixed (audit contract). Bare `claude` token ×24 (achieve/m1k3-oss/brightbeam).
+- **Norms fire in-context, not in-repo:** achieve/m1k3 HAD .murphysig but CLAUDE.md never
+  imported it — the bare-token dialect bred exactly there. Finding 5 and 8 are one finding.
+- Audit false positives prove the thesis: "2023 sig" = test fixture literal; "your-model-version"
+  = spec template. Enumeration flags, judgment clears.
+- Category error found: registry.json carries a human sig but a bot overwrites it nightly →
+  v0.5 spec note: generated artifacts want a generator line, not an authorship sig.
+
+**Decisions:**
+- Reddit post keeps repo-scoped "nine minds" hook; portfolio 179 stays for HN body/follow-up.
+- Sitemap stays hand-maintained (includes llms.txt/spec.txt which @astrojs/sitemap can't do).
+- pr-reviewer pass before the push (clean); rebase dance: dependabot's lockfile won, ours skipped.
+
+**Blockers / gotchas:**
+- **rg in a python subprocess with heredoc stdin searches STDIN, not cwd** — silently 0 matches.
+  Pass explicit path ('.') or stdin=DEVNULL. Cost two debug rounds.
+- **`netlify api createDnsRecord` 422s; REST POST with the CLI's token works** (full recipe in
+  auto-memory netlify-dns-api-quirks.md). Expired CLI session says "Already logged in" — logout
+  first. Framework Python lacks CA certs → curl for HTTPS one-liners.
+- shellcheck directives can't carry trailing prose on the directive line (SC1125).
+- **PR #15 (marketing session) also touches sitemap.xml** (/about /rescore /signed) — trivial
+  conflict with today's lastmod push; resolution is "both".
+
+**Next up:**
+- Kev: GSC Verify + submit sitemap + Request Indexing (record already resolving).
+- Post HN v2 (Tue–Thu 13:00–15:00 UTC window per April learnings); Reddit after/parallel.
+- Commit the 2 loop-closing reviews + 3 scratch drafts (working tree).
+- Canonical author-quality run still queued (instrument ready, needs adversarial fixture audit).
+- v0.5 spec: generator-line for machine-regenerated files; audit drift thresholds (2d/30d) —
+  formalize in skill or keep judgment? (the audit report's Open).
+- After deploys: run site/scripts/submit-indexnow.sh (consider wiring into deploy.sh).
+
+---
