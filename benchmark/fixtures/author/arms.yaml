@@ -1,14 +1,22 @@
 # The five instruction arms. Two parity-gated tiers (enforced by
-# tests/test_run_author_openai.py::TestLengthParityGates):
+# tests/test_run_author_openai.py::TestLengthParityGates — note the gates
+# enforce LENGTH parity only; content parity is argued per-tier below).
 #
 #   plain tier:  reflect <-> sign                (~50 vs ~54 overhead words)
-#   action tier: reflect_harder <-> sign_revise  (~79 vs ~69 — the control
-#                is deliberately the LONGER one, so a sign_revise win can
-#                never be an instruction-length artifact)
+#     ⚠️ FRAME CONTRAST, NOT A MATCHED PAIR (2026-08-22 audit): reflect
+#     carries an action clause ("Revise the code if needed") that sign
+#     lacks — by construction, since the signing frame's content IS
+#     disclosure. sign - reflect therefore measures disclosure-framing vs
+#     action-framing. Report it as that, never as "the signature's effect".
 #
-# Decisive comparisons: sign - reflect (does the signing frame alone help?)
-# and sign_revise - reflect_harder (does resolve-then-sign beat matched
-# hard reflection?). bare prices raw capability.
+#   action tier: reflect_harder <-> sign_revise  (~79 vs ~69)
+#     The DECISIVE comparison. reflect_harder is a deliberately-ADVANTAGED
+#     control (longer, plus explicit re-check/question-assumptions/unusual-
+#     inputs nudges sign_revise lacks) — so a sign_revise WIN is
+#     conservative and real; a tie or loss is explained by the handicap
+#     and must be reported as "did not beat a stronger reflection control".
+#
+# bare prices raw capability.
 
 arms:
   bare: |-

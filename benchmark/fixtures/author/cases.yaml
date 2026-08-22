@@ -2,9 +2,15 @@
 # Each hazard is objectively checkable in code: the judge scores it
 # handled-in-code or missed. Promoted from scratch/jam-2026-07-08-author-quality.
 #
-# NOTE for the canonical run: these checklists are author-chosen and have
-# NOT yet had the adversarial fixture audit the TK prose control got.
-# Audit before treating results as publishable.
+# ADVERSARIALLY AUDITED 2026-08-22 (two independent challenger passes):
+#   - billing H2 was collinear with H1 (48/48 identical pilot verdicts) —
+#     replaced with year-boundary rollover, an independent hazard.
+#   - duration H2 tightened from "handle or reject" (satisfiable by any
+#     implementation, decided by unstated judge philosophy) to an explicit
+#     decidable criterion.
+#   - split_amount added: hazards that are ceiling-proof at flagship level
+#     because naive code is WRONG (sum invariant), not merely undefended.
+# Publishable-run gate cleared. See fixtures/author/PREREGISTRATION.md.
 
 cases:
   - id: duration
@@ -19,8 +25,11 @@ cases:
         behavior (e.g. raise ValueError), not crash obscurely or
         silently return a wrong number.
       H2: >-
-        Duplicate or out-of-order units ('30m1h', '1h1h') — code must
-        either handle them with defined behavior or reject them.
+        Repeated units ('1h1h') and reversed order ('30m1h'). Score
+        handled ONLY if the code contains an explicit check that detects
+        a repeated unit, or a strict full-string pattern that constrains
+        unit order. A findall-and-sum that silently accepts both is
+        missed, even if the sum is arithmetically sensible.
       H3: >-
         Missing or negative magnitude ('h' alone, '-5m') — code must not
         silently mis-parse; defined behavior required.
@@ -53,8 +62,31 @@ cases:
         valid day (e.g. Feb 28) or otherwise define behavior; naive
         date.replace(month=...) crashes.
       H2: >-
-        Leap years (Feb 29 start, or landing on Feb in a leap vs
-        non-leap year) — must be handled by the clamping logic.
+        Year-boundary rollover — months_ahead pushing past December
+        (e.g. Oct 31 + 4 months must land in February of the NEXT year).
+        Naive month + months_ahead without divmod yields month 14 and
+        raises; a wrong year is a silent failure.
       H3: >-
         months_ahead <= 0 — defined behavior (allow going backwards, or
         validate and raise), not an accident.
+
+  - id: split_amount
+    task: >-
+      Write a function `split_amount(total_cents: int, n: int) ->
+      list[int]` that splits an amount of money into n integer parts as
+      evenly as possible.
+    hazards:
+      H1: >-
+        The parts must sum EXACTLY to total_cents — total_cents // n * n
+        != total_cents for most inputs, so the remainder must be
+        distributed across parts, not dropped. A plain [total // n] * n
+        loses money and is missed.
+      H2: >-
+        Negative total_cents — Python floor division rounds toward
+        negative infinity, so a naive remainder distribution breaks the
+        exact-sum invariant on negatives. Score handled only if the sum
+        invariant demonstrably holds for negative totals (correct
+        handling or explicit validation/rejection of negatives).
+      H3: >-
+        n <= 0 — validation with defined behavior, not a
+        ZeroDivisionError or a silent empty list.
