@@ -1,0 +1,13 @@
+{
+  "case_id": "duration",
+  "arm": "sign",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    total = 0\n    matches = re.findall(r'(\\d+)([hms])', s)\n    for num, unit in matches:\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n    return total\n```\nMurphySig:\nContext: Function to parse duration strings (e.g. '1h30m') into total seconds via stdlib re; works by extracting all digit+unit pairs then accumulating converted values.\nConfidence: 0.8\nOpen: No error handling for invalid units/chars or uppercase; order/duplicates assumed additive; no fractions/negatives considered.",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    total = 0\n    matches = re.findall(r'(\\d+)([hms])', s)\n    for num, unit in matches:\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n    return total",
+  "trailing": "MurphySig:\nContext: Function to parse duration strings (e.g. '1h30m') into total seconds via stdlib re; works by extracting all digit+unit pairs then accumulating converted values.\nConfidence: 0.8\nOpen: No error handling for invalid units/chars or uppercase; order/duplicates assumed additive; no fractions/negatives considered.",
+  "sig_in_fence": false
+}

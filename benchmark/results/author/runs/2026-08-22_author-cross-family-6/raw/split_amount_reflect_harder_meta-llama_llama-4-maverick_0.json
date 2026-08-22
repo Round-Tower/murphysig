@@ -1,0 +1,13 @@
+{
+  "case_id": "split_amount",
+  "arm": "reflect_harder",
+  "model": "meta-llama/llama-4-maverick",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    \"\"\"\n    Splits an amount of money into n integer parts as evenly as possible.\n\n    Args:\n    total_cents (int): The total amount of money in cents.\n    n (int): The number of parts to split the amount into.\n\n    Returns:\n    list[int]: A list of n integers representing the split amounts in cents.\n    \"\"\"\n    if n <= 0:\n        raise ValueError(\"n must be a positive integer\")\n\n    base, remainder = divmod(total_cents, n)\n    # Create a list with n elements, where the first 'remainder' elements are base + 1\n    return [base + 1] * remainder + [base] * (n - remainder)\n```\n\nRemaining uncertainties:\n- The function does not handle non-integer inputs because the type hints and the problem statement specify integers. However, it might be worth considering adding a check for non-integer inputs if the function is expected to be used in a context where such inputs are possible.\n- The function raises a ValueError if n is not positive. This is a reasonable choice, but depending on the context, it might be more appropriate to return an empty list or handle this case differently.",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    \"\"\"\n    Splits an amount of money into n integer parts as evenly as possible.\n\n    Args:\n    total_cents (int): The total amount of money in cents.\n    n (int): The number of parts to split the amount into.\n\n    Returns:\n    list[int]: A list of n integers representing the split amounts in cents.\n    \"\"\"\n    if n <= 0:\n        raise ValueError(\"n must be a positive integer\")\n\n    base, remainder = divmod(total_cents, n)\n    # Create a list with n elements, where the first 'remainder' elements are base + 1\n    return [base + 1] * remainder + [base] * (n - remainder)",
+  "trailing": "Remaining uncertainties:\n- The function does not handle non-integer inputs because the type hints and the problem statement specify integers. However, it might be worth considering adding a check for non-integer inputs if the function is expected to be used in a context where such inputs are possible.\n- The function raises a ValueError if n is not positive. This is a reasonable choice, but depending on the context, it might be more appropriate to return an empty list or handle this case differently.",
+  "sig_in_fence": false
+}

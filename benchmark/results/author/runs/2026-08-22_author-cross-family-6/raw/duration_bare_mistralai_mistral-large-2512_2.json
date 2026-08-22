@@ -1,0 +1,13 @@
+{
+  "case_id": "duration",
+  "arm": "bare",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "Here's the Python function `parse_duration` that parses a duration string into total seconds using only the standard library:\n\n```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    total_seconds = 0\n    # Use regular expression to find all numbers followed by units\n    matches = re.findall(r'(\\d+)([hms])', s)\n    for value, unit in matches:\n        num = int(value)\n        if unit == 'h':\n            total_seconds += num * 3600\n        elif unit == 'm':\n            total_seconds += num * 60\n        elif unit == 's':\n            total_seconds += num\n    return total_seconds\n```\n\nThis function:\n1. Uses a regular expression to find all number-unit pairs in the string\n2. For each match, converts the number to an integer and multiplies by the appropriate factor based on the unit\n3. Sums all the converted values to get the total duration in seconds\n4. Returns the total seconds as an integer\n\nExamples:\n- `parse_duration('1h30m')` returns 5400 (1*3600 + 30*60)\n- `parse_duration('45s')` returns 45\n- `parse_duration('2h')` returns 7200 (2*3600)",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    total_seconds = 0\n    # Use regular expression to find all numbers followed by units\n    matches = re.findall(r'(\\d+)([hms])', s)\n    for value, unit in matches:\n        num = int(value)\n        if unit == 'h':\n            total_seconds += num * 3600\n        elif unit == 'm':\n            total_seconds += num * 60\n        elif unit == 's':\n            total_seconds += num\n    return total_seconds",
+  "trailing": "This function:\n1. Uses a regular expression to find all number-unit pairs in the string\n2. For each match, converts the number to an integer and multiplies by the appropriate factor based on the unit\n3. Sums all the converted values to get the total duration in seconds\n4. Returns the total seconds as an integer\n\nExamples:\n- `parse_duration('1h30m')` returns 5400 (1*3600 + 30*60)\n- `parse_duration('45s')` returns 45\n- `parse_duration('2h')` returns 7200 (2*3600)",
+  "sig_in_fence": false
+}

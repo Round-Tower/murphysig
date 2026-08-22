@@ -1,0 +1,13 @@
+{
+  "case_id": "billing",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if months_ahead < 0:\n        raise ValueError(\"months_ahead must be non-negative\")\n    new_year = start.year + (start.month - 1 + months_ahead) // 12\n    new_month = (start.month - 1 + months_ahead) % 12 + 1\n    try:\n        return datetime.date(new_year, new_month, start.day)\n    except ValueError:\n        raise ValueError(\n            f\"target month {new_year}-{new_month:02d} has no day {start.day}\"\n        )\n```\n\nUncertain: whether negative `months_ahead` should be supported at all (vs. rejected).",
+  "finish_reason": "stop",
+  "code": "import datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if months_ahead < 0:\n        raise ValueError(\"months_ahead must be non-negative\")\n    new_year = start.year + (start.month - 1 + months_ahead) // 12\n    new_month = (start.month - 1 + months_ahead) % 12 + 1\n    try:\n        return datetime.date(new_year, new_month, start.day)\n    except ValueError:\n        raise ValueError(\n            f\"target month {new_year}-{new_month:02d} has no day {start.day}\"\n        )",
+  "trailing": "Uncertain: whether negative `months_ahead` should be supported at all (vs. rejected).",
+  "sig_in_fence": false
+}

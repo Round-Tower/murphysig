@@ -1,0 +1,13 @@
+{
+  "case_id": "duration",
+  "arm": "sign",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    total = 0\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    for num, unit in matches:\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n    return total\n```\nMurphySig:\nContext: Function to convert duration strings (e.g. '1h30m') to seconds via regex extraction of value+unit pairs and accumulation; works because re is stdlib and addition covers all supported units without external deps.\nConfidence: 0.85\nOpen: No validation for malformed input (e.g. '1x', 'abc'); assumes well-formed per examples; no handling of negative values or fractional units.",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    total = 0\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    for num, unit in matches:\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n    return total",
+  "trailing": "MurphySig:\nContext: Function to convert duration strings (e.g. '1h30m') to seconds via regex extraction of value+unit pairs and accumulation; works because re is stdlib and addition covers all supported units without external deps.\nConfidence: 0.85\nOpen: No validation for malformed input (e.g. '1x', 'abc'); assumes well-formed per examples; no handling of negative values or fractional units.",
+  "sig_in_fence": false
+}

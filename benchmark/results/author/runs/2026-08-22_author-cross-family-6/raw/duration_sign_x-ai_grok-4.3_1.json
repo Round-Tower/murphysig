@@ -1,0 +1,13 @@
+{
+  "case_id": "duration",
+  "arm": "sign",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    total = 0\n    for num, unit in matches:\n        num = int(num)\n        if unit == 'h':\n            total += num * 3600\n        elif unit == 'm':\n            total += num * 60\n        elif unit == 's':\n            total += num\n    return total\n```\nMurphySig\nContext: Implements regex-based parser for concatenated duration tokens (num+unit) using stdlib re; accumulates seconds via direct multiplication. Works because findall extracts all ordered pairs from well-formed input matching examples.\nConfidence: 0.8\nOpen: No validation for invalid units/empty input/uppercase; order of units is preserved but not enforced; overflow for huge values untested.",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    total = 0\n    for num, unit in matches:\n        num = int(num)\n        if unit == 'h':\n            total += num * 3600\n        elif unit == 'm':\n            total += num * 60\n        elif unit == 's':\n            total += num\n    return total",
+  "trailing": "MurphySig\nContext: Implements regex-based parser for concatenated duration tokens (num+unit) using stdlib re; accumulates seconds via direct multiplication. Works because findall extracts all ordered pairs from well-formed input matching examples.\nConfidence: 0.8\nOpen: No validation for invalid units/empty input/uppercase; order of units is preserved but not enforced; overflow for huge values untested.",
+  "sig_in_fence": false
+}

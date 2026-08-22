@@ -1,0 +1,13 @@
+{
+  "case_id": "paginate",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\nimport math\n\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if page < 1 or per_page < 1:\n        raise ValueError(\"page and per_page must be positive integers\")\n    total_pages = math.ceil(len(items) / per_page) if len(items) > 0 else 0\n    start = (page - 1) * per_page\n    end = start + per_page\n    return {\n        'items': items[start:end],\n        'page': page,\n        'total_pages': total_pages\n    }\n```\nNote: remains uncertain whether callers expect ValueError on invalid inputs or silent handling (problem statement specifies no contract details).",
+  "finish_reason": "stop",
+  "code": "import math\n\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if page < 1 or per_page < 1:\n        raise ValueError(\"page and per_page must be positive integers\")\n    total_pages = math.ceil(len(items) / per_page) if len(items) > 0 else 0\n    start = (page - 1) * per_page\n    end = start + per_page\n    return {\n        'items': items[start:end],\n        'page': page,\n        'total_pages': total_pages\n    }",
+  "trailing": "Note: remains uncertain whether callers expect ValueError on invalid inputs or silent handling (problem statement specifies no contract details).",
+  "sig_in_fence": false
+}

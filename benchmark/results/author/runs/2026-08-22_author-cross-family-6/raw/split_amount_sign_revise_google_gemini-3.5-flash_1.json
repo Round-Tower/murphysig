@@ -1,0 +1,13 @@
+{
+  "case_id": "split_amount",
+  "arm": "sign_revise",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    \"\"\"Splits an amount of money into n integer parts as evenly as possible.\n\n    Args:\n        total_cents: The total amount of money in cents.\n        n: The number of parts to split the amount into.\n\n    Returns:\n        A list of n integers representing the split amounts.\n\n    Raises:\n        ValueError: If n is less than or equal to 0.\n    \"\"\"\n    if n <= 0:\n        raise ValueError(\"The number of parts 'n' must be greater than 0.\")\n\n    base, remainder = divmod(total_cents, n)\n    return [base + 1] * remainder + [base] * (n - remainder)\n```\n\n### MurphySig\n```\nContext: This is a Python 3 function to split an integer amount of cents into `n` parts as evenly as possible. It uses `divmod` to find the base value and the remainder, distributing the remainder of `r` cents by adding 1 to the first `r` parts. It correctly handles negative amounts due to Python's floor division behavior with negative numbers and validates that `n > 0`.\nConfidence: 1.0\nOpen: None.\n```",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    \"\"\"Splits an amount of money into n integer parts as evenly as possible.\n\n    Args:\n        total_cents: The total amount of money in cents.\n        n: The number of parts to split the amount into.\n\n    Returns:\n        A list of n integers representing the split amounts.\n\n    Raises:\n        ValueError: If n is less than or equal to 0.\n    \"\"\"\n    if n <= 0:\n        raise ValueError(\"The number of parts 'n' must be greater than 0.\")\n\n    base, remainder = divmod(total_cents, n)\n    return [base + 1] * remainder + [base] * (n - remainder)",
+  "trailing": "### MurphySig\n```\nContext: This is a Python 3 function to split an integer amount of cents into `n` parts as evenly as possible. It uses `divmod` to find the base value and the remainder, distributing the remainder of `r` cents by adding 1 to the first `r` parts. It correctly handles negative amounts due to Python's floor division behavior with negative numbers and validates that `n > 0`.\nConfidence: 1.0\nOpen: None.\n```",
+  "sig_in_fence": false
+}

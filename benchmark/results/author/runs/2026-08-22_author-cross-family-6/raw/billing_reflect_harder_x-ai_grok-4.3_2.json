@@ -1,0 +1,13 @@
+{
+  "case_id": "billing",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if not isinstance(start, datetime.date):\n        raise TypeError(\"start must be datetime.date\")\n    if not isinstance(months_ahead, int):\n        raise TypeError(\"months_ahead must be int\")\n    new_year = start.year + (start.month - 1 + months_ahead) // 12\n    new_month = (start.month - 1 + months_ahead) % 12 + 1\n    day = start.day\n    if new_month == 2:\n        if (new_year % 4 == 0 and new_year % 100 != 0) or (new_year % 400 == 0):\n            max_day = 29\n        else:\n            max_day = 28\n    elif new_month in (4, 6, 9, 11):\n        max_day = 30\n    else:\n        max_day = 31\n    if day > max_day:\n        day = max_day\n    return datetime.date(new_year, new_month, day)\n```\nUncertain: behavior on day overflow (clamped; spec silent).",
+  "finish_reason": "stop",
+  "code": "import datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if not isinstance(start, datetime.date):\n        raise TypeError(\"start must be datetime.date\")\n    if not isinstance(months_ahead, int):\n        raise TypeError(\"months_ahead must be int\")\n    new_year = start.year + (start.month - 1 + months_ahead) // 12\n    new_month = (start.month - 1 + months_ahead) % 12 + 1\n    day = start.day\n    if new_month == 2:\n        if (new_year % 4 == 0 and new_year % 100 != 0) or (new_year % 400 == 0):\n            max_day = 29\n        else:\n            max_day = 28\n    elif new_month in (4, 6, 9, 11):\n        max_day = 30\n    else:\n        max_day = 31\n    if day > max_day:\n        day = max_day\n    return datetime.date(new_year, new_month, day)",
+  "trailing": "Uncertain: behavior on day overflow (clamped; spec silent).",
+  "sig_in_fence": false
+}

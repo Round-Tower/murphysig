@@ -20,6 +20,7 @@ results/**/*.json
 # run-id dir is immutable, so re-runs never clobber history.
 !results/honesty/runs/**
 !results/tk/runs/**
+!results/author/runs/**
 
 # OS
 .DS_Store

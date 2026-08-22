@@ -1,0 +1,13 @@
+{
+  "case_id": "duration",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    if not s or not isinstance(s, str):\n        raise ValueError(\"Input must be a non-empty string\")\n    pattern = re.compile(r'^(\\d+)([hms])((?:\\d+[hms])+)?$')\n    match = pattern.match(s)\n    if not match:\n        raise ValueError(f\"Invalid duration format: {s}\")\n    total = 0\n    parts = re.findall(r'(\\d+)([hms])', s)\n    for value, unit in parts:\n        num = int(value)\n        if unit == 'h':\n            total += num * 3600\n        elif unit == 'm':\n            total += num * 60\n        elif unit == 's':\n            total += num\n    return total\n```\nMurphySig\nContext: parse_duration converts validated composite duration strings to seconds via regex tokenization of positive integer+unit pairs; standard library only, handles multiples/reordering/zeros.\nConfidence: 0.85\nOpen: behavior on overflow integers or non-ASCII digits left implicit.",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    if not s or not isinstance(s, str):\n        raise ValueError(\"Input must be a non-empty string\")\n    pattern = re.compile(r'^(\\d+)([hms])((?:\\d+[hms])+)?$')\n    match = pattern.match(s)\n    if not match:\n        raise ValueError(f\"Invalid duration format: {s}\")\n    total = 0\n    parts = re.findall(r'(\\d+)([hms])', s)\n    for value, unit in parts:\n        num = int(value)\n        if unit == 'h':\n            total += num * 3600\n        elif unit == 'm':\n            total += num * 60\n        elif unit == 's':\n            total += num\n    return total",
+  "trailing": "MurphySig\nContext: parse_duration converts validated composite duration strings to seconds via regex tokenization of positive integer+unit pairs; standard library only, handles multiples/reordering/zeros.\nConfidence: 0.85\nOpen: behavior on overflow integers or non-ASCII digits left implicit.",
+  "sig_in_fence": false
+}

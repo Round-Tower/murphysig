@@ -1,0 +1,13 @@
+{
+  "case_id": "billing",
+  "arm": "bare",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\nimport calendar\nimport datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    # Calculate the target year and month\n    total_months = start.month - 1 + months_ahead\n    target_year = start.year + (total_months // 12)\n    target_month = (total_months % 12) + 1\n    \n    # Get the maximum number of days in the target month\n    _, max_days = calendar.monthrange(target_year, target_month)\n    \n    # Clamp the day to the maximum days of the target month\n    target_day = min(start.day, max_days)\n    \n    return datetime.date(target_year, target_month, target_day)\n```",
+  "finish_reason": "stop",
+  "code": "import calendar\nimport datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    # Calculate the target year and month\n    total_months = start.month - 1 + months_ahead\n    target_year = start.year + (total_months // 12)\n    target_month = (total_months % 12) + 1\n    \n    # Get the maximum number of days in the target month\n    _, max_days = calendar.monthrange(target_year, target_month)\n    \n    # Clamp the day to the maximum days of the target month\n    target_day = min(start.day, max_days)\n    \n    return datetime.date(target_year, target_month, target_day)",
+  "trailing": "",
+  "sig_in_fence": false
+}

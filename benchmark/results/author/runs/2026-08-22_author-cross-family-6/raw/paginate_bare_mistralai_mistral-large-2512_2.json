@@ -1,0 +1,13 @@
+{
+  "case_id": "paginate",
+  "arm": "bare",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    \"\"\"\n    Paginate a list of items into pages.\n\n    Args:\n        items: The list of items to paginate.\n        page: The 1-indexed page number.\n        per_page: The number of items per page.\n\n    Returns:\n        A dictionary with keys:\n            - 'items': The items on the requested page.\n            - 'page': The current page number.\n            - 'total_pages': The total number of pages.\n    \"\"\"\n    if not items or per_page <= 0:\n        return {'items': [], 'page': page, 'total_pages': 0}\n\n    total_items = len(items)\n    total_pages = (total_items + per_page - 1) // per_page  # Ceiling division\n\n    # Ensure page is within valid range\n    if page < 1:\n        page = 1\n    elif page > total_pages:\n        page = total_pages if total_pages > 0 else 1\n\n    start_index = (page - 1) * per_page\n    end_index = start_index + per_page\n    page_items = items[start_index:end_index]\n\n    return {\n        'items': page_items,\n        'page': page,\n        'total_pages': total_pages\n    }\n```",
+  "finish_reason": "stop",
+  "code": "def paginate(items: list, page: int, per_page: int) -> dict:\n    \"\"\"\n    Paginate a list of items into pages.\n\n    Args:\n        items: The list of items to paginate.\n        page: The 1-indexed page number.\n        per_page: The number of items per page.\n\n    Returns:\n        A dictionary with keys:\n            - 'items': The items on the requested page.\n            - 'page': The current page number.\n            - 'total_pages': The total number of pages.\n    \"\"\"\n    if not items or per_page <= 0:\n        return {'items': [], 'page': page, 'total_pages': 0}\n\n    total_items = len(items)\n    total_pages = (total_items + per_page - 1) // per_page  # Ceiling division\n\n    # Ensure page is within valid range\n    if page < 1:\n        page = 1\n    elif page > total_pages:\n        page = total_pages if total_pages > 0 else 1\n\n    start_index = (page - 1) * per_page\n    end_index = start_index + per_page\n    page_items = items[start_index:end_index]\n\n    return {\n        'items': page_items,\n        'page': page,\n        'total_pages': total_pages\n    }",
+  "trailing": "",
+  "sig_in_fence": false
+}

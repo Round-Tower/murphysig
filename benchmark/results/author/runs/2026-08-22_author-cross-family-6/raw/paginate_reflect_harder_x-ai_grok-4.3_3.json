@@ -1,0 +1,13 @@
+{
+  "case_id": "paginate",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if not isinstance(items, list) or per_page <= 0 or page < 1:\n        return {'items': [], 'page': page, 'total_pages': 0}\n    total = len(items)\n    total_pages = (total + per_page - 1) // per_page if total > 0 else 0\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end] if start < total else []\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}\n```\nUncertain: behavior for page>total_pages or invalid inputs (chose empty+0, no spec).",
+  "finish_reason": "stop",
+  "code": "def paginate(items: list, page: int, per_page: int) -> dict:\n    if not isinstance(items, list) or per_page <= 0 or page < 1:\n        return {'items': [], 'page': page, 'total_pages': 0}\n    total = len(items)\n    total_pages = (total + per_page - 1) // per_page if total > 0 else 0\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end] if start < total else []\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}",
+  "trailing": "Uncertain: behavior for page>total_pages or invalid inputs (chose empty+0, no spec).",
+  "sig_in_fence": false
+}

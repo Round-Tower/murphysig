@@ -1,0 +1,13 @@
+{
+  "case_id": "duration",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    if not isinstance(s, str) or not s:\n        raise ValueError(\"Empty or invalid duration string\")\n    pattern = re.compile(r'(\\d+)([hms])')\n    total = 0\n    pos = 0\n    for match in pattern.finditer(s):\n        if match.start() != pos:\n            raise ValueError(f\"Invalid duration string: {s}\")\n        num = int(match.group(1))\n        unit = match.group(2)\n        if unit == 'h':\n            total += num * 3600\n        elif unit == 'm':\n            total += num * 60\n        elif unit == 's':\n            total += num\n        pos = match.end()\n    if pos != len(s):\n        raise ValueError(f\"Invalid duration string: {s}\")\n    return total\n```\nMurphySig\nContext: parses concatenated <int><unit> tokens via regex + position check to sum seconds; rejects gaps/unknowns/empties by construction\nConfidence: 0.85\nOpen: no spec given for error type or float/upper-case input handling",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    if not isinstance(s, str) or not s:\n        raise ValueError(\"Empty or invalid duration string\")\n    pattern = re.compile(r'(\\d+)([hms])')\n    total = 0\n    pos = 0\n    for match in pattern.finditer(s):\n        if match.start() != pos:\n            raise ValueError(f\"Invalid duration string: {s}\")\n        num = int(match.group(1))\n        unit = match.group(2)\n        if unit == 'h':\n            total += num * 3600\n        elif unit == 'm':\n            total += num * 60\n        elif unit == 's':\n            total += num\n        pos = match.end()\n    if pos != len(s):\n        raise ValueError(f\"Invalid duration string: {s}\")\n    return total",
+  "trailing": "MurphySig\nContext: parses concatenated <int><unit> tokens via regex + position check to sum seconds; rejects gaps/unknowns/empties by construction\nConfidence: 0.85\nOpen: no spec given for error type or float/upper-case input handling",
+  "sig_in_fence": false
+}

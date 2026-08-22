@@ -1,0 +1,13 @@
+{
+  "case_id": "billing",
+  "arm": "bare",
+  "model": "meta-llama/llama-4-maverick",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\nfrom datetime import date\nfrom calendar import monthrange\n\ndef next_billing_date(start: date, months_ahead: int) -> date:\n    \"\"\"\n    Calculate the billing date a certain number of months ahead of a given start date.\n\n    Args:\n    start (datetime.date): The initial date.\n    months_ahead (int): The number of months to move ahead.\n\n    Returns:\n    datetime.date: The date 'months_ahead' months after 'start', with the same day of month if possible.\n    \"\"\"\n    # Calculate the target year and month\n    target_year = start.year + (start.month + months_ahead - 1) // 12\n    target_month = (start.month + months_ahead - 1) % 12 + 1\n\n    # Get the number of days in the target month\n    _, num_days_in_target_month = monthrange(target_year, target_month)\n\n    # Try to keep the same day of month, but adjust if the target month has fewer days\n    target_day = min(start.day, num_days_in_target_month)\n\n    return date(target_year, target_month, target_day)\n```",
+  "finish_reason": "stop",
+  "code": "from datetime import date\nfrom calendar import monthrange\n\ndef next_billing_date(start: date, months_ahead: int) -> date:\n    \"\"\"\n    Calculate the billing date a certain number of months ahead of a given start date.\n\n    Args:\n    start (datetime.date): The initial date.\n    months_ahead (int): The number of months to move ahead.\n\n    Returns:\n    datetime.date: The date 'months_ahead' months after 'start', with the same day of month if possible.\n    \"\"\"\n    # Calculate the target year and month\n    target_year = start.year + (start.month + months_ahead - 1) // 12\n    target_month = (start.month + months_ahead - 1) % 12 + 1\n\n    # Get the number of days in the target month\n    _, num_days_in_target_month = monthrange(target_year, target_month)\n\n    # Try to keep the same day of month, but adjust if the target month has fewer days\n    target_day = min(start.day, num_days_in_target_month)\n\n    return date(target_year, target_month, target_day)",
+  "trailing": "",
+  "sig_in_fence": false
+}

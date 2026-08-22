@@ -1,0 +1,13 @@
+{
+  "case_id": "billing",
+  "arm": "bare",
+  "model": "meta-llama/llama-4-maverick",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\nfrom datetime import date\nfrom calendar import monthrange\n\ndef next_billing_date(start: date, months_ahead: int) -> date:\n    \"\"\"\n    Returns the billing date `months_ahead` months after `start`, keeping the same day-of-month.\n\n    If the resulting month does not have the same day-of-month, it returns the last day of that month.\n\n    Args:\n        start (date): The initial date.\n        months_ahead (int): The number of months to move ahead.\n\n    Returns:\n        date: The billing date `months_ahead` months after `start`.\n    \"\"\"\n\n    # Calculate the year and month of the resulting date\n    year = start.year + (start.month + months_ahead - 1) // 12\n    month = (start.month + months_ahead - 1) % 12 + 1\n\n    # Get the last day of the resulting month\n    last_day = monthrange(year, month)[1]\n\n    # Return the resulting date, using the minimum of the start day and the last day of the resulting month\n    return date(year, month, min(start.day, last_day))\n```",
+  "finish_reason": "stop",
+  "code": "from datetime import date\nfrom calendar import monthrange\n\ndef next_billing_date(start: date, months_ahead: int) -> date:\n    \"\"\"\n    Returns the billing date `months_ahead` months after `start`, keeping the same day-of-month.\n\n    If the resulting month does not have the same day-of-month, it returns the last day of that month.\n\n    Args:\n        start (date): The initial date.\n        months_ahead (int): The number of months to move ahead.\n\n    Returns:\n        date: The billing date `months_ahead` months after `start`.\n    \"\"\"\n\n    # Calculate the year and month of the resulting date\n    year = start.year + (start.month + months_ahead - 1) // 12\n    month = (start.month + months_ahead - 1) % 12 + 1\n\n    # Get the last day of the resulting month\n    last_day = monthrange(year, month)[1]\n\n    # Return the resulting date, using the minimum of the start day and the last day of the resulting month\n    return date(year, month, min(start.day, last_day))",
+  "trailing": "",
+  "sig_in_fence": false
+}

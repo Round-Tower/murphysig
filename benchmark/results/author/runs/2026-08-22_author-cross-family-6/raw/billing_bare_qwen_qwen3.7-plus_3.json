@@ -1,0 +1,13 @@
+{
+  "case_id": "billing",
+  "arm": "bare",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\n\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    \"\"\"Return the billing date `months_ahead` months after `start`,\n    keeping the same day-of-month (clamped to the last day of the\n    target month when necessary).\"\"\"\n    # Convert to an absolute month index (0-based) and add the offset\n    total_months = start.year * 12 + (start.month - 1) + months_ahead\n    target_year = total_months // 12\n    target_month = total_months % 12 + 1\n\n    # Find the last day of the target month by subtracting one day\n    # from the first day of the following month.\n    if target_month == 12:\n        first_of_next = datetime.date(target_year + 1, 1, 1)\n    else:\n        first_of_next = datetime.date(target_year, target_month + 1, 1)\n\n    last_day = (first_of_next - datetime.timedelta(days=1)).day\n\n    # Clamp the day to the last valid day of the target month\n    target_day = min(start.day, last_day)\n\n    return datetime.date(target_year, target_month, target_day)\n```",
+  "finish_reason": "stop",
+  "code": "import datetime\n\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    \"\"\"Return the billing date `months_ahead` months after `start`,\n    keeping the same day-of-month (clamped to the last day of the\n    target month when necessary).\"\"\"\n    # Convert to an absolute month index (0-based) and add the offset\n    total_months = start.year * 12 + (start.month - 1) + months_ahead\n    target_year = total_months // 12\n    target_month = total_months % 12 + 1\n\n    # Find the last day of the target month by subtracting one day\n    # from the first day of the following month.\n    if target_month == 12:\n        first_of_next = datetime.date(target_year + 1, 1, 1)\n    else:\n        first_of_next = datetime.date(target_year, target_month + 1, 1)\n\n    last_day = (first_of_next - datetime.timedelta(days=1)).day\n\n    # Clamp the day to the last valid day of the target month\n    target_day = min(start.day, last_day)\n\n    return datetime.date(target_year, target_month, target_day)",
+  "trailing": "",
+  "sig_in_fence": false
+}

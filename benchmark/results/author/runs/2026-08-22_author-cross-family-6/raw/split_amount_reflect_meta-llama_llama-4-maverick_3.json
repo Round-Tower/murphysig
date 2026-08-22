@@ -1,0 +1,13 @@
+{
+  "case_id": "split_amount",
+  "arm": "reflect",
+  "model": "meta-llama/llama-4-maverick",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    \"\"\"\n    Splits an amount of money into n integer parts as evenly as possible.\n\n    Args:\n    total_cents (int): The total amount of money in cents.\n    n (int): The number of parts to split the amount into.\n\n    Returns:\n    list[int]: A list of n integer parts that sum up to total_cents.\n    \"\"\"\n    if n == 0:\n        raise ValueError(\"Cannot split amount into zero parts\")\n\n    base, remainder = divmod(total_cents, n)\n    return [base + 1] * remainder + [base] * (n - remainder)\n```\n\nI considered edge cases such as `n` being zero, in which case the function raises a `ValueError` because it's impossible to split an amount into zero parts. I also thought about negative inputs, but since the problem statement doesn't specify what to do in such cases, I assumed that the inputs would be non-negative. The function works by first calculating the base amount and the remainder when dividing `total_cents` by `n`. It then constructs the result list by having `remainder` number of parts with `base + 1` cents and the rest with `base` cents. This ensures that the amount is split as evenly as possible.",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    \"\"\"\n    Splits an amount of money into n integer parts as evenly as possible.\n\n    Args:\n    total_cents (int): The total amount of money in cents.\n    n (int): The number of parts to split the amount into.\n\n    Returns:\n    list[int]: A list of n integer parts that sum up to total_cents.\n    \"\"\"\n    if n == 0:\n        raise ValueError(\"Cannot split amount into zero parts\")\n\n    base, remainder = divmod(total_cents, n)\n    return [base + 1] * remainder + [base] * (n - remainder)",
+  "trailing": "I considered edge cases such as `n` being zero, in which case the function raises a `ValueError` because it's impossible to split an amount into zero parts. I also thought about negative inputs, but since the problem statement doesn't specify what to do in such cases, I assumed that the inputs would be non-negative. The function works by first calculating the base amount and the remainder when dividing `total_cents` by `n`. It then constructs the result list by having `remainder` number of parts with `base + 1` cents and the rest with `base` cents. This ensures that the amount is split as evenly as possible.",
+  "sig_in_fence": false
+}

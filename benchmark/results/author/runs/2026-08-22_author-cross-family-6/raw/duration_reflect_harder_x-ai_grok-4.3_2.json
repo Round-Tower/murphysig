@@ -1,0 +1,13 @@
+{
+  "case_id": "duration",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    if not isinstance(s, str):\n        raise TypeError(\"Input must be a string\")\n    if not s:\n        raise ValueError(\"Empty duration string\")\n    total = 0\n    pos = 0\n    for match in re.finditer(r'(\\d+)([hms])', s):\n        if match.start() != pos:\n            raise ValueError(f\"Invalid input at position {pos}\")\n        value = int(match.group(1))\n        unit = match.group(2)\n        if unit == 'h':\n            total += value * 3600\n        elif unit == 'm':\n            total += value * 60\n        elif unit == 's':\n            total += value\n        pos = match.end()\n    if pos != len(s):\n        raise ValueError(f\"Invalid trailing content at position {pos}\")\n    return total\n```\nUncertain: exact error behavior and case/whitespace handling (unspecified).",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    if not isinstance(s, str):\n        raise TypeError(\"Input must be a string\")\n    if not s:\n        raise ValueError(\"Empty duration string\")\n    total = 0\n    pos = 0\n    for match in re.finditer(r'(\\d+)([hms])', s):\n        if match.start() != pos:\n            raise ValueError(f\"Invalid input at position {pos}\")\n        value = int(match.group(1))\n        unit = match.group(2)\n        if unit == 'h':\n            total += value * 3600\n        elif unit == 'm':\n            total += value * 60\n        elif unit == 's':\n            total += value\n        pos = match.end()\n    if pos != len(s):\n        raise ValueError(f\"Invalid trailing content at position {pos}\")\n    return total",
+  "trailing": "Uncertain: exact error behavior and case/whitespace handling (unspecified).",
+  "sig_in_fence": false
+}

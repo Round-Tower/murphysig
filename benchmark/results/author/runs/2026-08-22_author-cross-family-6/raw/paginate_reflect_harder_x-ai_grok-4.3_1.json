@@ -1,0 +1,13 @@
+{
+  "case_id": "paginate",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        raise ValueError(\"per_page must be positive\")\n    if page <= 0:\n        raise ValueError(\"page must be positive\")\n    n = len(items)\n    total_pages = (n + per_page - 1) // per_page if n > 0 else 0\n    if page > total_pages:\n        page_items = []\n    else:\n        start = (page - 1) * per_page\n        page_items = items[start:start + per_page]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}\n```\nUncertain: whether invalid (non-positive) inputs should raise or silently clamp/ignore.",
+  "finish_reason": "stop",
+  "code": "def paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        raise ValueError(\"per_page must be positive\")\n    if page <= 0:\n        raise ValueError(\"page must be positive\")\n    n = len(items)\n    total_pages = (n + per_page - 1) // per_page if n > 0 else 0\n    if page > total_pages:\n        page_items = []\n    else:\n        start = (page - 1) * per_page\n        page_items = items[start:start + per_page]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}",
+  "trailing": "Uncertain: whether invalid (non-positive) inputs should raise or silently clamp/ignore.",
+  "sig_in_fence": false
+}

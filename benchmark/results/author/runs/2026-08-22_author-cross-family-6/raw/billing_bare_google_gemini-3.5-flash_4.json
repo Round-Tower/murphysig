@@ -1,0 +1,13 @@
+{
+  "case_id": "billing",
+  "arm": "bare",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "An elegant and robust way to implement this is to calculate the target year and month by converting the starting date into total months since year 0, adding the `months_ahead`, and then converting back. To handle cases where the target month has fewer days than the starting day (e.g., January 31st to February), we cap the day at the maximum day of the target month using `calendar.monthrange`.\n\nHere is the complete implementation using only the Python standard library:\n\n```python\nimport calendar\nimport datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    # Convert start date to total months, add the offset\n    total_months = start.year * 12 + (start.month - 1) + months_ahead\n    \n    # Calculate target year and month\n    target_year = total_months // 12\n    target_month = (total_months % 12) + 1\n    \n    # Get the maximum number of days in the target month\n    max_day = calendar.monthrange(target_year, target_month)[1]\n    \n    # Keep the same day, but cap it at the maximum day of the target month\n    target_day = min(start.day, max_day)\n    \n    return datetime.date(target_year, target_month, target_day)\n```",
+  "finish_reason": "stop",
+  "code": "import calendar\nimport datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    # Convert start date to total months, add the offset\n    total_months = start.year * 12 + (start.month - 1) + months_ahead\n    \n    # Calculate target year and month\n    target_year = total_months // 12\n    target_month = (total_months % 12) + 1\n    \n    # Get the maximum number of days in the target month\n    max_day = calendar.monthrange(target_year, target_month)[1]\n    \n    # Keep the same day, but cap it at the maximum day of the target month\n    target_day = min(start.day, max_day)\n    \n    return datetime.date(target_year, target_month, target_day)",
+  "trailing": "",
+  "sig_in_fence": false
+}

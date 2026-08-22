@@ -1,0 +1,13 @@
+{
+  "case_id": "split_amount",
+  "arm": "sign",
+  "model": "meta-llama/llama-4-maverick",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    \"\"\"\n    Splits an amount of money into n integer parts as evenly as possible.\n\n    Args:\n    total_cents (int): The total amount of money in cents.\n    n (int): The number of parts to split the amount into.\n\n    Returns:\n    list[int]: A list of n integers representing the split amounts in cents.\n    \"\"\"\n    base, remainder = divmod(total_cents, n)\n    return [base + 1] * remainder + [base] * (n - remainder)\n\n# MurphySig\n# Context: This function works by first dividing the total amount by the number of parts to get the base amount and the remainder. \n#          It then constructs the result list by having the remainder number of parts be one cent more than the base amount, \n#          and the rest be the base amount. This ensures the amounts are split as evenly as possible.\n# Confidence: 1.0\n# Open: What to do when n is zero? Currently, this will raise a ZeroDivisionError. It might be better to raise a ValueError with a more informative message.\n```",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    \"\"\"\n    Splits an amount of money into n integer parts as evenly as possible.\n\n    Args:\n    total_cents (int): The total amount of money in cents.\n    n (int): The number of parts to split the amount into.\n\n    Returns:\n    list[int]: A list of n integers representing the split amounts in cents.\n    \"\"\"\n    base, remainder = divmod(total_cents, n)\n    return [base + 1] * remainder + [base] * (n - remainder)",
+  "trailing": "# MurphySig\n# Context: This function works by first dividing the total amount by the number of parts to get the base amount and the remainder. \n#          It then constructs the result list by having the remainder number of parts be one cent more than the base amount, \n#          and the rest be the base amount. This ensures the amounts are split as evenly as possible.\n# Confidence: 1.0\n# Open: What to do when n is zero? Currently, this will raise a ZeroDivisionError. It might be better to raise a ValueError with a more informative message.",
+  "sig_in_fence": true
+}

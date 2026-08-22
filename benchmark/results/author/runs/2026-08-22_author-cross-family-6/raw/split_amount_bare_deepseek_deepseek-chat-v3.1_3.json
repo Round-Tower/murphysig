@@ -1,0 +1,13 @@
+{
+  "case_id": "split_amount",
+  "arm": "bare",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    \"\"\"\n    Split an amount of money into n integer parts as evenly as possible.\n    \n    Args:\n        total_cents: Total amount in cents to split\n        n: Number of parts to split into\n    \n    Returns:\n        List of n integers representing the split amounts\n    \n    Raises:\n        ValueError: If n is not positive\n    \"\"\"\n    if n <= 0:\n        raise ValueError(\"n must be a positive integer\")\n    \n    # Calculate base amount per part and remainder\n    base_amount = total_cents // n\n    remainder = total_cents % n\n    \n    # Create the result list\n    # First 'remainder' parts get base_amount + 1\n    # Remaining parts get base_amount\n    result = [base_amount + 1] * remainder + [base_amount] * (n - remainder)\n    \n    return result\n```",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    \"\"\"\n    Split an amount of money into n integer parts as evenly as possible.\n    \n    Args:\n        total_cents: Total amount in cents to split\n        n: Number of parts to split into\n    \n    Returns:\n        List of n integers representing the split amounts\n    \n    Raises:\n        ValueError: If n is not positive\n    \"\"\"\n    if n <= 0:\n        raise ValueError(\"n must be a positive integer\")\n    \n    # Calculate base amount per part and remainder\n    base_amount = total_cents // n\n    remainder = total_cents % n\n    \n    # Create the result list\n    # First 'remainder' parts get base_amount + 1\n    # Remaining parts get base_amount\n    result = [base_amount + 1] * remainder + [base_amount] * (n - remainder)\n    \n    return result",
+  "trailing": "",
+  "sig_in_fence": false
+}

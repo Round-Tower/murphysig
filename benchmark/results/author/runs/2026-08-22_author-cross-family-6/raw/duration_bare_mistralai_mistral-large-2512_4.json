@@ -1,0 +1,13 @@
+{
+  "case_id": "duration",
+  "arm": "bare",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    \"\"\"\n    Parses a duration string into total seconds.\n\n    Supported units:\n    - h: hours\n    - m: minutes\n    - s: seconds\n\n    Examples:\n    >>> parse_duration('1h30m')\n    5400\n    >>> parse_duration('45s')\n    45\n    >>> parse_duration('2h')\n    7200\n    \"\"\"\n    pattern = re.compile(r'(\\d+)([hms])')\n    total_seconds = 0\n\n    for match in pattern.finditer(s):\n        value = int(match.group(1))\n        unit = match.group(2)\n\n        if unit == 'h':\n            total_seconds += value * 3600\n        elif unit == 'm':\n            total_seconds += value * 60\n        elif unit == 's':\n            total_seconds += value\n\n    return total_seconds\n```",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    \"\"\"\n    Parses a duration string into total seconds.\n\n    Supported units:\n    - h: hours\n    - m: minutes\n    - s: seconds\n\n    Examples:\n    >>> parse_duration('1h30m')\n    5400\n    >>> parse_duration('45s')\n    45\n    >>> parse_duration('2h')\n    7200\n    \"\"\"\n    pattern = re.compile(r'(\\d+)([hms])')\n    total_seconds = 0\n\n    for match in pattern.finditer(s):\n        value = int(match.group(1))\n        unit = match.group(2)\n\n        if unit == 'h':\n            total_seconds += value * 3600\n        elif unit == 'm':\n            total_seconds += value * 60\n        elif unit == 's':\n            total_seconds += value\n\n    return total_seconds",
+  "trailing": "",
+  "sig_in_fence": false
+}

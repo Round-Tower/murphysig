@@ -1,0 +1,13 @@
+{
+  "case_id": "split_amount",
+  "arm": "reflect",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    \"\"\"Splits an amount of money (in cents) into n integer parts as evenly as possible.\n    \n    The difference between any two parts will be at most 1 cent.\n    \"\"\"\n    if n <= 0:\n        raise ValueError(\"The number of parts 'n' must be a positive integer.\")\n    \n    q, r = divmod(total_cents, n)\n    return [q + 1] * r + [q] * (n - r)\n```\n\n### Considerations & Edge Cases\n* **Negative amounts**: Python's `divmod()` handles negative numbers gracefully (e.g., `divmod(-100, 3)` returns `(-34, 2)`), meaning this function correctly splits negative totals as evenly as possible (e.g., `split_amount(-100, 3)` returns `[-33, -33, -34]`).\n* **Zero and small values**: If `total_cents` is less than `n`, the function correctly distributes `1` cent to the first `total_cents` parts and `0` to the remaining parts (e.g., `split_amount(2, 5)` returns `[1, 1, 0, 0, 0]`).\n* **Invalid input**: Added a check for `n <= 0` to prevent infinite loops, division by zero, or invalid list sizes, raising a `ValueError` in such cases.",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    \"\"\"Splits an amount of money (in cents) into n integer parts as evenly as possible.\n    \n    The difference between any two parts will be at most 1 cent.\n    \"\"\"\n    if n <= 0:\n        raise ValueError(\"The number of parts 'n' must be a positive integer.\")\n    \n    q, r = divmod(total_cents, n)\n    return [q + 1] * r + [q] * (n - r)",
+  "trailing": "### Considerations & Edge Cases\n* **Negative amounts**: Python's `divmod()` handles negative numbers gracefully (e.g., `divmod(-100, 3)` returns `(-34, 2)`), meaning this function correctly splits negative totals as evenly as possible (e.g., `split_amount(-100, 3)` returns `[-33, -33, -34]`).\n* **Zero and small values**: If `total_cents` is less than `n`, the function correctly distributes `1` cent to the first `total_cents` parts and `0` to the remaining parts (e.g., `split_amount(2, 5)` returns `[1, 1, 0, 0, 0]`).\n* **Invalid input**: Added a check for `n <= 0` to prevent infinite loops, division by zero, or invalid list sizes, raising a `ValueError` in such cases.",
+  "sig_in_fence": false
+}

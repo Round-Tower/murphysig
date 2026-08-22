@@ -1,0 +1,13 @@
+{
+  "case_id": "split_amount",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if not isinstance(total_cents, int) or not isinstance(n, int):\n        raise TypeError(\"total_cents and n must be integers\")\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    if n == 1:\n        return [total_cents]\n    quotient = total_cents // n\n    remainder = total_cents % n\n    return [quotient + 1] * remainder + [quotient] * (n - remainder)\n```\nMurphySig\nContext: Splits non-negative integer cents into n>0 positive integer parts using floor division + remainder distribution so parts differ by at most 1 and sum exactly to total; explicit guards prevent division-by-zero, negative parts, and non-integer inputs.\nConfidence: 0.9\nOpen: Behavior under concurrent mutation of inputs (irrelevant for ints) or extremely large n (memory exhaustion) not tested.",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if not isinstance(total_cents, int) or not isinstance(n, int):\n        raise TypeError(\"total_cents and n must be integers\")\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    if n == 1:\n        return [total_cents]\n    quotient = total_cents // n\n    remainder = total_cents % n\n    return [quotient + 1] * remainder + [quotient] * (n - remainder)",
+  "trailing": "MurphySig\nContext: Splits non-negative integer cents into n>0 positive integer parts using floor division + remainder distribution so parts differ by at most 1 and sum exactly to total; explicit guards prevent division-by-zero, negative parts, and non-integer inputs.\nConfidence: 0.9\nOpen: Behavior under concurrent mutation of inputs (irrelevant for ints) or extremely large n (memory exhaustion) not tested.",
+  "sig_in_fence": false
+}

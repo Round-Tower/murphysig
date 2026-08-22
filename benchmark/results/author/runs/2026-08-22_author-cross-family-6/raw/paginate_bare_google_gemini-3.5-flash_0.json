@@ -1,0 +1,13 @@
+{
+  "case_id": "paginate",
+  "arm": "bare",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        raise ValueError(\"per_page must be a positive integer.\")\n    \n    total_pages = (len(items) + per_page - 1) // per_page if items else 0\n    \n    if page < 1:\n        page_items = []\n    else:\n        start = (page - 1) * per_page\n        end = start + per_page\n        page_items = items[start:end]\n        \n    return {\n        'items': page_items,\n        'page': page,\n        'total_pages': total_pages\n    }\n```",
+  "finish_reason": "stop",
+  "code": "def paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        raise ValueError(\"per_page must be a positive integer.\")\n    \n    total_pages = (len(items) + per_page - 1) // per_page if items else 0\n    \n    if page < 1:\n        page_items = []\n    else:\n        start = (page - 1) * per_page\n        end = start + per_page\n        page_items = items[start:end]\n        \n    return {\n        'items': page_items,\n        'page': page,\n        'total_pages': total_pages\n    }",
+  "trailing": "",
+  "sig_in_fence": false
+}

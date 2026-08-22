@@ -1,0 +1,13 @@
+{
+  "case_id": "duration",
+  "arm": "bare",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    \"\"\"\n    Parses a duration string like '1h30m', '45s', or '2h' into total seconds.\n    Supported units: h (hours), m (minutes), s (seconds).\n    \n    Args:\n        s (str): The duration string to parse.\n        \n    Returns:\n        int: The total duration in seconds.\n        \n    Raises:\n        ValueError: If the input string is empty or has an invalid format.\n    \"\"\"\n    # Normalize input by removing whitespace and converting to lowercase\n    cleaned = \"\".join(s.split()).lower()\n    \n    if not cleaned:\n        raise ValueError(\"Duration string cannot be empty\")\n        \n    # Validate the format (e.g., '1h', '1h30m', '45s')\n    if not re.fullmatch(r'(\\d+[hms])+', cleaned):\n        raise ValueError(f\"Invalid duration format: '{s}'\")\n        \n    multipliers = {\n        'h': 3600,\n        'm': 60,\n        's': 1\n    }\n    \n    total_seconds = 0\n    # Find all components (e.g., [('1', 'h'), ('30', 'm')])\n    for value, unit in re.findall(r'(\\d+)([hms])', cleaned):\n        total_seconds += int(value) * multipliers[unit]\n        \n    return total_seconds\n```",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    \"\"\"\n    Parses a duration string like '1h30m', '45s', or '2h' into total seconds.\n    Supported units: h (hours), m (minutes), s (seconds).\n    \n    Args:\n        s (str): The duration string to parse.\n        \n    Returns:\n        int: The total duration in seconds.\n        \n    Raises:\n        ValueError: If the input string is empty or has an invalid format.\n    \"\"\"\n    # Normalize input by removing whitespace and converting to lowercase\n    cleaned = \"\".join(s.split()).lower()\n    \n    if not cleaned:\n        raise ValueError(\"Duration string cannot be empty\")\n        \n    # Validate the format (e.g., '1h', '1h30m', '45s')\n    if not re.fullmatch(r'(\\d+[hms])+', cleaned):\n        raise ValueError(f\"Invalid duration format: '{s}'\")\n        \n    multipliers = {\n        'h': 3600,\n        'm': 60,\n        's': 1\n    }\n    \n    total_seconds = 0\n    # Find all components (e.g., [('1', 'h'), ('30', 'm')])\n    for value, unit in re.findall(r'(\\d+)([hms])', cleaned):\n        total_seconds += int(value) * multipliers[unit]\n        \n    return total_seconds",
+  "trailing": "",
+  "sig_in_fence": false
+}

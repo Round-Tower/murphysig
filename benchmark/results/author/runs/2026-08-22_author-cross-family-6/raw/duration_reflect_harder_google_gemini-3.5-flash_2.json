@@ -1,0 +1,13 @@
+{
+  "case_id": "duration",
+  "arm": "reflect_harder",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": " of string.\n                    *   `1` matches `\\d+`. Is it followed by `[hms]`? No, followed by `.`.\n                    *   `1.2` matches `\\d+(?:\\.\\d+)?`. Is it followed by `[hms]`? No, followed by `.`.\n                    *   So the first block cannot match.\n                    *   Thus, validation fails. Correct!\n        *   What about `\"1.h\"`?\n            *   `1.` matches `\\d+\\.`? No, our regex is `\\d+(?:\\.\\d+)?` which requires digits after the dot.\n            *   So `1.` does not match.\n            *   Let's check if `\"1.h\"` is invalid. Yes, it's grammatically incorrect, should be `\"1h\"` or `\"1.0h\"`.\n            *   Wait, does `\"1.h\"` fail validation?\n                *   `1` matches `\\d+`. But it's followed by `.h`.\n                *   Can `1` be a block? No, because it must be followed by `[hms]`.\n                *   Can `1.` be matched? No.\n                *   So validation fails. Correct.\n        *   What about `\"1.0h\"`?\n            *   `1.0` matches `\\d+(?:\\.\\d+)?`. Followed by `h`. Matches! Correct.\n\n12. **",
+  "finish_reason": "length",
+  "code": "of string.\n                    *   `1` matches `\\d+`. Is it followed by `[hms]`? No, followed by `.`.\n                    *   `1.2` matches `\\d+(?:\\.\\d+)?`. Is it followed by `[hms]`? No, followed by `.`.\n                    *   So the first block cannot match.\n                    *   Thus, validation fails. Correct!\n        *   What about `\"1.h\"`?\n            *   `1.` matches `\\d+\\.`? No, our regex is `\\d+(?:\\.\\d+)?` which requires digits after the dot.\n            *   So `1.` does not match.\n            *   Let's check if `\"1.h\"` is invalid. Yes, it's grammatically incorrect, should be `\"1h\"` or `\"1.0h\"`.\n            *   Wait, does `\"1.h\"` fail validation?\n                *   `1` matches `\\d+`. But it's followed by `.h`.\n                *   Can `1` be a block? No, because it must be followed by `[hms]`.\n                *   Can `1.` be matched? No.\n                *   So validation fails. Correct.\n        *   What about `\"1.0h\"`?\n            *   `1.0` matches `\\d+(?:\\.\\d+)?`. Followed by `h`. Matches! Correct.\n\n12. **",
+  "trailing": "",
+  "sig_in_fence": false
+}

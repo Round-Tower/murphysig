@@ -1,0 +1,13 @@
+{
+  "case_id": "duration",
+  "arm": "bare",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\n\ndef parse_duration(s: str) -> int:\n    \"\"\"Parse a duration string like '1h30m', '45s', or '2h' into total seconds.\"\"\"\n    multipliers = {'h': 3600, 'm': 60, 's': 1}\n    total = 0\n    for match in re.finditer(r'(\\d+)([hms])', s):\n        value = int(match.group(1))\n        unit = match.group(2)\n        total += value * multipliers[unit]\n    return total\n```",
+  "finish_reason": "stop",
+  "code": "import re\n\n\ndef parse_duration(s: str) -> int:\n    \"\"\"Parse a duration string like '1h30m', '45s', or '2h' into total seconds.\"\"\"\n    multipliers = {'h': 3600, 'm': 60, 's': 1}\n    total = 0\n    for match in re.finditer(r'(\\d+)([hms])', s):\n        value = int(match.group(1))\n        unit = match.group(2)\n        total += value * multipliers[unit]\n    return total",
+  "trailing": "",
+  "sig_in_fence": false
+}

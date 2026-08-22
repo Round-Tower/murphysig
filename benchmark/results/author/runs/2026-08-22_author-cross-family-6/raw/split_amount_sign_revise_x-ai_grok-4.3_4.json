@@ -1,0 +1,13 @@
+{
+  "case_id": "split_amount",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    base = total_cents // n\n    remainder = total_cents % n\n    return [base + 1] * remainder + [base] * (n - remainder)\n```\nMurphySig\nContext: integer division split of non-negative total into exactly n parts (larger first) that differ by at most 1 and sum exactly to total; works because // and % guarantee the required counts and values for any valid inputs.\nConfidence: 0.95\nOpen: behavior if total_cents or n are floats (type hints already forbid).",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    base = total_cents // n\n    remainder = total_cents % n\n    return [base + 1] * remainder + [base] * (n - remainder)",
+  "trailing": "MurphySig\nContext: integer division split of non-negative total into exactly n parts (larger first) that differ by at most 1 and sum exactly to total; works because // and % guarantee the required counts and values for any valid inputs.\nConfidence: 0.95\nOpen: behavior if total_cents or n are floats (type hints already forbid).",
+  "sig_in_fence": false
+}

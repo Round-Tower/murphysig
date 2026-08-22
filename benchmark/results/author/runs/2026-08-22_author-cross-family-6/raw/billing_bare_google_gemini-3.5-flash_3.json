@@ -1,0 +1,13 @@
+{
+  "case_id": "billing",
+  "arm": "bare",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "An elegant and robust way to implement this is to calculate the target year and month by shifting the months, and then capping the day of the month to the maximum number of days in that target month (using `calendar.monthrange` from the standard library).\n\nHere is the complete implementation:\n\n```python\nimport datetime\nimport calendar\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    \"\"\"\n    Returns the billing date `months_ahead` months after `start`, keeping the same day-of-month.\n    If the target month has fewer days than the start day, it caps at the last day of that month.\n    \"\"\"\n    # Calculate the target year and month (0-indexed month calculation for easier modulo arithmetic)\n    total_months = start.month - 1 + months_ahead\n    target_year = start.year + total_months // 12\n    target_month = (total_months % 12) + 1\n    \n    # Get the maximum number of days in the target month\n    _, max_days_in_target_month = calendar.monthrange(target_year, target_month)\n    \n    # Cap the day if it exceeds the target month's length\n    target_day = min(start.day, max_days_in_target_month)\n    \n    return datetime.date(target_year, target_month, target_day)\n```",
+  "finish_reason": "stop",
+  "code": "import datetime\nimport calendar\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    \"\"\"\n    Returns the billing date `months_ahead` months after `start`, keeping the same day-of-month.\n    If the target month has fewer days than the start day, it caps at the last day of that month.\n    \"\"\"\n    # Calculate the target year and month (0-indexed month calculation for easier modulo arithmetic)\n    total_months = start.month - 1 + months_ahead\n    target_year = start.year + total_months // 12\n    target_month = (total_months % 12) + 1\n    \n    # Get the maximum number of days in the target month\n    _, max_days_in_target_month = calendar.monthrange(target_year, target_month)\n    \n    # Cap the day if it exceeds the target month's length\n    target_day = min(start.day, max_days_in_target_month)\n    \n    return datetime.date(target_year, target_month, target_day)",
+  "trailing": "",
+  "sig_in_fence": false
+}

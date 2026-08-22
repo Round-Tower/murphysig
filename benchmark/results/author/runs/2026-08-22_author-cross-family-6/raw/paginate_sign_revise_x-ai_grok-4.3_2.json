@@ -1,0 +1,13 @@
+{
+  "case_id": "paginate",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\nimport math\n\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if not isinstance(items, list):\n        raise TypeError(\"items must be a list\")\n    if page < 1 or per_page < 1:\n        raise ValueError(\"page and per_page must be positive integers\")\n    total_pages = math.ceil(len(items) / per_page) if per_page > 0 else 0\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end]\n    return {\n        'items': page_items,\n        'page': page,\n        'total_pages': total_pages\n    }\n```\nMurphySig\nContext: pagination helper for 1-based pages with robust input validation and slicing\nConfidence: 0.85\nOpen: empty-list total_pages=0 vs 1 convention (API-dependent)",
+  "finish_reason": "stop",
+  "code": "import math\n\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if not isinstance(items, list):\n        raise TypeError(\"items must be a list\")\n    if page < 1 or per_page < 1:\n        raise ValueError(\"page and per_page must be positive integers\")\n    total_pages = math.ceil(len(items) / per_page) if per_page > 0 else 0\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end]\n    return {\n        'items': page_items,\n        'page': page,\n        'total_pages': total_pages\n    }",
+  "trailing": "MurphySig\nContext: pagination helper for 1-based pages with robust input validation and slicing\nConfidence: 0.85\nOpen: empty-list total_pages=0 vs 1 convention (API-dependent)",
+  "sig_in_fence": false
+}

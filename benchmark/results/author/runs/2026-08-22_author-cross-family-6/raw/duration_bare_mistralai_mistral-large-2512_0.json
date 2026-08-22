@@ -1,0 +1,13 @@
+{
+  "case_id": "duration",
+  "arm": "bare",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    \"\"\"\n    Parses a duration string into total seconds.\n\n    Args:\n        s: A string representing a duration with units 'h' (hours), 'm' (minutes), or 's' (seconds).\n           Examples: '1h30m', '45s', '2h'.\n\n    Returns:\n        The total duration in seconds as an integer.\n\n    Raises:\n        ValueError: If the string is malformed or contains unsupported units.\n    \"\"\"\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    if not matches:\n        raise ValueError(f\"Invalid duration string: '{s}'\")\n\n    total_seconds = 0\n    for value, unit in matches:\n        num = int(value)\n        if unit == 'h':\n            total_seconds += num * 3600\n        elif unit == 'm':\n            total_seconds += num * 60\n        elif unit == 's':\n            total_seconds += num\n        else:\n            raise ValueError(f\"Unsupported unit: '{unit}'\")\n\n    return total_seconds\n```",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    \"\"\"\n    Parses a duration string into total seconds.\n\n    Args:\n        s: A string representing a duration with units 'h' (hours), 'm' (minutes), or 's' (seconds).\n           Examples: '1h30m', '45s', '2h'.\n\n    Returns:\n        The total duration in seconds as an integer.\n\n    Raises:\n        ValueError: If the string is malformed or contains unsupported units.\n    \"\"\"\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    if not matches:\n        raise ValueError(f\"Invalid duration string: '{s}'\")\n\n    total_seconds = 0\n    for value, unit in matches:\n        num = int(value)\n        if unit == 'h':\n            total_seconds += num * 3600\n        elif unit == 'm':\n            total_seconds += num * 60\n        elif unit == 's':\n            total_seconds += num\n        else:\n            raise ValueError(f\"Unsupported unit: '{unit}'\")\n\n    return total_seconds",
+  "trailing": "",
+  "sig_in_fence": false
+}

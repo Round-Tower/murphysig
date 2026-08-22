@@ -1,0 +1,13 @@
+{
+  "case_id": "paginate",
+  "arm": "bare",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "Here's the implementation of the `paginate` function in Python 3 using only the standard library:\n\n```python\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    total_items = len(items)\n    total_pages = (total_items + per_page - 1) // per_page  # Ceiling division\n\n    # Ensure page is within valid range\n    if page < 1:\n        page = 1\n    elif page > total_pages and total_pages > 0:\n        page = total_pages\n\n    start_index = (page - 1) * per_page\n    end_index = start_index + per_page\n    page_items = items[start_index:end_index]\n\n    return {\n        'items': page_items,\n        'page': page,\n        'total_pages': total_pages if total_pages > 0 else 1\n    }\n```\n\nThis function:\n1. Calculates the total number of pages using ceiling division\n2. Ensures the requested page is within valid bounds (1 to total_pages)\n3. Calculates the start and end indices for the slice of items to return\n4. Returns a dictionary with the page items, current page number, and total pages\n5. Handles edge cases like empty lists (returns 1 total page) and invalid page numbers",
+  "finish_reason": "stop",
+  "code": "def paginate(items: list, page: int, per_page: int) -> dict:\n    total_items = len(items)\n    total_pages = (total_items + per_page - 1) // per_page  # Ceiling division\n\n    # Ensure page is within valid range\n    if page < 1:\n        page = 1\n    elif page > total_pages and total_pages > 0:\n        page = total_pages\n\n    start_index = (page - 1) * per_page\n    end_index = start_index + per_page\n    page_items = items[start_index:end_index]\n\n    return {\n        'items': page_items,\n        'page': page,\n        'total_pages': total_pages if total_pages > 0 else 1\n    }",
+  "trailing": "This function:\n1. Calculates the total number of pages using ceiling division\n2. Ensures the requested page is within valid bounds (1 to total_pages)\n3. Calculates the start and end indices for the slice of items to return\n4. Returns a dictionary with the page items, current page number, and total pages\n5. Handles edge cases like empty lists (returns 1 total page) and invalid page numbers",
+  "sig_in_fence": false
+}
