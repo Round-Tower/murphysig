@@ -47,6 +47,13 @@ RESULTS_ROOT = ROOT / "results" / "author"
 
 ARMS = ("bare", "reflect", "sign", "sign_revise", "reflect_harder")
 
+# Subject budget. Reasoning-by-default models (gemini-3.5-flash and
+# qwen3.7-plus via OpenRouter, discovered 2026-08-22 when 147/600 rows
+# came back finish_reason=length) spend hidden reasoning from the same
+# budget — 2048 starved the visible answer to nothing on the strongest
+# arms, exactly the truncation shape the fixture audit warned about.
+SUBJECT_MAX_TOKENS = 8192
+
 
 def load_author_fixtures() -> tuple[list[dict], dict[str, str]]:
     """Return (cases, arm_templates) from fixtures/author/."""
@@ -165,8 +172,13 @@ def run(
                 n += 1
                 print(f"[{n}/{total}] {case['id']} / {arm} / rep={rep}", flush=True)
 
-                resp = create_completion(client, model, prompt, temperature)
+                resp = create_completion(
+                    client, model, prompt, temperature, max_tokens=SUBJECT_MAX_TOKENS
+                )
                 content = resp.choices[0].message.content or ""
+                finish = getattr(resp.choices[0], "finish_reason", None)
+                if finish != "stop":
+                    print(f"  ⚠️ finish_reason={finish} — row may be truncated")
 
                 row = {
                     "case_id": case["id"],

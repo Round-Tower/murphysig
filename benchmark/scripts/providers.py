@@ -100,16 +100,22 @@ def call_with_retries(fn, *, retries: int, base_delay: float, sleep=time.sleep):
     raise AssertionError("unreachable")  # pragma: no cover
 
 
-def create_completion(client, model: str, prompt: str, temperature: float):
+def create_completion(
+    client, model: str, prompt: str, temperature: float, max_tokens: int = 2048
+):
     """Chat-completions call with graceful fallbacks:
     - GPT-5-family reasoning models reject explicit temperature;
     - older/compat providers reject max_completion_tokens (want max_tokens);
     - upstream 429s (free-tier bursts) are retried with backoff.
+    max_tokens default stays 2048 (judge calls, TK/Honesty runners);
+    subject runners raise it — reasoning-by-default models (gemini-3.5-
+    flash, qwen3.7-plus on OpenRouter, found 2026-08-22) spend hidden
+    reasoning from the same budget and truncate the visible answer.
     """
     base = {"model": model, "messages": [{"role": "user", "content": prompt}]}
     last_err: Exception | None = None
     for tok_param in ("max_completion_tokens", "max_tokens"):
-        kwargs = {**base, tok_param: 2048}
+        kwargs = {**base, tok_param: max_tokens}
         for with_temp in (True, False):
             def _do(wt=with_temp, kw=kwargs):
                 if wt:

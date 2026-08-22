@@ -67,3 +67,46 @@ class TestRetry:
 
         with pytest.raises(ValueError):
             call_with_retries(fn, retries=3, base_delay=0.0, sleep=lambda s: None)
+
+
+class _FakeClient:
+    """Records chat.completions.create kwargs and returns a stub."""
+
+    def __init__(self):
+        self.calls = []
+        outer = self
+
+        class _Completions:
+            def create(self, **kwargs):
+                outer.calls.append(kwargs)
+                class _Msg:
+                    content = "ok"
+                class _Choice:
+                    message = _Msg()
+                    finish_reason = "stop"
+                class _Resp:
+                    choices = [_Choice()]
+                return _Resp()
+
+        class _Chat:
+            completions = _Completions()
+
+        self.chat = _Chat()
+
+
+class TestMaxTokensOverride:
+    """2026-08-22: gemini-3.5-flash and qwen3.7-plus became reasoning-by-
+    default on OpenRouter — hidden reasoning ate the 2048 budget and
+    truncated 147/600 author rows (finish_reason=length, some with ZERO
+    visible chars). Subject calls need a raisable budget; the default
+    stays 2048 so existing judge/TK behavior is untouched."""
+
+    def test_default_budget_is_2048(self):
+        client = _FakeClient()
+        create_completion(client, "m", "p", 0.7)
+        assert client.calls[0]["max_completion_tokens"] == 2048
+
+    def test_explicit_budget_passes_through(self):
+        client = _FakeClient()
+        create_completion(client, "m", "p", 0.7, max_tokens=8192)
+        assert client.calls[0]["max_completion_tokens"] == 8192
