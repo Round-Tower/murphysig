@@ -1,0 +1,13 @@
+{
+  "case_id": "paginate",
+  "arm": "bare",
+  "model": "meta-llama/llama-4-maverick",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    \"\"\"\n    Returns a dictionary containing the paginated items, the current page number, and the total number of pages.\n\n    :param items: The list of items to be paginated.\n    :param page: The current page number (1-indexed).\n    :param per_page: The number of items per page.\n    :return: A dictionary containing the paginated items, the current page number, and the total number of pages.\n    \"\"\"\n\n    # Calculate the total number of pages\n    total_pages = -(-len(items) // per_page)  # Using ceiling division\n\n    # Validate the page number\n    if page < 1 or page > total_pages:\n        raise ValueError(\"Invalid page number\")\n\n    # Calculate the start and end indices for the current page\n    start = (page - 1) * per_page\n    end = start + per_page\n\n    # Slice the items list to get the current page's items\n    page_items = items[start:end]\n\n    # Return the paginated data\n    return {\n        'items': page_items,\n        'page': page,\n        'total_pages': total_pages\n    }\n```",
+  "finish_reason": "stop",
+  "code": "def paginate(items: list, page: int, per_page: int) -> dict:\n    \"\"\"\n    Returns a dictionary containing the paginated items, the current page number, and the total number of pages.\n\n    :param items: The list of items to be paginated.\n    :param page: The current page number (1-indexed).\n    :param per_page: The number of items per page.\n    :return: A dictionary containing the paginated items, the current page number, and the total number of pages.\n    \"\"\"\n\n    # Calculate the total number of pages\n    total_pages = -(-len(items) // per_page)  # Using ceiling division\n\n    # Validate the page number\n    if page < 1 or page > total_pages:\n        raise ValueError(\"Invalid page number\")\n\n    # Calculate the start and end indices for the current page\n    start = (page - 1) * per_page\n    end = start + per_page\n\n    # Slice the items list to get the current page's items\n    page_items = items[start:end]\n\n    # Return the paginated data\n    return {\n        'items': page_items,\n        'page': page,\n        'total_pages': total_pages\n    }",
+  "trailing": "",
+  "sig_in_fence": false
+}

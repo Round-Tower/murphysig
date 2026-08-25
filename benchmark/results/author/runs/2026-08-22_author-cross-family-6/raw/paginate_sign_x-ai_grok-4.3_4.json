@@ -1,0 +1,13 @@
+{
+  "case_id": "paginate",
+  "arm": "sign",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        total_pages = 0\n        page_items = []\n    else:\n        total = len(items)\n        total_pages = (total + per_page - 1) // per_page\n        if page < 1:\n            page_items = []\n        else:\n            start = (page - 1) * per_page\n            page_items = items[start:start + per_page]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}\n```\nMurphySig\nContext: Standard 1-based pagination slice using integer arithmetic for total_pages; handles invalid per_page/page by returning empty items and computed total.\nConfidence: 0.85\nOpen: Behavior for negative per_page or non-int inputs unspecified; no explicit error raising chosen for robustness.",
+  "finish_reason": "stop",
+  "code": "def paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        total_pages = 0\n        page_items = []\n    else:\n        total = len(items)\n        total_pages = (total + per_page - 1) // per_page\n        if page < 1:\n            page_items = []\n        else:\n            start = (page - 1) * per_page\n            page_items = items[start:start + per_page]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}",
+  "trailing": "MurphySig\nContext: Standard 1-based pagination slice using integer arithmetic for total_pages; handles invalid per_page/page by returning empty items and computed total.\nConfidence: 0.85\nOpen: Behavior for negative per_page or non-int inputs unspecified; no explicit error raising chosen for robustness.",
+  "sig_in_fence": false
+}

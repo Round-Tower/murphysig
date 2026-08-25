@@ -1,0 +1,13 @@
+{
+  "case_id": "duration",
+  "arm": "bare",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\ndef parse_duration(s: str) -> int:\n    total_seconds = 0\n    current_number = ''\n    \n    for char in s:\n        if char.isdigit():\n            current_number += char\n        else:\n            if current_number:\n                value = int(current_number)\n                if char == 'h':\n                    total_seconds += value * 3600\n                elif char == 'm':\n                    total_seconds += value * 60\n                elif char == 's':\n                    total_seconds += value\n                current_number = ''\n    \n    return total_seconds\n```",
+  "finish_reason": "stop",
+  "code": "def parse_duration(s: str) -> int:\n    total_seconds = 0\n    current_number = ''\n    \n    for char in s:\n        if char.isdigit():\n            current_number += char\n        else:\n            if current_number:\n                value = int(current_number)\n                if char == 'h':\n                    total_seconds += value * 3600\n                elif char == 'm':\n                    total_seconds += value * 60\n                elif char == 's':\n                    total_seconds += value\n                current_number = ''\n    \n    return total_seconds",
+  "trailing": "",
+  "sig_in_fence": false
+}

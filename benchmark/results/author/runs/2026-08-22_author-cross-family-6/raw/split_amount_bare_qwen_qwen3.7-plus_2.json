@@ -1,0 +1,13 @@
+{
+  "case_id": "split_amount",
+  "arm": "bare",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    base, remainder = divmod(total_cents, n)\n    return [base + 1] * remainder + [base] * (n - remainder)\n```",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    base, remainder = divmod(total_cents, n)\n    return [base + 1] * remainder + [base] * (n - remainder)",
+  "trailing": "",
+  "sig_in_fence": false
+}

@@ -8,6 +8,13 @@
 #   curl -sL https://murphysig.dev/init | bash
 #
 # Idempotent — safe to re-run.
+#
+# Signed: Kev + claude-fable-5, 2026-07-12
+# Format: MurphySig v0.4 (https://murphysig.dev/spec)
+# Prior: Unknown (script predates this signature)
+# Context: Added AGENTS.md discovery alongside CLAUDE.md — the convention
+# shouldn't be Claude-only. Both paths idempotent; covered by tests/test_init.sh.
+# Confidence: 0.85 — the discovery matrix is tested; author fallback chain isn't.
 
 set -e
 
@@ -61,7 +68,10 @@ EOF
     echo "✓  Wrote .murphysig"
 fi
 
+FOUND_DISCOVERY=0
+
 if [ -f CLAUDE.md ]; then
+    FOUND_DISCOVERY=1
     if grep -qF "@.murphysig" CLAUDE.md 2>/dev/null; then
         echo "✓  CLAUDE.md already imports @.murphysig"
     else
@@ -70,12 +80,32 @@ if [ -f CLAUDE.md ]; then
         mv CLAUDE.md.new CLAUDE.md
         echo "✓  Added @.murphysig import to top of CLAUDE.md"
     fi
-else
+fi
+
+if [ -f AGENTS.md ]; then
+    FOUND_DISCOVERY=1
+    if grep -qF ".murphysig" AGENTS.md 2>/dev/null; then
+        echo "✓  AGENTS.md already references .murphysig"
+    else
+        # backticks below are markdown, not expansion
+        # shellcheck disable=SC2016
+        printf 'This project uses MurphySig — read `.murphysig` at the repo root and follow it. (https://murphysig.dev)\n\n' > AGENTS.md.new
+        cat AGENTS.md >> AGENTS.md.new
+        mv AGENTS.md.new AGENTS.md
+        echo "✓  Added MurphySig reference to top of AGENTS.md"
+    fi
+fi
+
+if [ "$FOUND_DISCOVERY" -eq 0 ]; then
     echo ""
-    echo "→  No CLAUDE.md found in this directory."
+    echo "→  No CLAUDE.md or AGENTS.md found in this directory."
     echo "   If you use Claude Code, create CLAUDE.md with this line at the top:"
     echo ""
     echo "       @.murphysig"
+    echo ""
+    echo "   For other AI tools, add this line to your AGENTS.md:"
+    echo ""
+    echo "       This project uses MurphySig — read .murphysig and follow it."
     echo ""
 fi
 

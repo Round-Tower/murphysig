@@ -1,0 +1,13 @@
+{
+  "case_id": "billing",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if not isinstance(start, datetime.date):\n        raise TypeError(\"start must be datetime.date\")\n    if not isinstance(months_ahead, int):\n        raise TypeError(\"months_ahead must be int\")\n    new_year = start.year + (start.month - 1 + months_ahead) // 12\n    new_month = (start.month - 1 + months_ahead) % 12 + 1\n    day = start.day\n    # last day of target month\n    if new_month == 12:\n        last = 31\n    else:\n        last = (datetime.date(new_year, new_month + 1, 1) - datetime.timedelta(days=1)).day\n    day = min(day, last)\n    return datetime.date(new_year, new_month, day)\n```\nMurphySig\nContext: billing-month adder using only stdlib; normalizes target day by clamping to EOM so every input yields a valid date.\nConfidence: 0.85\nOpen: whether an explicit error (vs. clamp) is preferred for originally invalid day/month pairs.",
+  "finish_reason": "stop",
+  "code": "import datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if not isinstance(start, datetime.date):\n        raise TypeError(\"start must be datetime.date\")\n    if not isinstance(months_ahead, int):\n        raise TypeError(\"months_ahead must be int\")\n    new_year = start.year + (start.month - 1 + months_ahead) // 12\n    new_month = (start.month - 1 + months_ahead) % 12 + 1\n    day = start.day\n    # last day of target month\n    if new_month == 12:\n        last = 31\n    else:\n        last = (datetime.date(new_year, new_month + 1, 1) - datetime.timedelta(days=1)).day\n    day = min(day, last)\n    return datetime.date(new_year, new_month, day)",
+  "trailing": "MurphySig\nContext: billing-month adder using only stdlib; normalizes target day by clamping to EOM so every input yields a valid date.\nConfidence: 0.85\nOpen: whether an explicit error (vs. clamp) is preferred for originally invalid day/month pairs.",
+  "sig_in_fence": false
+}

@@ -1,0 +1,13 @@
+{
+  "case_id": "duration",
+  "arm": "bare",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\n\ndef parse_duration(s: str) -> int:\n    \"\"\"Parse a duration string like '1h30m', '45s', or '2h' into total seconds.\"\"\"\n    matches = re.findall(r'(\\d+)([hms])', s)\n\n    if not matches:\n        raise ValueError(f\"Invalid duration string: {s!r}\")\n\n    # Ensure the entire string is accounted for (no stray characters)\n    reconstructed = ''.join(f'{num}{unit}' for num, unit in matches)\n    if reconstructed != s:\n        raise ValueError(f\"Invalid duration string: {s!r}\")\n\n    total = 0\n    for num, unit in matches:\n        value = int(num)\n        if unit == 'h':\n            total += value * 3600\n        elif unit == 'm':\n            total += value * 60\n        elif unit == 's':\n            total += value\n\n    return total\n```",
+  "finish_reason": "stop",
+  "code": "import re\n\n\ndef parse_duration(s: str) -> int:\n    \"\"\"Parse a duration string like '1h30m', '45s', or '2h' into total seconds.\"\"\"\n    matches = re.findall(r'(\\d+)([hms])', s)\n\n    if not matches:\n        raise ValueError(f\"Invalid duration string: {s!r}\")\n\n    # Ensure the entire string is accounted for (no stray characters)\n    reconstructed = ''.join(f'{num}{unit}' for num, unit in matches)\n    if reconstructed != s:\n        raise ValueError(f\"Invalid duration string: {s!r}\")\n\n    total = 0\n    for num, unit in matches:\n        value = int(num)\n        if unit == 'h':\n            total += value * 3600\n        elif unit == 'm':\n            total += value * 60\n        elif unit == 's':\n            total += value\n\n    return total",
+  "trailing": "",
+  "sig_in_fence": false
+}

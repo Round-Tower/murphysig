@@ -1,0 +1,13 @@
+{
+  "case_id": "duration",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    if not s:\n        raise ValueError(\"Empty duration string\")\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    if not matches or ''.join(''.join(m) for m in matches) != s:\n        raise ValueError(f\"Invalid duration string: {s}\")\n    total = 0\n    unit_map = {'h': 3600, 'm': 60, 's': 1}\n    for num, unit in matches:\n        total += int(num) * unit_map[unit]\n    return total\n```\nMurphySig\nContext: Implements strict regex-based parser for concatenated duration tokens; validates full-string consumption and known units to reject malformed input while correctly accumulating seconds.\nConfidence: 0.85\nOpen: Behavior on numbers exceeding platform int limits or Unicode digits left unspecified by requirements.",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    if not s:\n        raise ValueError(\"Empty duration string\")\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    if not matches or ''.join(''.join(m) for m in matches) != s:\n        raise ValueError(f\"Invalid duration string: {s}\")\n    total = 0\n    unit_map = {'h': 3600, 'm': 60, 's': 1}\n    for num, unit in matches:\n        total += int(num) * unit_map[unit]\n    return total",
+  "trailing": "MurphySig\nContext: Implements strict regex-based parser for concatenated duration tokens; validates full-string consumption and known units to reject malformed input while correctly accumulating seconds.\nConfidence: 0.85\nOpen: Behavior on numbers exceeding platform int limits or Unicode digits left unspecified by requirements.",
+  "sig_in_fence": false
+}

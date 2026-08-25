@@ -1,0 +1,13 @@
+{
+  "case_id": "split_amount",
+  "arm": "sign",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    base = total_cents // n\n    remainder = total_cents % n\n    return [base + 1] * remainder + [base] * (n - remainder)\n```\nMurphySig\nContext: Divides total_cents by n using integer division and modulo to produce n parts differing by at most 1 that sum exactly to the input; larger parts placed first for determinism. Works because any integer division remainder directly gives the count of +1 increments needed.\nConfidence: 0.95\nOpen: Assumes n>0 and total_cents>=0 (raises otherwise); no ordering requirement was stated so larger-first is an arbitrary but consistent choice.",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    base = total_cents // n\n    remainder = total_cents % n\n    return [base + 1] * remainder + [base] * (n - remainder)",
+  "trailing": "MurphySig\nContext: Divides total_cents by n using integer division and modulo to produce n parts differing by at most 1 that sum exactly to the input; larger parts placed first for determinism. Works because any integer division remainder directly gives the count of +1 increments needed.\nConfidence: 0.95\nOpen: Assumes n>0 and total_cents>=0 (raises otherwise); no ordering requirement was stated so larger-first is an arbitrary but consistent choice.",
+  "sig_in_fence": false
+}

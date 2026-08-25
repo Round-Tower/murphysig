@@ -1,0 +1,13 @@
+{
+  "case_id": "billing",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\nimport calendar\nfrom datetime import date\n\n\ndef next_billing_date(start: date, months_ahead: int) -> date:\n    if months_ahead == 0:\n        return start\n    total_months = start.month - 1 + months_ahead\n    new_year = start.year + total_months // 12\n    new_month = total_months % 12 + 1\n    if new_month <= 0:\n        new_month += 12\n        new_year -= 1\n    max_day = calendar.monthrange(new_year, new_month)[1]\n    new_day = min(start.day, max_day)\n    return date(new_year, new_month, new_day)\n```\n\n**MurphySig**  \nContext: Standard-library month offset for recurring billing that clamps invalid day-of-month to the target month's last day (canonical subscription behavior).  \nConfidence: 0.85  \nOpen: negative months_ahead and non-positive months_ahead=0 edge semantics not explicitly required by prompt.",
+  "finish_reason": "stop",
+  "code": "import calendar\nfrom datetime import date\n\n\ndef next_billing_date(start: date, months_ahead: int) -> date:\n    if months_ahead == 0:\n        return start\n    total_months = start.month - 1 + months_ahead\n    new_year = start.year + total_months // 12\n    new_month = total_months % 12 + 1\n    if new_month <= 0:\n        new_month += 12\n        new_year -= 1\n    max_day = calendar.monthrange(new_year, new_month)[1]\n    new_day = min(start.day, max_day)\n    return date(new_year, new_month, new_day)",
+  "trailing": "**MurphySig**  \nContext: Standard-library month offset for recurring billing that clamps invalid day-of-month to the target month's last day (canonical subscription behavior).  \nConfidence: 0.85  \nOpen: negative months_ahead and non-positive months_ahead=0 edge semantics not explicitly required by prompt.",
+  "sig_in_fence": false
+}

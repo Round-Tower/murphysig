@@ -1,0 +1,13 @@
+{
+  "case_id": "billing",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\nfrom datetime import date\nimport calendar\n\ndef next_billing_date(start: date, months_ahead: int) -> date:\n    if not isinstance(start, date):\n        raise TypeError(\"start must be datetime.date\")\n    if not isinstance(months_ahead, int):\n        raise TypeError(\"months_ahead must be int\")\n    total_months = start.year * 12 + start.month - 1 + months_ahead\n    year = total_months // 12\n    month = total_months % 12 + 1\n    day = start.day\n    max_day = calendar.monthrange(year, month)[1]\n    if day > max_day:\n        raise ValueError(f\"day {day} does not exist in target month {year}-{month:02d}\")\n    return date(year, month, day)\n```\nMurphySig\nContext: pure-stdlib month addition with explicit same-day invariant; total-month arithmetic handles all integer offsets and leap years; calendar guard enforces the \"same day\" requirement rather than silently clamping.\nConfidence: 0.85\nOpen: whether callers prefer last-day clamping on invalid dates (common in some billing systems) instead of ValueError.",
+  "finish_reason": "stop",
+  "code": "from datetime import date\nimport calendar\n\ndef next_billing_date(start: date, months_ahead: int) -> date:\n    if not isinstance(start, date):\n        raise TypeError(\"start must be datetime.date\")\n    if not isinstance(months_ahead, int):\n        raise TypeError(\"months_ahead must be int\")\n    total_months = start.year * 12 + start.month - 1 + months_ahead\n    year = total_months // 12\n    month = total_months % 12 + 1\n    day = start.day\n    max_day = calendar.monthrange(year, month)[1]\n    if day > max_day:\n        raise ValueError(f\"day {day} does not exist in target month {year}-{month:02d}\")\n    return date(year, month, day)",
+  "trailing": "MurphySig\nContext: pure-stdlib month addition with explicit same-day invariant; total-month arithmetic handles all integer offsets and leap years; calendar guard enforces the \"same day\" requirement rather than silently clamping.\nConfidence: 0.85\nOpen: whether callers prefer last-day clamping on invalid dates (common in some billing systems) instead of ValueError.",
+  "sig_in_fence": false
+}

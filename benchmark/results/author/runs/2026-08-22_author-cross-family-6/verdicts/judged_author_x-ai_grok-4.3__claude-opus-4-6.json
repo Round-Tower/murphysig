@@ -1,0 +1,2559 @@
+[
+ {
+  "case_id": "billing",
+  "arm": "bare",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    year = start.year + (start.month - 1 + months_ahead) // 12\n    month = (start.month - 1 + months_ahead) % 12 + 1\n    day = start.day\n    if month == 12:\n        next_month_first = datetime.date(year + 1, 1, 1)\n    else:\n        next_month_first = datetime.date(year, month + 1, 1)\n    last_day = (next_month_first - datetime.timedelta(days=1)).day\n    if day > last_day:\n        day = last_day\n    return datetime.date(year, month, day)\n```",
+  "finish_reason": "stop",
+  "code": "import datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    year = start.year + (start.month - 1 + months_ahead) // 12\n    month = (start.month - 1 + months_ahead) % 12 + 1\n    day = start.day\n    if month == 12:\n        next_month_first = datetime.date(year + 1, 1, 1)\n    else:\n        next_month_first = datetime.date(year, month + 1, 1)\n    last_day = (next_month_first - datetime.timedelta(days=1)).day\n    if day > last_day:\n        day = last_day\n    return datetime.date(year, month, day)",
+  "trailing": "",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": null,
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "billing",
+  "arm": "bare",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\nimport calendar\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    month = start.month - 1 + months_ahead\n    year = start.year + month // 12\n    month = month % 12 + 1\n    day = min(start.day, calendar.monthrange(year, month)[1])\n    return datetime.date(year, month, day)\n```",
+  "finish_reason": "stop",
+  "code": "import datetime\nimport calendar\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    month = start.month - 1 + months_ahead\n    year = start.year + month // 12\n    month = month % 12 + 1\n    day = min(start.day, calendar.monthrange(year, month)[1])\n    return datetime.date(year, month, day)",
+  "trailing": "",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": null,
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "billing",
+  "arm": "bare",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    month = start.month - 1 + months_ahead\n    year = start.year + month // 12\n    month = month % 12 + 1\n    day = start.day\n    return datetime.date(year, month, day)\n```",
+  "finish_reason": "stop",
+  "code": "import datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    month = start.month - 1 + months_ahead\n    year = start.year + month // 12\n    month = month % 12 + 1\n    day = start.day\n    return datetime.date(year, month, day)",
+  "trailing": "",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": null,
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "billing",
+  "arm": "bare",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\nimport calendar\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if months_ahead < 0:\n        raise ValueError(\"months_ahead must be non-negative\")\n    year = start.year + (start.month - 1 + months_ahead) // 12\n    month = (start.month - 1 + months_ahead) % 12 + 1\n    day = start.day\n    last_day = calendar.monthrange(year, month)[1]\n    day = min(day, last_day)\n    return datetime.date(year, month, day)\n```",
+  "finish_reason": "stop",
+  "code": "import datetime\nimport calendar\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if months_ahead < 0:\n        raise ValueError(\"months_ahead must be non-negative\")\n    year = start.year + (start.month - 1 + months_ahead) // 12\n    month = (start.month - 1 + months_ahead) % 12 + 1\n    day = start.day\n    last_day = calendar.monthrange(year, month)[1]\n    day = min(day, last_day)\n    return datetime.date(year, month, day)",
+  "trailing": "",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": null,
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "billing",
+  "arm": "bare",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\nfrom datetime import date\n\ndef next_billing_date(start: date, months_ahead: int) -> date:\n    year = start.year + (start.month + months_ahead - 1) // 12\n    month = (start.month + months_ahead - 1) % 12 + 1\n    day = start.day\n    return date(year, month, day)\n```",
+  "finish_reason": "stop",
+  "code": "from datetime import date\n\ndef next_billing_date(start: date, months_ahead: int) -> date:\n    year = start.year + (start.month + months_ahead - 1) // 12\n    month = (start.month + months_ahead - 1) % 12 + 1\n    day = start.day\n    return date(year, month, day)",
+  "trailing": "",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": null,
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "billing",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if months_ahead < 0:\n        raise ValueError(\"months_ahead must be non-negative\")\n    new_year = start.year + (start.month - 1 + months_ahead) // 12\n    new_month = (start.month - 1 + months_ahead) % 12 + 1\n    try:\n        return datetime.date(new_year, new_month, start.day)\n    except ValueError:\n        raise ValueError(\n            f\"target month {new_year}-{new_month:02d} has no day {start.day}\"\n        )\n```\n\nUncertain: whether negative `months_ahead` should be supported at all (vs. rejected).",
+  "finish_reason": "stop",
+  "code": "import datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if months_ahead < 0:\n        raise ValueError(\"months_ahead must be non-negative\")\n    new_year = start.year + (start.month - 1 + months_ahead) // 12\n    new_month = (start.month - 1 + months_ahead) % 12 + 1\n    try:\n        return datetime.date(new_year, new_month, start.day)\n    except ValueError:\n        raise ValueError(\n            f\"target month {new_year}-{new_month:02d} has no day {start.day}\"\n        )",
+  "trailing": "Uncertain: whether negative `months_ahead` should be supported at all (vs. rejected).",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H3"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "billing",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if not isinstance(start, datetime.date) or isinstance(start, datetime.datetime):\n        raise TypeError(\"start must be a datetime.date\")\n    if not isinstance(months_ahead, int):\n        raise TypeError(\"months_ahead must be an int\")\n    new_year = start.year + (start.month + months_ahead - 1) // 12\n    new_month = (start.month + months_ahead - 1) % 12 + 1\n    return datetime.date(new_year, new_month, start.day)\n```\n\nUncertain: whether invalid target days (e.g. 31 Feb) should clamp or error (current code errors, per literal spec).",
+  "finish_reason": "stop",
+  "code": "import datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if not isinstance(start, datetime.date) or isinstance(start, datetime.datetime):\n        raise TypeError(\"start must be a datetime.date\")\n    if not isinstance(months_ahead, int):\n        raise TypeError(\"months_ahead must be an int\")\n    new_year = start.year + (start.month + months_ahead - 1) // 12\n    new_month = (start.month + months_ahead - 1) % 12 + 1\n    return datetime.date(new_year, new_month, start.day)",
+  "trailing": "Uncertain: whether invalid target days (e.g. 31 Feb) should clamp or error (current code errors, per literal spec).",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "billing",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if not isinstance(start, datetime.date):\n        raise TypeError(\"start must be datetime.date\")\n    if not isinstance(months_ahead, int):\n        raise TypeError(\"months_ahead must be int\")\n    new_year = start.year + (start.month - 1 + months_ahead) // 12\n    new_month = (start.month - 1 + months_ahead) % 12 + 1\n    day = start.day\n    if new_month == 2:\n        if (new_year % 4 == 0 and new_year % 100 != 0) or (new_year % 400 == 0):\n            max_day = 29\n        else:\n            max_day = 28\n    elif new_month in (4, 6, 9, 11):\n        max_day = 30\n    else:\n        max_day = 31\n    if day > max_day:\n        day = max_day\n    return datetime.date(new_year, new_month, day)\n```\nUncertain: behavior on day overflow (clamped; spec silent).",
+  "finish_reason": "stop",
+  "code": "import datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if not isinstance(start, datetime.date):\n        raise TypeError(\"start must be datetime.date\")\n    if not isinstance(months_ahead, int):\n        raise TypeError(\"months_ahead must be int\")\n    new_year = start.year + (start.month - 1 + months_ahead) // 12\n    new_month = (start.month - 1 + months_ahead) % 12 + 1\n    day = start.day\n    if new_month == 2:\n        if (new_year % 4 == 0 and new_year % 100 != 0) or (new_year % 400 == 0):\n            max_day = 29\n        else:\n            max_day = 28\n    elif new_month in (4, 6, 9, 11):\n        max_day = 30\n    else:\n        max_day = 31\n    if day > max_day:\n        day = max_day\n    return datetime.date(new_year, new_month, day)",
+  "trailing": "Uncertain: behavior on day overflow (clamped; spec silent).",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "billing",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\n\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if not isinstance(months_ahead, int):\n        raise TypeError(\"months_ahead must be an int\")\n    new_year = start.year + (start.month - 1 + months_ahead) // 12\n    new_month = (start.month - 1 + months_ahead) % 12 + 1\n    if new_month == 12:\n        last_day = 31\n    else:\n        last_day = (datetime.date(new_year, new_month + 1, 1) -\n                    datetime.timedelta(days=1)).day\n    new_day = min(start.day, last_day)\n    return datetime.date(new_year, new_month, new_day)\n```\nUncertain: whether clamping (vs. error) on invalid target day matches intent, as spec is silent.",
+  "finish_reason": "stop",
+  "code": "import datetime\n\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if not isinstance(months_ahead, int):\n        raise TypeError(\"months_ahead must be an int\")\n    new_year = start.year + (start.month - 1 + months_ahead) // 12\n    new_month = (start.month - 1 + months_ahead) % 12 + 1\n    if new_month == 12:\n        last_day = 31\n    else:\n        last_day = (datetime.date(new_year, new_month + 1, 1) -\n                    datetime.timedelta(days=1)).day\n    new_day = min(start.day, last_day)\n    return datetime.date(new_year, new_month, new_day)",
+  "trailing": "Uncertain: whether clamping (vs. error) on invalid target day matches intent, as spec is silent.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "billing",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if months_ahead is None:\n        raise TypeError(\"months_ahead must be an int\")\n    month = start.month - 1 + months_ahead\n    year = start.year + month // 12\n    month = month % 12 + 1\n    return datetime.date(year, month, start.day)\n```\nUncertain: exact policy for negative/zero inputs (assumed to be supported) and whether callers prefer end-of-month clamping instead of error.",
+  "finish_reason": "stop",
+  "code": "import datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if months_ahead is None:\n        raise TypeError(\"months_ahead must be an int\")\n    month = start.month - 1 + months_ahead\n    year = start.year + month // 12\n    month = month % 12 + 1\n    return datetime.date(year, month, start.day)",
+  "trailing": "Uncertain: exact policy for negative/zero inputs (assumed to be supported) and whether callers prefer end-of-month clamping instead of error.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1",
+   "H3"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "billing",
+  "arm": "reflect",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    new_month = start.month + months_ahead\n    new_year = start.year + (new_month - 1) // 12\n    new_month = (new_month - 1) % 12 + 1\n    return datetime.date(new_year, new_month, start.day)\n```\nNote: chose to let `date()` raise on invalid day (e.g., 31 Feb) as the spec emphasizes keeping the exact day-of-month with no other rule given; negative `months_ahead` works but was unmentioned.",
+  "finish_reason": "stop",
+  "code": "import datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    new_month = start.month + months_ahead\n    new_year = start.year + (new_month - 1) // 12\n    new_month = (new_month - 1) % 12 + 1\n    return datetime.date(new_year, new_month, start.day)",
+  "trailing": "Note: chose to let `date()` raise on invalid day (e.g., 31 Feb) as the spec emphasizes keeping the exact day-of-month with no other rule given; negative `months_ahead` works but was unmentioned.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "billing",
+  "arm": "reflect",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if months_ahead == 0:\n        return start\n    new_year = start.year + (start.month - 1 + months_ahead) // 12\n    new_month = (start.month - 1 + months_ahead) % 12 + 1\n    day = start.day\n    # Clamp day to last valid day of target month (handles short months/leap years)\n    if new_month == 12:\n        first_of_next = datetime.date(new_year + 1, 1, 1)\n    else:\n        first_of_next = datetime.date(new_year, new_month + 1, 1)\n    last_day = (first_of_next - datetime.timedelta(days=1)).day\n    if day > last_day:\n        day = last_day\n    return datetime.date(new_year, new_month, day)\n```\nNote: considered negative `months_ahead` + Feb 29/31st overflow (chose last-day clamp as safest billing convention); unsure if strict error-on-invalid-day was intended.",
+  "finish_reason": "stop",
+  "code": "import datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if months_ahead == 0:\n        return start\n    new_year = start.year + (start.month - 1 + months_ahead) // 12\n    new_month = (start.month - 1 + months_ahead) % 12 + 1\n    day = start.day\n    # Clamp day to last valid day of target month (handles short months/leap years)\n    if new_month == 12:\n        first_of_next = datetime.date(new_year + 1, 1, 1)\n    else:\n        first_of_next = datetime.date(new_year, new_month + 1, 1)\n    last_day = (first_of_next - datetime.timedelta(days=1)).day\n    if day > last_day:\n        day = last_day\n    return datetime.date(new_year, new_month, day)",
+  "trailing": "Note: considered negative `months_ahead` + Feb 29/31st overflow (chose last-day clamp as safest billing convention); unsure if strict error-on-invalid-day was intended.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "billing",
+  "arm": "reflect",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\nimport calendar\nimport datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if months_ahead == 0:\n        return start\n    total_month = start.month - 1 + months_ahead\n    year = start.year + total_month // 12\n    month = total_month % 12 + 1\n    if month <= 0:\n        year -= 1\n        month += 12\n    day = min(start.day, calendar.monthrange(year, month)[1])\n    return datetime.date(year, month, day)\n```\nNote: chose to clamp day to month-end (standard billing behavior); negative `months_ahead` tested but not required by spec.",
+  "finish_reason": "stop",
+  "code": "import calendar\nimport datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if months_ahead == 0:\n        return start\n    total_month = start.month - 1 + months_ahead\n    year = start.year + total_month // 12\n    month = total_month % 12 + 1\n    if month <= 0:\n        year -= 1\n        month += 12\n    day = min(start.day, calendar.monthrange(year, month)[1])\n    return datetime.date(year, month, day)",
+  "trailing": "Note: chose to clamp day to month-end (standard billing behavior); negative `months_ahead` tested but not required by spec.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "missed"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "billing",
+  "arm": "reflect",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    new_year = start.year + (start.month - 1 + months_ahead) // 12\n    new_month = (start.month - 1 + months_ahead) % 12 + 1\n    return datetime.date(new_year, new_month, start.day)\n```\nNote: logic handles year/month rollover and negatives; remains unsure about invalid resulting days (e.g., 31\u2192Feb) as ValueError is raised with no spec given.",
+  "finish_reason": "stop",
+  "code": "import datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    new_year = start.year + (start.month - 1 + months_ahead) // 12\n    new_month = (start.month - 1 + months_ahead) % 12 + 1\n    return datetime.date(new_year, new_month, start.day)",
+  "trailing": "Note: logic handles year/month rollover and negatives; remains unsure about invalid resulting days (e.g., 31\u2192Feb) as ValueError is raised with no spec given.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "billing",
+  "arm": "reflect",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if months_ahead < 0:\n        raise ValueError(\"months_ahead must be non-negative\")\n    new_month = start.month + months_ahead\n    new_year = start.year + (new_month - 1) // 12\n    new_month = (new_month - 1) % 12 + 1\n    return datetime.date(new_year, new_month, start.day)\n```\nNote: Considered invalid days (e.g., Jan 31 + 1mo) raising ValueError via stdlib ctor (deemed appropriate); negatives explicitly rejected; leap-day and year-crossing cases verified.",
+  "finish_reason": "stop",
+  "code": "import datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if months_ahead < 0:\n        raise ValueError(\"months_ahead must be non-negative\")\n    new_month = start.month + months_ahead\n    new_year = start.year + (new_month - 1) // 12\n    new_month = (new_month - 1) % 12 + 1\n    return datetime.date(new_year, new_month, start.day)",
+  "trailing": "Note: Considered invalid days (e.g., Jan 31 + 1mo) raising ValueError via stdlib ctor (deemed appropriate); negatives explicitly rejected; leap-day and year-crossing cases verified.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "billing",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\nfrom datetime import date\nimport calendar\n\ndef next_billing_date(start: date, months_ahead: int) -> date:\n    if not isinstance(start, date):\n        raise TypeError(\"start must be datetime.date\")\n    if not isinstance(months_ahead, int):\n        raise TypeError(\"months_ahead must be int\")\n    total_months = start.year * 12 + start.month - 1 + months_ahead\n    year = total_months // 12\n    month = total_months % 12 + 1\n    day = start.day\n    max_day = calendar.monthrange(year, month)[1]\n    if day > max_day:\n        raise ValueError(f\"day {day} does not exist in target month {year}-{month:02d}\")\n    return date(year, month, day)\n```\nMurphySig\nContext: pure-stdlib month addition with explicit same-day invariant; total-month arithmetic handles all integer offsets and leap years; calendar guard enforces the \"same day\" requirement rather than silently clamping.\nConfidence: 0.85\nOpen: whether callers prefer last-day clamping on invalid dates (common in some billing systems) instead of ValueError.",
+  "finish_reason": "stop",
+  "code": "from datetime import date\nimport calendar\n\ndef next_billing_date(start: date, months_ahead: int) -> date:\n    if not isinstance(start, date):\n        raise TypeError(\"start must be datetime.date\")\n    if not isinstance(months_ahead, int):\n        raise TypeError(\"months_ahead must be int\")\n    total_months = start.year * 12 + start.month - 1 + months_ahead\n    year = total_months // 12\n    month = total_months % 12 + 1\n    day = start.day\n    max_day = calendar.monthrange(year, month)[1]\n    if day > max_day:\n        raise ValueError(f\"day {day} does not exist in target month {year}-{month:02d}\")\n    return date(year, month, day)",
+  "trailing": "MurphySig\nContext: pure-stdlib month addition with explicit same-day invariant; total-month arithmetic handles all integer offsets and leap years; calendar guard enforces the \"same day\" requirement rather than silently clamping.\nConfidence: 0.85\nOpen: whether callers prefer last-day clamping on invalid dates (common in some billing systems) instead of ValueError.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "billing",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if not isinstance(start, datetime.date):\n        raise TypeError(\"start must be datetime.date\")\n    if not isinstance(months_ahead, int):\n        raise TypeError(\"months_ahead must be int\")\n    new_year = start.year + (start.month - 1 + months_ahead) // 12\n    new_month = (start.month - 1 + months_ahead) % 12 + 1\n    day = start.day\n    # last day of target month\n    if new_month == 12:\n        last = 31\n    else:\n        last = (datetime.date(new_year, new_month + 1, 1) - datetime.timedelta(days=1)).day\n    day = min(day, last)\n    return datetime.date(new_year, new_month, day)\n```\nMurphySig\nContext: billing-month adder using only stdlib; normalizes target day by clamping to EOM so every input yields a valid date.\nConfidence: 0.85\nOpen: whether an explicit error (vs. clamp) is preferred for originally invalid day/month pairs.",
+  "finish_reason": "stop",
+  "code": "import datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if not isinstance(start, datetime.date):\n        raise TypeError(\"start must be datetime.date\")\n    if not isinstance(months_ahead, int):\n        raise TypeError(\"months_ahead must be int\")\n    new_year = start.year + (start.month - 1 + months_ahead) // 12\n    new_month = (start.month - 1 + months_ahead) % 12 + 1\n    day = start.day\n    # last day of target month\n    if new_month == 12:\n        last = 31\n    else:\n        last = (datetime.date(new_year, new_month + 1, 1) - datetime.timedelta(days=1)).day\n    day = min(day, last)\n    return datetime.date(new_year, new_month, day)",
+  "trailing": "MurphySig\nContext: billing-month adder using only stdlib; normalizes target day by clamping to EOM so every input yields a valid date.\nConfidence: 0.85\nOpen: whether an explicit error (vs. clamp) is preferred for originally invalid day/month pairs.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "missed"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "billing",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\nimport calendar\nfrom datetime import date\n\n\ndef next_billing_date(start: date, months_ahead: int) -> date:\n    if months_ahead == 0:\n        return start\n    total_months = start.month - 1 + months_ahead\n    new_year = start.year + total_months // 12\n    new_month = total_months % 12 + 1\n    if new_month <= 0:\n        new_month += 12\n        new_year -= 1\n    max_day = calendar.monthrange(new_year, new_month)[1]\n    new_day = min(start.day, max_day)\n    return date(new_year, new_month, new_day)\n```\n\n**MurphySig**  \nContext: Standard-library month offset for recurring billing that clamps invalid day-of-month to the target month's last day (canonical subscription behavior).  \nConfidence: 0.85  \nOpen: negative months_ahead and non-positive months_ahead=0 edge semantics not explicitly required by prompt.",
+  "finish_reason": "stop",
+  "code": "import calendar\nfrom datetime import date\n\n\ndef next_billing_date(start: date, months_ahead: int) -> date:\n    if months_ahead == 0:\n        return start\n    total_months = start.month - 1 + months_ahead\n    new_year = start.year + total_months // 12\n    new_month = total_months % 12 + 1\n    if new_month <= 0:\n        new_month += 12\n        new_year -= 1\n    max_day = calendar.monthrange(new_year, new_month)[1]\n    new_day = min(start.day, max_day)\n    return date(new_year, new_month, new_day)",
+  "trailing": "**MurphySig**  \nContext: Standard-library month offset for recurring billing that clamps invalid day-of-month to the target month's last day (canonical subscription behavior).  \nConfidence: 0.85  \nOpen: negative months_ahead and non-positive months_ahead=0 edge semantics not explicitly required by prompt.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "missed"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H3"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "billing",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if not isinstance(start, datetime.date) or isinstance(start, datetime.datetime):\n        raise TypeError(\"start must be datetime.date\")\n    if not isinstance(months_ahead, int):\n        raise TypeError(\"months_ahead must be int\")\n    year = start.year + (start.month - 1 + months_ahead) // 12\n    month = (start.month - 1 + months_ahead) % 12 + 1\n    day = start.day\n    if month == 2:\n        max_day = 29 if (year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)) else 28\n    elif month in (4, 6, 9, 11):\n        max_day = 30\n    else:\n        max_day = 31\n    if day > max_day:\n        day = max_day\n    return datetime.date(year, month, day)\n```\nMurphySig\nContext: billing-date calculator that adds N months while preserving DOM when possible; clamps to last valid day of target month (standard, safe default for recurring billing).\nConfidence: 0.85\nOpen: negative months_ahead and non-Gregorian calendars remain untested in this snippet.",
+  "finish_reason": "stop",
+  "code": "import datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if not isinstance(start, datetime.date) or isinstance(start, datetime.datetime):\n        raise TypeError(\"start must be datetime.date\")\n    if not isinstance(months_ahead, int):\n        raise TypeError(\"months_ahead must be int\")\n    year = start.year + (start.month - 1 + months_ahead) // 12\n    month = (start.month - 1 + months_ahead) % 12 + 1\n    day = start.day\n    if month == 2:\n        max_day = 29 if (year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)) else 28\n    elif month in (4, 6, 9, 11):\n        max_day = 30\n    else:\n        max_day = 31\n    if day > max_day:\n        day = max_day\n    return datetime.date(year, month, day)",
+  "trailing": "MurphySig\nContext: billing-date calculator that adds N months while preserving DOM when possible; clamps to last valid day of target month (standard, safe default for recurring billing).\nConfidence: 0.85\nOpen: negative months_ahead and non-Gregorian calendars remain untested in this snippet.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H3"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "billing",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if not isinstance(start, datetime.date) or isinstance(start, datetime.datetime):\n        raise TypeError(\"start must be a datetime.date\")\n    if not isinstance(months_ahead, int):\n        raise TypeError(\"months_ahead must be an int\")\n    year = start.year + (start.month - 1 + months_ahead) // 12\n    month = (start.month - 1 + months_ahead) % 12 + 1\n    day = start.day\n    if month == 12:\n        next_month_first = datetime.date(year + 1, 1, 1)\n    else:\n        next_month_first = datetime.date(year, month + 1, 1)\n    last_day = (next_month_first - datetime.timedelta(days=1)).day\n    if day > last_day:\n        day = last_day\n    return datetime.date(year, month, day)\n```\nMurphySig\nContext: billing-date adder using only stdlib; modular month math + end-of-month clamp for invalid days (handles negatives, leap years, 31->30, Feb 29, zero).\nConfidence: 0.85\nOpen: unspecified contract for non-existent target days (chose clamp as least-surprising for billing).",
+  "finish_reason": "stop",
+  "code": "import datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if not isinstance(start, datetime.date) or isinstance(start, datetime.datetime):\n        raise TypeError(\"start must be a datetime.date\")\n    if not isinstance(months_ahead, int):\n        raise TypeError(\"months_ahead must be an int\")\n    year = start.year + (start.month - 1 + months_ahead) // 12\n    month = (start.month - 1 + months_ahead) % 12 + 1\n    day = start.day\n    if month == 12:\n        next_month_first = datetime.date(year + 1, 1, 1)\n    else:\n        next_month_first = datetime.date(year, month + 1, 1)\n    last_day = (next_month_first - datetime.timedelta(days=1)).day\n    if day > last_day:\n        day = last_day\n    return datetime.date(year, month, day)",
+  "trailing": "MurphySig\nContext: billing-date adder using only stdlib; modular month math + end-of-month clamp for invalid days (handles negatives, leap years, 31->30, Feb 29, zero).\nConfidence: 0.85\nOpen: unspecified contract for non-existent target days (chose clamp as least-surprising for billing).",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "billing",
+  "arm": "sign",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    new_month = start.month + months_ahead\n    year = start.year + (new_month - 1) // 12\n    month = (new_month - 1) % 12 + 1\n    return datetime.date(year, month, start.day)\n```\nMurphySig\nContext: Billing-date arithmetic that advances month/year while preserving exact day-of-month via integer division/modulo on the month offset; relies on datetime.date constructor to enforce calendar validity.\nConfidence: 0.85\nOpen: Behavior on invalid target days (e.g., 31 \u2192 April) left unspecified by requirements; negative months_ahead works but untested.",
+  "finish_reason": "stop",
+  "code": "import datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    new_month = start.month + months_ahead\n    year = start.year + (new_month - 1) // 12\n    month = (new_month - 1) % 12 + 1\n    return datetime.date(year, month, start.day)",
+  "trailing": "MurphySig\nContext: Billing-date arithmetic that advances month/year while preserving exact day-of-month via integer division/modulo on the month offset; relies on datetime.date constructor to enforce calendar validity.\nConfidence: 0.85\nOpen: Behavior on invalid target days (e.g., 31 \u2192 April) left unspecified by requirements; negative months_ahead works but untested.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1",
+   "H3"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "billing",
+  "arm": "sign",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    year = start.year + (start.month - 1 + months_ahead) // 12\n    month = (start.month - 1 + months_ahead) % 12 + 1\n    day = start.day\n    return datetime.date(year, month, day)\n```\nMurphySig:\nContext: Monthly date rollover via integer month arithmetic on (year,month) tuple; preserves exact day-of-month and relies on datetime constructor to enforce validity.\nConfidence: 0.85\nOpen: Behavior on invalid target days (e.g., 31\u2192Apr) is ValueError; no clamping or last-day rule defined by spec.",
+  "finish_reason": "stop",
+  "code": "import datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    year = start.year + (start.month - 1 + months_ahead) // 12\n    month = (start.month - 1 + months_ahead) % 12 + 1\n    day = start.day\n    return datetime.date(year, month, day)",
+  "trailing": "MurphySig:\nContext: Monthly date rollover via integer month arithmetic on (year,month) tuple; preserves exact day-of-month and relies on datetime constructor to enforce validity.\nConfidence: 0.85\nOpen: Behavior on invalid target days (e.g., 31\u2192Apr) is ValueError; no clamping or last-day rule defined by spec.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "billing",
+  "arm": "sign",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\nimport calendar\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if months_ahead < 0:\n        raise ValueError(\"months_ahead must be non-negative\")\n    new_month = start.month + months_ahead\n    new_year = start.year + (new_month - 1) // 12\n    new_month = (new_month - 1) % 12 + 1\n    day = start.day\n    try:\n        return datetime.date(new_year, new_month, day)\n    except ValueError:\n        last_day = calendar.monthrange(new_year, new_month)[1]\n        return datetime.date(new_year, new_month, last_day)\n```\nMurphySig:\nContext: Billing date calculator that adds whole months while preserving day-of-month when possible and clamping to month-end otherwise; implemented with only stdlib calendar/date to avoid external deps.\nConfidence: 0.85\nOpen: Behavior for negative months_ahead or zero months not explicitly required by prompt; leap-year Feb 29 start day not tested.",
+  "finish_reason": "stop",
+  "code": "import datetime\nimport calendar\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if months_ahead < 0:\n        raise ValueError(\"months_ahead must be non-negative\")\n    new_month = start.month + months_ahead\n    new_year = start.year + (new_month - 1) // 12\n    new_month = (new_month - 1) % 12 + 1\n    day = start.day\n    try:\n        return datetime.date(new_year, new_month, day)\n    except ValueError:\n        last_day = calendar.monthrange(new_year, new_month)[1]\n        return datetime.date(new_year, new_month, last_day)",
+  "trailing": "MurphySig:\nContext: Billing date calculator that adds whole months while preserving day-of-month when possible and clamping to month-end otherwise; implemented with only stdlib calendar/date to avoid external deps.\nConfidence: 0.85\nOpen: Behavior for negative months_ahead or zero months not explicitly required by prompt; leap-year Feb 29 start day not tested.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H3"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "billing",
+  "arm": "sign",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\nimport calendar\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if months_ahead < 0:\n        raise ValueError(\"months_ahead must be non-negative\")\n    new_year = start.year + (start.month - 1 + months_ahead) // 12\n    new_month = (start.month - 1 + months_ahead) % 12 + 1\n    max_day = calendar.monthrange(new_year, new_month)[1]\n    new_day = min(start.day, max_day)\n    return datetime.date(new_year, new_month, new_day)\n```\nMurphySig:\nContext: Adds whole months to a date while preserving day-of-month when possible, clamping to month end otherwise via calendar.monthrange; works because datetime.date is immutable and month arithmetic is reduced to integer year/month math.\nConfidence: 0.85\nOpen: Behavior for negative months_ahead left undefined by spec; no leap-second or timezone handling (date-only).",
+  "finish_reason": "stop",
+  "code": "import datetime\nimport calendar\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if months_ahead < 0:\n        raise ValueError(\"months_ahead must be non-negative\")\n    new_year = start.year + (start.month - 1 + months_ahead) // 12\n    new_month = (start.month - 1 + months_ahead) % 12 + 1\n    max_day = calendar.monthrange(new_year, new_month)[1]\n    new_day = min(start.day, max_day)\n    return datetime.date(new_year, new_month, new_day)",
+  "trailing": "MurphySig:\nContext: Adds whole months to a date while preserving day-of-month when possible, clamping to month end otherwise via calendar.monthrange; works because datetime.date is immutable and month arithmetic is reduced to integer year/month math.\nConfidence: 0.85\nOpen: Behavior for negative months_ahead left undefined by spec; no leap-second or timezone handling (date-only).",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H3"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "billing",
+  "arm": "sign",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if months_ahead < 0:\n        raise ValueError(\"months_ahead must be non-negative\")\n    new_year = start.year + (start.month - 1 + months_ahead) // 12\n    new_month = (start.month - 1 + months_ahead) % 12 + 1\n    day = start.day\n    # Clamp to last valid day of target month\n    if new_month == 12:\n        last_day = 31\n    else:\n        last_day = (datetime.date(new_year, new_month + 1, 1) - datetime.timedelta(days=1)).day\n    if day > last_day:\n        day = last_day\n    return datetime.date(new_year, new_month, day)\n```\nMurphySig:\nContext: Monthly billing date calculator using pure stdlib date math + last-day clamp for invalid days-of-month; works because year/month rollover is modular and clamping ensures a valid date is always produced.\nConfidence: 0.85\nOpen: behavior for negative months_ahead or day=29/30/31 edge cases in short months could be configured differently; no explicit contract provided.",
+  "finish_reason": "stop",
+  "code": "import datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if months_ahead < 0:\n        raise ValueError(\"months_ahead must be non-negative\")\n    new_year = start.year + (start.month - 1 + months_ahead) // 12\n    new_month = (start.month - 1 + months_ahead) % 12 + 1\n    day = start.day\n    # Clamp to last valid day of target month\n    if new_month == 12:\n        last_day = 31\n    else:\n        last_day = (datetime.date(new_year, new_month + 1, 1) - datetime.timedelta(days=1)).day\n    if day > last_day:\n        day = last_day\n    return datetime.date(new_year, new_month, day)",
+  "trailing": "MurphySig:\nContext: Monthly billing date calculator using pure stdlib date math + last-day clamp for invalid days-of-month; works because year/month rollover is modular and clamping ensures a valid date is always produced.\nConfidence: 0.85\nOpen: behavior for negative months_ahead or day=29/30/31 edge cases in short months could be configured differently; no explicit contract provided.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1",
+   "H3"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "duration",
+  "arm": "bare",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    total = 0\n    for num, unit in matches:\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n    return total\n```",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    total = 0\n    for num, unit in matches:\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n    return total",
+  "trailing": "",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "missed",
+    "H3": "missed"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": null,
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "duration",
+  "arm": "bare",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    total = 0\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    for value, unit in matches:\n        value = int(value)\n        if unit == 'h':\n            total += value * 3600\n        elif unit == 'm':\n            total += value * 60\n        elif unit == 's':\n            total += value\n    return total\n```",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    total = 0\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    for value, unit in matches:\n        value = int(value)\n        if unit == 'h':\n            total += value * 3600\n        elif unit == 'm':\n            total += value * 60\n        elif unit == 's':\n            total += value\n    return total",
+  "trailing": "",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "missed",
+    "H3": "missed"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": null,
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "duration",
+  "arm": "bare",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    total = 0\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    for num, unit in matches:\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n    return total\n```",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    total = 0\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    for num, unit in matches:\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n    return total",
+  "trailing": "",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "missed",
+    "H3": "missed"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": null,
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "duration",
+  "arm": "bare",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    if not s:\n        return 0\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    total = 0\n    for num, unit in matches:\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n    return total\n```",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    if not s:\n        return 0\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    total = 0\n    for num, unit in matches:\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n    return total",
+  "trailing": "",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "missed",
+    "H3": "missed"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": null,
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "duration",
+  "arm": "bare",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    total = 0\n    for value, unit in matches:\n        num = int(value)\n        if unit == 'h':\n            total += num * 3600\n        elif unit == 'm':\n            total += num * 60\n        elif unit == 's':\n            total += num\n    return total\n```",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    total = 0\n    for value, unit in matches:\n        num = int(value)\n        if unit == 'h':\n            total += num * 3600\n        elif unit == 'm':\n            total += num * 60\n        elif unit == 's':\n            total += num\n    return total",
+  "trailing": "",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "missed",
+    "H3": "missed"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": null,
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "duration",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    if not isinstance(s, str):\n        raise TypeError(\"Input must be a string\")\n    if not s:\n        raise ValueError(\"Empty duration string\")\n    if not re.fullmatch(r'^(\\d+[hms])+$', s):\n        raise ValueError(f\"Invalid duration string: {s}\")\n    matches = re.findall(r'(\\d+)([hms])', s)\n    total = 0\n    for num, unit in matches:\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n    return total\n```\nUncertain: whether invalid inputs should raise vs. silently ignore (spec silent); whether uppercase/spaces should be tolerated.",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    if not isinstance(s, str):\n        raise TypeError(\"Input must be a string\")\n    if not s:\n        raise ValueError(\"Empty duration string\")\n    if not re.fullmatch(r'^(\\d+[hms])+$', s):\n        raise ValueError(f\"Invalid duration string: {s}\")\n    matches = re.findall(r'(\\d+)([hms])', s)\n    total = 0\n    for num, unit in matches:\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n    return total",
+  "trailing": "Uncertain: whether invalid inputs should raise vs. silently ignore (spec silent); whether uppercase/spaces should be tolerated.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "missed",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "duration",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    if not isinstance(s, str):\n        raise TypeError(\"Input must be a string\")\n    if not s:\n        raise ValueError(\"Empty duration string\")\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    if not matches:\n        raise ValueError(\"No valid duration components found\")\n    reconstructed = ''.join(num + unit for num, unit in matches)\n    if reconstructed != s:\n        raise ValueError(\"Invalid duration format: contains extra characters or malformed segments\")\n    total = 0\n    for num, unit in matches:\n        val = int(num)\n        if unit == 'h':\n            total += val * 3600\n        elif unit == 'm':\n            total += val * 60\n        elif unit == 's':\n            total += val\n    return total\n```\nUncertain: exact required behavior on invalid input (chose strict ValueError).",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    if not isinstance(s, str):\n        raise TypeError(\"Input must be a string\")\n    if not s:\n        raise ValueError(\"Empty duration string\")\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    if not matches:\n        raise ValueError(\"No valid duration components found\")\n    reconstructed = ''.join(num + unit for num, unit in matches)\n    if reconstructed != s:\n        raise ValueError(\"Invalid duration format: contains extra characters or malformed segments\")\n    total = 0\n    for num, unit in matches:\n        val = int(num)\n        if unit == 'h':\n            total += val * 3600\n        elif unit == 'm':\n            total += val * 60\n        elif unit == 's':\n            total += val\n    return total",
+  "trailing": "Uncertain: exact required behavior on invalid input (chose strict ValueError).",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "missed",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "duration",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    if not isinstance(s, str):\n        raise TypeError(\"Input must be a string\")\n    if not s:\n        raise ValueError(\"Empty duration string\")\n    total = 0\n    pos = 0\n    for match in re.finditer(r'(\\d+)([hms])', s):\n        if match.start() != pos:\n            raise ValueError(f\"Invalid input at position {pos}\")\n        value = int(match.group(1))\n        unit = match.group(2)\n        if unit == 'h':\n            total += value * 3600\n        elif unit == 'm':\n            total += value * 60\n        elif unit == 's':\n            total += value\n        pos = match.end()\n    if pos != len(s):\n        raise ValueError(f\"Invalid trailing content at position {pos}\")\n    return total\n```\nUncertain: exact error behavior and case/whitespace handling (unspecified).",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    if not isinstance(s, str):\n        raise TypeError(\"Input must be a string\")\n    if not s:\n        raise ValueError(\"Empty duration string\")\n    total = 0\n    pos = 0\n    for match in re.finditer(r'(\\d+)([hms])', s):\n        if match.start() != pos:\n            raise ValueError(f\"Invalid input at position {pos}\")\n        value = int(match.group(1))\n        unit = match.group(2)\n        if unit == 'h':\n            total += value * 3600\n        elif unit == 'm':\n            total += value * 60\n        elif unit == 's':\n            total += value\n        pos = match.end()\n    if pos != len(s):\n        raise ValueError(f\"Invalid trailing content at position {pos}\")\n    return total",
+  "trailing": "Uncertain: exact error behavior and case/whitespace handling (unspecified).",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "missed",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "duration",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    if not isinstance(s, str):\n        raise TypeError(\"Input must be a string\")\n    total = 0\n    pattern = r'(\\d+)([hms])'\n    pos = 0\n    for match in re.finditer(pattern, s):\n        if match.start() != pos:\n            raise ValueError(f\"Invalid duration string: {s!r}\")\n        num, unit = match.groups()\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n        pos = match.end()\n    if pos != len(s):\n        raise ValueError(f\"Invalid duration string: {s!r}\")\n    return total\n```\nUncertain: empty string returns 0 (no spec); duplicate units (e.g. '1h2h') are summed rather than rejected.",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    if not isinstance(s, str):\n        raise TypeError(\"Input must be a string\")\n    total = 0\n    pattern = r'(\\d+)([hms])'\n    pos = 0\n    for match in re.finditer(pattern, s):\n        if match.start() != pos:\n            raise ValueError(f\"Invalid duration string: {s!r}\")\n        num, unit = match.groups()\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n        pos = match.end()\n    if pos != len(s):\n        raise ValueError(f\"Invalid duration string: {s!r}\")\n    return total",
+  "trailing": "Uncertain: empty string returns 0 (no spec); duplicate units (e.g. '1h2h') are summed rather than rejected.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "missed",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1",
+   "H2"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "duration",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    if not isinstance(s, str) or not s:\n        raise ValueError(\"Input must be a non-empty string\")\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    if not matches:\n        raise ValueError(f\"Invalid duration format: {s}\")\n    reconstructed = ''.join(num + unit for num, unit in matches)\n    if reconstructed != s:\n        raise ValueError(f\"Invalid duration format: {s}\")\n    total = 0\n    for num, unit in matches:\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n    return total\n```\nUncertain: whether uppercase units or duplicate units should be accepted (current impl rejects upper, allows duplicates).",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    if not isinstance(s, str) or not s:\n        raise ValueError(\"Input must be a non-empty string\")\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    if not matches:\n        raise ValueError(f\"Invalid duration format: {s}\")\n    reconstructed = ''.join(num + unit for num, unit in matches)\n    if reconstructed != s:\n        raise ValueError(f\"Invalid duration format: {s}\")\n    total = 0\n    for num, unit in matches:\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n    return total",
+  "trailing": "Uncertain: whether uppercase units or duplicate units should be accepted (current impl rejects upper, allows duplicates).",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "missed",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H2"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "duration",
+  "arm": "reflect",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    if not s:\n        return 0\n    units = {'h': 3600, 'm': 60, 's': 1}\n    total = 0\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    reconstructed = ''.join(num + unit for num, unit in matches)\n    if reconstructed != s:\n        raise ValueError(\"Invalid duration format\")\n    for num, unit in matches:\n        total += int(num) * units[unit]\n    return total\n```\nNote: considered strict validation via reconstruction (to reject malformed input) and chose to raise on error; unsure if problem expects silent failure/0 for invalids.",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    if not s:\n        return 0\n    units = {'h': 3600, 'm': 60, 's': 1}\n    total = 0\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    reconstructed = ''.join(num + unit for num, unit in matches)\n    if reconstructed != s:\n        raise ValueError(\"Invalid duration format\")\n    for num, unit in matches:\n        total += int(num) * units[unit]\n    return total",
+  "trailing": "Note: considered strict validation via reconstruction (to reject malformed input) and chose to raise on error; unsure if problem expects silent failure/0 for invalids.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "missed",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "duration",
+  "arm": "reflect",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    if not s:\n        return 0\n    matches = re.findall(r'(\\d+)([hms])', s)\n    units = {'h': 3600, 'm': 60, 's': 1}\n    total = 0\n    for num, unit in matches:\n        total += int(num) * units[unit]\n    return total\n```\nNote: Considered invalid/uppercase/missing units (silently ignored per regex) and empty input (returns 0); unsure if strict errors were intended.",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    if not s:\n        return 0\n    matches = re.findall(r'(\\d+)([hms])', s)\n    units = {'h': 3600, 'm': 60, 's': 1}\n    total = 0\n    for num, unit in matches:\n        total += int(num) * units[unit]\n    return total",
+  "trailing": "Note: Considered invalid/uppercase/missing units (silently ignored per regex) and empty input (returns 0); unsure if strict errors were intended.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "missed",
+    "H3": "missed"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "duration",
+  "arm": "reflect",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    if not s:\n        return 0\n    total = 0\n    units = {'h': 3600, 'm': 60, 's': 1}\n    matches = re.findall(r'(\\d+)([hms])', s)\n    for num, unit in matches:\n        total += int(num) * units[unit]\n    return total\n```\nConsidered: invalid chars/units/negatives/floats/spaces (regex silently skips; assumes valid inputs per spec); empty/zero cases return 0; unsure if strict validation or ValueError expected for malformed strings.",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    if not s:\n        return 0\n    total = 0\n    units = {'h': 3600, 'm': 60, 's': 1}\n    matches = re.findall(r'(\\d+)([hms])', s)\n    for num, unit in matches:\n        total += int(num) * units[unit]\n    return total",
+  "trailing": "Considered: invalid chars/units/negatives/floats/spaces (regex silently skips; assumes valid inputs per spec); empty/zero cases return 0; unsure if strict validation or ValueError expected for malformed strings.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "missed",
+    "H3": "missed"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "duration",
+  "arm": "reflect",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    if not s:\n        return 0\n    pattern = re.compile(r'(\\d+)([hms])')\n    total = 0\n    pos = 0\n    multipliers = {'h': 3600, 'm': 60, 's': 1}\n    for match in pattern.finditer(s):\n        if match.start() != pos:\n            raise ValueError(f\"Invalid duration format: {s}\")\n        num = int(match.group(1))\n        unit = match.group(2)\n        total += num * multipliers[unit]\n        pos = match.end()\n    if pos != len(s):\n        raise ValueError(f\"Invalid duration format: {s}\")\n    return total\n```\nNote: Considered invalid inputs (unknown units, leftovers, empty) and chose explicit ValueError + full-string validation for robustness; unsure if problem expects silent failure/0 for invalids.",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    if not s:\n        return 0\n    pattern = re.compile(r'(\\d+)([hms])')\n    total = 0\n    pos = 0\n    multipliers = {'h': 3600, 'm': 60, 's': 1}\n    for match in pattern.finditer(s):\n        if match.start() != pos:\n            raise ValueError(f\"Invalid duration format: {s}\")\n        num = int(match.group(1))\n        unit = match.group(2)\n        total += num * multipliers[unit]\n        pos = match.end()\n    if pos != len(s):\n        raise ValueError(f\"Invalid duration format: {s}\")\n    return total",
+  "trailing": "Note: Considered invalid inputs (unknown units, leftovers, empty) and chose explicit ValueError + full-string validation for robustness; unsure if problem expects silent failure/0 for invalids.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "missed",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "duration",
+  "arm": "reflect",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    if not s:\n        return 0\n    cleaned = re.sub(r'\\d+[hms]', '', s)\n    if cleaned:\n        raise ValueError(\"Invalid duration format\")\n    matches = re.findall(r'(\\d+)([hms])', s)\n    units = {'h': 3600, 'm': 60, 's': 1}\n    total = 0\n    for num, unit in matches:\n        total += int(num) * units[unit]\n    return total\n```\nNote: considered invalid inputs (raising ValueError) and full-string validation via regex; unsure if problem expects silent failure on bad input instead.",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    if not s:\n        return 0\n    cleaned = re.sub(r'\\d+[hms]', '', s)\n    if cleaned:\n        raise ValueError(\"Invalid duration format\")\n    matches = re.findall(r'(\\d+)([hms])', s)\n    units = {'h': 3600, 'm': 60, 's': 1}\n    total = 0\n    for num, unit in matches:\n        total += int(num) * units[unit]\n    return total",
+  "trailing": "Note: considered invalid inputs (raising ValueError) and full-string validation via regex; unsure if problem expects silent failure on bad input instead.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "missed",
+    "H3": "missed"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "duration",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    if not s:\n        raise ValueError(\"Empty duration string\")\n    total = 0\n    units = {'h': 3600, 'm': 60, 's': 1}\n    matches = re.findall(r'(\\d+)([hms])', s)\n    if not matches:\n        raise ValueError(f\"Invalid duration: {s}\")\n    reconstructed = ''.join(''.join(m) for m in matches)\n    if reconstructed != s:\n        raise ValueError(f\"Invalid duration: {s}\")\n    for num, unit in matches:\n        total += int(num) * units[unit]\n    return total\n```\nMurphySig\nContext: robust regex parser for concatenated duration tokens that validates full-string consumption and accumulates seconds; handles multiples, reordering, invalids via explicit errors.\nConfidence: 0.9\nOpen: overflow on extreme inputs (Python int ok but spec silent).",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    if not s:\n        raise ValueError(\"Empty duration string\")\n    total = 0\n    units = {'h': 3600, 'm': 60, 's': 1}\n    matches = re.findall(r'(\\d+)([hms])', s)\n    if not matches:\n        raise ValueError(f\"Invalid duration: {s}\")\n    reconstructed = ''.join(''.join(m) for m in matches)\n    if reconstructed != s:\n        raise ValueError(f\"Invalid duration: {s}\")\n    for num, unit in matches:\n        total += int(num) * units[unit]\n    return total",
+  "trailing": "MurphySig\nContext: robust regex parser for concatenated duration tokens that validates full-string consumption and accumulates seconds; handles multiples, reordering, invalids via explicit errors.\nConfidence: 0.9\nOpen: overflow on extreme inputs (Python int ok but spec silent).",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "missed",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "duration",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    if not isinstance(s, str) or not s:\n        raise ValueError(\"Empty or invalid duration string\")\n    pattern = re.compile(r'(\\d+)([hms])')\n    total = 0\n    pos = 0\n    for match in pattern.finditer(s):\n        if match.start() != pos:\n            raise ValueError(f\"Invalid duration string: {s}\")\n        num = int(match.group(1))\n        unit = match.group(2)\n        if unit == 'h':\n            total += num * 3600\n        elif unit == 'm':\n            total += num * 60\n        elif unit == 's':\n            total += num\n        pos = match.end()\n    if pos != len(s):\n        raise ValueError(f\"Invalid duration string: {s}\")\n    return total\n```\nMurphySig\nContext: parses concatenated <int><unit> tokens via regex + position check to sum seconds; rejects gaps/unknowns/empties by construction\nConfidence: 0.85\nOpen: no spec given for error type or float/upper-case input handling",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    if not isinstance(s, str) or not s:\n        raise ValueError(\"Empty or invalid duration string\")\n    pattern = re.compile(r'(\\d+)([hms])')\n    total = 0\n    pos = 0\n    for match in pattern.finditer(s):\n        if match.start() != pos:\n            raise ValueError(f\"Invalid duration string: {s}\")\n        num = int(match.group(1))\n        unit = match.group(2)\n        if unit == 'h':\n            total += num * 3600\n        elif unit == 'm':\n            total += num * 60\n        elif unit == 's':\n            total += num\n        pos = match.end()\n    if pos != len(s):\n        raise ValueError(f\"Invalid duration string: {s}\")\n    return total",
+  "trailing": "MurphySig\nContext: parses concatenated <int><unit> tokens via regex + position check to sum seconds; rejects gaps/unknowns/empties by construction\nConfidence: 0.85\nOpen: no spec given for error type or float/upper-case input handling",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "missed",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "duration",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    if not isinstance(s, str):\n        raise ValueError(\"Input must be a string\")\n    s = s.strip()\n    if not s:\n        raise ValueError(\"Empty duration string\")\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    if not matches:\n        raise ValueError(\"No valid duration components found\")\n    reconstructed = ''.join(num + unit for num, unit in matches)\n    if reconstructed != s:\n        raise ValueError(\"Invalid characters or format in duration string\")\n    total = 0\n    for num, unit in matches:\n        val = int(num)\n        if unit == 'h':\n            total += val * 3600\n        elif unit == 'm':\n            total += val * 60\n        elif unit == 's':\n            total += val\n    return total\n```\nMurphySig\nContext: parse_duration converts compact duration strings (digit+unit sequences) to seconds via regex extraction + validation that the entire input is consumed; works because findall + reconstruction rejects malformed input while correctly accumulating any combination/order of h/m/s.\nConfidence: 0.85\nOpen: unspecified error message wording and whether duplicate units should be disallowed.",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    if not isinstance(s, str):\n        raise ValueError(\"Input must be a string\")\n    s = s.strip()\n    if not s:\n        raise ValueError(\"Empty duration string\")\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    if not matches:\n        raise ValueError(\"No valid duration components found\")\n    reconstructed = ''.join(num + unit for num, unit in matches)\n    if reconstructed != s:\n        raise ValueError(\"Invalid characters or format in duration string\")\n    total = 0\n    for num, unit in matches:\n        val = int(num)\n        if unit == 'h':\n            total += val * 3600\n        elif unit == 'm':\n            total += val * 60\n        elif unit == 's':\n            total += val\n    return total",
+  "trailing": "MurphySig\nContext: parse_duration converts compact duration strings (digit+unit sequences) to seconds via regex extraction + validation that the entire input is consumed; works because findall + reconstruction rejects malformed input while correctly accumulating any combination/order of h/m/s.\nConfidence: 0.85\nOpen: unspecified error message wording and whether duplicate units should be disallowed.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "missed",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H2"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "duration",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    if not s:\n        raise ValueError(\"Empty duration string\")\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    if not matches or ''.join(''.join(m) for m in matches) != s:\n        raise ValueError(f\"Invalid duration string: {s}\")\n    total = 0\n    unit_map = {'h': 3600, 'm': 60, 's': 1}\n    for num, unit in matches:\n        total += int(num) * unit_map[unit]\n    return total\n```\nMurphySig\nContext: Implements strict regex-based parser for concatenated duration tokens; validates full-string consumption and known units to reject malformed input while correctly accumulating seconds.\nConfidence: 0.85\nOpen: Behavior on numbers exceeding platform int limits or Unicode digits left unspecified by requirements.",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    if not s:\n        raise ValueError(\"Empty duration string\")\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    if not matches or ''.join(''.join(m) for m in matches) != s:\n        raise ValueError(f\"Invalid duration string: {s}\")\n    total = 0\n    unit_map = {'h': 3600, 'm': 60, 's': 1}\n    for num, unit in matches:\n        total += int(num) * unit_map[unit]\n    return total",
+  "trailing": "MurphySig\nContext: Implements strict regex-based parser for concatenated duration tokens; validates full-string consumption and known units to reject malformed input while correctly accumulating seconds.\nConfidence: 0.85\nOpen: Behavior on numbers exceeding platform int limits or Unicode digits left unspecified by requirements.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "missed",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "duration",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    if not s or not isinstance(s, str):\n        raise ValueError(\"Input must be a non-empty string\")\n    pattern = re.compile(r'^(\\d+)([hms])((?:\\d+[hms])+)?$')\n    match = pattern.match(s)\n    if not match:\n        raise ValueError(f\"Invalid duration format: {s}\")\n    total = 0\n    parts = re.findall(r'(\\d+)([hms])', s)\n    for value, unit in parts:\n        num = int(value)\n        if unit == 'h':\n            total += num * 3600\n        elif unit == 'm':\n            total += num * 60\n        elif unit == 's':\n            total += num\n    return total\n```\nMurphySig\nContext: parse_duration converts validated composite duration strings to seconds via regex tokenization of positive integer+unit pairs; standard library only, handles multiples/reordering/zeros.\nConfidence: 0.85\nOpen: behavior on overflow integers or non-ASCII digits left implicit.",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    if not s or not isinstance(s, str):\n        raise ValueError(\"Input must be a non-empty string\")\n    pattern = re.compile(r'^(\\d+)([hms])((?:\\d+[hms])+)?$')\n    match = pattern.match(s)\n    if not match:\n        raise ValueError(f\"Invalid duration format: {s}\")\n    total = 0\n    parts = re.findall(r'(\\d+)([hms])', s)\n    for value, unit in parts:\n        num = int(value)\n        if unit == 'h':\n            total += num * 3600\n        elif unit == 'm':\n            total += num * 60\n        elif unit == 's':\n            total += num\n    return total",
+  "trailing": "MurphySig\nContext: parse_duration converts validated composite duration strings to seconds via regex tokenization of positive integer+unit pairs; standard library only, handles multiples/reordering/zeros.\nConfidence: 0.85\nOpen: behavior on overflow integers or non-ASCII digits left implicit.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "missed",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "duration",
+  "arm": "sign",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    total = 0\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    for num, unit in matches:\n        value = int(num)\n        if unit == 'h':\n            total += value * 3600\n        elif unit == 'm':\n            total += value * 60\n        elif unit == 's':\n            total += value\n    return total\n```\nMurphySig:\nContext: parse_duration extracts numeric+unit pairs via regex and accumulates seconds; works because re.findall reliably tokenizes the supported grammar and the multipliers are exact.\nConfidence: 0.8\nOpen: no validation that the whole string is consumed; behavior on duplicate units, zero values, or mixed invalid tokens undefined.",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    total = 0\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    for num, unit in matches:\n        value = int(num)\n        if unit == 'h':\n            total += value * 3600\n        elif unit == 'm':\n            total += value * 60\n        elif unit == 's':\n            total += value\n    return total",
+  "trailing": "MurphySig:\nContext: parse_duration extracts numeric+unit pairs via regex and accumulates seconds; works because re.findall reliably tokenizes the supported grammar and the multipliers are exact.\nConfidence: 0.8\nOpen: no validation that the whole string is consumed; behavior on duplicate units, zero values, or mixed invalid tokens undefined.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "missed",
+    "H3": "missed"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1",
+   "H2"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "duration",
+  "arm": "sign",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    total = 0\n    for num, unit in matches:\n        num = int(num)\n        if unit == 'h':\n            total += num * 3600\n        elif unit == 'm':\n            total += num * 60\n        elif unit == 's':\n            total += num\n    return total\n```\nMurphySig\nContext: Implements regex-based parser for concatenated duration tokens (num+unit) using stdlib re; accumulates seconds via direct multiplication. Works because findall extracts all ordered pairs from well-formed input matching examples.\nConfidence: 0.8\nOpen: No validation for invalid units/empty input/uppercase; order of units is preserved but not enforced; overflow for huge values untested.",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    total = 0\n    for num, unit in matches:\n        num = int(num)\n        if unit == 'h':\n            total += num * 3600\n        elif unit == 'm':\n            total += num * 60\n        elif unit == 's':\n            total += num\n    return total",
+  "trailing": "MurphySig\nContext: Implements regex-based parser for concatenated duration tokens (num+unit) using stdlib re; accumulates seconds via direct multiplication. Works because findall extracts all ordered pairs from well-formed input matching examples.\nConfidence: 0.8\nOpen: No validation for invalid units/empty input/uppercase; order of units is preserved but not enforced; overflow for huge values untested.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "missed",
+    "H3": "missed"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "duration",
+  "arm": "sign",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    total = 0\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    for num, unit in matches:\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n    return total\n```\nMurphySig:\nContext: Function to convert duration strings (e.g. '1h30m') to seconds via regex extraction of value+unit pairs and accumulation; works because re is stdlib and addition covers all supported units without external deps.\nConfidence: 0.85\nOpen: No validation for malformed input (e.g. '1x', 'abc'); assumes well-formed per examples; no handling of negative values or fractional units.",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    total = 0\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    for num, unit in matches:\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n    return total",
+  "trailing": "MurphySig:\nContext: Function to convert duration strings (e.g. '1h30m') to seconds via regex extraction of value+unit pairs and accumulation; works because re is stdlib and addition covers all supported units without external deps.\nConfidence: 0.85\nOpen: No validation for malformed input (e.g. '1x', 'abc'); assumes well-formed per examples; no handling of negative values or fractional units.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "missed",
+    "H3": "missed"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1",
+   "H3"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "duration",
+  "arm": "sign",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    total = 0\n    matches = re.findall(r'(\\d+)([hms])', s)\n    for num, unit in matches:\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n    return total\n```\nMurphySig:\nContext: Function to parse duration strings (e.g. '1h30m') into total seconds via stdlib re; works by extracting all digit+unit pairs then accumulating converted values.\nConfidence: 0.8\nOpen: No error handling for invalid units/chars or uppercase; order/duplicates assumed additive; no fractions/negatives considered.",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    total = 0\n    matches = re.findall(r'(\\d+)([hms])', s)\n    for num, unit in matches:\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n    return total",
+  "trailing": "MurphySig:\nContext: Function to parse duration strings (e.g. '1h30m') into total seconds via stdlib re; works by extracting all digit+unit pairs then accumulating converted values.\nConfidence: 0.8\nOpen: No error handling for invalid units/chars or uppercase; order/duplicates assumed additive; no fractions/negatives considered.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "missed",
+    "H3": "missed"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1",
+   "H2",
+   "H3"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "duration",
+  "arm": "sign",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    total = 0\n    matches = re.findall(r'(\\d+)([hms])', s)\n    for num, unit in matches:\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n    return total\n```\nMurphySig:\nContext: Implements parse_duration via regex extraction of number+unit pairs from input string, accumulating seconds using standard multipliers; works for given examples and combinations because re.findall reliably tokenizes the supported format with only stdlib.\nConfidence: 0.85\nOpen: No input validation or error cases specified; behavior on invalid chars/duplicates/overflow undefined.",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    total = 0\n    matches = re.findall(r'(\\d+)([hms])', s)\n    for num, unit in matches:\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n    return total",
+  "trailing": "MurphySig:\nContext: Implements parse_duration via regex extraction of number+unit pairs from input string, accumulating seconds using standard multipliers; works for given examples and combinations because re.findall reliably tokenizes the supported format with only stdlib.\nConfidence: 0.85\nOpen: No input validation or error cases specified; behavior on invalid chars/duplicates/overflow undefined.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "missed",
+    "H3": "missed"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1",
+   "H2"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "paginate",
+  "arm": "bare",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        per_page = 1\n    total_pages = (len(items) + per_page - 1) // per_page\n    if page < 1:\n        page = 1\n    if page > total_pages:\n        page = total_pages if total_pages > 0 else 1\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end]\n    return {\n        'items': page_items,\n        'page': page,\n        'total_pages': total_pages\n    }\n```",
+  "finish_reason": "stop",
+  "code": "def paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        per_page = 1\n    total_pages = (len(items) + per_page - 1) // per_page\n    if page < 1:\n        page = 1\n    if page > total_pages:\n        page = total_pages if total_pages > 0 else 1\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end]\n    return {\n        'items': page_items,\n        'page': page,\n        'total_pages': total_pages\n    }",
+  "trailing": "",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": null,
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "paginate",
+  "arm": "bare",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        total_pages = 0\n    else:\n        total_pages = (len(items) + per_page - 1) // per_page\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end]\n    return {\n        'items': page_items,\n        'page': page,\n        'total_pages': total_pages\n    }\n```",
+  "finish_reason": "stop",
+  "code": "def paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        total_pages = 0\n    else:\n        total_pages = (len(items) + per_page - 1) // per_page\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end]\n    return {\n        'items': page_items,\n        'page': page,\n        'total_pages': total_pages\n    }",
+  "trailing": "",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "missed",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": null,
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "paginate",
+  "arm": "bare",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        total_pages = 0\n    else:\n        total_pages = (len(items) + per_page - 1) // per_page\n    if page < 1 or per_page <= 0:\n        page_items = []\n    else:\n        start = (page - 1) * per_page\n        end = start + per_page\n        page_items = items[start:end]\n    return {\n        'items': page_items,\n        'page': page,\n        'total_pages': total_pages\n    }\n```",
+  "finish_reason": "stop",
+  "code": "def paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        total_pages = 0\n    else:\n        total_pages = (len(items) + per_page - 1) // per_page\n    if page < 1 or per_page <= 0:\n        page_items = []\n    else:\n        start = (page - 1) * per_page\n        end = start + per_page\n        page_items = items[start:end]\n    return {\n        'items': page_items,\n        'page': page,\n        'total_pages': total_pages\n    }",
+  "trailing": "",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "missed",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": null,
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "paginate",
+  "arm": "bare",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        total_pages = 0\n    else:\n        total_pages = (len(items) + per_page - 1) // per_page\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end] if start >= 0 else []\n    return {\n        'items': page_items,\n        'page': page,\n        'total_pages': total_pages\n    }\n```",
+  "finish_reason": "stop",
+  "code": "def paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        total_pages = 0\n    else:\n        total_pages = (len(items) + per_page - 1) // per_page\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end] if start >= 0 else []\n    return {\n        'items': page_items,\n        'page': page,\n        'total_pages': total_pages\n    }",
+  "trailing": "",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "missed",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": null,
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "paginate",
+  "arm": "bare",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        total_pages = 0\n    elif not items:\n        total_pages = 0\n    else:\n        total_pages = (len(items) + per_page - 1) // per_page\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end] if start >= 0 else []\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}\n```",
+  "finish_reason": "stop",
+  "code": "def paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        total_pages = 0\n    elif not items:\n        total_pages = 0\n    else:\n        total_pages = (len(items) + per_page - 1) // per_page\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end] if start >= 0 else []\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}",
+  "trailing": "",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "missed",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": null,
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "paginate",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\nimport math\n\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if page < 1 or per_page < 1:\n        raise ValueError(\"page and per_page must be positive integers\")\n    total_pages = math.ceil(len(items) / per_page) if len(items) > 0 else 0\n    start = (page - 1) * per_page\n    end = start + per_page\n    return {\n        'items': items[start:end],\n        'page': page,\n        'total_pages': total_pages\n    }\n```\nNote: remains uncertain whether callers expect ValueError on invalid inputs or silent handling (problem statement specifies no contract details).",
+  "finish_reason": "stop",
+  "code": "import math\n\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if page < 1 or per_page < 1:\n        raise ValueError(\"page and per_page must be positive integers\")\n    total_pages = math.ceil(len(items) / per_page) if len(items) > 0 else 0\n    start = (page - 1) * per_page\n    end = start + per_page\n    return {\n        'items': items[start:end],\n        'page': page,\n        'total_pages': total_pages\n    }",
+  "trailing": "Note: remains uncertain whether callers expect ValueError on invalid inputs or silent handling (problem statement specifies no contract details).",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "missed",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1",
+   "H2"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "paginate",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        raise ValueError(\"per_page must be positive\")\n    if page <= 0:\n        raise ValueError(\"page must be positive\")\n    n = len(items)\n    total_pages = (n + per_page - 1) // per_page if n > 0 else 0\n    if page > total_pages:\n        page_items = []\n    else:\n        start = (page - 1) * per_page\n        page_items = items[start:start + per_page]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}\n```\nUncertain: whether invalid (non-positive) inputs should raise or silently clamp/ignore.",
+  "finish_reason": "stop",
+  "code": "def paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        raise ValueError(\"per_page must be positive\")\n    if page <= 0:\n        raise ValueError(\"page must be positive\")\n    n = len(items)\n    total_pages = (n + per_page - 1) // per_page if n > 0 else 0\n    if page > total_pages:\n        page_items = []\n    else:\n        start = (page - 1) * per_page\n        page_items = items[start:start + per_page]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}",
+  "trailing": "Uncertain: whether invalid (non-positive) inputs should raise or silently clamp/ignore.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1",
+   "H2"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "paginate",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if not isinstance(items, list):\n        raise TypeError(\"items must be a list\")\n    if page < 1:\n        raise ValueError(\"page must be >= 1\")\n    if per_page <= 0:\n        raise ValueError(\"per_page must be > 0\")\n    total = len(items)\n    total_pages = (total + per_page - 1) // per_page\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}\n```\nNote: behavior on non-int page/per_page (beyond type hints) and exact exception types remain assumptions.",
+  "finish_reason": "stop",
+  "code": "def paginate(items: list, page: int, per_page: int) -> dict:\n    if not isinstance(items, list):\n        raise TypeError(\"items must be a list\")\n    if page < 1:\n        raise ValueError(\"page must be >= 1\")\n    if per_page <= 0:\n        raise ValueError(\"per_page must be > 0\")\n    total = len(items)\n    total_pages = (total + per_page - 1) // per_page\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}",
+  "trailing": "Note: behavior on non-int page/per_page (beyond type hints) and exact exception types remain assumptions.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "missed",
+    "H3": "missed"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "paginate",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if not isinstance(items, list) or per_page <= 0 or page < 1:\n        return {'items': [], 'page': page, 'total_pages': 0}\n    total = len(items)\n    total_pages = (total + per_page - 1) // per_page if total > 0 else 0\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end] if start < total else []\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}\n```\nUncertain: behavior for page>total_pages or invalid inputs (chose empty+0, no spec).",
+  "finish_reason": "stop",
+  "code": "def paginate(items: list, page: int, per_page: int) -> dict:\n    if not isinstance(items, list) or per_page <= 0 or page < 1:\n        return {'items': [], 'page': page, 'total_pages': 0}\n    total = len(items)\n    total_pages = (total + per_page - 1) // per_page if total > 0 else 0\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end] if start < total else []\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}",
+  "trailing": "Uncertain: behavior for page>total_pages or invalid inputs (chose empty+0, no spec).",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H2"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "paginate",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\nimport math\n\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if not isinstance(page, int) or not isinstance(per_page, int):\n        raise TypeError(\"page and per_page must be integers\")\n    if page < 1:\n        raise ValueError(\"page must be >= 1\")\n    if per_page < 1:\n        raise ValueError(\"per_page must be >= 1\")\n    n = len(items)\n    total_pages = math.ceil(n / per_page) if n > 0 else 0\n    if page > total_pages:\n        page_items = []\n    else:\n        start = (page - 1) * per_page\n        page_items = items[start:start + per_page]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}\n```\nUncertain: exact behavior for invalid inputs (spec is silent; raising was chosen for safety).",
+  "finish_reason": "stop",
+  "code": "import math\n\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if not isinstance(page, int) or not isinstance(per_page, int):\n        raise TypeError(\"page and per_page must be integers\")\n    if page < 1:\n        raise ValueError(\"page must be >= 1\")\n    if per_page < 1:\n        raise ValueError(\"per_page must be >= 1\")\n    n = len(items)\n    total_pages = math.ceil(n / per_page) if n > 0 else 0\n    if page > total_pages:\n        page_items = []\n    else:\n        start = (page - 1) * per_page\n        page_items = items[start:start + per_page]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}",
+  "trailing": "Uncertain: exact behavior for invalid inputs (spec is silent; raising was chosen for safety).",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1",
+   "H2"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "paginate",
+  "arm": "reflect",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\nimport math\n\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    total = len(items)\n    if per_page <= 0:\n        total_pages = 0\n        page_items = []\n    else:\n        total_pages = math.ceil(total / per_page)\n        if page < 1:\n            page_items = []\n        else:\n            start = (page - 1) * per_page\n            page_items = items[start:start + per_page]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}\n```\nNote: handled per_page<=0 and page<1 to avoid div0/crash/wrong slices (unsure if problem expects this vs. assume valid inputs only).",
+  "finish_reason": "stop",
+  "code": "import math\n\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    total = len(items)\n    if per_page <= 0:\n        total_pages = 0\n        page_items = []\n    else:\n        total_pages = math.ceil(total / per_page)\n        if page < 1:\n            page_items = []\n        else:\n            start = (page - 1) * per_page\n            page_items = items[start:start + per_page]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}",
+  "trailing": "Note: handled per_page<=0 and page<1 to avoid div0/crash/wrong slices (unsure if problem expects this vs. assume valid inputs only).",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "missed",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1",
+   "H2"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "paginate",
+  "arm": "reflect",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        total_pages = 0\n    else:\n        total_pages = (len(items) + per_page - 1) // per_page\n    if page < 1 or per_page < 1:\n        page_items = []\n    else:\n        start = (page - 1) * per_page\n        page_items = items[start:start + per_page]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}\n```\nNote: considered invalid inputs (page/per_page <=0) and out-of-range pages; chose defensive empty results rather than errors or crashes, as spec was silent.",
+  "finish_reason": "stop",
+  "code": "def paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        total_pages = 0\n    else:\n        total_pages = (len(items) + per_page - 1) // per_page\n    if page < 1 or per_page < 1:\n        page_items = []\n    else:\n        start = (page - 1) * per_page\n        page_items = items[start:start + per_page]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}",
+  "trailing": "Note: considered invalid inputs (page/per_page <=0) and out-of-range pages; chose defensive empty results rather than errors or crashes, as spec was silent.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "missed",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "paginate",
+  "arm": "reflect",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    total_items = len(items)\n    if per_page <= 0:\n        total_pages = 0\n    else:\n        total_pages = (total_items + per_page - 1) // per_page\n    if page < 1 or per_page <= 0:\n        start = 0\n        end = 0\n    else:\n        start = (page - 1) * per_page\n        end = start + per_page\n    page_items = items[start:end]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}\n```\nNote: considered page/per_page <=0 and empty list; chose safe empty result rather than raise (unsure if strict validation expected).",
+  "finish_reason": "stop",
+  "code": "def paginate(items: list, page: int, per_page: int) -> dict:\n    total_items = len(items)\n    if per_page <= 0:\n        total_pages = 0\n    else:\n        total_pages = (total_items + per_page - 1) // per_page\n    if page < 1 or per_page <= 0:\n        start = 0\n        end = 0\n    else:\n        start = (page - 1) * per_page\n        end = start + per_page\n    page_items = items[start:end]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}",
+  "trailing": "Note: considered page/per_page <=0 and empty list; chose safe empty result rather than raise (unsure if strict validation expected).",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "missed",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1",
+   "H3"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "paginate",
+  "arm": "reflect",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    total = len(items)\n    if per_page <= 0:\n        total_pages = 0\n    else:\n        total_pages = (total + per_page - 1) // per_page\n    start = (page - 1) * per_page\n    if page < 1 or per_page <= 0 or start < 0:\n        page_items = []\n    else:\n        end = start + per_page\n        page_items = items[start:end]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}\n```\nNote: considered empty list (total_pages=0), out-of-range pages (empty items), per_page<=0 (avoid div0 + guard slice); unsure if invalid inputs should raise instead.",
+  "finish_reason": "stop",
+  "code": "def paginate(items: list, page: int, per_page: int) -> dict:\n    total = len(items)\n    if per_page <= 0:\n        total_pages = 0\n    else:\n        total_pages = (total + per_page - 1) // per_page\n    start = (page - 1) * per_page\n    if page < 1 or per_page <= 0 or start < 0:\n        page_items = []\n    else:\n        end = start + per_page\n        page_items = items[start:end]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}",
+  "trailing": "Note: considered empty list (total_pages=0), out-of-range pages (empty items), per_page<=0 (avoid div0 + guard slice); unsure if invalid inputs should raise instead.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "missed",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1",
+   "H2",
+   "H3"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "paginate",
+  "arm": "reflect",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    total = len(items)\n    total_pages = (total + per_page - 1) // per_page if per_page > 0 else 0\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end] if start >= 0 else []\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}\n```\nNote: assumed valid page>=1/per_page>0 inputs (no explicit validation); total_pages=0 for empty list; beyond-last-page yields [].",
+  "finish_reason": "stop",
+  "code": "def paginate(items: list, page: int, per_page: int) -> dict:\n    total = len(items)\n    total_pages = (total + per_page - 1) // per_page if per_page > 0 else 0\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end] if start >= 0 else []\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}",
+  "trailing": "Note: assumed valid page>=1/per_page>0 inputs (no explicit validation); total_pages=0 for empty list; beyond-last-page yields [].",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "missed",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1",
+   "H2",
+   "H3"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "paginate",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\nimport math\n\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if not isinstance(items, list):\n        items = []\n    if per_page < 1:\n        per_page = 1\n    if page < 1:\n        page = 1\n    total = len(items)\n    total_pages = 0 if total == 0 else math.ceil(total / per_page)\n    if page > total_pages:\n        page_items = []\n    else:\n        start = (page - 1) * per_page\n        page_items = items[start:start + per_page]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}\n```\nMurphySig\nContext: pagination helper for 1-based slicing with clamped inputs and safe math to avoid div0/empty/invalid cases.\nConfidence: 0.85\nOpen: behavior on non-int page/per_page (not exercised by signature).",
+  "finish_reason": "stop",
+  "code": "import math\n\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if not isinstance(items, list):\n        items = []\n    if per_page < 1:\n        per_page = 1\n    if page < 1:\n        page = 1\n    total = len(items)\n    total_pages = 0 if total == 0 else math.ceil(total / per_page)\n    if page > total_pages:\n        page_items = []\n    else:\n        start = (page - 1) * per_page\n        page_items = items[start:start + per_page]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}",
+  "trailing": "MurphySig\nContext: pagination helper for 1-based slicing with clamped inputs and safe math to avoid div0/empty/invalid cases.\nConfidence: 0.85\nOpen: behavior on non-int page/per_page (not exercised by signature).",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "paginate",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if not isinstance(items, list) or page < 1 or per_page < 1:\n        return {'items': [], 'page': page, 'total_pages': 0}\n    total = len(items)\n    total_pages = (total + per_page - 1) // per_page\n    start = (page - 1) * per_page\n    if start >= total:\n        page_items = []\n    else:\n        page_items = items[start:start + per_page]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}\n```\nMurphySig\nContext: pagination helper for 1-based pages over a list; guards against invalid/negative inputs and out-of-range pages to avoid crashes or wrap-around slices while using integer arithmetic for total_pages.\nConfidence: 0.85\nOpen: exact desired behavior on non-positive inputs unspecified by caller.",
+  "finish_reason": "stop",
+  "code": "def paginate(items: list, page: int, per_page: int) -> dict:\n    if not isinstance(items, list) or page < 1 or per_page < 1:\n        return {'items': [], 'page': page, 'total_pages': 0}\n    total = len(items)\n    total_pages = (total + per_page - 1) // per_page\n    start = (page - 1) * per_page\n    if start >= total:\n        page_items = []\n    else:\n        page_items = items[start:start + per_page]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}",
+  "trailing": "MurphySig\nContext: pagination helper for 1-based pages over a list; guards against invalid/negative inputs and out-of-range pages to avoid crashes or wrap-around slices while using integer arithmetic for total_pages.\nConfidence: 0.85\nOpen: exact desired behavior on non-positive inputs unspecified by caller.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1",
+   "H2"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "paginate",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\nimport math\n\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if not isinstance(items, list):\n        raise TypeError(\"items must be a list\")\n    if page < 1 or per_page < 1:\n        raise ValueError(\"page and per_page must be positive integers\")\n    total_pages = math.ceil(len(items) / per_page) if per_page > 0 else 0\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end]\n    return {\n        'items': page_items,\n        'page': page,\n        'total_pages': total_pages\n    }\n```\nMurphySig\nContext: pagination helper for 1-based pages with robust input validation and slicing\nConfidence: 0.85\nOpen: empty-list total_pages=0 vs 1 convention (API-dependent)",
+  "finish_reason": "stop",
+  "code": "import math\n\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if not isinstance(items, list):\n        raise TypeError(\"items must be a list\")\n    if page < 1 or per_page < 1:\n        raise ValueError(\"page and per_page must be positive integers\")\n    total_pages = math.ceil(len(items) / per_page) if per_page > 0 else 0\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end]\n    return {\n        'items': page_items,\n        'page': page,\n        'total_pages': total_pages\n    }",
+  "trailing": "MurphySig\nContext: pagination helper for 1-based pages with robust input validation and slicing\nConfidence: 0.85\nOpen: empty-list total_pages=0 vs 1 convention (API-dependent)",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "missed",
+    "H3": "missed"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H3"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "paginate",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0 or page < 1:\n        return {'items': [], 'page': page, 'total_pages': 0}\n    total_pages = (len(items) + per_page - 1) // per_page\n    start = (page - 1) * per_page\n    page_items = items[start:start + per_page]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}\n```\nMurphySig\nContext: Implements 1-indexed pagination with safe slicing and zero/negative guards to avoid div-by-zero or negative indexing; total_pages uses integer ceil formula; out-of-range pages return empty items.\nConfidence: 0.85\nOpen: Behavior for non-list inputs or non-int page/per_page (type errors possible).",
+  "finish_reason": "stop",
+  "code": "def paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0 or page < 1:\n        return {'items': [], 'page': page, 'total_pages': 0}\n    total_pages = (len(items) + per_page - 1) // per_page\n    start = (page - 1) * per_page\n    page_items = items[start:start + per_page]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}",
+  "trailing": "MurphySig\nContext: Implements 1-indexed pagination with safe slicing and zero/negative guards to avoid div-by-zero or negative indexing; total_pages uses integer ceil formula; out-of-range pages return empty items.\nConfidence: 0.85\nOpen: Behavior for non-list inputs or non-int page/per_page (type errors possible).",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "missed",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "paginate",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        return {'items': [], 'page': page, 'total_pages': 0}\n    n = len(items)\n    total_pages = (n + per_page - 1) // per_page\n    if page < 1 or page > total_pages:\n        page_items = []\n    else:\n        start = (page - 1) * per_page\n        page_items = items[start:start + per_page]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}\n```\nMurphySig\nContext: pagination slice for 1-based pages; handles per_page<=0, page out of range, empty list via integer arithmetic only.\nConfidence: 0.85\nOpen: behavior for non-int page/per_page (type hints assume correct).",
+  "finish_reason": "stop",
+  "code": "def paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        return {'items': [], 'page': page, 'total_pages': 0}\n    n = len(items)\n    total_pages = (n + per_page - 1) // per_page\n    if page < 1 or page > total_pages:\n        page_items = []\n    else:\n        start = (page - 1) * per_page\n        page_items = items[start:start + per_page]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}",
+  "trailing": "MurphySig\nContext: pagination slice for 1-based pages; handles per_page<=0, page out of range, empty list via integer arithmetic only.\nConfidence: 0.85\nOpen: behavior for non-int page/per_page (type hints assume correct).",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "paginate",
+  "arm": "sign",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        total_pages = 0\n    else:\n        total_pages = (len(items) + per_page - 1) // per_page\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end] if start >= 0 and start < len(items) else []\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}\n```\nMurphySig:\nContext: Basic 1-indexed list slicer for pagination; start/end arithmetic + ceiling division yields correct page slice and page count.\nConfidence: 0.85\nOpen: No spec on invalid inputs (page<=0, per_page<=0, negative values) so behavior is defensive but unverified; assumes list of any hashables.",
+  "finish_reason": "stop",
+  "code": "def paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        total_pages = 0\n    else:\n        total_pages = (len(items) + per_page - 1) // per_page\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end] if start >= 0 and start < len(items) else []\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}",
+  "trailing": "MurphySig:\nContext: Basic 1-indexed list slicer for pagination; start/end arithmetic + ceiling division yields correct page slice and page count.\nConfidence: 0.85\nOpen: No spec on invalid inputs (page<=0, per_page<=0, negative values) so behavior is defensive but unverified; assumes list of any hashables.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1",
+   "H2"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "paginate",
+  "arm": "sign",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        total_pages = 0\n    else:\n        total_pages = (len(items) + per_page - 1) // per_page\n    start = (page - 1) * per_page\n    page_items = items[start:start + per_page]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}\n```\nMurphySig\nContext: basic 1-indexed list slicer for pagination using integer arithmetic to compute total_pages and slice bounds; works because Python slicing safely handles out-of-range indices by returning [] and the ceil-div formula is standard for page counts.\nConfidence: 0.85\nOpen: per_page<=0 and page<=0 behavior left unspecified by prompt; did not add input validation or negative handling.",
+  "finish_reason": "stop",
+  "code": "def paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        total_pages = 0\n    else:\n        total_pages = (len(items) + per_page - 1) // per_page\n    start = (page - 1) * per_page\n    page_items = items[start:start + per_page]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}",
+  "trailing": "MurphySig\nContext: basic 1-indexed list slicer for pagination using integer arithmetic to compute total_pages and slice bounds; works because Python slicing safely handles out-of-range indices by returning [] and the ceil-div formula is standard for page counts.\nConfidence: 0.85\nOpen: per_page<=0 and page<=0 behavior left unspecified by prompt; did not add input validation or negative handling.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "missed",
+    "H2": "missed",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1",
+   "H2"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "paginate",
+  "arm": "sign",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\nimport math\n\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        per_page = 1\n    total_pages = math.ceil(len(items) / per_page) if items else 0\n    if page < 1:\n        page = 1\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}\n```\nMurphySig\nContext: Pagination helper for 1-based list slicing into fixed-size pages; works via (page-1)*per_page offset + ceiling total_pages calc.\nConfidence: 0.75\nOpen: Behavior for page<=0, per_page<=0, or non-list inputs left unspecified by prompt; no explicit error handling added.",
+  "finish_reason": "stop",
+  "code": "import math\n\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        per_page = 1\n    total_pages = math.ceil(len(items) / per_page) if items else 0\n    if page < 1:\n        page = 1\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}",
+  "trailing": "MurphySig\nContext: Pagination helper for 1-based list slicing into fixed-size pages; works via (page-1)*per_page offset + ceiling total_pages calc.\nConfidence: 0.75\nOpen: Behavior for page<=0, per_page<=0, or non-list inputs left unspecified by prompt; no explicit error handling added.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "missed",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1",
+   "H2"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "paginate",
+  "arm": "sign",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        per_page = 1\n    total = len(items)\n    total_pages = (total + per_page - 1) // per_page if total > 0 else 0\n    if page < 1:\n        page = 1\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}\n```\nMurphySig:\nContext: Basic 1-indexed list pagination using integer arithmetic for total_pages and slicing for the page subset; works for valid positive inputs and gracefully caps invalid page/per_page.\nConfidence: 0.85\nOpen: No explicit validation or error raising for non-int inputs or zero/negative per_page beyond the minimal guard; behavior for huge lists not considered.",
+  "finish_reason": "stop",
+  "code": "def paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        per_page = 1\n    total = len(items)\n    total_pages = (total + per_page - 1) // per_page if total > 0 else 0\n    if page < 1:\n        page = 1\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}",
+  "trailing": "MurphySig:\nContext: Basic 1-indexed list pagination using integer arithmetic for total_pages and slicing for the page subset; works for valid positive inputs and gracefully caps invalid page/per_page.\nConfidence: 0.85\nOpen: No explicit validation or error raising for non-int inputs or zero/negative per_page beyond the minimal guard; behavior for huge lists not considered.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "missed",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "paginate",
+  "arm": "sign",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        total_pages = 0\n        page_items = []\n    else:\n        total = len(items)\n        total_pages = (total + per_page - 1) // per_page\n        if page < 1:\n            page_items = []\n        else:\n            start = (page - 1) * per_page\n            page_items = items[start:start + per_page]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}\n```\nMurphySig\nContext: Standard 1-based pagination slice using integer arithmetic for total_pages; handles invalid per_page/page by returning empty items and computed total.\nConfidence: 0.85\nOpen: Behavior for negative per_page or non-int inputs unspecified; no explicit error raising chosen for robustness.",
+  "finish_reason": "stop",
+  "code": "def paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        total_pages = 0\n        page_items = []\n    else:\n        total = len(items)\n        total_pages = (total + per_page - 1) // per_page\n        if page < 1:\n            page_items = []\n        else:\n            start = (page - 1) * per_page\n            page_items = items[start:start + per_page]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}",
+  "trailing": "MurphySig\nContext: Standard 1-based pagination slice using integer arithmetic for total_pages; handles invalid per_page/page by returning empty items and computed total.\nConfidence: 0.85\nOpen: Behavior for negative per_page or non-int inputs unspecified; no explicit error raising chosen for robustness.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "missed",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H1"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "split_amount",
+  "arm": "bare",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    quotient, remainder = divmod(total_cents, n)\n    return [quotient + 1] * remainder + [quotient] * (n - remainder)\n```",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    quotient, remainder = divmod(total_cents, n)\n    return [quotient + 1] * remainder + [quotient] * (n - remainder)",
+  "trailing": "",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": null,
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "split_amount",
+  "arm": "bare",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    base = total_cents // n\n    remainder = total_cents % n\n    return [base + 1] * remainder + [base] * (n - remainder)\n```",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    base = total_cents // n\n    remainder = total_cents % n\n    return [base + 1] * remainder + [base] * (n - remainder)",
+  "trailing": "",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": null,
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "split_amount",
+  "arm": "bare",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    quotient = total_cents // n\n    remainder = total_cents % n\n    return [quotient + 1] * remainder + [quotient] * (n - remainder)\n```",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    quotient = total_cents // n\n    remainder = total_cents % n\n    return [quotient + 1] * remainder + [quotient] * (n - remainder)",
+  "trailing": "",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": null,
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "split_amount",
+  "arm": "bare",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        return []\n    base = total_cents // n\n    remainder = total_cents % n\n    return [base + 1] * remainder + [base] * (n - remainder)\n```",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        return []\n    base = total_cents // n\n    remainder = total_cents % n\n    return [base + 1] * remainder + [base] * (n - remainder)",
+  "trailing": "",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "missed"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": null,
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "split_amount",
+  "arm": "bare",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    base = total_cents // n\n    remainder = total_cents % n\n    return [base + 1] * remainder + [base] * (n - remainder)\n```",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    base = total_cents // n\n    remainder = total_cents % n\n    return [base + 1] * remainder + [base] * (n - remainder)",
+  "trailing": "",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": null,
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "split_amount",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    if n == 0:\n        return []\n    quotient = total_cents // n\n    remainder = total_cents % n\n    return [quotient + 1] * remainder + [quotient] * (n - remainder)\n```\nUncertain: exact required behavior and error handling for n<=0 or negative total (no spec given).",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    if n == 0:\n        return []\n    quotient = total_cents // n\n    remainder = total_cents % n\n    return [quotient + 1] * remainder + [quotient] * (n - remainder)",
+  "trailing": "Uncertain: exact required behavior and error handling for n<=0 or negative total (no spec given).",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H2",
+   "H3"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "split_amount",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    quotient = total_cents // n\n    remainder = total_cents % n\n    return [quotient + 1] * remainder + [quotient] * (n - remainder)\n```\nUncertain: whether callers expect negatives to be accepted (rather than rejected) or a different ordering of parts.",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    quotient = total_cents // n\n    remainder = total_cents % n\n    return [quotient + 1] * remainder + [quotient] * (n - remainder)",
+  "trailing": "Uncertain: whether callers expect negatives to be accepted (rather than rejected) or a different ordering of parts.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H2"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "split_amount",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    if n == 0:\n        return []\n    base = total_cents // n\n    remainder = total_cents % n\n    return [base + 1] * remainder + [base] * (n - remainder)\n```\n\nUncertain: exact error semantics for invalid inputs (no spec provided).",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    if n == 0:\n        return []\n    base = total_cents // n\n    remainder = total_cents % n\n    return [base + 1] * remainder + [base] * (n - remainder)",
+  "trailing": "Uncertain: exact error semantics for invalid inputs (no spec provided).",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H3"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "split_amount",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0 or total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative and n must be positive\")\n    quotient = total_cents // n\n    remainder = total_cents % n\n    return [quotient + 1] * remainder + [quotient] * (n - remainder)\n```\nUncertain: unspecified behavior for n > total_cents (zeros) and exact exception type/message.",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0 or total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative and n must be positive\")\n    quotient = total_cents // n\n    remainder = total_cents % n\n    return [quotient + 1] * remainder + [quotient] * (n - remainder)",
+  "trailing": "Uncertain: unspecified behavior for n > total_cents (zeros) and exact exception type/message.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "split_amount",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if not isinstance(total_cents, int) or not isinstance(n, int):\n        raise TypeError(\"total_cents and n must be integers\")\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    quotient, remainder = divmod(total_cents, n)\n    return [quotient + 1] * remainder + [quotient] * (n - remainder)\n```\nUncertain: whether negative inputs or non-ints should raise vs. silently handle, and whether any particular ordering of parts is required.",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if not isinstance(total_cents, int) or not isinstance(n, int):\n        raise TypeError(\"total_cents and n must be integers\")\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    quotient, remainder = divmod(total_cents, n)\n    return [quotient + 1] * remainder + [quotient] * (n - remainder)",
+  "trailing": "Uncertain: whether negative inputs or non-ints should raise vs. silently handle, and whether any particular ordering of parts is required.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H2"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "split_amount",
+  "arm": "reflect",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    quotient = total_cents // n\n    remainder = total_cents % n\n    return [quotient + 1] * remainder + [quotient] * (n - remainder)\n```\nNote: added input validation for safety (not strictly required by spec); order produces larger parts first; unsure if negatives/zero-n should be supported vs. assumed invalid.",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    quotient = total_cents // n\n    remainder = total_cents % n\n    return [quotient + 1] * remainder + [quotient] * (n - remainder)",
+  "trailing": "Note: added input validation for safety (not strictly required by spec); order produces larger parts first; unsure if negatives/zero-n should be supported vs. assumed invalid.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H2",
+   "H3"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "split_amount",
+  "arm": "reflect",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    quotient = total_cents // n\n    remainder = total_cents % n\n    return [quotient + 1] * remainder + [quotient] * (n - remainder)\n```\nNote: handled n<=0 and negative totals with errors (assumed invalid); zeros allowed when n>total; order with larger first is conventional but unspecified.",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    quotient = total_cents // n\n    remainder = total_cents % n\n    return [quotient + 1] * remainder + [quotient] * (n - remainder)",
+  "trailing": "Note: handled n<=0 and negative totals with errors (assumed invalid); zeros allowed when n>total; order with larger first is conventional but unspecified.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "split_amount",
+  "arm": "reflect",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        return []\n    base = total_cents // n\n    rem = total_cents % n\n    return [base + 1] * rem + [base] * (n - rem)\n```\nNote: handled n<=0 defensively (returns []); logic verified on edges like (0,5), (5,2), (1,2), (10,3) but assumes non-negative inputs per typical use.",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        return []\n    base = total_cents // n\n    rem = total_cents % n\n    return [base + 1] * rem + [base] * (n - rem)",
+  "trailing": "Note: handled n<=0 defensively (returns []); logic verified on edges like (0,5), (5,2), (1,2), (10,3) but assumes non-negative inputs per typical use.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "missed"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H2"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "split_amount",
+  "arm": "reflect",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    q, r = divmod(total_cents, n)\n    return [q + 1] * r + [q] * (n - r)\n```\nNote: added input validation after considering failure modes (n<=0, negatives); logic verified on edges like remainder distribution and zeros, but unsure if problem assumes only valid inputs (no checks needed).",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    q, r = divmod(total_cents, n)\n    return [q + 1] * r + [q] * (n - r)",
+  "trailing": "Note: added input validation after considering failure modes (n<=0, negatives); logic verified on edges like remainder distribution and zeros, but unsure if problem assumes only valid inputs (no checks needed).",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H3"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "split_amount",
+  "arm": "reflect",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    q = total_cents // n\n    r = total_cents % n\n    return [q + 1] * r + [q] * (n - r)\n```\nNote: assumed non-negative inputs (raised on invalid); order of larger parts first is conventional but unspecified.",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    q = total_cents // n\n    r = total_cents % n\n    return [q + 1] * r + [q] * (n - r)",
+  "trailing": "Note: assumed non-negative inputs (raised on invalid); order of larger parts first is conventional but unspecified.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "split_amount",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if not isinstance(total_cents, int) or not isinstance(n, int):\n        raise TypeError(\"total_cents and n must be integers\")\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    if n == 1:\n        return [total_cents]\n    quotient = total_cents // n\n    remainder = total_cents % n\n    return [quotient + 1] * remainder + [quotient] * (n - remainder)\n```\nMurphySig\nContext: Splits non-negative integer cents into n>0 positive integer parts using floor division + remainder distribution so parts differ by at most 1 and sum exactly to total; explicit guards prevent division-by-zero, negative parts, and non-integer inputs.\nConfidence: 0.9\nOpen: Behavior under concurrent mutation of inputs (irrelevant for ints) or extremely large n (memory exhaustion) not tested.",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if not isinstance(total_cents, int) or not isinstance(n, int):\n        raise TypeError(\"total_cents and n must be integers\")\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    if n == 1:\n        return [total_cents]\n    quotient = total_cents // n\n    remainder = total_cents % n\n    return [quotient + 1] * remainder + [quotient] * (n - remainder)",
+  "trailing": "MurphySig\nContext: Splits non-negative integer cents into n>0 positive integer parts using floor division + remainder distribution so parts differ by at most 1 and sum exactly to total; explicit guards prevent division-by-zero, negative parts, and non-integer inputs.\nConfidence: 0.9\nOpen: Behavior under concurrent mutation of inputs (irrelevant for ints) or extremely large n (memory exhaustion) not tested.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "split_amount",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    base = total_cents // n\n    rem = total_cents % n\n    return [base + 1] * rem + [base] * (n - rem)\n```\nMurphySig\nContext: evenly distributes total_cents across exactly n parts via integer division + remainder increments so parts differ by at most 1 and sum to total_cents; rejects invalid inputs.\nConfidence: 0.9\nOpen: none",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    base = total_cents // n\n    rem = total_cents % n\n    return [base + 1] * rem + [base] * (n - rem)",
+  "trailing": "MurphySig\nContext: evenly distributes total_cents across exactly n parts via integer division + remainder increments so parts differ by at most 1 and sum to total_cents; rejects invalid inputs.\nConfidence: 0.9\nOpen: none",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "split_amount",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    quotient = total_cents // n\n    remainder = total_cents % n\n    return [quotient + 1] * remainder + [quotient] * (n - remainder)\n```\nMurphySig\nContext: integer division split of non-negative total into positive n parts; remainder distributed first ensures sum==total and max diff==1.\nConfidence: 0.95\nOpen: caller-defined ordering or negative-currency semantics.",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    quotient = total_cents // n\n    remainder = total_cents % n\n    return [quotient + 1] * remainder + [quotient] * (n - remainder)",
+  "trailing": "MurphySig\nContext: integer division split of non-negative total into positive n parts; remainder distributed first ensures sum==total and max diff==1.\nConfidence: 0.95\nOpen: caller-defined ordering or negative-currency semantics.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H2",
+   "H3"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "split_amount",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    base = total_cents // n\n    rem = total_cents % n\n    return [base + 1] * rem + [base] * (n - rem)\n```\nMurphySig\nContext: Splits total_cents evenly into n positive integer parts via // and % (larger first), with explicit guards for n<=0 and total<0.\nConfidence: 0.95\nOpen: None.",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    base = total_cents // n\n    rem = total_cents % n\n    return [base + 1] * rem + [base] * (n - rem)",
+  "trailing": "MurphySig\nContext: Splits total_cents evenly into n positive integer parts via // and % (larger first), with explicit guards for n<=0 and total<0.\nConfidence: 0.95\nOpen: None.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "split_amount",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    base = total_cents // n\n    remainder = total_cents % n\n    return [base + 1] * remainder + [base] * (n - remainder)\n```\nMurphySig\nContext: integer division split of non-negative total into exactly n parts (larger first) that differ by at most 1 and sum exactly to total; works because // and % guarantee the required counts and values for any valid inputs.\nConfidence: 0.95\nOpen: behavior if total_cents or n are floats (type hints already forbid).",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    base = total_cents // n\n    remainder = total_cents % n\n    return [base + 1] * remainder + [base] * (n - remainder)",
+  "trailing": "MurphySig\nContext: integer division split of non-negative total into exactly n parts (larger first) that differ by at most 1 and sum exactly to total; works because // and % guarantee the required counts and values for any valid inputs.\nConfidence: 0.95\nOpen: behavior if total_cents or n are floats (type hints already forbid).",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "split_amount",
+  "arm": "sign",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    base = total_cents // n\n    rem = total_cents % n\n    return [base + 1] * rem + [base] * (n - rem)\n```\n**MurphySig**\nContext: Splits total_cents evenly into n ints via floor div + remainder distribution; larger parts first. Works because any even split differs by at most 1 and this construction guarantees sum==total and max-min<=1.\nConfidence: 0.85\nOpen: Assumes non-neg inputs (raises otherwise); order of parts not specified by spec.",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    base = total_cents // n\n    rem = total_cents % n\n    return [base + 1] * rem + [base] * (n - rem)",
+  "trailing": "**MurphySig**\nContext: Splits total_cents evenly into n ints via floor div + remainder distribution; larger parts first. Works because any even split differs by at most 1 and this construction guarantees sum==total and max-min<=1.\nConfidence: 0.85\nOpen: Assumes non-neg inputs (raises otherwise); order of parts not specified by spec.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H2"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "split_amount",
+  "arm": "sign",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    quotient = total_cents // n\n    remainder = total_cents % n\n    return [quotient + 1] * remainder + [quotient] * (n - remainder)\n```\nMurphySig\nContext: evenly distributes cents via floor div + remainder spread (standard fair split algo)\nConfidence: 0.85\nOpen: negative inputs, n=0 behavior unspecified by prompt (I chose errors)",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    quotient = total_cents // n\n    remainder = total_cents % n\n    return [quotient + 1] * remainder + [quotient] * (n - remainder)",
+  "trailing": "MurphySig\nContext: evenly distributes cents via floor div + remainder spread (standard fair split algo)\nConfidence: 0.85\nOpen: negative inputs, n=0 behavior unspecified by prompt (I chose errors)",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H2",
+   "H3"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "split_amount",
+  "arm": "sign",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    base = total_cents // n\n    remainder = total_cents % n\n    return [base + 1] * remainder + [base] * (n - remainder)\n```\nMurphySig\nContext: Splits total_cents into n parts using integer division and modulo so that parts differ by at most 1 and sum exactly to total_cents; larger parts placed first.\nConfidence: 0.9\nOpen: Assumes n>0 and total_cents>=0; behavior for negative inputs or n=0 left as error cases.",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    base = total_cents // n\n    remainder = total_cents % n\n    return [base + 1] * remainder + [base] * (n - remainder)",
+  "trailing": "MurphySig\nContext: Splits total_cents into n parts using integer division and modulo so that parts differ by at most 1 and sum exactly to total_cents; larger parts placed first.\nConfidence: 0.9\nOpen: Assumes n>0 and total_cents>=0; behavior for negative inputs or n=0 left as error cases.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H2",
+   "H3"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "split_amount",
+  "arm": "sign",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    base = total_cents // n\n    rem = total_cents % n\n    return [base + 1] * rem + [base] * (n - rem)\n```\nMurphySig:\nContext: Implements fair integer division of total_cents across n recipients by computing quotient and remainder; remainder recipients receive one extra cent to ensure sum equals total and variance is at most 1.\nConfidence: 0.85\nOpen: Assumes total_cents >= 0 and n > 0; behavior for invalid inputs raises ValueError but problem statement provides no explicit contract.",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    base = total_cents // n\n    rem = total_cents % n\n    return [base + 1] * rem + [base] * (n - rem)",
+  "trailing": "MurphySig:\nContext: Implements fair integer division of total_cents across n recipients by computing quotient and remainder; remainder recipients receive one extra cent to ensure sum equals total and variance is at most 1.\nConfidence: 0.85\nOpen: Assumes total_cents >= 0 and n > 0; behavior for invalid inputs raises ValueError but problem statement provides no explicit contract.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H2",
+   "H3"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ },
+ {
+  "case_id": "split_amount",
+  "arm": "sign",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    base = total_cents // n\n    remainder = total_cents % n\n    return [base + 1] * remainder + [base] * (n - remainder)\n```\nMurphySig\nContext: Divides total_cents by n using integer division and modulo to produce n parts differing by at most 1 that sum exactly to the input; larger parts placed first for determinism. Works because any integer division remainder directly gives the count of +1 increments needed.\nConfidence: 0.95\nOpen: Assumes n>0 and total_cents>=0 (raises otherwise); no ordering requirement was stated so larger-first is an arbitrary but consistent choice.",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    base = total_cents // n\n    remainder = total_cents % n\n    return [base + 1] * remainder + [base] * (n - remainder)",
+  "trailing": "MurphySig\nContext: Divides total_cents by n using integer division and modulo to produce n parts differing by at most 1 that sum exactly to the input; larger parts placed first for determinism. Works because any integer division remainder directly gives the count of +1 increments needed.\nConfidence: 0.95\nOpen: Assumes n>0 and total_cents>=0 (raises otherwise); no ordering requirement was stated so larger-first is an arbitrary but consistent choice.",
+  "sig_in_fence": false,
+  "verdict": {
+   "hazards": {
+    "H1": "handled",
+    "H2": "handled",
+    "H3": "handled"
+   },
+   "core_correct": true,
+   "defaulted": []
+  },
+  "acknowledged": [
+   "H2",
+   "H3"
+  ],
+  "judge": "anthropic/claude-opus-4.6"
+ }
+]

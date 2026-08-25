@@ -1,0 +1,13 @@
+{
+  "case_id": "split_amount",
+  "arm": "reflect",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be a positive integer\")\n    base, rem = divmod(total_cents, n)\n    return [base + 1] * rem + [base] * (n - rem)\n```\n\n**Notes on considerations:**\n\n- **Core logic:** `divmod(total_cents, n)` gives a `base` quotient and `rem` remainder. We create `rem` parts of `base + 1` and `n - rem` parts of `base`. This guarantees the sum is exactly `total_cents` and the maximum difference between any two parts is 1 (as even as integer splitting allows).\n\n- **Negative amounts:** Python's `divmod` uses floor division, so negative `total_cents` still works correctly (e.g., `split_amount(-5, 3)` \u2192 `[-1, -2, -2]`, sum = \u22125, max difference = 1).\n\n- **Edge cases verified:** `n = 1` returns `[total_cents]`; `total_cents = 0` returns all zeros; `n > total_cents` (e.g., `split_amount(3, 5)` \u2192 `[1, 1, 1, 0, 0]`) works correctly.\n\n- **`n \u2264 0`:** Raises `ValueError` since splitting into zero or negative parts is undefined.\n\n- **Ordering:** Larger parts come first. The problem doesn't specify order, so this is a reasonable default. If round-robin or sorted order were required, that would need to be specified.",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be a positive integer\")\n    base, rem = divmod(total_cents, n)\n    return [base + 1] * rem + [base] * (n - rem)",
+  "trailing": "**Notes on considerations:**\n\n- **Core logic:** `divmod(total_cents, n)` gives a `base` quotient and `rem` remainder. We create `rem` parts of `base + 1` and `n - rem` parts of `base`. This guarantees the sum is exactly `total_cents` and the maximum difference between any two parts is 1 (as even as integer splitting allows).\n\n- **Negative amounts:** Python's `divmod` uses floor division, so negative `total_cents` still works correctly (e.g., `split_amount(-5, 3)` \u2192 `[-1, -2, -2]`, sum = \u22125, max difference = 1).\n\n- **Edge cases verified:** `n = 1` returns `[total_cents]`; `total_cents = 0` returns all zeros; `n > total_cents` (e.g., `split_amount(3, 5)` \u2192 `[1, 1, 1, 0, 0]`) works correctly.\n\n- **`n \u2264 0`:** Raises `ValueError` since splitting into zero or negative parts is undefined.\n\n- **Ordering:** Larger parts come first. The problem doesn't specify order, so this is a reasonable default. If round-robin or sorted order were required, that would need to be specified.",
+  "sig_in_fence": false
+}

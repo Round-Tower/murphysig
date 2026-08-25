@@ -1,0 +1,13 @@
+{
+  "case_id": "duration",
+  "arm": "bare",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    \"\"\"\n    Parses a duration string like '1h30m', '45s', or '2h' into total seconds.\n    Supported units: h (hours), m (minutes), s (seconds).\n    \n    Raises ValueError if the input format is invalid.\n    \"\"\"\n    # Strict validation: string must consist only of one or more [digits][hms] pairs,\n    # optionally surrounded by whitespace.\n    if not re.match(r'^\\s*(?:\\d+\\s*[hms]\\s*)+$', s):\n        raise ValueError(f\"Invalid duration format: {s!r}\")\n        \n    # Find all components\n    matches = re.findall(r'(\\d+)\\s*([hms])', s)\n    \n    multipliers = {\n        'h': 3600,\n        'm': 60,\n        's': 1\n    }\n    \n    total_seconds = 0\n    for value_str, unit in matches:\n        total_seconds += int(value_str) * multipliers[unit]\n        \n    return total_seconds\n```",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    \"\"\"\n    Parses a duration string like '1h30m', '45s', or '2h' into total seconds.\n    Supported units: h (hours), m (minutes), s (seconds).\n    \n    Raises ValueError if the input format is invalid.\n    \"\"\"\n    # Strict validation: string must consist only of one or more [digits][hms] pairs,\n    # optionally surrounded by whitespace.\n    if not re.match(r'^\\s*(?:\\d+\\s*[hms]\\s*)+$', s):\n        raise ValueError(f\"Invalid duration format: {s!r}\")\n        \n    # Find all components\n    matches = re.findall(r'(\\d+)\\s*([hms])', s)\n    \n    multipliers = {\n        'h': 3600,\n        'm': 60,\n        's': 1\n    }\n    \n    total_seconds = 0\n    for value_str, unit in matches:\n        total_seconds += int(value_str) * multipliers[unit]\n        \n    return total_seconds",
+  "trailing": "",
+  "sig_in_fence": false
+}

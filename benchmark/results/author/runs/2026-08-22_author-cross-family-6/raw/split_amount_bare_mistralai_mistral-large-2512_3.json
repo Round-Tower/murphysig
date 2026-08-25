@@ -1,0 +1,13 @@
+{
+  "case_id": "split_amount",
+  "arm": "bare",
+  "model": "mistralai/mistral-large-2512",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "Here's a Python function that splits an amount of money (given in cents) into `n` parts as evenly as possible, using only the standard library:\n\n```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be a positive integer\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n\n    base = total_cents // n\n    remainder = total_cents % n\n    result = [base] * n\n    for i in range(remainder):\n        result[i] += 1\n    return result\n```\n\n### Explanation:\n1. **Input Validation**: The function first checks if `n` is a positive integer and if `total_cents` is non-negative.\n2. **Base Calculation**: The base amount for each part is calculated as `total_cents // n` (integer division).\n3. **Remainder Handling**: The remainder from the division (`total_cents % n`) is distributed one cent at a time to the first `remainder` parts of the result list.\n4. **Result Construction**: The result list is initialized with `base` for all `n` parts, and then the remainder is added to the first `remainder` elements.\n\nThis ensures the split is as even as possible, with the difference between any two parts being at most 1 cent.",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be a positive integer\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n\n    base = total_cents // n\n    remainder = total_cents % n\n    result = [base] * n\n    for i in range(remainder):\n        result[i] += 1\n    return result",
+  "trailing": "### Explanation:\n1. **Input Validation**: The function first checks if `n` is a positive integer and if `total_cents` is non-negative.\n2. **Base Calculation**: The base amount for each part is calculated as `total_cents // n` (integer division).\n3. **Remainder Handling**: The remainder from the division (`total_cents % n`) is distributed one cent at a time to the first `remainder` parts of the result list.\n4. **Result Construction**: The result list is initialized with `base` for all `n` parts, and then the remainder is added to the first `remainder` elements.\n\nThis ensures the split is as even as possible, with the difference between any two parts being at most 1 cent.",
+  "sig_in_fence": false
+}

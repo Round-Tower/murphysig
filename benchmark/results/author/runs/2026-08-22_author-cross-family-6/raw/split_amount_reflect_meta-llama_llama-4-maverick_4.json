@@ -1,0 +1,13 @@
+{
+  "case_id": "split_amount",
+  "arm": "reflect",
+  "model": "meta-llama/llama-4-maverick",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    \"\"\"\n    Splits an amount of money into n integer parts as evenly as possible.\n\n    Args:\n    total_cents (int): The total amount of money in cents.\n    n (int): The number of parts to split the amount into.\n\n    Returns:\n    list[int]: A list of n integer parts that sum up to total_cents.\n    \"\"\"\n    if n == 0:\n        return []\n    \n    base, remainder = divmod(total_cents, n)\n    return [base + 1] * remainder + [base] * (n - remainder)\n\n# Example usage:\n# print(split_amount(100, 3))  # Output: [34, 33, 33]\n```\n\nI considered several edge cases and potential issues when implementing this function:\n- Handling the case where `n` equals 0 to avoid division by zero. In this case, an empty list is returned.\n- Ensuring that the function works correctly for both positive and negative `total_cents` values.\n- Verifying that the sum of the returned parts equals `total_cents`.\n- Checking that the function handles cases where `total_cents` is not evenly divisible by `n` by distributing the remainder as evenly as possible.\n- The function assumes that `n` is a non-negative integer. If `n` could be negative, additional error checking would be necessary.",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    \"\"\"\n    Splits an amount of money into n integer parts as evenly as possible.\n\n    Args:\n    total_cents (int): The total amount of money in cents.\n    n (int): The number of parts to split the amount into.\n\n    Returns:\n    list[int]: A list of n integer parts that sum up to total_cents.\n    \"\"\"\n    if n == 0:\n        return []\n    \n    base, remainder = divmod(total_cents, n)\n    return [base + 1] * remainder + [base] * (n - remainder)\n\n# Example usage:\n# print(split_amount(100, 3))  # Output: [34, 33, 33]",
+  "trailing": "I considered several edge cases and potential issues when implementing this function:\n- Handling the case where `n` equals 0 to avoid division by zero. In this case, an empty list is returned.\n- Ensuring that the function works correctly for both positive and negative `total_cents` values.\n- Verifying that the sum of the returned parts equals `total_cents`.\n- Checking that the function handles cases where `total_cents` is not evenly divisible by `n` by distributing the remainder as evenly as possible.\n- The function assumes that `n` is a non-negative integer. If `n` could be negative, additional error checking would be necessary.",
+  "sig_in_fence": false
+}

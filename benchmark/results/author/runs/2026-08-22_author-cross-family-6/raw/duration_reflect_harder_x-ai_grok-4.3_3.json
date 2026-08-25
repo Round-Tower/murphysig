@@ -1,0 +1,13 @@
+{
+  "case_id": "duration",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    if not isinstance(s, str):\n        raise TypeError(\"Input must be a string\")\n    total = 0\n    pattern = r'(\\d+)([hms])'\n    pos = 0\n    for match in re.finditer(pattern, s):\n        if match.start() != pos:\n            raise ValueError(f\"Invalid duration string: {s!r}\")\n        num, unit = match.groups()\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n        pos = match.end()\n    if pos != len(s):\n        raise ValueError(f\"Invalid duration string: {s!r}\")\n    return total\n```\nUncertain: empty string returns 0 (no spec); duplicate units (e.g. '1h2h') are summed rather than rejected.",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    if not isinstance(s, str):\n        raise TypeError(\"Input must be a string\")\n    total = 0\n    pattern = r'(\\d+)([hms])'\n    pos = 0\n    for match in re.finditer(pattern, s):\n        if match.start() != pos:\n            raise ValueError(f\"Invalid duration string: {s!r}\")\n        num, unit = match.groups()\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n        pos = match.end()\n    if pos != len(s):\n        raise ValueError(f\"Invalid duration string: {s!r}\")\n    return total",
+  "trailing": "Uncertain: empty string returns 0 (no spec); duplicate units (e.g. '1h2h') are summed rather than rejected.",
+  "sig_in_fence": false
+}

@@ -47,6 +47,13 @@ RESULTS_ROOT = ROOT / "results" / "author"
 
 ARMS = ("bare", "reflect", "sign", "sign_revise", "reflect_harder")
 
+# Subject budget. Reasoning-by-default models (gemini-3.5-flash and
+# qwen3.7-plus via OpenRouter, discovered 2026-08-22 when 147/600 rows
+# came back finish_reason=length) spend hidden reasoning from the same
+# budget — 2048 starved the visible answer to nothing on the strongest
+# arms, exactly the truncation shape the fixture audit warned about.
+SUBJECT_MAX_TOKENS = 8192
+
 
 def load_author_fixtures() -> tuple[list[dict], dict[str, str]]:
     """Return (cases, arm_templates) from fixtures/author/."""
@@ -67,17 +74,73 @@ def instruction_overhead_words(arms: dict[str, str], name: str) -> int:
     return len(arms[name].split()) - len(arms["bare"].split())
 
 
+_FENCE = r"```[A-Za-z0-9_+-]*[ \t]*\n"
+
+# Markers that identify a signature/reflection block. Checked ONLY against
+# non-executable tail regions (comments / a trailing bare string), never
+# against executable code, so `opts = {"Open": 1}` can't false-positive.
+_SIG_MARKERS = re.compile(
+    r"(?im)murphysig|^\s*#?\s*(signed|confidence|open|context|prior)\s*:"
+)
+
+
 def extract_code(text: str) -> str:
     """First fenced code block; whole text if the model skipped the fence."""
-    m = re.search(r"```(?:python)?\s*\n(.*?)```", text, re.DOTALL)
+    m = re.search(_FENCE + r"(.*?)```", text, re.DOTALL)
     return (m.group(1) if m else text).strip()
 
 
 def extract_trailing(text: str) -> str:
     """Everything after the first fenced code block — the reflection note
     or signature block. This is what the deferral judge reads."""
-    parts = re.split(r"```(?:python)?\s*\n.*?```", text, maxsplit=1, flags=re.DOTALL)
+    parts = re.split(_FENCE + r".*?```", text, maxsplit=1, flags=re.DOTALL)
     return parts[1].strip() if len(parts) > 1 else ""
+
+
+def split_signature(code: str) -> tuple[str, str]:
+    """Strip a signature/reflection block a model left INSIDE the fence.
+
+    The 2026-08-22 adversarial audit found ~46% of pilot sign-arm rows
+    carried the MurphySig block inside the code fence — un-blinding the
+    hazard judge in one direction and starving the deferral judge in the
+    other. Two shapes are handled, both strictly non-executable tails:
+    a trailing comment/blank run, and a trailing bare triple-quoted
+    string. A tail is only stripped when it contains signature markers,
+    so ordinary trailing comments survive. Returns (code, sig_text)."""
+    for _ in range(2):  # a docstring block may sit under a comment block
+        lines = code.rstrip().split("\n")
+        i = len(lines)
+        while i > 0 and (not lines[i - 1].strip() or lines[i - 1].lstrip().startswith("#")):
+            i -= 1
+        if i < len(lines):
+            tail = "\n".join(lines[i:])
+            if _SIG_MARKERS.search(tail):
+                code = "\n".join(lines[:i]).rstrip()
+                return _finish_split(code, tail)
+        m = re.search(r'(?s)\n(("""|\'\'\')(?!.*\2.*\S).*?\2)\s*$', code.rstrip())
+        if m and _SIG_MARKERS.search(m.group(1)):
+            code = code.rstrip()[: m.start()].rstrip()
+            return _finish_split(code, m.group(1))
+        break
+    return code, ""
+
+
+def _finish_split(code: str, sig: str) -> tuple[str, str]:
+    """Recurse once so comment-over-docstring stacks fully strip."""
+    inner_code, inner_sig = split_signature(code)
+    combined = (inner_sig + "\n" + sig).strip() if inner_sig else sig.strip()
+    return inner_code, combined
+
+
+def extract_fields(content: str) -> dict:
+    """The judged fields for one response: fence-extracted code with any
+    in-fence signature stripped and rerouted to trailing, plus the
+    sig_in_fence flag the analysis records."""
+    code, in_fence_sig = split_signature(extract_code(content))
+    trailing = extract_trailing(content)
+    if in_fence_sig:
+        trailing = (trailing + "\n\n" + in_fence_sig).strip() if trailing else in_fence_sig
+    return {"code": code, "trailing": trailing, "sig_in_fence": bool(in_fence_sig)}
 
 
 def resolve_arms(arg: str) -> tuple[str, ...]:
@@ -109,8 +172,13 @@ def run(
                 n += 1
                 print(f"[{n}/{total}] {case['id']} / {arm} / rep={rep}", flush=True)
 
-                resp = create_completion(client, model, prompt, temperature)
+                resp = create_completion(
+                    client, model, prompt, temperature, max_tokens=SUBJECT_MAX_TOKENS
+                )
                 content = resp.choices[0].message.content or ""
+                finish = getattr(resp.choices[0], "finish_reason", None)
+                if finish != "stop":
+                    print(f"  ⚠️ finish_reason={finish} — row may be truncated")
 
                 row = {
                     "case_id": case["id"],
@@ -120,8 +188,8 @@ def run(
                     "rep": rep,
                     "temperature": temperature,
                     "content": content,
-                    "code": extract_code(content),
-                    "trailing": extract_trailing(content),
+                    "finish_reason": getattr(resp.choices[0], "finish_reason", None),
+                    **extract_fields(content),
                 }
                 rows.append(row)
 

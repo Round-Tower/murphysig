@@ -1,0 +1,13 @@
+{
+  "case_id": "billing",
+  "arm": "bare",
+  "model": "deepseek/deepseek-chat-v3.1",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\nfrom calendar import monthrange\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    year = start.year\n    month = start.month + months_ahead\n    \n    # Adjust year and month if month exceeds 12\n    year += (month - 1) // 12\n    month = (month - 1) % 12 + 1\n    \n    # Get the last day of the target month\n    _, last_day = monthrange(year, month)\n    \n    # Use the same day of month, but don't exceed the last day of the target month\n    day = min(start.day, last_day)\n    \n    return datetime.date(year, month, day)\n```",
+  "finish_reason": "stop",
+  "code": "import datetime\nfrom calendar import monthrange\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    year = start.year\n    month = start.month + months_ahead\n    \n    # Adjust year and month if month exceeds 12\n    year += (month - 1) // 12\n    month = (month - 1) % 12 + 1\n    \n    # Get the last day of the target month\n    _, last_day = monthrange(year, month)\n    \n    # Use the same day of month, but don't exceed the last day of the target month\n    day = min(start.day, last_day)\n    \n    return datetime.date(year, month, day)",
+  "trailing": "",
+  "sig_in_fence": false
+}

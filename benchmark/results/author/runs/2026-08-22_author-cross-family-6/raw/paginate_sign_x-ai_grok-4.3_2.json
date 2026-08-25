@@ -1,0 +1,13 @@
+{
+  "case_id": "paginate",
+  "arm": "sign",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\nimport math\n\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        per_page = 1\n    total_pages = math.ceil(len(items) / per_page) if items else 0\n    if page < 1:\n        page = 1\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}\n```\nMurphySig\nContext: Pagination helper for 1-based list slicing into fixed-size pages; works via (page-1)*per_page offset + ceiling total_pages calc.\nConfidence: 0.75\nOpen: Behavior for page<=0, per_page<=0, or non-list inputs left unspecified by prompt; no explicit error handling added.",
+  "finish_reason": "stop",
+  "code": "import math\n\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        per_page = 1\n    total_pages = math.ceil(len(items) / per_page) if items else 0\n    if page < 1:\n        page = 1\n    start = (page - 1) * per_page\n    end = start + per_page\n    page_items = items[start:end]\n    return {'items': page_items, 'page': page, 'total_pages': total_pages}",
+  "trailing": "MurphySig\nContext: Pagination helper for 1-based list slicing into fixed-size pages; works via (page-1)*per_page offset + ceiling total_pages calc.\nConfidence: 0.75\nOpen: Behavior for page<=0, per_page<=0, or non-list inputs left unspecified by prompt; no explicit error handling added.",
+  "sig_in_fence": false
+}

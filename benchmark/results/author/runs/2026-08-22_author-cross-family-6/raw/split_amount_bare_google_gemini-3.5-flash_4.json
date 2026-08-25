@@ -1,0 +1,13 @@
+{
+  "case_id": "split_amount",
+  "arm": "bare",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "An elegant way to implement this is by using Python's built-in `divmod()` function, which returns both the quotient and the remainder of the division. \n\nIf we divide `total_cents` by `n`, the quotient is the base amount each part receives, and the remainder is the number of extra cents that need to be distributed (one per part) to make the sum exact.\n\nHere is the complete implementation:\n\n```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    \"\"\"\n    Splits an amount of money (in cents) into n integer parts as evenly as possible.\n    \n    :param total_cents: The total amount of money in cents.\n    :param n: The number of parts to split the amount into.\n    :return: A list of n integers representing the split amounts.\n    \"\"\"\n    if n <= 0:\n        raise ValueError(\"Number of parts (n) must be a positive integer.\")\n        \n    q, r = divmod(total_cents, n)\n    return [q + 1] * r + [q] * (n - r)\n```",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    \"\"\"\n    Splits an amount of money (in cents) into n integer parts as evenly as possible.\n    \n    :param total_cents: The total amount of money in cents.\n    :param n: The number of parts to split the amount into.\n    :return: A list of n integers representing the split amounts.\n    \"\"\"\n    if n <= 0:\n        raise ValueError(\"Number of parts (n) must be a positive integer.\")\n        \n    q, r = divmod(total_cents, n)\n    return [q + 1] * r + [q] * (n - r)",
+  "trailing": "",
+  "sig_in_fence": false
+}

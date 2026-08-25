@@ -1,0 +1,57 @@
+{
+  "run_id": "2026-08-22_author-cross-family-6",
+  "theme": "author",
+  "date": "2026-08-22",
+  "git_sha": "3982e51",
+  "fixture_hash": "sha256:f6ac68a000941bcf",
+  "judge_model": "openai/gpt-5.4",
+  "reps": 5,
+  "temperature": 0.7,
+  "model_count": 6,
+  "total_responses": 600,
+  "models": [
+    {
+      "provider": "openrouter",
+      "id": "google/gemini-3.5-flash",
+      "n": 100
+    },
+    {
+      "provider": "openrouter",
+      "id": "meta-llama/llama-4-maverick",
+      "n": 100
+    },
+    {
+      "provider": "openrouter",
+      "id": "x-ai/grok-4.3",
+      "n": 100
+    },
+    {
+      "provider": "openrouter",
+      "id": "deepseek/deepseek-chat-v3.1",
+      "n": 100
+    },
+    {
+      "provider": "openrouter",
+      "id": "qwen/qwen3.7-plus",
+      "n": 100
+    },
+    {
+      "provider": "openrouter",
+      "id": "mistralai/mistral-large-2512",
+      "n": 100
+    }
+  ],
+  "headline": {
+    "delta_sign_reflect": -0.0389,
+    "delta_sign_revise_reflect_harder": 0.0389,
+    "confession_rate": {
+      "bare": 0.0,
+      "reflect": 0.4459,
+      "reflect_harder": 0.4118,
+      "sign": 0.6818,
+      "sign_revise": 0.2162
+    }
+  },
+  "signed": "Kev + claude-fable-5",
+  "format": "MurphySig v0.4 (https://murphysig.dev/spec)"
+}

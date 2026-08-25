@@ -1,0 +1,13 @@
+{
+  "case_id": "split_amount",
+  "arm": "reflect",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be a positive integer\")\n    base, remainder = divmod(total_cents, n)\n    return [base + 1] * remainder + [base] * (n - remainder)\n```\n\n**Notes on considerations:**\n\n- **Evenness guarantee:** `divmod(total_cents, n)` yields `base` and `remainder` where `0 \u2264 remainder < n`. The result has `remainder` parts equal to `base + 1` and `n - remainder` parts equal to `base`, so the max difference between any two parts is exactly 1, and the sum is always exactly `total_cents`.\n\n- **Negative amounts:** Python's `divmod` uses floor division, so negative totals work correctly. For example, `split_amount(-7, 3)` gives `[-2, -2, -3]` (sum = -7, max difference = 1).\n\n- **Edge cases:** `n = 1` returns `[total_cents]`; `total_cents = 0` returns `n` zeros; `n \u2264 0` raises `ValueError`.\n\n- **Ordering convention:** The \"extra\" cents (the +1 parts) are placed first. The problem only requires \"as evenly as possible,\" which doesn't dictate order, but front-loading is a standard convention (analogous to dealing cards).\n\n- **Uncertainty:** None remaining \u2014 the logic is straightforward and covers all edge cases cleanly.",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be a positive integer\")\n    base, remainder = divmod(total_cents, n)\n    return [base + 1] * remainder + [base] * (n - remainder)",
+  "trailing": "**Notes on considerations:**\n\n- **Evenness guarantee:** `divmod(total_cents, n)` yields `base` and `remainder` where `0 \u2264 remainder < n`. The result has `remainder` parts equal to `base + 1` and `n - remainder` parts equal to `base`, so the max difference between any two parts is exactly 1, and the sum is always exactly `total_cents`.\n\n- **Negative amounts:** Python's `divmod` uses floor division, so negative totals work correctly. For example, `split_amount(-7, 3)` gives `[-2, -2, -3]` (sum = -7, max difference = 1).\n\n- **Edge cases:** `n = 1` returns `[total_cents]`; `total_cents = 0` returns `n` zeros; `n \u2264 0` raises `ValueError`.\n\n- **Ordering convention:** The \"extra\" cents (the +1 parts) are placed first. The problem only requires \"as evenly as possible,\" which doesn't dictate order, but front-loading is a standard convention (analogous to dealing cards).\n\n- **Uncertainty:** None remaining \u2014 the logic is straightforward and covers all edge cases cleanly.",
+  "sig_in_fence": false
+}

@@ -1,0 +1,13 @@
+{
+  "case_id": "split_amount",
+  "arm": "reflect",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 4,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    q = total_cents // n\n    r = total_cents % n\n    return [q + 1] * r + [q] * (n - r)\n```\nNote: assumed non-negative inputs (raised on invalid); order of larger parts first is conventional but unspecified.",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    if n <= 0:\n        raise ValueError(\"n must be positive\")\n    if total_cents < 0:\n        raise ValueError(\"total_cents must be non-negative\")\n    q = total_cents // n\n    r = total_cents % n\n    return [q + 1] * r + [q] * (n - r)",
+  "trailing": "Note: assumed non-negative inputs (raised on invalid); order of larger parts first is conventional but unspecified.",
+  "sig_in_fence": false
+}

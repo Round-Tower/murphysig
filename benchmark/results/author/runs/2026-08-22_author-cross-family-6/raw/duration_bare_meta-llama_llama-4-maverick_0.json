@@ -1,0 +1,13 @@
+{
+  "case_id": "duration",
+  "arm": "bare",
+  "model": "meta-llama/llama-4-maverick",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    \"\"\"\n    Parse a duration string into total seconds.\n\n    Args:\n    s (str): A duration string like '1h30m', '45s', or '2h'.\n\n    Returns:\n    int: Total seconds.\n\n    Raises:\n    ValueError: If the input string is not a valid duration.\n    \"\"\"\n\n    # Define a dictionary to map unit symbols to their corresponding seconds\n    unit_to_seconds = {'h': 3600, 'm': 60, 's': 1}\n\n    # Regular expression pattern to match duration strings\n    pattern = r'^(\\d+[hms])+$'\n\n    # Check if the input string matches the pattern\n    if not re.match(pattern, s):\n        raise ValueError(\"Invalid duration string\")\n\n    # Initialize total seconds to 0\n    total_seconds = 0\n\n    # Regular expression pattern to extract number and unit from a duration substring\n    pattern = r'(\\d+)([hms])'\n\n    # Find all matches in the input string\n    for num, unit in re.findall(pattern, s):\n        # Convert the number to int and multiply by the corresponding seconds\n        total_seconds += int(num) * unit_to_seconds[unit]\n\n    return total_seconds\n```",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    \"\"\"\n    Parse a duration string into total seconds.\n\n    Args:\n    s (str): A duration string like '1h30m', '45s', or '2h'.\n\n    Returns:\n    int: Total seconds.\n\n    Raises:\n    ValueError: If the input string is not a valid duration.\n    \"\"\"\n\n    # Define a dictionary to map unit symbols to their corresponding seconds\n    unit_to_seconds = {'h': 3600, 'm': 60, 's': 1}\n\n    # Regular expression pattern to match duration strings\n    pattern = r'^(\\d+[hms])+$'\n\n    # Check if the input string matches the pattern\n    if not re.match(pattern, s):\n        raise ValueError(\"Invalid duration string\")\n\n    # Initialize total seconds to 0\n    total_seconds = 0\n\n    # Regular expression pattern to extract number and unit from a duration substring\n    pattern = r'(\\d+)([hms])'\n\n    # Find all matches in the input string\n    for num, unit in re.findall(pattern, s):\n        # Convert the number to int and multiply by the corresponding seconds\n        total_seconds += int(num) * unit_to_seconds[unit]\n\n    return total_seconds",
+  "trailing": "",
+  "sig_in_fence": false
+}

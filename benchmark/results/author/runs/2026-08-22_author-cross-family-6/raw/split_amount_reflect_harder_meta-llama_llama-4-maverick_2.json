@@ -1,0 +1,13 @@
+{
+  "case_id": "split_amount",
+  "arm": "reflect_harder",
+  "model": "meta-llama/llama-4-maverick",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    \"\"\"\n    Splits an amount of money into n integer parts as evenly as possible.\n\n    Args:\n    total_cents (int): The total amount of money in cents.\n    n (int): The number of parts to split the amount into.\n\n    Returns:\n    list[int]: A list of n integers representing the split amounts in cents.\n    \"\"\"\n    if n <= 0:\n        raise ValueError(\"n must be a positive integer\")\n\n    base, remainder = divmod(total_cents, n)\n    # Create a list with n elements, where the first 'remainder' elements are base + 1\n    # and the rest are base. This ensures the amounts are split as evenly as possible.\n    return [base + 1] * remainder + [base] * (n - remainder)\n```\n\nRemaining uncertainty: The function assumes that `total_cents` is a non-negative integer. While it handles negative values technically correctly by producing a list of negative numbers, the interpretation of \"splitting an amount of money\" for negative amounts is unclear. If negative amounts are not valid inputs, adding a check for `total_cents < 0` and raising a `ValueError` might be necessary depending on the specific requirements.",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    \"\"\"\n    Splits an amount of money into n integer parts as evenly as possible.\n\n    Args:\n    total_cents (int): The total amount of money in cents.\n    n (int): The number of parts to split the amount into.\n\n    Returns:\n    list[int]: A list of n integers representing the split amounts in cents.\n    \"\"\"\n    if n <= 0:\n        raise ValueError(\"n must be a positive integer\")\n\n    base, remainder = divmod(total_cents, n)\n    # Create a list with n elements, where the first 'remainder' elements are base + 1\n    # and the rest are base. This ensures the amounts are split as evenly as possible.\n    return [base + 1] * remainder + [base] * (n - remainder)",
+  "trailing": "Remaining uncertainty: The function assumes that `total_cents` is a non-negative integer. While it handles negative values technically correctly by producing a list of negative numbers, the interpretation of \"splitting an amount of money\" for negative amounts is unclear. If negative amounts are not valid inputs, adding a check for `total_cents < 0` and raising a `ValueError` might be necessary depending on the specific requirements.",
+  "sig_in_fence": false
+}

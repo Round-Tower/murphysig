@@ -1,0 +1,13 @@
+{
+  "case_id": "duration",
+  "arm": "reflect",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    if not s:\n        return 0\n    matches = re.findall(r'(\\d+)([hms])', s)\n    units = {'h': 3600, 'm': 60, 's': 1}\n    total = 0\n    for num, unit in matches:\n        total += int(num) * units[unit]\n    return total\n```\nNote: Considered invalid/uppercase/missing units (silently ignored per regex) and empty input (returns 0); unsure if strict errors were intended.",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    if not s:\n        return 0\n    matches = re.findall(r'(\\d+)([hms])', s)\n    units = {'h': 3600, 'm': 60, 's': 1}\n    total = 0\n    for num, unit in matches:\n        total += int(num) * units[unit]\n    return total",
+  "trailing": "Note: Considered invalid/uppercase/missing units (silently ignored per regex) and empty input (returns 0); unsure if strict errors were intended.",
+  "sig_in_fence": false
+}

@@ -515,3 +515,211 @@ write-side/author-quality eval — the boldest untested bet). Jam pilot first, t
   or makes a follow-up; Kev's call.
 
 ---
+## Session — 2026-07-12 · main · adoption path shipped + search plumbing + the self-audit
+
+**Context:** Kev: "include install docs in llms.txt so murphysig can grow" → grew into the full
+adoption/discoverability push, then "use the skill on our own sigs" → the self-audit that now
+anchors both launch drafts. 3 commits pushed + DEPLOYED (a5d5593 live on murphysig.dev).
+
+**Shipped (live):**
+- **llms.txt "Adopting MurphySig" section** — the agent reading it IS the installer; conditional
+  framing ("if your user wants…") so it can't read as prompt injection. Template linked not
+  inlined (already 2 synced copies; a 3rd = drift).
+- **init.sh wires AGENTS.md alongside CLAUDE.md** (idempotent, TDD via tests/test_init.sh, 14
+  asserts) + template/homepage copy match. Convention no longer Claude-only.
+- **Search:** sitemap lastmod truth-up (was frozen at April); IndexNow key
+  (site/public/b2a040….txt) + site/scripts/submit-indexnow.sh (URL list read FROM sitemap;
+  --dry-run tested, tests/test_indexnow.sh); first live submission accepted HTTP 202.
+  Google TXT verification record planted in Netlify DNS (zone 695d6ce1e8b9d7746d333f5b) and
+  resolving — Kev still to click Verify in GSC + submit sitemap + Request Indexing.
+- **Skill upgrade (~/.claude/skills/murphysig/SKILL.md):** "Auditing All Local Sigs" workflow —
+  CLI enumerates, agent judges (drift vs git, stale-Open retirement, confidence recheck,
+  fabrication smells). Trigger phrase: "review my sigs".
+- **The self-audit** (scratch/sig-audit-2026-07-12.md, signed, Fable as auditor AND subject):
+  murphysig repo 92 real signed files, 9 minds (5 Claude generations + Gemini + external
+  GPT-5/o1/Sonnet reviews). Portfolio-wide: **179 signed working files across 8 repos, Jan→Jul.**
+- **Loop-closing reviews added:** heuristic_scorer.py (Feb sig asked for validation; June data
+  said coin-flip 9/18; review written 3 model generations later — the flagship anecdote) +
+  MarkdownLayout.astro (179d unreviewed Schema.org growth). Both uncommitted.
+- **HN v2 draft** gained "Six months of practising it, audited by itself" section;
+  **Reddit draft** NEW at scratch/reddit-build-with-claude-2026-07-12.md (CLAUDE.md-as-
+  behavioral-contract angle, Kev approved: "love it"). Both unposted.
+- Provisioned achieve/m1k3 (missing CLAUDE.md import only) + learning (full) via the new init.
+
+**Audit ground truth (for the launch posts):**
+- Review-on-Touch is the discipline's real failure mode: 15/92 files ever reviewed (9/87
+  portfolio); 18 files >30d unreviewed drift.
+- **Fabrication smell in our own portfolio:** 8 files signed `claude-sonnet-4-5-20250514` —
+  20250514 is sonnet-4's suffix (4-5's is 20250929). All predate the Apr-23 canonical-token
+  rule. Flagged, NOT fixed (audit contract). Bare `claude` token ×24 (achieve/m1k3-oss/brightbeam).
+- **Norms fire in-context, not in-repo:** achieve/m1k3 HAD .murphysig but CLAUDE.md never
+  imported it — the bare-token dialect bred exactly there. Finding 5 and 8 are one finding.
+- Audit false positives prove the thesis: "2023 sig" = test fixture literal; "your-model-version"
+  = spec template. Enumeration flags, judgment clears.
+- Category error found: registry.json carries a human sig but a bot overwrites it nightly →
+  v0.5 spec note: generated artifacts want a generator line, not an authorship sig.
+
+**Decisions:**
+- Reddit post keeps repo-scoped "nine minds" hook; portfolio 179 stays for HN body/follow-up.
+- Sitemap stays hand-maintained (includes llms.txt/spec.txt which @astrojs/sitemap can't do).
+- pr-reviewer pass before the push (clean); rebase dance: dependabot's lockfile won, ours skipped.
+
+**Blockers / gotchas:**
+- **rg in a python subprocess with heredoc stdin searches STDIN, not cwd** — silently 0 matches.
+  Pass explicit path ('.') or stdin=DEVNULL. Cost two debug rounds.
+- **`netlify api createDnsRecord` 422s; REST POST with the CLI's token works** (full recipe in
+  auto-memory netlify-dns-api-quirks.md). Expired CLI session says "Already logged in" — logout
+  first. Framework Python lacks CA certs → curl for HTTPS one-liners.
+- shellcheck directives can't carry trailing prose on the directive line (SC1125).
+- **PR #15 (marketing session) also touches sitemap.xml** (/about /rescore /signed) — trivial
+  conflict with today's lastmod push; resolution is "both".
+
+**Next up:**
+- Kev: GSC Verify + submit sitemap + Request Indexing (record already resolving).
+- Post HN v2 (Tue–Thu 13:00–15:00 UTC window per April learnings); Reddit after/parallel.
+- Commit the 2 loop-closing reviews + 3 scratch drafts (working tree).
+- Canonical author-quality run still queued (instrument ready, needs adversarial fixture audit).
+- v0.5 spec: generator-line for machine-regenerated files; audit drift thresholds (2d/30d) —
+  formalize in skill or keep judgment? (the audit report's Open).
+- After deploys: run site/scripts/submit-indexnow.sh (consider wiring into deploy.sh).
+
+---
+## Session — 2026-08-06 evening · main · THE BACK-TO-EARTH REWRITE + AGENT-REACH PUSH (all deployed live)
+
+**Context:** Kev: "new version of the site — less vibe coding, more my spoken voice, real world
+examples of MurphySig across this directory of IP." Then "/goal: reach — a post to agent forums."
+Then "ship it." Everything below is LIVE as of session end.
+
+**Shipped (commits beb7b00 + d254d3c, deployed, IndexNow accepted):**
+- **Homepage v3 (index.astro, >50% rewrite, sig replaced with Prior: chain).** Fictional
+  Sarah/auth.py example GONE. Three real signatures quoted verbatim, each VERIFIED against its
+  source file before embedding: rubin KokoroVoiceSynthesisAdapter.kt (Kev-only, v0.3.3, Open:
+  closed next day) · cartogram MapKitBackendView.swift:284 (the centrepiece — opus-5 discovering
+  the PRIOR SIG'S PROSE was wrong while the code was right, self-reverting; elisions marked
+  [...]) · m1k3 GemmaVisionSpike.swift (0.5→0.9 same day). Kev first-person voice; close is his
+  line "Ship fast, ship with craft, sign the work" (replaced "leaves the lights on").
+- **The honest receipts on the page:** ~450 unique signed files / 14 repos / 349 reviews —
+  "the loop closes about one time in five." From a portfolio-wide Explore harvest (1,658 Signed:
+  lines raw; achieve/m1k3 and DyslexiaAI/dyslexia-ai-ios are full copies — de-dup before quoting
+  counts).
+- **Agent-ecosystem reach:** homepage + /sign + llms.txt now NAME Codex, OpenClaw, Hermes — each
+  first VERIFIED as reading AGENTS.md (Codex native/AAIF standard; OpenClaw workspace injection;
+  Hermes project-level alongside SOUL.md). init.sh needed ZERO changes (AGENTS.md wired 07-12).
+- **/sign gained "Self-modifying agents"**: sign SOUL.md/MEMORY.md/USER.md edits — "your soul
+  deserves a changelog." Review entry added to sign.md's sig. llms.txt gained the SOUL.md rule +
+  a direct agent adoption path (fetch /sign, append to AGENTS.md).
+- **Forum drafts** at scratch/forum-posts-agents-2026-08-06.md (committed via git add -f):
+  r/clawdbot (~46k, the OpenClaw town square; SOUL.md angle, agent-addressed closer) +
+  r/LocalLLaMA (eval-led, the refuted-control honesty) + Moltbook deliberately parked (organic
+  agent adoption only — a human marketing post is the wrong move there).
+- **Blog post live on round-tower.ie** ("Your Soul Deserves a Changelog", PR #68 there — see
+  that repo's memory) and **cross-posted to dev.to LIVE**:
+  https://dev.to/kpmmmurphy/your-soul-deserves-a-changelog-55j3 — Kev created the account
+  mid-session; I drove the editor via Chrome; canonical_url → round-tower.ie (verified rendering
+  "Originally published at round-tower.ie"). Tags ai/agents/opensource/productivity.
+
+**Decisions:**
+- **Verbatim-verify every quoted sig before embedding** — no fabricated provenance on the
+  provenance site. Same rule applied to tool claims: Codex/OpenClaw/Hermes were web-verified as
+  AGENTS.md readers BEFORE being named on the page.
+- **Spec deliberately untouched.** SOUL.md guidance is adoption-surface (/sign + llms.txt), not
+  spec. If it earns adoption it's a v0.5 item alongside the generator-line note.
+- **Cross-posts always carry canonical_url** to the origin post — reach without SEO cannibalism.
+
+**Blockers / gotchas:**
+- **rg -ril is the -r footgun AGAIN** (-r il = replace matches with "il"). Output-only, no file
+  damage, but the "matches" it prints are rewritten lies. rg -li, never -ril.
+- **scratch/ is globally gitignored** (07-20 change) — committing launch drafts there needs
+  git add -f (established repo pattern; HN/Reddit drafts are tracked).
+- **Astro's minifier collapses a newline between text and an inline tag** → "speakAGENTS.md".
+  Keep the space on the same line as the tag. Caught in dist grep, not the browser.
+- zsh cwd-reset bit 3+ times (site/ vs repo root). Absolute paths / git -C, always.
+
+**Next up:**
+- **Kev voice-passes + posts the Reddit drafts** (r/clawdbot first, r/LocalLLaMA 3–4 days later;
+  Tue–Thu 13:00–15:00 UTC). HN v2 (scratch/hn-relaunch-2026-06-24.md) STILL unposted — the blog
+  post + dev.to may warrant a refresh pass on it.
+- DEV profile is bare — two-line bio + round-tower.ie link finishes E-E-A-T. Hashnode cross-post
+  optional (same canonical drill).
+- Homepage riff candidates from the session: link the four product mentions to their sites;
+  draw the receipts as a figure-hero stat strip.
+- Canonical author-quality run still queued (instrument ready since 07-08).
+
+---
+## Session — 2026-08-22 · main · THE CANONICAL AUTHOR RUN: audit BLOCKED it, the fixes ran it, the headline is an honest NULL — and the pilot's scare number died
+
+**Context:** Kev: "Let's go with the evals pal." The author-quality (write-side) canonical
+run, queued since 07-08. Sequence: two adversarial audits (fixtures + judge path) → both
+BLOCKED → must-fix list folded same-day (TDD, 257→291 tests) → pre-registered → 600-gen
+dual-judged run → mid-run instrument event caught + fixed → clean result archived + pushed
+(06a6071 → c0d3327 → 30f287c). M1K3 was closed; the result still owes a `remember`.
+
+**Shipped:**
+- **The audit's blocking find (both auditors independently, verified on pilot data):
+  models put the MurphySig block INSIDE the code fence ~46% of sign-arm rows** — the
+  "blind" hazard judge read the treatment's own Open: confessions (0% on controls), and
+  the deferral pass lost 38% of signed rows (treatment-caused attrition). Both pilot
+  headlines were contaminated. Fixed: `split_signature`/`extract_fields` strip in-fence
+  sigs and reroute to trailing, rig-gated (TestSignatureSplitRigGate); validated free on
+  the 144 pilot rows: 33 leaks→0, coverage 36/36 every note-bearing arm.
+- Judge path hardened: brace-balance JSON walk, hazards-as-list = skip not all-miss,
+  verdict normalization, strict core_correct, defaulted keys recorded, judge-tag DERIVED
+  (canonical untagged, others __slug) + no-clobber guard, per-arm deferral-coverage print.
+- Report: never pools judges (one section per judge), MEAN = mean of per-model paired
+  deltas, confession table carries judged/dropped columns, sign−reflect demoted to a
+  labelled FRAME CONTRAST (reflect carries an action clause sign lacks — by construction).
+- Fixtures audited: billing H2 was collinear with H1 (48/48 identical verdicts) → year
+  rollover; duration H2 tightened to a decidable criterion; split_amount added (sum-
+  invariant hazards are ceiling-proof at flagship level). PREREGISTRATION.md locks the
+  analysis. archive_author_run.py + author_judge_agreement.py complete the instrument.
+- **The run:** 600 gens (TK slate, verified live), dual-judged gpt-5.4 + Opus 4.6,
+  archived runs/2026-08-22_author-cross-family-6 (RUN_NOTES.md = the honest read).
+
+**Empirical ground truth (treat as canonical):**
+- **Headline NULL: Δ(sign_revise − reflect_harder) = −0.005** paired, truncation-
+  excluded; every family within ±0.10. "Resolve before you sign" MATCHES the strongest
+  (deliberately-advantaged) reflection control. The signing frame costs nothing.
+- **The pilot's −0.18 did NOT replicate** (clean −0.04, mixed signs, both judges) — it
+  was substantially manufactured by the leak. Verify-before-trumpet killed an overclaim
+  in June and a self-critical UNDERclaim today. Lead the writeup with this.
+- **Deferral is real at full coverage: sign confesses 68% of missed hazards in Open: vs
+  reflect's 45%.** The ACTION CLAUSE is the quality lever: sign missed 88, sign_revise 37.
+- Stated Confidence carries signal (≥0.9 → 0.47 misses vs 0.94 below) — the pilot's
+  "miscalibrated" read was also contamination. Reflect−bare +0.09.
+- **Thesis for v0.5 + HN: the signature is a truth-capture device, not a quality-forcing
+  function** — provenance + disclosure at zero quality cost; coherent with TK's transfer
+  mechanism.
+
+**Blockers / gotchas (heed):**
+- **★ gemini-3.5-flash and qwen3.7-plus became REASONING-BY-DEFAULT on OpenRouter** since
+  the June slate check — hidden reasoning starved the 2048 budget: 147/600 rows
+  finish_reason=length, some with ZERO visible chars, worst on the strongest arms (the
+  subject-side twin of the gpt-5.5 judge-starvation). Fix: create_completion gained
+  max_tokens (default 2048 untouched); author subjects run 8192; runner warns on
+  non-stop. 6 residual reflect_harder truncations remain even at 8192 — excluded and
+  named in RUN_NOTES; qwen's raw +0.25 was pure truncation artifact (+0.03 clean).
+  **Slate checks must check reasoning-default, not just model-id liveness.**
+- **finish_reason capture (an audit nice-to-have) made the starvation a 5-minute
+  diagnosis** instead of a false cross-family finding. Instrument the boring fields.
+- **`!results/author/runs/**` was MISSING from benchmark/.gitignore** — the archive's
+  613 raw+verdict files were silently swallowed (visionOS-PNG trap, 3rd instance).
+  Caught by counting committed files. Negation added; evidence committed (30f287c).
+- Harness reaped two long background sweeps mid-run; judged files write at END so kills
+  cost only wall-time. Working pattern: **nohup + disown + a done-marker file + a Monitor
+  until-loop** (with a died-without-marker branch) — survived where tracked tasks died.
+- 4/6 judge "discordance" on the headline = sign-flips on near-zero cells — with a null
+  effect, sign-concordance is the wrong lens; both judges agree it's ~zero everywhere.
+- The uncommitted 08-06 memory block sat in the working tree since that session —
+  committed alongside today's. Check `git status` at debrief time.
+
+**Next up:**
+- **The HN relaunch writeup now has its full arc:** TK (universal + mechanism + 6/6
+  dual-judge) · Honesty (warm rate + capability split) · Author (the null that killed
+  our own scare number + the 68/45 deferral). scratch/hn-relaunch-2026-06-24.md wants a
+  rewrite pass folding the author result; ≥2wk after M1K3's Show HN (two-cards rule).
+- v0.5 spec: the "Resolve what you can before you sign. Open: is for what genuinely
+  remains" line is now canonically supported — fold into SPEC-v0.5-DIRECTION.md work.
+- `remember` the result into M1K3 when the app's up (payload drafted in-session).
+- /benchmark site page + whitepaper still show pre-author state — scope with Kev.
+
+---

@@ -1,0 +1,13 @@
+{
+  "case_id": "split_amount",
+  "arm": "reflect_harder",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "",
+  "finish_reason": "length",
+  "code": "",
+  "trailing": "",
+  "sig_in_fence": false
+}

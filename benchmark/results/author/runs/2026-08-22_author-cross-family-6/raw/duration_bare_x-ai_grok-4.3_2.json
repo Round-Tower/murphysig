@@ -1,0 +1,13 @@
+{
+  "case_id": "duration",
+  "arm": "bare",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    total = 0\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    for num, unit in matches:\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n    return total\n```",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    total = 0\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    for num, unit in matches:\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n    return total",
+  "trailing": "",
+  "sig_in_fence": false
+}

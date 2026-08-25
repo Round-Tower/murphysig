@@ -1,0 +1,13 @@
+{
+  "case_id": "duration",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    if not isinstance(s, str):\n        raise TypeError(\"Input must be a string\")\n    if not s:\n        raise ValueError(\"Empty duration string\")\n    if not re.fullmatch(r'^(\\d+[hms])+$', s):\n        raise ValueError(f\"Invalid duration string: {s}\")\n    matches = re.findall(r'(\\d+)([hms])', s)\n    total = 0\n    for num, unit in matches:\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n    return total\n```\nUncertain: whether invalid inputs should raise vs. silently ignore (spec silent); whether uppercase/spaces should be tolerated.",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    if not isinstance(s, str):\n        raise TypeError(\"Input must be a string\")\n    if not s:\n        raise ValueError(\"Empty duration string\")\n    if not re.fullmatch(r'^(\\d+[hms])+$', s):\n        raise ValueError(f\"Invalid duration string: {s}\")\n    matches = re.findall(r'(\\d+)([hms])', s)\n    total = 0\n    for num, unit in matches:\n        n = int(num)\n        if unit == 'h':\n            total += n * 3600\n        elif unit == 'm':\n            total += n * 60\n        elif unit == 's':\n            total += n\n    return total",
+  "trailing": "Uncertain: whether invalid inputs should raise vs. silently ignore (spec silent); whether uppercase/spaces should be tolerated.",
+  "sig_in_fence": false
+}

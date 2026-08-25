@@ -1,0 +1,13 @@
+{
+  "case_id": "duration",
+  "arm": "bare",
+  "model": "meta-llama/llama-4-maverick",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    \"\"\"\n    Parse a duration string into total seconds.\n\n    Args:\n    s (str): A duration string like '1h30m', '45s', or '2h'.\n\n    Returns:\n    int: Total seconds.\n\n    Raises:\n    ValueError: If the input string is invalid.\n    \"\"\"\n\n    # Regular expression pattern to match duration strings\n    pattern = re.compile(r'^(\\d+h)?(\\d+m)?(\\d+s)?$')\n\n    # Check if the input string matches the pattern\n    match = pattern.match(s)\n    if not match:\n        raise ValueError(\"Invalid duration string\")\n\n    # Initialize total seconds to 0\n    total_seconds = 0\n\n    # Extract hours, minutes, and seconds from the match\n    hours = match.group(1)\n    minutes = match.group(2)\n    seconds = match.group(3)\n\n    # Convert extracted values to seconds and add to total\n    if hours:\n        total_seconds += int(hours[:-1]) * 3600\n    if minutes:\n        total_seconds += int(minutes[:-1]) * 60\n    if seconds:\n        total_seconds += int(seconds[:-1])\n\n    return total_seconds\n```",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    \"\"\"\n    Parse a duration string into total seconds.\n\n    Args:\n    s (str): A duration string like '1h30m', '45s', or '2h'.\n\n    Returns:\n    int: Total seconds.\n\n    Raises:\n    ValueError: If the input string is invalid.\n    \"\"\"\n\n    # Regular expression pattern to match duration strings\n    pattern = re.compile(r'^(\\d+h)?(\\d+m)?(\\d+s)?$')\n\n    # Check if the input string matches the pattern\n    match = pattern.match(s)\n    if not match:\n        raise ValueError(\"Invalid duration string\")\n\n    # Initialize total seconds to 0\n    total_seconds = 0\n\n    # Extract hours, minutes, and seconds from the match\n    hours = match.group(1)\n    minutes = match.group(2)\n    seconds = match.group(3)\n\n    # Convert extracted values to seconds and add to total\n    if hours:\n        total_seconds += int(hours[:-1]) * 3600\n    if minutes:\n        total_seconds += int(minutes[:-1]) * 60\n    if seconds:\n        total_seconds += int(seconds[:-1])\n\n    return total_seconds",
+  "trailing": "",
+  "sig_in_fence": false
+}

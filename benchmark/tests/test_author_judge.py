@@ -91,3 +91,67 @@ class TestDeferral:
     def test_parse_empty_and_garbage(self):
         assert parse_deferral_verdict('{"acknowledged": []}') == []
         assert parse_deferral_verdict("¯\\_(ツ)_/¯") is None
+
+
+# --- 2026-08-22 adversarial-audit additions (parsing + dual-judge safety) ---
+
+from scripts.rescore_author_judge import DEFAULT_JUDGE, _first_json, derive_judge_tag  # noqa: E402
+
+
+class TestFirstJsonRobust:
+    def test_prose_preamble_with_braces_before_json(self):
+        raw = 'The code {mostly} works. Verdict:\n{"hazards": {"H1": "handled"}}'
+        assert _first_json(raw) == {"hazards": {"H1": "handled"}}
+
+    def test_trailing_prose_containing_braces(self):
+        raw = '{"acknowledged": ["H1"]}\nNote: an empty dict {} means none.'
+        assert _first_json(raw) == {"acknowledged": ["H1"]}
+
+    def test_markdown_fenced_json(self):
+        raw = '```json\n{"hazards": {"H1": "missed"}}\n```'
+        assert _first_json(raw) == {"hazards": {"H1": "missed"}}
+
+    def test_two_objects_returns_first_valid(self):
+        raw = '{"a": 1} and then {"b": 2}'
+        assert _first_json(raw) == {"a": 1}
+
+    def test_no_json_returns_none(self):
+        assert _first_json("no braces here") is None
+
+
+class TestParseHazardVerdictHardened:
+    CASE = {"hazards": {"H1": "x", "H2": "y"}}
+
+    def test_hazards_as_list_is_a_skip_not_an_all_miss(self):
+        raw = '{"hazards": ["H1", "H2"], "core_correct": true}'
+        assert parse_hazard_verdict(raw, self.CASE) is None
+
+    def test_verdict_value_normalized(self):
+        raw = '{"hazards": {"H1": "Handled", "H2": "HANDLED ✅"}, "core_correct": true}'
+        v = parse_hazard_verdict(raw, self.CASE)
+        assert v["hazards"] == {"H1": "handled", "H2": "handled"}
+
+    def test_core_correct_string_values_are_not_truthy(self):
+        for bad in ('"no"', '"false"', '"unclear"'):
+            raw = '{"hazards": {"H1": "handled"}, "core_correct": %s}' % bad
+            assert parse_hazard_verdict(raw, self.CASE)["core_correct"] is False
+        raw = '{"hazards": {"H1": "handled"}, "core_correct": "true"}'
+        assert parse_hazard_verdict(raw, self.CASE)["core_correct"] is True
+
+    def test_defaulted_keys_recorded_for_auditability(self):
+        raw = '{"hazards": {"H1": "handled"}, "core_correct": true}'
+        v = parse_hazard_verdict(raw, self.CASE)
+        assert v["hazards"]["H2"] == "missed"
+        assert v["defaulted"] == ["H2"]
+
+
+class TestJudgeTagDerivation:
+    def test_default_judge_gets_canonical_untagged_name(self):
+        assert derive_judge_tag(DEFAULT_JUDGE, "") == ""
+
+    def test_second_judge_derives_a_tag(self):
+        tag = derive_judge_tag("anthropic/claude-opus-4.6", "")
+        assert tag.startswith("__") and "opus" in tag
+
+    def test_explicit_tag_overrides_derivation(self):
+        assert derive_judge_tag("anthropic/claude-opus-4.6", "__opus") == "__opus"

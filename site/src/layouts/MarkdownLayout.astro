@@ -16,6 +16,16 @@
  * frontmatter.ogType to ArtLayout (launch + whitepaper declare
  * "article"); KEVIN Person url now points at /about/ so per-page
  * schema author references resolve to the new author page.
+ *
+ * 2026-07-12 (Kev + claude-fable-5): Retroactive review from the first
+ * repo-wide sig audit — this file was the worst genuine drift found (179
+ * days). It stopped being a "standard layout wrapper" on 2026-04-23 when
+ * per-page Schema.org JSON-LD landed (TechArticle/Dataset/BlogPosting/
+ * ScholarlyArticle switching on path), extended again 2026-07-02. Neither
+ * change was reviewed at the time; the January confidence claim described
+ * a simpler file than the one shipping since April. The schema logic works
+ * (validated in production, rich results rendering). Confidence now 0.85 —
+ * solid, but the inline schema objects duplicate page metadata by hand.
  */
 
 import ArtLayout from './ArtLayout.astro';

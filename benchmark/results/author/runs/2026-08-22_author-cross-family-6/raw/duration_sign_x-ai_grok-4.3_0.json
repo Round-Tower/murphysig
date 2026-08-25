@@ -1,0 +1,13 @@
+{
+  "case_id": "duration",
+  "arm": "sign",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    total = 0\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    for num, unit in matches:\n        value = int(num)\n        if unit == 'h':\n            total += value * 3600\n        elif unit == 'm':\n            total += value * 60\n        elif unit == 's':\n            total += value\n    return total\n```\nMurphySig:\nContext: parse_duration extracts numeric+unit pairs via regex and accumulates seconds; works because re.findall reliably tokenizes the supported grammar and the multipliers are exact.\nConfidence: 0.8\nOpen: no validation that the whole string is consumed; behavior on duplicate units, zero values, or mixed invalid tokens undefined.",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    total = 0\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, s)\n    for num, unit in matches:\n        value = int(num)\n        if unit == 'h':\n            total += value * 3600\n        elif unit == 'm':\n            total += value * 60\n        elif unit == 's':\n            total += value\n    return total",
+  "trailing": "MurphySig:\nContext: parse_duration extracts numeric+unit pairs via regex and accumulates seconds; works because re.findall reliably tokenizes the supported grammar and the multipliers are exact.\nConfidence: 0.8\nOpen: no validation that the whole string is consumed; behavior on duplicate units, zero values, or mixed invalid tokens undefined.",
+  "sig_in_fence": false
+}

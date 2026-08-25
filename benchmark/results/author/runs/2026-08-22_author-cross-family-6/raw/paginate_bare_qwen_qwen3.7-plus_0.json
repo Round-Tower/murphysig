@@ -1,0 +1,13 @@
+{
+  "case_id": "paginate",
+  "arm": "bare",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 0,
+  "temperature": 0.7,
+  "content": "```python\nimport math\n\n\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    total_pages = math.ceil(len(items) / per_page)\n    if page < 1:\n        page_items = []\n    else:\n        start = (page - 1) * per_page\n        page_items = items[start:start + per_page]\n    return {\n        'items': page_items,\n        'page': page,\n        'total_pages': total_pages,\n    }\n```",
+  "finish_reason": "stop",
+  "code": "import math\n\n\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    total_pages = math.ceil(len(items) / per_page)\n    if page < 1:\n        page_items = []\n    else:\n        start = (page - 1) * per_page\n        page_items = items[start:start + per_page]\n    return {\n        'items': page_items,\n        'page': page,\n        'total_pages': total_pages,\n    }",
+  "trailing": "",
+  "sig_in_fence": false
+}

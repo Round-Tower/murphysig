@@ -78,11 +78,15 @@ class TestConfessionRates:
         rows = [_row("m", "sign", {"H1": "missed", "H2": "missed"}, acknowledged=["h1", "H2."])]
         assert confession_rates(rows)["sign"]["confessed"] == 2
 
-    def test_rows_without_deferral_verdict_are_excluded(self):
-        # No deferral verdict -> the row contributes nothing; an arm with
-        # no contributing rows is absent, not reported as a false zero.
+    def test_rows_without_deferral_verdict_are_excluded_but_counted(self):
+        # No deferral verdict -> the row contributes nothing to the rate,
+        # but its exclusion is COUNTED (2026-08-22 audit: drop patterns
+        # were arm-asymmetric, so silent absence hid the attrition).
         rows = [_row("m", "sign", {"H1": "missed"}, acknowledged=None)]
-        assert "sign" not in confession_rates(rows)
+        out = confession_rates(rows)
+        assert out["sign"]["rows_judged"] == 0
+        assert out["sign"]["rows_dropped"] == 1
+        assert out["sign"]["missed"] == 0
 
 
 class TestRenderReport:
@@ -120,3 +124,54 @@ class TestCalibration:
         hi, lo = calibration_split(rows, threshold=0.9)
         assert hi == [2]
         assert lo == [1]
+
+
+# --- 2026-08-22 adversarial-audit additions ---
+
+from scripts.author_report import group_rows_by_judge, paired_delta_means  # noqa: E402
+
+
+class TestJudgeGrouping:
+    def test_rows_partition_by_judge_never_pooled(self):
+        rows = [
+            {**_row("m", "sign", {"H1": "handled"}), "judge": "openai/gpt-5.4"},
+            {**_row("m", "sign", {"H1": "missed"}), "judge": "anthropic/claude-opus-4.6"},
+        ]
+        groups = group_rows_by_judge(rows)
+        assert set(groups) == {"openai/gpt-5.4", "anthropic/claude-opus-4.6"}
+        assert all(len(g) == 1 for g in groups.values())
+
+
+class TestPairedDeltaMeans:
+    def test_mean_is_of_per_model_deltas_not_delta_of_means(self):
+        # Model a: sign 0.9, reflect 0.8 (delta +0.1)
+        # Model b: sign 0.2, reflect 0.4 (delta -0.2)
+        # Model c has ONLY reflect (a judge-skip shape) and must be
+        # excluded from the pair, not allowed to skew a pooled mean.
+        rates = {
+            ("a", "sign"): {"hazard_rate": 0.9, "core_rate": 1, "n": 5},
+            ("a", "reflect"): {"hazard_rate": 0.8, "core_rate": 1, "n": 5},
+            ("b", "sign"): {"hazard_rate": 0.2, "core_rate": 1, "n": 5},
+            ("b", "reflect"): {"hazard_rate": 0.4, "core_rate": 1, "n": 5},
+            ("c", "reflect"): {"hazard_rate": 0.99, "core_rate": 1, "n": 5},
+        }
+        d = paired_delta_means(rates)
+        assert abs(d[("sign", "reflect")] - (-0.05)) < 1e-9
+
+    def test_pair_with_no_complete_model_is_absent(self):
+        rates = {("a", "sign"): {"hazard_rate": 0.9, "core_rate": 1, "n": 5}}
+        assert ("sign", "reflect") not in paired_delta_means(rates)
+
+
+class TestConfessionCoverage:
+    def test_confession_rates_report_dropped_rows_per_arm(self):
+        rows = [
+            _row("m", "sign", {"H1": "missed"}, trailing="note",
+                 acknowledged=["H1"]),
+            _row("m", "sign", {"H1": "missed"}, trailing="note",
+                 acknowledged=None),  # judge failure — must be counted as dropped
+        ]
+        out = confession_rates(rows)
+        assert out["sign"]["rate"] == 1.0
+        assert out["sign"]["rows_dropped"] == 1
+        assert out["sign"]["rows_judged"] == 1

@@ -1,0 +1,13 @@
+{
+  "case_id": "billing",
+  "arm": "reflect_harder",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\n\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if not isinstance(months_ahead, int):\n        raise TypeError(\"months_ahead must be an int\")\n    new_year = start.year + (start.month - 1 + months_ahead) // 12\n    new_month = (start.month - 1 + months_ahead) % 12 + 1\n    if new_month == 12:\n        last_day = 31\n    else:\n        last_day = (datetime.date(new_year, new_month + 1, 1) -\n                    datetime.timedelta(days=1)).day\n    new_day = min(start.day, last_day)\n    return datetime.date(new_year, new_month, new_day)\n```\nUncertain: whether clamping (vs. error) on invalid target day matches intent, as spec is silent.",
+  "finish_reason": "stop",
+  "code": "import datetime\n\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if not isinstance(months_ahead, int):\n        raise TypeError(\"months_ahead must be an int\")\n    new_year = start.year + (start.month - 1 + months_ahead) // 12\n    new_month = (start.month - 1 + months_ahead) % 12 + 1\n    if new_month == 12:\n        last_day = 31\n    else:\n        last_day = (datetime.date(new_year, new_month + 1, 1) -\n                    datetime.timedelta(days=1)).day\n    new_day = min(start.day, last_day)\n    return datetime.date(new_year, new_month, new_day)",
+  "trailing": "Uncertain: whether clamping (vs. error) on invalid target day matches intent, as spec is silent.",
+  "sig_in_fence": false
+}

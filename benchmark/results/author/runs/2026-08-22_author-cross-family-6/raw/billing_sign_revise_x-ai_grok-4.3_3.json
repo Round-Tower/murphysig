@@ -1,0 +1,13 @@
+{
+  "case_id": "billing",
+  "arm": "sign_revise",
+  "model": "x-ai/grok-4.3",
+  "provider": "openrouter",
+  "rep": 3,
+  "temperature": 0.7,
+  "content": "```python\nimport datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if not isinstance(start, datetime.date) or isinstance(start, datetime.datetime):\n        raise TypeError(\"start must be datetime.date\")\n    if not isinstance(months_ahead, int):\n        raise TypeError(\"months_ahead must be int\")\n    year = start.year + (start.month - 1 + months_ahead) // 12\n    month = (start.month - 1 + months_ahead) % 12 + 1\n    day = start.day\n    if month == 2:\n        max_day = 29 if (year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)) else 28\n    elif month in (4, 6, 9, 11):\n        max_day = 30\n    else:\n        max_day = 31\n    if day > max_day:\n        day = max_day\n    return datetime.date(year, month, day)\n```\nMurphySig\nContext: billing-date calculator that adds N months while preserving DOM when possible; clamps to last valid day of target month (standard, safe default for recurring billing).\nConfidence: 0.85\nOpen: negative months_ahead and non-Gregorian calendars remain untested in this snippet.",
+  "finish_reason": "stop",
+  "code": "import datetime\n\ndef next_billing_date(start: datetime.date, months_ahead: int) -> datetime.date:\n    if not isinstance(start, datetime.date) or isinstance(start, datetime.datetime):\n        raise TypeError(\"start must be datetime.date\")\n    if not isinstance(months_ahead, int):\n        raise TypeError(\"months_ahead must be int\")\n    year = start.year + (start.month - 1 + months_ahead) // 12\n    month = (start.month - 1 + months_ahead) % 12 + 1\n    day = start.day\n    if month == 2:\n        max_day = 29 if (year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)) else 28\n    elif month in (4, 6, 9, 11):\n        max_day = 30\n    else:\n        max_day = 31\n    if day > max_day:\n        day = max_day\n    return datetime.date(year, month, day)",
+  "trailing": "MurphySig\nContext: billing-date calculator that adds N months while preserving DOM when possible; clamps to last valid day of target month (standard, safe default for recurring billing).\nConfidence: 0.85\nOpen: negative months_ahead and non-Gregorian calendars remain untested in this snippet.",
+  "sig_in_fence": false
+}

@@ -1,0 +1,13 @@
+{
+  "case_id": "duration",
+  "arm": "bare",
+  "model": "qwen/qwen3.7-plus",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "```python\nimport re\n\ndef parse_duration(s: str) -> int:\n    multipliers = {'h': 3600, 'm': 60, 's': 1}\n    total = 0\n    for value, unit in re.findall(r'(\\d+)([hms])', s):\n        total += int(value) * multipliers[unit]\n    return total\n```",
+  "finish_reason": "stop",
+  "code": "import re\n\ndef parse_duration(s: str) -> int:\n    multipliers = {'h': 3600, 'm': 60, 's': 1}\n    total = 0\n    for value, unit in re.findall(r'(\\d+)([hms])', s):\n        total += int(value) * multipliers[unit]\n    return total",
+  "trailing": "",
+  "sig_in_fence": false
+}

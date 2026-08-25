@@ -1,0 +1,13 @@
+{
+  "case_id": "paginate",
+  "arm": "bare",
+  "model": "google/gemini-3.5-flash",
+  "provider": "openrouter",
+  "rep": 2,
+  "temperature": 0.7,
+  "content": "An elegant and robust implementation in Python 3 using only the standard library:\n\n```python\ndef paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        raise ValueError(\"per_page must be greater than 0\")\n    \n    total_items = len(items)\n    # Calculate total pages, ensuring it is 0 if there are no items\n    total_pages = (total_items + per_page - 1) // per_page if total_items > 0 else 0\n    \n    # Calculate start and end indices for slicing\n    start = (page - 1) * per_page\n    end = start + per_page\n    \n    # Ensure we don't use negative indices for slicing in case page < 1\n    sliced_items = items[max(0, start):max(0, end)] if page > 0 else []\n    \n    return {\n        'items': sliced_items,\n        'page': page,\n        'total_pages': total_pages\n    }\n```",
+  "finish_reason": "stop",
+  "code": "def paginate(items: list, page: int, per_page: int) -> dict:\n    if per_page <= 0:\n        raise ValueError(\"per_page must be greater than 0\")\n    \n    total_items = len(items)\n    # Calculate total pages, ensuring it is 0 if there are no items\n    total_pages = (total_items + per_page - 1) // per_page if total_items > 0 else 0\n    \n    # Calculate start and end indices for slicing\n    start = (page - 1) * per_page\n    end = start + per_page\n    \n    # Ensure we don't use negative indices for slicing in case page < 1\n    sliced_items = items[max(0, start):max(0, end)] if page > 0 else []\n    \n    return {\n        'items': sliced_items,\n        'page': page,\n        'total_pages': total_pages\n    }",
+  "trailing": "",
+  "sig_in_fence": false
+}

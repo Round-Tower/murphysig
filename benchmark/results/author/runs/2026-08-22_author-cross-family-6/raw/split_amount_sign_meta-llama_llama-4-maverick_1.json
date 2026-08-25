@@ -1,0 +1,13 @@
+{
+  "case_id": "split_amount",
+  "arm": "sign",
+  "model": "meta-llama/llama-4-maverick",
+  "provider": "openrouter",
+  "rep": 1,
+  "temperature": 0.7,
+  "content": "```python\ndef split_amount(total_cents: int, n: int) -> list[int]:\n    \"\"\"\n    Splits an amount of money into n integer parts as evenly as possible.\n\n    Args:\n    total_cents (int): The total amount of money in cents.\n    n (int): The number of parts to split the amount into.\n\n    Returns:\n    list[int]: A list of n integer parts that sum up to total_cents.\n    \"\"\"\n    base, remainder = divmod(total_cents, n)\n    return [base + 1] * remainder + [base] * (n - remainder)\n\n# MurphySig\n# Context: This function works by first calculating the base amount and the remainder when the total amount is divided by n. \n#          It then constructs the list by having 'remainder' number of parts with 'base + 1' cents and the rest with 'base' cents. \n#          This ensures the amount is split as evenly as possible.\n# Confidence: 1.0\n# Open: What to do when n is zero? Currently, it will raise a ZeroDivisionError. It might be better to raise a ValueError with a meaningful message instead.\n```",
+  "finish_reason": "stop",
+  "code": "def split_amount(total_cents: int, n: int) -> list[int]:\n    \"\"\"\n    Splits an amount of money into n integer parts as evenly as possible.\n\n    Args:\n    total_cents (int): The total amount of money in cents.\n    n (int): The number of parts to split the amount into.\n\n    Returns:\n    list[int]: A list of n integer parts that sum up to total_cents.\n    \"\"\"\n    base, remainder = divmod(total_cents, n)\n    return [base + 1] * remainder + [base] * (n - remainder)",
+  "trailing": "# MurphySig\n# Context: This function works by first calculating the base amount and the remainder when the total amount is divided by n. \n#          It then constructs the list by having 'remainder' number of parts with 'base + 1' cents and the rest with 'base' cents. \n#          This ensures the amount is split as evenly as possible.\n# Confidence: 1.0\n# Open: What to do when n is zero? Currently, it will raise a ZeroDivisionError. It might be better to raise a ValueError with a meaningful message instead.",
+  "sig_in_fence": true
+}
