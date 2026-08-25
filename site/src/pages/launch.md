@@ -4,6 +4,7 @@ title: A 90-day field report on signing AI-collaborative code
 version: 0.4
 date: 2026-04-23
 description: I built a natural-language provenance convention for human-AI collaboration. I used it on 137+ commits across 7 of my own active projects in 90 days. Here is what worked, what did not, and what the empirical tests showed.
+ogType: article
 ---
 
 *A field report from the only person who has used MurphySig daily — me. Honest numbers, including the unflattering ones.*
@@ -123,4 +124,9 @@ is double-counted in spirit if not in fact), and whether HN's tone
 preference for "show, don't tell" lands or reads as boastful.
 Open: Should the v0.4 stability claim go in the title to give HN a
 crisper hook? Should the cross-family ask be the lead instead of buried?
+
+Reviews:
+
+2026-07-10 (Kev + claude-fable-5): Metadata only — frontmatter
+ogType: article so the layout emits og:type=article. No content change.
 -->

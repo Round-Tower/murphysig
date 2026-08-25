@@ -84,3 +84,4 @@ most agent CLIs read `AGENTS.md`).
 ## Optional
 
 - [GitHub Repository](https://github.com/Round-Tower/murphysig): Source code, CLI tool, and project history
+- [About the Author](https://murphysig.dev/about): Kevin Murphy — creator of MurphySig, Round Tower (round-tower.ie)
