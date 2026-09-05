@@ -12,6 +12,10 @@
 # Confidence: 0.7 — covers the five regressions caught by the audit. Doesn't
 # exhaustively cover every comment style or every flag combination.
 # Open: Should we wire this into CI? Currently runs only when invoked directly.
+#
+# Review: Kev + claude-fable-5-1, 2026-09-05 — added the drift/summary gallery test
+# (git repo with a back-dated commit; hooks disabled in the fixture repo so the
+# global pre-commit doesn't fire inside a test). Confidence 0.75.
 
 set -uo pipefail
 
@@ -116,6 +120,39 @@ EOF
     out=$("$SIG" gallery 2>&1)
     assert_contains "$out" "evil.py" "gallery still finds the file"
     assert_contains "$out" "0.5" "confidence is parsed even when sig content has pipes"
+    cd / && rm -rf "$d"
+}
+
+echo "test_gallery_shows_drift_and_review_summary"
+{
+    d=$(mk_workspace) && cd "$d"
+    git init -q . && git config user.email t@t && git config user.name t && git config core.hooksPath /dev/null
+    cat > old.py <<'EOF'
+# Signed: Kev + claude-opus-4-7, 2026-01-01
+# Format: MurphySig v0.4 (https://murphysig.dev/spec)
+#
+# Context: Test fixture
+#
+# Confidence: 0.7 - tested
+# Open: None
+x = 1
+EOF
+    cat > fresh.py <<'EOF'
+# Signed: Kev + claude-opus-4-7, 2026-01-01
+# Format: MurphySig v0.4 (https://murphysig.dev/spec)
+#
+# Confidence: 0.7 - tested
+#
+# Reviews:
+#
+# 2026-03-01 (Kev + claude-opus-4-7): Reviewed. Confidence now 0.8.
+y = 2
+EOF
+    git add . >/dev/null && GIT_AUTHOR_DATE=2026-03-01T12:00:00 GIT_COMMITTER_DATE=2026-03-01T12:00:00 git commit -qm c
+    out=$("$SIG" gallery 2>&1)
+    assert_contains "$out" "Drift: 59d" "gallery shows days between signature and last commit"
+    assert_contains "$out" "unreviewed" "gallery flags a drifted file with no review"
+    assert_contains "$out" "1/2 reviewed (50%)" "gallery prints the review-rate summary"
     cd / && rm -rf "$d"
 }
 

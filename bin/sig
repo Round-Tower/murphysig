@@ -33,6 +33,13 @@
 # ". " between review text and "Confidence now …" and strips a trailing
 # period from the text to avoid doubling. New tests/test_sig.sh covers all
 # five with pure-bash assertions. Confidence now 0.85.
+#
+# 2026-09-05 (Kev + claude-fable-5-1): Gallery gained a Drift line (days from the
+# signature date to the file's last commit, via git log %cs) and a footer summary
+# "N signed · R/N reviewed (P%) · D drifted >30d unreviewed"; SIG_DRIFT_DAYS overrides
+# the 30. Kev's call after the portfolio audit found 14% of 1,276 signed files ever
+# reviewed: make the number visible at commit time, not audit time. Tested in
+# tests/test_sig.sh (test_gallery_shows_drift_and_review_summary). Confidence 0.8.
 
 set -e
 
@@ -60,7 +67,7 @@ get_author() {
     if [ -n "${MURPHYSIG_AUTHOR:-}" ]; then
         echo "$MURPHYSIG_AUTHOR"
     elif [ -f ".murphysig.author" ]; then
-        head -1 .murphysig.author | tr -d '\n'
+        head -1 .murphysig.author | tr -d '\n\n'
     elif command -v git &> /dev/null && git config user.name &> /dev/null; then
         git config user.name
     else
@@ -213,6 +220,25 @@ safe_replace() {
 }
 
 # Check if file has a signature (first 50 lines only)
+# Days between two YYYY-MM-DD dates (BSD or GNU date). Empty on parse failure.
+days_between() {
+    local a="$1" b="$2" ta tb
+    ta=$(date -j -f "%Y-%m-%d" "$a" +%s 2>/dev/null || date -d "$a" +%s 2>/dev/null) || return 1
+    tb=$(date -j -f "%Y-%m-%d" "$b" +%s 2>/dev/null || date -d "$b" +%s 2>/dev/null) || return 1
+    echo $(( (tb - ta) / 86400 ))
+}
+
+# Drift: days from the signature date to the file's last commit, when the
+# file is tracked in git. Empty when not in a repo / not committed / undated.
+get_drift_days() {
+    local file="$1" sig_date last_commit
+    sig_date=$(head -50 "$file" 2>/dev/null | grep "Signed:" | head -1 | grep -oE '20[0-9]{2}-[0-9]{2}-[0-9]{2}' | head -1)
+    [ -z "$sig_date" ] && return 0
+    last_commit=$(git log -1 --format=%cs -- "$file" 2>/dev/null)
+    [ -z "$last_commit" ] && return 0
+    days_between "$sig_date" "$last_commit" 2>/dev/null
+}
+
 has_signature() {
     local file="$1"
     head -50 "$file" 2>/dev/null | grep -q "^[[:space:]]*[-#/*]*[[:space:]]*Signed:" 2>/dev/null
@@ -441,20 +467,36 @@ cmd_gallery() {
     echo -e "${BOLD}Your Signed Work${NC}"
     echo ""
 
-    local found=0
+    local found=0 total=0 reviewed=0 drifted=0
+    local drift_threshold="${SIG_DRIFT_DAYS:-30}"
 
     # Grep-based discovery: find any file containing "Signed:" (skip binaries)
     while IFS= read -r file; do
         if has_signature "$file"; then
             found=1
+            total=$((total + 1))
             local info=$(get_signature_info "$file")
             local signed=$(printf '%s' "$info" | cut -f1)
             local confidence=$(printf '%s' "$info" | cut -f2)
             local reviews=$(printf '%s' "$info" | cut -f3)
+            local drift=$(get_drift_days "$file")
+            [ "${reviews:-0}" -gt 0 ] && reviewed=$((reviewed + 1))
 
             echo -e "${GREEN}*${NC} ${BOLD}$file${NC}"
             echo -e "  ${DIM}$signed${NC}"
             echo -e "  Confidence: ${CYAN}$confidence${NC} | Reviews: $reviews"
+            # Drift: the signature describes a file that has since changed.
+            # Unreviewed drift past the threshold is the discipline's real
+            # failure mode (portfolio audit 2026-09-05: 14% of 1,276 signed
+            # files ever reviewed) — surface it where the author will see it.
+            if [ -n "$drift" ] && [ "$drift" -gt 0 ]; then
+                if [ "${reviews:-0}" -eq 0 ] && [ "$drift" -gt "$drift_threshold" ]; then
+                    drifted=$((drifted + 1))
+                    echo -e "  ${YELLOW}Drift: ${drift}d, unreviewed${NC} — commits newer than the signature; add a Review"
+                else
+                    echo -e "  ${DIM}Drift: ${drift}d${NC}"
+                fi
+            fi
             echo ""
         fi
     done < <(grep -rIl "Signed:" . 2>/dev/null | grep -v -e 'node_modules' -e '\.git/' -e '/dist/' -e '\.next/' -e '\.DS_Store' | sort)
@@ -462,6 +504,9 @@ cmd_gallery() {
     if [ $found -eq 0 ]; then
         echo -e "${DIM}No signed files found.${NC}"
         echo -e "${DIM}Use 'sig add <file>' to sign your first file.${NC}"
+    else
+        local pct=$(( reviewed * 100 / total ))
+        echo -e "${BOLD}${total} signed${NC} · ${reviewed}/${total} reviewed (${pct}%) · ${drifted} drifted >${drift_threshold}d unreviewed"
     fi
 
     echo ""
