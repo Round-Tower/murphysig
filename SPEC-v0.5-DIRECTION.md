@@ -59,13 +59,27 @@ knowledge.** Less "format," more "constitution + capture ritual."
 | `Open:` becomes resolvable | Make the uncertainty field trackable across time — an Open question a later signature *closes*. Highest-content field in the data (Q3 moved most). Turns signatures into a living risk/uncertainty ledger an agent can query before editing. | 🟡 plausible |
 | Confidence = triage, not scrutiny | The honest replacement for the refuted ICL claim: confidence + unresolved Open is a *routing signal* ("audit this first"), not a scrutiny dial. Define it for agents. | 🟡 needs eval |
 | Write-side reflection prompt | Spec offers the author *questions to answer*, not just fields to fill. Captures the metacognition benefit at write-time. | 🔴 aspirational |
+| **"Resolve what you can before you sign."** | One-line action clause attached to the signing instruction: *Open: is for what genuinely remains — not for what you didn't feel like fixing.* Halves missed hazards vs the bare signing frame (88→37) and matches the strongest reflection control at zero quality cost. | ✅ eval-backed (2026-08-22) |
 
 ---
 
-## The boldest defensible bet — the author-side effect
+## The boldest defensible bet — the author-side effect (TESTED 2026-08-22)
 
-The control measured *reader* benefit. The bigger, untested claim is on the
-author:
+> **Result:** null on quality, real on disclosure. Run
+> `results/author/runs/2026-08-22_author-cross-family-6` — 600 generations,
+> six families, dual-judged, pre-registered. Δ(sign_revise − reflect_harder)
+> = −0.005 (GPT-5.4) / +0.025 (Opus 4.6), every family inside ±0.10.
+> The signing frame does NOT make the author's code better than a matched
+> reflection prompt — and, contrary to our own pilot, does not make it
+> worse. What it does: models confess **68%** of missed hazards in `Open:`
+> (vs 45% under plain reflection), stated confidence tracks miss rate, and
+> the action clause "resolve what you can before you sign" halves misses.
+> **MurphySig is a truth-capture device, not a quality-forcing function.**
+> The "quality-forcing function" framing below is retained as the
+> hypothesis it was; it is now refuted at this scale.
+
+The control measured *reader* benefit. The bigger claim, as written before the
+run, was on the author:
 
 > **Hypothesis: signed work is *better* work** — not because the reader gains,
 > but because knowing you'll sign, and having to state your confidence and your
@@ -99,7 +113,26 @@ generic "think carefully" prompt — on the *write* side this time.
 
 ---
 
-## Recommended sequencing
+## What v0.5 should therefore say (post-run)
+
+The thesis sharpens rather than breaks. Both proven levers survive; a third
+joins them:
+
+1. **Norms change behavior** (honesty run — 100% warm on four of six families).
+2. **Externalized tacit knowledge transfers** (TK run — the content, not the format).
+3. **Signing captures the truth about the work** (author run — misses surface
+   in `Open:`; confidence tracks misses). It does not improve the work by
+   itself, so the spec must never promise that. Pair the signing instruction
+   with the action clause and you get provenance + disclosure at no cost.
+
+Concretely for v0.5: the signing guidance gains one sentence — *"Resolve what
+you can before you sign. Open: is for what genuinely remains."* — and the
+`Open:` field is described as a ledger of known-unresolved risk that a later
+signature can close. Confidence-as-triage and `Open:`-as-ledger move from
+"plausible" to "the obvious next eval", because the write-side data shows
+`Open:` is exactly where the misses land.
+
+## Recommended sequencing (as written 2026-06-24)
 
 Chase **author-quality** first — it's the most on-brand ("sign the work"),
 the boldest, and reuses the existing harness shape. It's the experiment that
@@ -127,4 +160,15 @@ it survive a matched "think carefully" control? Which behavioral norms beyond
 "never fabricate" actually move AI behavior? Does confidence+Open routing beat
 random attention allocation?
 Prior: Unknown (new design note; thesis emerged from run 2026-06-24_tk-prose-control-6)
+
+Reviews:
+
+2026-09-05 (Kev + claude-fable-5-1): The author-quality bet has been run
+(2026-08-22, pre-registered, six families, dual-judged) and the result folded
+in: null on quality, real on disclosure. Marked the "quality-forcing function"
+framing refuted at this scale and added the post-run "what v0.5 should say"
+section — the action clause is now eval-backed and the third lever is
+truth-capture. Original text preserved so the bet can be read as it was made.
+Confidence for the direction note rises to 0.8: two of three proposed
+experiments now have data; confidence-as-triage remains the open one.
 -->

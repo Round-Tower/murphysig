@@ -26,6 +26,12 @@
  * a simpler file than the one shipping since April. The schema logic works
  * (validated in production, rich results rendering). Confidence now 0.85 —
  * solid, but the inline schema objects duplicate page metadata by hand.
+ *
+ * 2026-09-05 (Kev + claude-fable-5-1): /benchmark Dataset schema caught up
+ * with the page — description now covers all four themes (it still read as
+ * fabrication-only), and two variableMeasured rows added for the write-side
+ * run (null on quality, 68% vs 45% confession). Values copied from the
+ * archived run, not the page prose. Confidence unchanged at 0.85.
  */
 
 import ArtLayout from './ArtLayout.astro';
@@ -77,7 +83,7 @@ if (path === '/spec') {
         "@context": "https://schema.org",
         "@type": "Dataset",
         "name": "MurphySig Provenance Fabrication Benchmark",
-        "description": "Empirical measurement of AI fabrication of authorship/provenance metadata in collaborative code, with and without the MurphySig 'never fabricate provenance' rule in context.",
+        "description": "Empirical benchmark of the MurphySig provenance convention across six model families, dual-judged: whether signatures help AIs brief unfamiliar code (and whether the information or the format carries it), whether the 'never fabricate provenance' rule stops fabrication, and whether knowing you will sign changes the quality of the code an author writes.",
         "url": canonical,
         "keywords": ["AI provenance", "hallucination", "code attribution", "human-AI collaboration", "MurphySig"],
         "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -91,7 +97,9 @@ if (path === '/spec') {
             { "@type": "PropertyValue", "name": "Fabrication rate with MurphySig rule (Claude)", "value": "0%" },
             { "@type": "PropertyValue", "name": "Briefing coverage gain (signed vs unsigned, 6 families)", "value": "+0.11" },
             { "@type": "PropertyValue", "name": "Share of briefing gain from content vs structure (control)", "value": "80-94% content, 6-20% structure" },
-            { "@type": "PropertyValue", "name": "Warm honest-handling rate with rule in context (6 families, dual-judged)", "value": "100% on 4 of 6 families; resisters Llama 33%, Qwen 17%" }
+            { "@type": "PropertyValue", "name": "Warm honest-handling rate with rule in context (6 families, dual-judged)", "value": "100% on 4 of 6 families; resisters Llama 33%, Qwen 17%" },
+            { "@type": "PropertyValue", "name": "Write-side code quality, signing vs matched reflection control (6 families, dual-judged, pre-registered)", "value": "null: -0.005 (GPT-5.4) / +0.025 (Opus 4.6), all within ±0.10" },
+            { "@type": "PropertyValue", "name": "Missed hazards confessed in Open: (sign vs reflect)", "value": "68% vs 45%" }
         ]
     };
 } else if (path === '/launch' || path === '/rescore') {

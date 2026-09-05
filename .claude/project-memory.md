@@ -723,3 +723,75 @@ dual-judged run → mid-run instrument event caught + fixed → clean result arc
 - /benchmark site page + whitepaper still show pre-author state — scope with Kev.
 
 ---
+## Session — 2026-09-05 · main · the write-side result PUBLISHED (Theme 4 live) + HN v3 + v0.5 note
+
+**Context:** Kev: "go for it kid" on "the murphysig eval" — which turned out to be DONE
+(five archived runs, three themes, 2026-06-22 → 08-22). The stale item was *publishing* the
+08-22 author run. This session closed every "next up" the 08-22 block left open except the
+whitepaper. M1K3 spoke throughout (Kev's ask).
+
+**Shipped (one commit, pushed → Netlify):**
+- **`site/src/pages/benchmark.md` — Theme 4 "The write side"**: design (5 arms, blind
+  dual judge, pre-reg), dumbbell chart reflect_harder→sign_revise per family, hazard table,
+  the null + the pilot's −0.18 retired as in-fence contamination, confession bars (68/45/41/22),
+  action-clause + confidence-signal bullets, the honest paragraph, the reasoning-default
+  truncation caveat. Theme table now has four rows (Reflection moved from "not empirical" to
+  tested-on-the-write-side); one-liner, spec summary, caveats, artifacts, What's-next #6 done +
+  #7 (Open:-as-ledger) added; review entry appended.
+- **Every number re-derived from `runs/2026-08-22_author-cross-family-6/verdicts/`** before
+  publishing (python over both judges' JSON, `finish_reason=="stop"` filter): GPT clean mean
+  −0.005 (matches RUN_NOTES exactly), **Opus clean mean +0.025** (RUN_NOTES only quoted GPT;
+  page now carries both). Per-arm means in the table are clean-row means (reflect_harder 0.90,
+  not the raw report's 0.86 — gemini/qwen rows differ, everything else identical).
+- **`scratch/hn-relaunch-2026-06-24.md` → v3**: retitled around the double refutation, new
+  Honesty + write-side sections, kill/keep list extended, "what this is NOT" covers the null-≠-
+  equivalence + truncation point, all four run ids listed. Signed review added.
+- **`SPEC-v0.5-DIRECTION.md`**: author bet marked TESTED with a result box; action clause added
+  to the moves table as ✅ eval-backed; new "What v0.5 should therefore say" (three levers:
+  norms / transfer / truth-capture). Original hypothesis text preserved. Review added, conf 0.8.
+- **Synced surfaces**: `llms.txt` Reflection line rewritten (was "not empirical, out of scope");
+  `MarkdownLayout.astro` Dataset schema description was still fabrication-only → now all four
+  themes + 2 new variableMeasured rows (review added); sitemap lastmod for /benchmark + llms.txt.
+- **M1K3 `remember`'d** the canonical author result (kind=decision) — the 08-22 IOU closed.
+
+**Decisions:**
+- **Reflection theme reclassified.** The page said reflection was "cultural, not empirical";
+  the write-side run IS the empirical test of it. Reclassifying is the page's own rule applied
+  to its framing, so it's done on the page, not deferred to Kev.
+- **Report both judges' clean means, not just the canonical one.** With a null, "both judges
+  agree it's ~zero" is the claim — quoting one judge invites the bias attack for nothing.
+- **Pushed = deployed, on "go for it."** Told Kev via M1K3 that push deploys and to shout;
+  no shout. Prior sessions held pushes for Kev's call — that was when the *claims* were changing
+  under him. Here the claims were already committed in RUN_NOTES two weeks ago.
+- Whitepaper deliberately NOT touched (v0.0.2 foundational doc; 08-22 said scope with Kev).
+
+**Gotchas:**
+- **zsh: `echo =====` fails** ("==== not found") — `=word` is equals-expansion. Use `echo "-----"`.
+- Report.md's arm means are RAW (truncations included); RUN_NOTES/page numbers are CLEAN. When
+  quoting the write-side table, say which. Future `author_report.py` should print both or
+  filter `finish_reason` itself.
+- Global auto-memory was stale on THREE closed items (DB pool, Cartogram 10.1.x, payments
+  toggle) AND pitched "run the eval" when it was done — read the repo memory before pitching.
+
+**Next up:**
+- **Post HN v3** — ≥2wk after M1K3's Show HN (two-cards rule), Tue–Thu 13:00–15:00 UTC. It's
+  long; Kev's voice pass may cut it. Reddit drafts (r/clawdbot, r/LocalLLaMA) still unposted.
+- **v0.5 spec bump** is now fully evidence-backed: add the action clause to the signing
+  guidance, define `Open:` as a closable ledger, generator-line for regenerated artifacts.
+  Sync spec.md / spec.txt / llms.txt / template together.
+- Whitepaper still pre-author (and pre-control) — scope with Kev.
+- Evals queue: confidence-as-triage / Open:-as-ledger (the one untested lever); third judge;
+  `reflect_harder` budget bump so no control rows truncate.
+- `submit-indexnow.sh` after this deploy.
+
+<!--
+Signed: Kev + claude-fable-5-1, 2026-09-05
+Format: MurphySig v0.4 (https://murphysig.dev/spec)
+Prior: this file's 2026-08-22 block (whose "next up" this session executes)
+Context: Publishing pass, no new data. Value was in re-deriving the numbers from the
+archived verdicts and in finding the surfaces (llms.txt, Schema.org, theme table) that
+still contradicted the run.
+Confidence: 0.85 — numbers verified; page framing is interpretation, labelled as such.
+-->
+
+---

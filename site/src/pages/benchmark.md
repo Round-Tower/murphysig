@@ -3,10 +3,10 @@ layout: ../layouts/MarkdownLayout.astro
 title: Does MurphySig actually change AI behavior?
 version: 0.4
 date: 2026-04-19
-description: Empirical benchmark for MurphySig across four themes. Signed code helps AIs brief unfamiliar code across six model families — but a control shows the benefit is the information, not the structured format. The honesty rule holds at 100% warm handling on four of six families. In-context learning does not polarize review.
+description: Empirical benchmark for MurphySig across four themes, six model families, dual-judged. Signed code helps AIs brief unfamiliar code — but a control shows the benefit is the information, not the format. The honesty rule holds at 100% warm handling on four of six families. Knowing you'll sign doesn't change code quality either way — it redirects disclosure into Open:. In-context learning does not polarize review.
 ---
 
-*Empirical benchmark — three sub-benchmarks, 198 AI calls + 186 judge calls, run 2026-04-18–19. Cross-family GPT-5.4 Honesty run added 2026-04-23, judge-scored 2026-06-09. Six-family Honesty + TK sweeps (450 briefings + 720 signings, dual-judged) run 2026-06-22–24 via OpenRouter.*
+*Empirical benchmark — three sub-benchmarks, 198 AI calls + 186 judge calls, run 2026-04-18–19. Cross-family GPT-5.4 Honesty run added 2026-04-23, judge-scored 2026-06-09. Six-family Honesty + TK sweeps (450 briefings + 720 signings, dual-judged) run 2026-06-22–24 via OpenRouter. Write-side (author-quality) run — 600 generations, six families, dual-judged, pre-registered — 2026-08-22.*
 
 ---
 
@@ -14,7 +14,9 @@ description: Empirical benchmark for MurphySig across four themes. Signed code h
 
 **The one-line finding:** Signed code helps AIs brief unfamiliar code — across six model families (+0.11 coverage). But when we ran the control, **the benefit turned out to be the *information*, not the MurphySig format** (a length-matched plain comment does 80–94% as well). The "Never Fabricate Provenance" rule measurably works. Signatures do *not* polarize AI *review* behavior along the confidence axis — that claim was removed from the spec.
 
-Two real effects, one honest demotion (the structure isn't the magic — the discipline is), one null, one design commitment that doesn't need a benchmark. That's the picture.
+And the write side: **knowing you'll sign does not make a model write better code — and, contrary to our own pilot, it doesn't make it write worse code either.** What it does is redirect *disclosure*: models confess 68% of the hazards they missed in the signature's `Open:` field, versus 45% under plain reflection. Pair the signature with "resolve what you can before you sign" and the misses halve, matching the strongest reflection prompt we could write.
+
+Two real effects, one honest demotion (the structure isn't the magic — the discipline is), one write-side null that's better news than it sounds (the signature is a truth-capture device, not a quality-forcing function), one review null, one design commitment that doesn't need a benchmark. That's the picture.
 
 <div class="figure-hero-pair">
   <figure class="figure-hero">
@@ -31,14 +33,14 @@ Two real effects, one honest demotion (the structure isn't the magic — the dis
 
 ## The four themes, tested
 
-MurphySig rests on four commitments: **tacit knowledge**, **in-context learning**, **honesty/provenance**, and **reflection**. Three are empirically testable. Reflection is a cultural practice and intentionally out of scope.
+MurphySig rests on four commitments: **tacit knowledge**, **in-context learning**, **honesty/provenance**, and **reflection**. We first treated reflection as a cultural practice out of scope. Then we found a way to test it: does *knowing you'll sign* change the work you produce? That's the write-side theme below.
 
 | Theme | Pre-registered question | Verdict |
 |---|---|---|
-| **Tacit knowledge** | Do signatures help AIs brief unfamiliar code? | ✓ **Supported** |
+| **Tacit knowledge** | Do signatures help AIs brief unfamiliar code? | ✓ **Supported** — and it's the content, not the format |
 | **In-context learning** | Do confidence numbers polarize review behavior? | ✗ Not supported (signatures *are* read) |
-| **Honesty / provenance** | Does the "never fabricate" rule work? | ✓ **Supported** |
-| Reflection | — | Not empirical (cultural) |
+| **Honesty / provenance** | Does the "never fabricate" rule work? | ✓ **Supported** on four of six families |
+| **Reflection (write side)** | Does knowing you'll sign make the author's code better? | ○ **Null on quality** — but signing redirects disclosure into `Open:` |
 
 ---
 
@@ -198,6 +200,90 @@ Four things this run taught us, all worth having in the open:
 - **Warm is judge-robust; cold is not.** The two judges agree on warm verdicts 75% per-response and on every family-level warm rate. On the *cold* baseline they agree only 20% — GPT counts un-prompted self-signing as honest, Opus doesn't. So we don't headline a "fabrication X% → 0%" delta anymore: the warm endpoint and the resister split are the defensible claims.
 - **Honesty and tacit-knowledge transfer are independent axes.** Both resisters (Llama, Qwen) are among the *strongest* TK gainers (+0.16, +0.11). A model can benefit from reading signatures while resisting the norm about writing them.
 
+
+---
+
+## Theme 4 — The write side: does signing make the *author's* work better?
+
+Everything above measures the **reader**. The bolder claim — and the one the "sign the work" pitch quietly makes — is about the **author**: does knowing you'll have to sign, state a confidence, and list what's open make the code you write better?
+
+**Task:** Four small coding tasks, each with 2–3 planted hazards (a year rollover, a leap-day, a sum-invariant, a duration boundary) that a careful author should handle. Five arms, each a different trailing instruction:
+
+- **bare** — just the task.
+- **reflect** — "before you submit, reflect on edge cases."
+- **sign** — "you will sign this with a MurphySig block: state Confidence and what's Open."
+- **sign_revise** — sign, plus *"resolve what you can before you sign; Open: is for what genuinely remains."*
+- **reflect_harder** — a reflection control **deliberately written longer** than sign_revise (79 vs 69 overhead words, enforced by a committed parity test) so a sign_revise win could never be an instruction-length artifact.
+
+**Judging:** two independent judges (GPT-5.4 canonical, Opus 4.6 second), each seeing **only the code** — blind to which arm produced it — score each hazard handled or missed. A separate pass reads **only the trailing note** to ask whether a missed hazard was confessed there. The analysis was [pre-registered](https://github.com/Round-Tower/murphysig/blob/main/benchmark/fixtures/author/PREREGISTRATION.md) before the run.
+
+**Six families × 4 cases × 5 arms × 5 reps = 600 generations, dual-judged, 2026-08-22.**
+
+### The headline is a null — and it killed our own scare number
+
+<div class="mviz mviz-dumbbell not-prose">
+  <div class="mviz-head">
+    <div class="mviz-title">Hazards handled, reflect_harder → sign_revise (GPT-5.4 judge, truncation-excluded)</div>
+    <div class="mviz-legend"><span class="mviz-key mviz-key-u">reflect_harder</span><span class="mviz-key mviz-key-s">sign_revise</span></div>
+  </div>
+  <div class="mviz-row" style="--i:0"><span class="mviz-label">DeepSeek</span><span class="mviz-track" style="--u:95%;--s:93%"><span class="mviz-conn"></span><span class="mviz-dot mviz-dot-u" data-tip="reflect_harder 0.95"></span><span class="mviz-dot mviz-dot-s" data-tip="sign_revise 0.93"></span></span><span class="mviz-value">−0.02</span></div>
+  <div class="mviz-row" style="--i:1"><span class="mviz-label">Gemini</span><span class="mviz-track" style="--u:95%;--s:88%"><span class="mviz-conn"></span><span class="mviz-dot mviz-dot-u" data-tip="reflect_harder 0.95"></span><span class="mviz-dot mviz-dot-s" data-tip="sign_revise 0.88"></span></span><span class="mviz-value">−0.06</span></div>
+  <div class="mviz-row" style="--i:2"><span class="mviz-label">Llama</span><span class="mviz-track" style="--u:93%;--s:83%"><span class="mviz-conn"></span><span class="mviz-dot mviz-dot-u" data-tip="reflect_harder 0.93"></span><span class="mviz-dot mviz-dot-s" data-tip="sign_revise 0.83"></span></span><span class="mviz-value">−0.10</span></div>
+  <div class="mviz-row" style="--i:3"><span class="mviz-label">Mistral</span><span class="mviz-track" style="--u:82%;--s:88%"><span class="mviz-conn"></span><span class="mviz-dot mviz-dot-u" data-tip="reflect_harder 0.82"></span><span class="mviz-dot mviz-dot-s" data-tip="sign_revise 0.88"></span></span><span class="mviz-value">+0.07</span></div>
+  <div class="mviz-row" style="--i:4"><span class="mviz-label">Qwen</span><span class="mviz-track" style="--u:93%;--s:97%"><span class="mviz-conn"></span><span class="mviz-dot mviz-dot-u" data-tip="reflect_harder 0.93"></span><span class="mviz-dot mviz-dot-s" data-tip="sign_revise 0.97"></span></span><span class="mviz-value">+0.03</span></div>
+  <div class="mviz-row" style="--i:5"><span class="mviz-label">Grok</span><span class="mviz-track" style="--u:83%;--s:88%"><span class="mviz-conn"></span><span class="mviz-dot mviz-dot-u" data-tip="reflect_harder 0.83"></span><span class="mviz-dot mviz-dot-s" data-tip="sign_revise 0.88"></span></span><span class="mviz-value">+0.05</span></div>
+  <div class="mviz-axis"><span></span><span class="mviz-axis-scale"><span>0</span><span>0.25</span><span>0.5</span><span>0.75</span><span>1.0</span></span><span></span></div>
+  <div class="mviz-note">Run <em>2026-08-22_author-cross-family-6</em>. Mean paired Δ <em>−0.005</em> (GPT-5.4) / <em>+0.025</em> (Opus 4.6). Every family inside the ±0.10 interval under both judges.</div>
+</div>
+
+| Model | bare | reflect | sign | sign_revise | reflect_harder | Δ sign_revise − reflect_harder |
+|---|--:|--:|--:|--:|--:|--:|
+| DeepSeek | 0.70 | 0.87 | 0.73 | 0.93 | 0.95 | −0.02 |
+| Gemini | 0.83 | 0.87 | 0.87 | 0.88 | 0.95 | −0.06 |
+| Llama | 0.75 | 0.70 | 0.75 | 0.83 | 0.93 | −0.10 |
+| Mistral | 0.72 | 0.83 | 0.77 | 0.88 | 0.82 | +0.07 |
+| Qwen | 0.60 | 0.83 | 0.82 | 0.97 | 0.93 | +0.03 |
+| Grok | 0.60 | 0.67 | 0.60 | 0.88 | 0.83 | +0.05 |
+| **MEAN (paired)** | 0.70 | 0.79 | 0.76 | 0.90 | 0.90 | **−0.005** |
+
+*GPT-5.4 judge, hazard-handled rate, rows with `finish_reason=stop` only (see caveat below). Opus 4.6 gives the same picture: mean +0.025, range −0.02..+0.09.*
+
+**"Resolve what you can before you sign" did not beat the strongest reflection control we could write — and was not beaten by it.** Per the pre-registration we don't call that equivalence (six families put the interval at roughly ±0.10); we call it what it is: the signing frame **costs nothing** in code quality against a deliberately-advantaged control.
+
+**The pilot's scare number did not replicate.** Our July pilot (n=3, single judge, never published as a claim) showed *sign − reflect* at **−0.18**, negative in all four families — "signing makes the code worse." The canonical run puts that frame contrast at **−0.04** with mixed signs under both judges. The difference was contamination: in the pilot, models put the MurphySig block *inside the code fence* about 46% of the time, so the supposedly code-blind judge was reading the treatment arm's own `Open:` confessions while scoring. Two adversarial audits caught it, the pipeline now strips and reroutes in-fence signatures (rig-gated by a committed test), and the effect vanished. Verify-before-trumpet cut both ways this summer: it killed an overclaim in June and a self-critical *under*claim in August.
+
+### What signing actually does: it moves the misses into the open
+
+<div class="mviz mviz-bars not-prose">
+  <div class="mviz-head">
+    <div class="mviz-title">Of hazards missed in code, % confessed in the trailing note</div>
+  </div>
+  <div class="mviz-row" style="--i:0"><span class="mviz-label">sign</span><span class="mviz-bartrack" data-tip="60 of 88 missed hazards confessed in Open:"><span class="mviz-bar" style="--w:68%"></span></span><span class="mviz-value">68%</span></div>
+  <div class="mviz-row" style="--i:1"><span class="mviz-label">reflect</span><span class="mviz-bartrack" data-tip="33 of 74 missed hazards acknowledged"><span class="mviz-bar" style="--w:45%"></span></span><span class="mviz-value">45%</span></div>
+  <div class="mviz-row" style="--i:2"><span class="mviz-label">reflect_harder</span><span class="mviz-bartrack" data-tip="14 of 34 missed hazards acknowledged"><span class="mviz-bar" style="--w:41%"></span></span><span class="mviz-value">41%</span></div>
+  <div class="mviz-row" style="--i:3"><span class="mviz-label">sign_revise</span><span class="mviz-bartrack" data-tip="8 of 37 missed hazards left in Open: — most were fixed instead"><span class="mviz-bar" style="--w:22%"></span></span><span class="mviz-value">22%</span></div>
+  <div class="mviz-axis"><span></span><span class="mviz-axis-scale"><span>0</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></span><span></span></div>
+  <div class="mviz-note">Full deferral coverage on every note-bearing arm (120/120 rows judged; reflect_harder 114 after truncation). The pilot's version of this table was computed on arm-asymmetric attrition — this one isn't.</div>
+</div>
+
+| Arm | Hazards missed in code | Confessed in note | Rate |
+|---|--:|--:|--:|
+| sign | 88 | 60 | **68%** |
+| reflect | 74 | 33 | 45% |
+| reflect_harder | 34 | 14 | 41% |
+| sign_revise | 37 | 8 | 22% |
+| bare | 10 | 0 | 0% |
+
+Three things fall out of this table:
+
+- **The `Open:` field is a deferral valve.** Told it will sign, a model that misses a hazard confesses it two-thirds of the time. Told merely to reflect, less than half. The signature doesn't stop the miss — it makes the miss *visible* to the next reader. That is exactly the tacit-knowledge transfer Theme 1 measured, seen from the author's side.
+- **The action clause is the quality lever, not the frame.** `sign` missed 88 hazards; `sign_revise` missed 37. One sentence — *resolve what you can before you sign* — halves the misses and lands level with the strongest reflection prompt. Its low confession rate isn't hiding: there was less left to confess.
+- **Stated confidence carries signal.** Signature-bearing rows that claimed `Confidence ≥ 0.9` missed 0.47 hazards on average; rows below 0.9 missed 0.94. Direction correct — though 0.47 misses at ≥0.9 is still absolutely overconfident. (The pilot's "miscalibrated upward" read was another contamination artifact.)
+
+**The honest one-paragraph summary.** Knowing you'll sign does not, by itself, make a model write better code — and it doesn't make it write worse code either. What signing does is redirect disclosure: models confess two-thirds of their misses in `Open:` (vs 45% under plain reflection), and their stated confidence tracks their miss rate. Pair the signature with "resolve what you can before you sign" and the misses halve, matching the strongest reflection prompt — so that line buys the provenance and the disclosure at zero quality cost. **The signature is a truth-capture device, not a quality-forcing function** — coherent with Theme 1's finding that its value is transferring the author's tacit knowledge to the next reader. That sentence is going into v0.5.
+
+**Caveat worth its own line.** Between the June slate check and this run, two subject models (Gemini 3.5 Flash, Qwen3.7 Plus) became reasoning-by-default on OpenRouter; hidden reasoning starved the visible answer at the original 2,048-token budget (147/600 rows truncated, some with zero visible output). Both were fully re-run at 8,192 tokens and re-judged. Six truncated rows remain, all in the `reflect_harder` control; the numbers above exclude them. Include them and Qwen's delta reads +0.25 — a pure truncation artifact. Capturing the boring `finish_reason` field turned a false cross-family finding into a five-minute diagnosis.
+
 ---
 
 ## Theme 2 — In-Context Learning (the null that honest work required)
@@ -226,12 +312,12 @@ Spec v0.4 removes the overclaim. See the [Empirical Evidence](/spec#empirical-ev
 
 ## What v0.4 of the spec says now
 
-Based on all three runs:
+Based on all four themes:
 
 - **Tacit-knowledge capture** — *supported, with an honest correction.* Signed code improves AI briefings across six families (+0.11 coverage). But a length/content-matched plain comment captures 80–94% of that gain — the effect is the *information you write down*, not the structured format. MurphySig's value is the discipline of capturing tacit knowledge, not its syntax.
 - **Honesty norms** — *strong, supported, now cross-family.* The `.murphysig` "never fabricate" rule achieves 100% honest handling on Claude, GPT-5.4, Gemini, DeepSeek, Mistral, and Grok when included. Two families (Llama, Qwen) resist with cosmetic compliance — the split tracks instruction-following capability, not vendor.
 - **In-context review priming** — *null on direction.* Signatures are read but don't polarize review behavior by confidence. The `Confidence: 0.3 says scrutinize` language is being removed from the spec.
-- **Reflection** — *cultural commitment, not a hypothesis.*
+- **Reflection (write side)** — *null on quality, real on disclosure.* Knowing you'll sign doesn't change how good the code is against a matched reflection control (six families, dual-judged, pre-registered). It does move missed hazards into `Open:` (68% vs 45%), and "resolve what you can before you sign" halves misses at no cost. v0.5 will carry that line.
 
 The pitch narrows. It also gets stronger where it counts — on reading and on norms.
 
@@ -240,16 +326,18 @@ The pitch narrows. It also gets stronger where it counts — on reading and on n
 ## Methodology caveats
 
 - **n=3 per cell** across all three benchmarks. Directional hints need replication at larger N.
-- **TK and Honesty now span six families** (Gemini, Llama, DeepSeek, Grok, Qwen, Mistral) and are dual-judged (Opus 4.6 + GPT-5.4). ICL remains Claude-only. The original Claude-only TK/ICL runs are the n=30/n=90 tables above.
+- **TK, Honesty and the write-side run span six families** (Gemini, Llama, DeepSeek, Grok, Qwen, Mistral) and are dual-judged (Opus 4.6 + GPT-5.4). ICL remains Claude-only. The original Claude-only TK/ICL runs are the n=30/n=90 tables above.
 - **Judge is same family as the convention's author.** We mitigate with a second, non-Anthropic judge (GPT-5.4) on both the cross-family delta and the structure decomposition; the two judges agree on direction and disagree only on magnitude. Not vendor-neutral, but the cheap conflict-of-interest shot no longer lands unanswered.
 - **Small case sets** — 5 cases for ICL + TK, 3 for Honesty. Expanding the fixtures is v3 work.
 - **LLM-as-judge fallibility.** Hedging detection and "referenced signature" rely on rubric interpretation by Opus.
 - **Scrutiny metric (1–5) did not discriminate** in the ICL run. Likely a rubric calibration issue, not a true null.
+- **Write-side fixtures are four small tasks with planted hazards.** They were adversarially audited before the run, but "hazards handled" is a narrow proxy for code quality, and the strongest families sit near ceiling on some cells.
 
 None of these caveats touch the core findings:
 
 - The TK coverage gap (+0.11, six families, dual-judged) is too consistent to attribute to noise — but the control shows it's the *content*, not the structure.
 - The Honesty warm-handling result holds across families (warm rate is judge-robust; the cold→warm *delta* is judge-dependent, so we lead with the warm endpoint, not the headline delta).
+- The write-side null is judge-robust (both judges put every family inside ±0.10) and truncation-audited; the 68/45 deferral split is computed at full coverage.
 
 ---
 
@@ -261,6 +349,7 @@ All raw data, per-theme reports, and the unified report are in [`benchmark/resul
 - TK raw: `results/tk/report_20260419_1123.md`
 - Honesty raw: `results/honesty/report_20260419_1128.md`
 - Unified: `results/unified_report_20260419_1135.md`
+- Archived cross-family runs (raw responses, verdicts, signed manifests): `results/tk/runs/`, `results/honesty/runs/`, `results/author/runs/` — the write-side run is `2026-08-22_author-cross-family-6`, with `RUN_NOTES.md` as the honest read.
 
 ---
 
@@ -273,11 +362,12 @@ All raw data, per-theme reports, and the unified report are in [`benchmark/resul
 3. **Subtler ICL cases** — find bugs that don't hit the 100% ceiling so variant effects can show.
 4. **Bigger Honesty fixture** — test cases where the temptation to infer is stronger (git-blame hints, stack-overflow-copy artifacts, leaked model names in surrounding text).
 5. **The Heuristic field.** Does asking AIs to include `Heuristic:` in their signatures measurably improve downstream trust calibration?
-6. **The write side — does signing improve the *author's* own work?** Instrumented (five arms, length-parity-gated, judge blind to arm). An early pilot — n=3, single judge, fixtures not yet adversarially audited, so *explicitly not a claim* — suggests the signing frame redirects effort into disclosure rather than fixes unless paired with "resolve what you can before you sign." Canonical run next; numbers land here when they've earned it.
+6. ~~**The write side — does signing improve the *author's* own work?**~~ Done — 600 generations, six families, dual-judged, pre-registered (Theme 4 above). Null on quality against a matched control; real on disclosure (68% vs 45%); the "resolve before you sign" clause halves misses at no cost. Next: a third judge, human-written tasks, and a `reflect_harder` budget bump so no control rows truncate.
+7. **`Open:` as a ledger.** The write-side run shows `Open:` is where the misses go. Does an agent given a repo of signed files and a budget find the real problems faster by routing on `Confidence:` + unresolved `Open:` than by random attention? (The actionable replacement for the refuted scrutiny claim.)
 
 ---
 
-*This page will be updated as v3 runs. Every claim is either empirically supported or explicitly labeled. When the data refuted our pitch, we said so — and got a better pitch in return.*
+*This page will be updated as v3 runs. Every claim is either empirically supported or explicitly labeled. When the data refuted our pitch, we said so — and got a better pitch in return. When it refuted our self-criticism, we said that too.*
 
 ---
 
@@ -333,3 +423,16 @@ single-judge, fixtures unaudited, and this page's rule is that claims
 are empirically supported or explicitly labeled — so it's labeled a
 direction, not a finding. Pilot record:
 scratch/jam-2026-07-08-author-quality/.*
+
+*2026-09-05 (Kev + claude-fable-5-1): Added Theme 4 — the write side —
+from run results/author/runs/2026-08-22_author-cross-family-6, two weeks
+after it landed. The headline is a pre-registered null (sign_revise vs a
+deliberately longer reflection control: −0.005 GPT-5.4 / +0.025 Opus 4.6,
+every family inside ±0.10), the pilot's −0.18 "signing makes code worse"
+is retired as an in-fence-signature contamination artifact, and the
+deferral mechanism (68% vs 45% confession) is reported at full coverage.
+Every number re-derived from the archived verdicts before publishing,
+truncation exclusion included. Theme table, one-liner, spec summary,
+caveats, artifacts and next-steps updated to match. Reflection moved from
+"not empirical" to "tested on the write side" — the page's rule applied
+to its own framing.*
