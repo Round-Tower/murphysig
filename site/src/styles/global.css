@@ -704,6 +704,25 @@ body {
   border-radius: 0;
 }
 
+/* Signature blocks outside .prose (homepage receipts, registry pages).
+   Same treatment as .prose pre: type scales to the box, no wrapping,
+   scroll only as the last resort. The wrapper carries the padding, so
+   1.8cqi (vs 1.9 in .prose) leaves room for it. Kev, 2026-09-05:
+   "the other pages need the same code readability treatment".
+   Signed: Kev + claude-fable-5-1, 2026-09-05, Confidence 0.8, Prior: Unknown */
+.sigblock {
+  container-type: inline-size;
+}
+.sigblock pre {
+  font-family: var(--font-mono);
+  font-size: clamp(0.625rem, 1.8cqi, 1rem);
+  line-height: 1.7;
+  white-space: pre;
+  tab-size: 4;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
 /* Tables — editorial/scientific-paper aesthetic
    Double rules top + bottom, mono small-caps headers, tabular
    lining figures for readable numeric columns, subtle zebra. */
