@@ -59,7 +59,7 @@ Current spec version is **v0.4**. The `.murphysig` file at project root is the c
 
 | File | What it is |
 |------|-----------|
-| `MURPHYSIG_WHITEPAPER-v0.0.2.md` | Foundational philosophy (The Gallery Problem, in-context learning) |
+| `MURPHYSIG_WHITEPAPER-v0.1.0.md` | Foundational philosophy (The Gallery Problem, tacit knowledge, the norm) — v0.1.0 revised after the benchmark |
 | `.murphysig` | Project-level MurphySig declaration for AI discovery |
 | `reviews/` | External reviews of MurphySig (from Gemini, GPT-5, Sonnet) |
 | `bin/sig` | CLI tool — `init`, `add`, `review`, `gallery`, `questions` commands |
@@ -68,7 +68,7 @@ Current spec version is **v0.4**. The `.murphysig` file at project root is the c
 
 The spec and whitepaper exist in two forms each:
 - **Rendered pages**: `site/src/pages/spec.md` and `whitepaper.md` (served as HTML via Astro)
-- **Plain text**: `site/public/spec.txt` and root `MURPHYSIG_WHITEPAPER-v0.0.2.md`
+- **Plain text**: `site/public/spec.txt` and root `MURPHYSIG_WHITEPAPER-v0.1.0.md` (generated from the page: strip frontmatter, absolutise links, add the header)
 - **AI summary**: `site/public/llms.txt`
 
 Changes to spec content need to be kept in sync across these formats.

@@ -1,15 +1,13 @@
----
-layout: ../layouts/MarkdownLayout.astro
-title: "MurphySig: Foundational Whitepaper"
-version: 0.1.0
-date: 2026-09-05
-description: Why legible provenance matters in the age of AI collaboration — and what four benchmarks across six model families taught us about how it actually works. The signature is a truth-capture device, not a prompt.
-ogType: article
----
+# MurphySig: A Human-Readable Provenance Standard (v0.1.0)
+
+**Date**: September 2026 (v0.0.2: February 2026)
+**Status**: Foundational Whitepaper — revised after the benchmark
+**Spec URL**: https://murphysig.dev/spec
+**Benchmark**: https://murphysig.dev/benchmark
 
 **Authors**: Kevin Murphy, Claude (claude-opus-4-6-20250610 for v0.0.2; claude-fable-5-1 for this revision)
 
-> **Revised, not rewritten.** The first version of this paper (February 2026) was written before any of MurphySig's claims had been tested. Between April and August 2026 we tested them — four themes, six model families, two independent judges — and two of the claims below did not survive. This revision keeps the argument, corrects the mechanism, and says plainly what the data supports. The operational form lives in the [specification](/spec/); the numbers live on the [benchmark page](/benchmark/).
+> **Revised, not rewritten.** The first version of this paper (February 2026) was written before any of MurphySig's claims had been tested. Between April and August 2026 we tested them — four themes, six model families, two independent judges — and two of the claims below did not survive. This revision keeps the argument, corrects the mechanism, and says plainly what the data supports. The operational form lives in the [specification](https://murphysig.dev/spec); the numbers live on the [benchmark page](https://murphysig.dev/benchmark).
 
 ---
 
@@ -68,7 +66,7 @@ One part of the convention *does* act directly on model behaviour, and it acts s
 
 ## 5. What We Measured
 
-Every claim in this paper is either supported below or explicitly labelled as not. Full method, tables, per-family charts and archived raw runs are on the [benchmark page](/benchmark/); all runs are committed with signed manifests.
+Every claim in this paper is either supported below or explicitly labelled as not. Full method, tables, per-family charts and archived raw runs are on the [benchmark page](https://murphysig.dev/benchmark); all runs are committed with signed manifests.
 
 | Question | Result |
 |---|---|
@@ -106,7 +104,7 @@ We once thought the signature taught the machine to read. It turns out it teache
 
 ---
 
-*For the technical implementation details, see the [Specification](/spec). For the evidence, see the [Benchmark](/benchmark).*
+*For the technical implementation details, see the [Specification](https://murphysig.dev/spec). For the evidence, see the [Benchmark](https://murphysig.dev/benchmark).*
 
 ---
 

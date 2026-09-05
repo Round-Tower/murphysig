@@ -79,7 +79,7 @@ most agent CLIs read `AGENTS.md`).
 - [Full Specification](https://murphysig.dev/spec): The complete MurphySig standard — elements, confidence, reviews, reflections, multi-author workflow
 - [Plain Text Spec](https://murphysig.dev/spec.txt): Complete specification in plain text for AI consumption
 - [Benchmark Results](https://murphysig.dev/benchmark): Empirical findings on what signatures actually do for AI behavior
-- [Whitepaper](https://murphysig.dev/whitepaper): Foundational philosophy — The Gallery Problem, in-context learning, zero-friction rule
+- [Whitepaper](https://murphysig.dev/whitepaper): Foundational philosophy, v0.1.0 revised after the benchmark — The Gallery Problem, tacit knowledge as the mechanism, the .murphysig norm, zero-friction rule
 
 ## Optional
 
