@@ -96,7 +96,117 @@ Everything else—confidence, context, reflections—is optional. Start with the
 
 One addition the write-side data earned: **resolve what you can before you sign.** `Open:` is for what genuinely remains, not for what you didn't feel like fixing. That single sentence, added to the signing instruction, halved the hazards models left in the code—at no cost against the strongest reflection prompt we could write.
 
-## 7. Conclusion
+## 7. The Practice, Audited
+
+A convention that only exists in a spec is a proposal. This one has been used, by one human and a dozen model generations, across fifteen repositories for nine months. On 2026-09-05 we ran the convention's own audit over the whole workshop.
+
+| | |
+|---|---|
+| Unique signed files | **1,276** |
+| Repositories | 15 |
+| Distinct model tokens in signatures | 18 |
+| Files that ever received a review entry | **178 (14%)** |
+| Files with more than a month of unreviewed commits | 244 |
+
+Git blames one author for all of it. The signatures say otherwise. Signing at creation became a reflex in June 2026—over 1,400 signatures in the three months since—and the write side has scaled without friction. The review side has not: the loop closes about one time in seven. That is the discipline's honest failure mode, and it hasn't moved since we first measured it in July.
+
+Four signatures from that audit, quoted verbatim, show what the practice does when it works.
+
+**A doubt, written down, and answered five months later.** The benchmark's fallback scorer, February 2026:
+
+```
+# Signed: Kev + claude-opus-4-6, 2026-02-16
+# Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
+#
+# Context: Fallback scorer when API limits are hit. Should be validated
+#          against LLM judge results when available.
+#
+# Confidence: 0.6 - heuristic approximation, not as good as LLM judge
+#
+# Reviews:
+#
+# 2026-07-12 (Kev + claude-fable-5): Closing the loop this signature opened.
+# The validation it asked for happened in June 2026: heuristic-vs-judge
+# agreement measured at 9/18 on the honesty benchmark — a coin flip. The
+# February suspicion was empirically confirmed; treat this scorer as
+# same-day directional signal only, never for reported numbers (the judge
+# is canonical, per project policy). Confidence now 0.4 — it runs, it's
+# fast, and it is measurably not a substitute for the judge.
+```
+
+The February model said *I'm not sure this is good enough; check.* The check happened. The July model—three generations later—wrote the answer back into the file and lowered the confidence. Of 1,276 signed files, this is the only one whose review made the number go *down*. The write-side benchmark says stated confidence is directionally honest but absolutely overconfident; this is what that looks like in a real repository.
+
+**A review that was also a bug report.** A prompt-injection gate in M1K3, signed in July, reviewed in August by a different model:
+
+```
+//  Signed: Kev + claude-fable-5, 2026-07-12, Confidence 0.85, Prior: Unknown
+//  Context: docs/prompt-hardening-v2.md code-side ticket 1; the eval-side
+//  guard is ChatEvalFixtures.security (selfquery-notes et al.).
+//  Review: Kev + claude-opus-5, 2026-08-03, Confidence 0.85 — the gate covered
+//  persona rule 3's LEAK half (prompt/config/credentials) but not the half the
+//  rule names first: ABILITIES. So "What can you do?" — the app's own first-run
+//  suggestion chip, and the likeliest opening question there is — ran full
+//  retrieval, and answered out of whatever the corpus held. Live that was a call
+//  recording titled `M1K3_system_prompt_v2` containing the prompt text itself:
+//  the exact leak class this gate exists for, reached through the front door
+//  (#97). `capabilityProbe` closes it, end-anchored so only the bare probe gates
+//  and every "what can you do about X" keeps its grounding.
+```
+
+The original `Context:` line told the reviewer where the guard lived. The reviewer found the half the guard missed, named the live consequence, and recorded the fix—in the file, where the next reader will find it before they find the issue tracker.
+
+**An `Open:` that closed the next day.** A voice adapter in Rubin, signed by the human alone:
+
+```
+ * Signed: Kev, 2026-03-23
+ * Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
+ * Prior: Unknown (no signature existed before this edit)
+ * [...]
+ * Confidence: High - timeout architecture simplified, no nested timeouts
+ * Open: Is 240s timeout too generous? Could pre-warm fail silently on low-end devices?
+ *
+ * Reviews:
+ *
+ * 2026-03-24 (Kev + claude-opus-4-6): Security/reliability review: Mutex
+ * serialization correct for sequential guidance. 240s timeout justified by
+ * thermal throttling math (60 tokens x 3.6s = 216s + playback). Fallback chain
+ * solid — Kokoro failure gracefully degrades to platform TTS. Pre-warm pattern
+ * eliminates cold-start latency. Clean adapter pattern. Confidence now High.
+```
+
+The question the author knew they were ducking was answered with arithmetic by the next reader. Note the signature has no model in it: MurphySig is a convention for minds, and one of the minds is allowed to be only you.
+
+**Signing the scary line.** An entitlements file—the fifty most security-relevant lines in a macOS app, and the fifty least likely to carry a comment:
+
+```
+<!-- AVSpeechSynthesizer (P6/P8 voice) reaches the audioanalyticsd mach service
+     during TTS setup. Under the sandbox this throws a hard PRECONDITION
+     FAILURE ("…doesn't contain 'com.apple.audioanalyticsd'") and kills audio
+     output (CoreAudio -10877). [...] Scoped to the one analytics service the
+     synthesizer needs — no broader hole.
+     Signed: Kev + claude-sonnet-4-6, 2026-06-08, Confidence 0.6, Prior: Kev + claude-opus-4-8 -->
+<key>com.apple.security.temporary-exception.mach-lookup.global-name</key>
+```
+
+Four signatures in one XML file, one per sandbox hole, each saying why the hole exists and how narrow it is. Confidence 0.6 on a security exception is the number you want to see: it tells the next maintainer this one was reasoned about and is still not certain.
+
+The audit also found what you'd expect from nine months of practice under no enforcement: two comment dialects (a compact one-liner in M1K3, the block form elsewhere), one model spelled two ways in the same month, twenty-five bare `claude` tokens from a repo whose `.murphysig` was never imported into its agent's context. Norms fire in-context, not in-repo. The convention is honest about that too.
+
+## 8. The Watermark and the Signature
+
+Since 2 August 2026, the text this paper was revised with carries a watermark we cannot see. Anthropic marks output from every Claude model launched on or after that date—imperceptible token-choice patterns woven into the text, plus signed C2PA metadata on generated files—globally, driven by Article 50 of the EU AI Act and the Code of Practice on Transparency of AI-Generated Content that around 190 organisations signed in July. Google's SynthID-Text has run inside Gemini for longer. OpenAI watermarks images and audio and has, so far, chosen not to watermark text.
+
+So "did a model touch this?" is now answered by default, at the source, without anyone's cooperation. That is a real thing, and it changes what a visible signature is *for*. Three observations.
+
+**The watermark answers a narrower question than it sounds like.** Anthropic's own help page is careful: a detected mark means the content "may have been processed by Claude." Not who wrote it. Not whether a human directed it, or edited it since. Not why, or how sure they were. It cannot tell "Claude wrote this" from "Claude proofread this," and it cannot tell a different model's output from a human's. Detection is a presence test. Everything MurphySig records is what the presence test cannot carry.
+
+**Invisible provenance has a robustness problem; visible provenance has a discipline problem.** Anthropic says light editing probably won't strip the mark and a complete rewrite will; independent evaluation of the class reports that a single meaning-preserving paraphrase removes the large majority of detectable text watermarks. The engineering is going into survival because the mark is fighting the text. A signature survives transformation trivially—it *is* text; it goes where the file goes. Its failure is the one Section 7 measured: nobody comes back to it. Fourteen percent. Neither approach gets robustness for free; they pay for it in different currencies.
+
+**Detection is the floor. Disclosure is the ceiling.** MurphySig is not cryptographic. Anyone can type `Signed:` and lie. Our answer is behavioural, not mathematical: with the "never fabricate" norm in context, capable models stop inventing authors (Section 4). But an in-context norm binds the honest participant; it does nothing to the motivated liar—and the liar is exactly who the watermark exists for. Detection catches non-disclosure. Disclosure rewards the people already trying to tell the truth. You want both layers. They are not competing, and they are not even playing the same sport.
+
+The inversion worth sitting with: once every output is stamped "a machine may have been here," the stamp stops being information. Nearly everything is processed by a model now—the editor autocompletes, the agent refactors, the review bot rewrites your comment. The differentiator becomes what the minds involved chose to say on top of the stamp. A watermark marks presence. A signature records thought. This paper carries both; only one of them will tell you what we were thinking.
+
+## 9. Conclusion
 
 We do not need more complex tools. We need better habits of mind. MurphySig is a small cultural intervention with a long tail. It asks us to stop, sign our name, and say: *This is what I made. This is what I was thinking. This is what I'm not sure about. This is who helped me.*
 
@@ -112,9 +222,9 @@ We once thought the signature taught the machine to read. It turns out it teache
 *Format: MurphySig v0.4 (https://murphysig.dev/spec)*
 *Prior: v0.0.2 (Kev Murphy + claude-opus-4-6-20250610, 2026-02-12, Format v0.3.3) — the argument is theirs; the corrections are the benchmark's.*
 
-*Context: v0.1.0 — the first revision written after the claims were tested. Sections 3.1 and 4 carried the refuted "confidence makes the AI scrutinise" and "the signature is a prompt" claims for seven months after the benchmark page corrected them; both are now replaced with what the data supports (confidence as triage signal; tacit knowledge as the mechanism; the norm as the one thing that acts directly on the model). Section 5 is new. Section 3.2 and 6 gained the write-side result. Abstract and conclusion revised to match. Sections 1 and 2 untouched.*
+*Context: v0.1.0 — the first revision written after the claims were tested. Sections 3.1 and 4 carried the refuted "confidence makes the AI scrutinise" and "the signature is a prompt" claims for seven months after the benchmark page corrected them; both are now replaced with what the data supports (confidence as triage signal; tacit knowledge as the mechanism; the norm as the one thing that acts directly on the model). Section 5 is new. Sections 3.2 and 6 gained the write-side result. Section 7 is new: the 2026-09-05 portfolio audit (scratch/sig-audit-2026-09-05.md) and four signatures quoted verbatim, each read from its source file before being embedded. Section 8 is new: watermark facts from Anthropic's announcement and help centre (Aug 2026), the EU Code of Practice adequacy decision (Jul 2026), and Tamim & Khan, arXiv 2607.16010, on paraphrase robustness. Abstract and conclusion revised to match. Sections 1 and 2 untouched.*
 
-*Confidence: 0.85 — every empirical sentence traces to an archived run on the benchmark page; the "truth-capture device" framing and the reading of confidence-as-triage are interpretation, stated as such.*
+*Confidence: 0.85 — every empirical sentence traces to an archived run, the audit report, or a cited source; the "truth-capture device" framing, confidence-as-triage, and the floor/ceiling reading of watermarks are interpretation, stated as such. The audit's 14% is exact for the two review dialects found and may undercount a third.*
 
 *Open: Confidence-as-triage is the one lever here we assert from descriptive data and have not tested as an intervention. Does routing attention by `Confidence:` + unresolved `Open:` find real problems faster than random? That is the next eval.*
 
