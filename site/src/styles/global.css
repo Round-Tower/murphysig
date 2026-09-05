@@ -661,30 +661,34 @@ body {
 }
 
 /* Code blocks */
+.prose {
+  /* Lets `pre` size its type against the prose column (cqi units). */
+  container-type: inline-size;
+}
 .prose pre {
   font-family: var(--font-mono);
-  font-size: 0.875em;
+  /* Scale with the form factor, don't wrap. Signature blocks are ~80
+     columns of monospace; a mono glyph is ~0.6em wide, so a line needs
+     ~48em + padding. 1.9cqi ≈ container-width / 52, which fits an
+     80–84 column line exactly at any viewport; clamped so it never
+     exceeds the old 0.875em or drops below ~10px. Wrapping is OFF —
+     a signature split mid-word ("validated" / "judge" / "The") reads
+     worse than a scrollbar — and overflow-x is only the last resort on
+     a narrow phone below the floor. (2026-09-05, two passes with Kev:
+     first pre-wrap, which split lines; then this.)
+     Signed: Kev + claude-fable-5-1, 2026-09-05, Confidence 0.8, Prior: Unknown
+     (the .prose block carried no signature; this signs only the pre sizing).
+     Open: are there wide code samples on /spec that now render small? */
+  font-size: clamp(0.625rem, 1.9cqi, 0.875em);
   line-height: 1.7;
+  white-space: pre;
+  tab-size: 4;
   background-color: #fafaf9;
   border: 1px solid #e5e5e5;
   border-radius: 0.375rem;
   padding: 1.25em 1.5em;
   margin-top: 1.5em;
   margin-bottom: 1.75em;
-  /* Wrap, don't scroll. Most code blocks on this site are signature
-     blocks — prose in a monospace box — and a sideways scrollbar hides
-     the end of every long line, which is exactly where the confidence
-     and the Open: question live. pre-wrap keeps indentation and line
-     breaks; overflow-wrap: anywhere breaks an unbreakable token (a URL,
-     a path) rather than pushing the box wider. overflow-x stays as the
-     fallback for anything that still can't wrap (2026-09-05, Kev:
-     "the code blocks need side scrolling — can we improve this?").
-     Signed: Kev + claude-fable-5-1, 2026-09-05, Confidence 0.8, Prior: Unknown
-     (the .prose block carried no signature; this signs only the wrap rule).
-     Open: does pre-wrap hurt any genuinely wide code sample on /spec? */
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  tab-size: 4;
   overflow-x: auto;
   /* Defensive: never let a code block push the page wider than the viewport.
      Without max-width, long single lines (e.g. the launch page's signature
