@@ -671,6 +671,20 @@ body {
   padding: 1.25em 1.5em;
   margin-top: 1.5em;
   margin-bottom: 1.75em;
+  /* Wrap, don't scroll. Most code blocks on this site are signature
+     blocks — prose in a monospace box — and a sideways scrollbar hides
+     the end of every long line, which is exactly where the confidence
+     and the Open: question live. pre-wrap keeps indentation and line
+     breaks; overflow-wrap: anywhere breaks an unbreakable token (a URL,
+     a path) rather than pushing the box wider. overflow-x stays as the
+     fallback for anything that still can't wrap (2026-09-05, Kev:
+     "the code blocks need side scrolling — can we improve this?").
+     Signed: Kev + claude-fable-5-1, 2026-09-05, Confidence 0.8, Prior: Unknown
+     (the .prose block carried no signature; this signs only the wrap rule).
+     Open: does pre-wrap hurt any genuinely wide code sample on /spec? */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  tab-size: 4;
   overflow-x: auto;
   /* Defensive: never let a code block push the page wider than the viewport.
      Without max-width, long single lines (e.g. the launch page's signature
