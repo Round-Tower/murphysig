@@ -107,7 +107,7 @@ See [Empirical Evidence](#empirical-evidence) below and the [benchmark page](/be
 
 ## Empirical Evidence
 
-MurphySig's claims about AI behavior are backed by three sub-benchmarks run 2026-04-18–19, covering the three testable themes (tacit knowledge, in-context learning, honesty/provenance). Reflection is a cultural practice and deliberately out of scope.
+MurphySig's claims about AI behavior are backed by four benchmarks: three Claude-only sub-benchmarks run 2026-04-18–19 (tacit knowledge, in-context learning, honesty/provenance), then cross-family sweeps across six model families (2026-06-22–24, 2026-08-22), dual-judged. Reflection was first treated as a cultural practice out of scope; the write-side run (2026-08-22) is its empirical test.
 
 ### What was tested
 
@@ -137,6 +137,8 @@ On the `orphan_utility` case specifically, 33% of cold AIs fabricated an author 
 
 **In-context learning — signatures are read.** 85% reference rate on signed review variants (vs 0% unsigned). Models read signed context and cite it in their output.
 
+**The write side — null on quality, real on disclosure.** Does knowing you will sign make the author's code better? Across six families, dual-judged and pre-registered, "resolve what you can before you sign" neither beat nor lost to a deliberately longer reflection control (mean paired Δ −0.005 GPT-5.4 / +0.025 Opus 4.6, every family within ±0.10). What signing does: of hazards missed in code, models confess 68% in `Open:` vs 45% under plain reflection; stated confidence tracks miss rate. The signature is a truth-capture device, not a quality-forcing function.
+
 ### What the data does NOT support
 
 - **Confidence direction does not polarize review behavior.** Earlier drafts claimed `Confidence: 0.3` would make AIs "scrutinize this — it's likely buggy." The benchmark refuted that — scrutiny was invariant between `high` and `low` variants. That claim has been removed from v0.4.
@@ -144,8 +146,8 @@ On the `orphan_utility` case specifically, 33% of cold AIs fabricated an author 
 
 ### Caveats
 
-- n=3 per cell across all three sub-benchmarks — directional results need larger-N replication.
-- The original ICL/Honesty runs were Claude-only. TK now spans six families (Gemini, Llama, DeepSeek, Grok, Qwen, Mistral) and is dual-judged (Opus 4.6 + GPT-5.4).
+- n=3 per cell in the original Claude-only sub-benchmarks (reps 5 in the cross-family sweeps) — directional results need larger-N replication.
+- The original ICL/Honesty runs were Claude-only. TK, Honesty and the write-side run now span six families (Gemini, Llama, DeepSeek, Grok, Qwen, Mistral) and are dual-judged (Opus 4.6 + GPT-5.4). ICL remains Claude-only.
 - LLM-as-judge; the convention's author is Anthropic-aligned. Mitigated (not eliminated) by the second non-Anthropic judge; the two agree on direction.
 - Small case sets (5 / 5 / 3). Expanding fixtures is future work.
 
@@ -158,6 +160,7 @@ The TK coverage gap (+0.11, six families, dual-judged) is robust — but the str
   - `benchmark/results/report_20260418_2304.md` (ICL)
   - `benchmark/results/tk/report_20260419_1123.md` (TK)
   - `benchmark/results/honesty/report_20260419_1128.md` (Honesty)
+- **Archived cross-family runs** (raw responses, verdicts, signed manifests): `benchmark/results/{tk,honesty,author}/runs/`
 - **Unified four-theme report:** `benchmark/results/unified_report_20260419_1135.md`
 - **Reproducible benchmark code:** [`benchmark/`](https://github.com/Round-Tower/murphysig/tree/main/benchmark) — `python -m src all` runs the full suite (~$10)
 
@@ -1025,3 +1028,5 @@ Public domain. Use freely. Attribution appreciated but not required.
 *2026-07-02 (Kev + claude-fable-5): "The Craic Pass". Added Signatures in the Wild — three real blocks quoted verbatim from Round-Tower/m1k3, which went open source today with its MurphySig history intact; the spec's examples now include receipts, not just templates. Multi-author example crew localised (Saoirse, Dara, Niamh) and its confidence lines given honest pulses — the 2am signature that predicts its own race condition teaches calibration better than a clean 0.7 ever did. Mirror in spec.txt.*
 
 *2026-07-02 (Kev + claude-fable-5, later): "Name the Model, Not the Product" — prompted by the first third-party-agent signature in the wild: OpenCode's agent discovered .murphysig unaided and signed a codebase review, first as model-only (no human), then — corrected live — as human + product name (no model). Both failure modes in one document, so the spec now says it plainly: name human, weights, and harness; if the human is unknown to you, say so rather than omit them. Mirror in spec.txt.*
+
+*2026-09-05 (Kev + claude-fable-5-1): Empirical Evidence section caught up with the benchmark — no normative spec text touched. It still said "three sub-benchmarks… reflection out of scope" while the write-side run (2026-08-22, six families, dual-judged, pre-registered) had tested exactly that. Added the write-side paragraph (null on quality, 68% vs 45% disclosure), corrected the intro and caveats to four themes / six families, linked the archived runs. Mirror in spec.txt. The v0.5 bump — action clause, Open: as ledger — remains separate work.*

@@ -92,16 +92,19 @@ This is the load-bearing rule. The benchmark proves it works. AI assistants read
 
 ## Empirical evidence
 
-Three sub-benchmarks, 198 AI calls + 186 judge calls + a separate 18-call cross-family run, fixtures and runners in [`benchmark/`](./benchmark/).
+Four themes. The original Claude-only runs (198 AI calls + 186 judge calls, April 2026), then three cross-family sweeps across six model families via OpenRouter (Gemini, Llama, DeepSeek, Grok, Qwen, Mistral), every one dual-judged by Opus 4.6 and GPT-5.4, the last pre-registered. Fixtures, runners and archived raw runs in [`benchmark/`](./benchmark/).
 
 | Finding                                                | Result                              |
 |--------------------------------------------------------|-------------------------------------|
 | **Honesty** — anti-fabrication rule (Claude)           | 11% → 0% fabrication; 11% → 100% honest handling (cold→warm) |
 | **Honesty** — same rule, same judge (GPT-5.4)          | 66% → 100% honest handling; `Prior: Unknown` 0% → 100% (cold→warm) |
-| **Tacit knowledge** — signed code briefs better        | +0.12 coverage (0.65 → 0.77)        |
+| **Honesty** — same rule, six families, dual-judged     | 100% warm honest handling on Gemini, DeepSeek, Mistral, Grok; Llama 33% and Qwen 17% resist |
+| **Tacit knowledge** — signed code briefs better        | +0.12 coverage (0.65 → 0.77) Claude-only; **+0.11 across six families**, no capability cliff |
+| **Tacit knowledge** — is it the format or the information? | **The information.** A length-matched plain comment captures 80–94% of the gain |
 | **Confidence direction** — does 0.3 vs 0.9 polarize AI review? | No measurable effect (deleted from spec in v0.4) |
+| **Write side** — does knowing you'll sign make the code better? | **Null** vs a matched reflection control (−0.005 / +0.025, two judges); misses move into `Open:` (68% vs 45%) |
 
-The last row is intentionally unflattering. v0.4 removed an unsupported claim. The GPT-5.4 row replaces an earlier heuristic-scored "100% → 0% fabrication" headline that did not survive re-scoring with the same LLM judge used for the Claude run — GPT-5.4 doesn't fabricate human authors; its cold failure mode is signing as itself without acknowledging unknown prior provenance. Full methodology and per-case data on the [benchmark page](https://murphysig.dev/benchmark/).
+The confidence row is intentionally unflattering, and the write-side row killed our own pilot's "signing makes code worse" scare number (a pipeline leak, retired). v0.4 removed an unsupported claim. The GPT-5.4 row replaces an earlier heuristic-scored "100% → 0% fabrication" headline that did not survive re-scoring with the same LLM judge used for the Claude run — GPT-5.4 doesn't fabricate human authors; its cold failure mode is signing as itself without acknowledging unknown prior provenance. Full methodology and per-case data on the [benchmark page](https://murphysig.dev/benchmark/).
 
 ## Read more
 

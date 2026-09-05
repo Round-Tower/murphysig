@@ -60,7 +60,7 @@ See Empirical Evidence section below and /benchmark page for findings and caveat
 
 ### Empirical Evidence
 
-MurphySig's claims about AI behavior are backed by three sub-benchmarks (2026-04-18–19) covering the three testable themes. Reflection is a cultural practice and out of scope.
+MurphySig's claims about AI behavior are backed by four benchmarks: three Claude-only sub-benchmarks (2026-04-18–19), then cross-family sweeps across six model families (2026-06-22–24, 2026-08-22), dual-judged. Reflection was first treated as out of scope; the write-side run (2026-08-22) is its empirical test.
 
 What was tested:
 - Theme 1 (Tacit Knowledge): 60 briefings. 5 cases × 2 variants × 2 models × 3 reps. Judge scores briefing vs ground truth.
@@ -77,7 +77,9 @@ Honesty — STRONGLY SUPPORTED. The "never fabricate" rule achieves perfect comp
 
 In-Context Learning — signatures ARE read (85% reference rate, 0% unsigned), but confidence direction does NOT polarize review behavior. The previous spec claim that "Confidence: 0.3 says scrutinize this" has been removed.
 
-Caveats: small case sets (5 TK cases); the original ICL/Honesty runs were Claude-only (TK now spans six families and is dual-judged). The TK coverage delta is robust, but the control shows it is the content, not the structure. Honesty's warm rate is judge-robust; its cold→warm delta is judge-dependent, so lead with the warm endpoint.
+Write side — NULL on quality, REAL on disclosure. Knowing it will sign does not make a model write better code than a matched (deliberately longer) reflection control — mean paired delta -0.005 (GPT-5.4) / +0.025 (Opus 4.6) across six families, all within ±0.10 — and does not make it worse. Of hazards missed in code, models confess 68% in Open: vs 45% under plain reflection; stated confidence tracks miss rate. Adding "resolve what you can before you sign" halves misses at zero cost. The signature is a truth-capture device, not a quality-forcing function.
+
+Caveats: small case sets (5 TK cases, 4 write-side tasks); the original ICL/Honesty runs were Claude-only (TK, Honesty and the write-side run now span six families and are dual-judged; ICL remains Claude-only). The TK coverage delta is robust, but the control shows it is the content, not the structure. Honesty's warm rate is judge-robust; its cold→warm delta is judge-dependent, so lead with the warm endpoint.
 
 Full details: https://murphysig.dev/benchmark
 
@@ -542,3 +544,10 @@ lines given honest pulses. Mirror of the spec.md change.
 prompted by the first third-party-agent signature in the wild (OpenCode's
 agent, discovering .murphysig unaided). Name human, weights, and harness; if
 the human is unknown, say so rather than omit them. Mirror of spec.md.
+
+2026-09-05 (Kev + claude-fable-5-1): Empirical Evidence section caught up with the
+benchmark — no normative spec text touched. It still said "three sub-benchmarks…
+reflection out of scope" while the write-side run (2026-08-22, six families,
+dual-judged, pre-registered) had tested exactly that. Added the write-side paragraph
+(null on quality, 68% vs 45% disclosure), corrected intro and caveats to four themes /
+six families. Mirror of spec.md. The v0.5 bump remains separate work.
