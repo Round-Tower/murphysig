@@ -40,6 +40,15 @@
 # the 30. Kev's call after the portfolio audit found 14% of 1,276 signed files ever
 # reviewed: make the number visible at commit time, not audit time. Tested in
 # tests/test_sig.sh (test_gallery_shows_drift_and_review_summary). Confidence 0.8.
+#
+# 2026-09-05 (Kev + claude-fable-5-1): The gallery audited its own repo and lied three ways:
+# a README's fenced *example* signature was read as the file's own, an inline
+# Review: line (and the YAML bullet form) counted as no review, and a file
+# signed before its only commit showed as drifted. sig_lines() now skips fences
+# and reads head+tail (foot-signed markdown was invisible: 90 -> 105 files);
+# three review dialects count; single-commit files have no drift. One git walk
+# per file instead of two. Gallery on this repo: 24s -> ~35s, the price of the
+# fence-aware pass over 1,262 candidates. Confidence now 0.8, held.
 
 set -e
 
@@ -105,10 +114,33 @@ get_comment_style() {
     esac
 }
 
+# The lines a signature can legally live on: the first 50 and the last 60 of
+# the file (markdown signs at the foot), with fenced code blocks removed so a
+# README's *example* signature is never mistaken for the file's own.
+# Only the region that holds the Signed: line is returned, so a fixture or a
+# prose mention in the other half of the file can't pollute the fields.
+sig_lines() {
+    awk '
+        length($0) > 1000 { next }                 # minified/JSON lines never carry a sig
+        /^[[:space:]]*(```|~~~)/ { fence = !fence; next }
+        fence { next }
+        { n++; if (n <= 50) print "H" $0; else tail[n % 60] = $0 }
+        END { for (i = n - 59; i <= n; i++) if (i > 50) print "T" tail[i % 60] }
+    ' "$1" 2>/dev/null | awk '
+        { lines[NR] = $0 }
+        END {
+            region = "T"
+            for (i = 1; i <= NR; i++)
+                if (substr(lines[i], 1, 1) == "H" && lines[i] ~ /^H[[:space:]]*[-#\/*]*[[:space:]]*Signed:/) { region = "H"; break }
+            for (i = 1; i <= NR; i++)
+                if (substr(lines[i], 1, 1) == region) print substr(lines[i], 2)
+        }'
+}
+
 # Extract comment prefix from existing signature (e.g. "# " or " * ")
 get_comment_prefix() {
     local file="$1"
-    head -50 "$file" 2>/dev/null | grep "Signed:" | head -1 | sed 's/Signed:.*//'
+    sig_lines "$file" | grep "Signed:" | head -1 | sed 's/Signed:.*//'
 }
 
 # Generate signature block
@@ -232,25 +264,44 @@ days_between() {
 # file is tracked in git. Empty when not in a repo / not committed / undated.
 get_drift_days() {
     local file="$1" sig_date last_commit
-    sig_date=$(head -50 "$file" 2>/dev/null | grep "Signed:" | head -1 | grep -oE '20[0-9]{2}-[0-9]{2}-[0-9]{2}' | head -1)
+    sig_date=$(sig_lines "$file" | grep "Signed:" | head -1 | grep -oE '20[0-9]{2}-[0-9]{2}-[0-9]{2}' | head -1)
     [ -z "$sig_date" ] && return 0
-    last_commit=$(git log -1 --format=%cs -- "$file" 2>/dev/null)
-    [ -z "$last_commit" ] && return 0
+    # One history walk: newest commit date on the first line, commit count in the length.
+    local dates
+    dates=$(git log --format=%cs -- "$file" 2>/dev/null)
+    [ -z "$dates" ] && return 0
+    last_commit=$(printf '%s\n' "$dates" | head -1)
+    # One commit means the file was signed and then imported: nothing has
+    # changed since the signature, however old its date. Import lag isn't drift.
+    [ "$(printf '%s\n' "$dates" | wc -l | tr -d ' ')" = "1" ] && return 0
     days_between "$sig_date" "$last_commit" 2>/dev/null
 }
 
 has_signature() {
     local file="$1"
-    head -50 "$file" 2>/dev/null | grep -q "^[[:space:]]*[-#/*]*[[:space:]]*Signed:" 2>/dev/null
+    local anchored="^[[:space:]]*[-#/*]*[[:space:]]*Signed:"
+    # Cheap pre-filter: head/tail are near-free, the fence-aware awk is not,
+    # and a repo of benchmark JSON has hundreds of files that merely *mention* Signed:.
+    { head -50 "$file"; tail -60 "$file"; } 2>/dev/null | grep -q "$anchored" || return 1
+    sig_lines "$file" | grep -q "$anchored" 2>/dev/null
 }
 
 # Extract signature info from file
 get_signature_info() {
     local file="$1"
-    local signed=$(head -50 "$file" 2>/dev/null | grep "Signed:" | head -1 | sed 's/.*Signed:[[:space:]]*//' | sed 's/[[:space:]]*\*\/.*//' | sed 's/[[:space:]]*$//')
-    local confidence=$(head -50 "$file" 2>/dev/null | grep "Confidence:" | head -1 | sed 's/.*Confidence:[[:space:]]*//' | sed 's/[[:space:]]*\*\/.*//' | sed 's/[[:space:]]*$//')
-    local reviews
-    reviews=$(head -50 "$file" 2>/dev/null | grep -c "^[[:space:]]*[-#/*]*[[:space:]]*[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}" 2>/dev/null) || reviews=0
+    local lines signed confidence reviews dated inline
+    # From the Signed: line onward: Confidence and reviews follow the signature,
+    # never precede it, so a prose mention earlier in the region can't win.
+    lines=$(sig_lines "$file" | awk '/^[[:space:]]*[-#\/*]*[[:space:]]*Signed:/ { on = 1 } on')
+    signed=$(printf '%s\n' "$lines" | grep "Signed:" | head -1 | sed 's/.*Signed:[[:space:]]*//' | sed 's/[[:space:]]*\*\/.*//' | sed 's/[[:space:]]*$//')
+    confidence=$(printf '%s\n' "$lines" | grep "Confidence:" | head -1 | sed 's/.*Confidence:[[:space:]]*//' | sed 's/[[:space:]]*\*\/.*//' | sed 's/[[:space:]]*$//')
+    # Three review dialects: the block form's dated paragraph ("2026-09-05 (Kev + model): ...")
+    # the inline form's "Review: Kev + model, 2026-09-05 - ..." line,
+    dated=$(printf '%s\n' "$lines" | grep -c "^[[:space:]]*[-#/*]*[[:space:]]*[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}" 2>/dev/null) || dated=0
+    inline=$(printf '%s\n' "$lines" | grep -c "^[[:space:]]*[-#/*]*[[:space:]]*Review:" 2>/dev/null) || inline=0
+    # ...and the bullet form some YAML fixtures use: "# - model, 2026-06-24: ..."
+    bullet=$(printf '%s\n' "$lines" | grep -c "^[[:space:]]*[#/*]*[[:space:]]*- .*[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}:" 2>/dev/null) || bullet=0
+    reviews=$((dated + inline + bullet))
 
     # Tab-separated: signature content can legally contain pipes (single-line
     # shorthand sigs use ` | ` as a field separator inside the Signed: line).

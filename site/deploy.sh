@@ -8,6 +8,12 @@
 # Confidence: 0.9 - standard Netlify CLI workflow
 # Open: None
 #
+# Reviews:
+#
+# 2026-09-05 (Kev + claude-fable-5-1): Only the Format: line has changed since
+# signing (v0.3.3, the Gruber Cut). Note this script is now the manual
+# fallback: production deploys on push via Netlify. Confidence now 0.9, held.
+#
 
 set -e
 

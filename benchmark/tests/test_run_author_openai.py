@@ -13,6 +13,14 @@ much longer, "arm X wins" could be an instruction-length artifact.
 These cover the pure logic; no API calls.
 
 Confidence: 0.85
+
+Reviews:
+
+2026-09-05 (Kev + claude-fable-5-1): Nine tests added for split_signature
+and the fence handling: comment- and docstring-style in-fence signatures,
+after-fence untouched, marker words inside executable code never stripped,
+and a rig gate asserting no signature marker reaches the hazard judge.
+Confidence now 0.9.
 """
 
 from __future__ import annotations

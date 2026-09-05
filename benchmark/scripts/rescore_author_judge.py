@@ -24,6 +24,16 @@ Usage:
     set -a; source .env; set +a
     PYTHONPATH=. python scripts/rescore_author_judge.py \
         --dir results/author/openrouter --model google/gemini-2.5-flash
+
+Reviews:
+
+2026-09-05 (Kev + claude-fable-5-1): Audit hardening (06a6071):
+balanced-brace JSON extraction replaces the greedy regex that died on braced
+prose; a non-dict hazards value is a SKIP, not an all-miss; verdict strings
+normalised; core_correct rejects truthy strings; defaulted keys recorded.
+Judge-tag derivation restored so a second judge can never overwrite the
+canonical verdicts, and per-arm deferral coverage is printed with an
+asymmetry warning. Confidence now 0.85.
 """
 
 from __future__ import annotations

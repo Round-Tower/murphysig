@@ -37,6 +37,12 @@
 #   adversarially audited for content parity (same facts, no ground_truth
 #   leakage) and length parity (within ~15% of the rendered signature).
 #   Kev owns the wording; this is a draft for his edit.
+# - claude-fable-5-1, 2026-09-05: The June bullet above IS a review; the
+#   CLI's counter only learned this dialect tonight. The prose control it
+#   added ran in two archived sweeps (2026-06-24, 2026-08-22): content
+#   carries 80-94% of the briefing uplift, structure adds about nothing. The
+#   Open on the four questions stands. Confidence now 0.7: the cases have
+#   survived six model families.
 
 cases:
   - id: pagination

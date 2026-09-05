@@ -127,3 +127,20 @@ Reading the spec critically and pushing back is the most valuable contribution. 
 <p align="center">
   Built by <a href="https://round-tower.ie">Kev Murphy</a>. Signed.
 </p>
+
+<!--
+Signed: Kev + claude-fable-5-1, 2026-09-05
+Format: MurphySig v0.4 (https://murphysig.dev/spec)
+Prior: Unknown (the file carried no signature of its own; the Signed: block
+above is a worked example, not provenance)
+
+Context: The 2026-09-05 evidence table (six-family honesty row, format-vs-
+information row, write-side null) is my contribution; the rest of the README
+is Kev's across a year of rewrites (see git log). Signed because the gallery
+was reading the example as the file's signature, which is the exact confusion
+the spec warns about.
+
+Confidence: 0.8 - the numbers are copied from the archived runs; the prose
+around them is older and not mine to vouch for.
+Open: Should the README carry a review entry per benchmark theme as they land?
+-->

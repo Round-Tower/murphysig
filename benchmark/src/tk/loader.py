@@ -4,6 +4,12 @@ Signed: Kev + claude-opus-4-7, 2026-04-18
 Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
 
 Confidence: 0.9 - thin YAML parsing; signature fields nested under each case
+
+Reviews:
+
+2026-09-05 (Kev + claude-fable-5-1): Loads the prose field for the
+structure-vs-content control (773cbe8, 2026-06-24). One line. Confidence now
+0.9, held.
 """
 
 from __future__ import annotations

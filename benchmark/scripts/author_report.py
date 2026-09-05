@@ -21,6 +21,15 @@ Usage:
     cd benchmark
     PYTHONPATH=. python scripts/author_report.py \
         --judged 'results/author/openrouter/judged_author_*.json'
+
+Reviews:
+
+2026-09-05 (Kev + claude-fable-5-1): The 2026-08-22 adversarial audit folded
+in (06a6071): confession rates now count dropped rows per arm because the
+pilot's attrition was arm-asymmetric; reports partition by judge and never
+pool graders; the MEAN row is the mean of per-model paired deltas, not the
+delta of pooled means. All three under test. This is the code that produced
+the published null. Confidence now 0.85.
 """
 
 from __future__ import annotations

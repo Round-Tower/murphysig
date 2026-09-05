@@ -4,6 +4,13 @@
 # Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
 #
 # Confidence: 0.8 - stats are straightforward, hypothesis framing is the art
+#
+# Reviews:
+#
+# 2026-09-05 (Kev + claude-fable-5-1): One deletion since signing: an unused
+# high_stats variable removed in the CI lint sweep (ef51e90). No behaviour
+# change; the hypothesis framing this signature worried about has since been
+# superseded by the four-theme suite. Confidence now 0.8, held.
 """
 
 from __future__ import annotations

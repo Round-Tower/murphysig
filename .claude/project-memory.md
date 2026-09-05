@@ -822,6 +822,22 @@ whitepaper. M1K3 spoke throughout (Kev's ask).
   use `pnpm --dir <abs path> build`. Colour escapes inside an asserted string break
   substring tests — wrap the whole phrase, not the value. HEIC screenshots exceed the Read cap → `sips -s format
   jpeg --resampleWidth 1400` first.
+- **Review sweep (Kev: "let's do that review")**: the gallery's 26 flags triaged against
+  `git log` → 16 real (author-theme scripts/tests from the 08-22 audit fold, TK prose-control
+  files, three 1-line site edits), 8 false positives, 1 unsigned (README: its only `Signed:`
+  was the worked example). All 16 reviewed from their diffs; README signed `Prior: Unknown`.
+  Footer after: **106 signed · 40/106 reviewed (37%) · 0 drifted**.
+- **The gallery lied about its own repo, four ways** — all fixed TDD (19/19): fenced
+  *example* signatures read as the file's own; inline `Review:` and the YAML bullet
+  (`# - model, date:`) dialects uncounted; a file signed before its only commit shown as
+  drifted (import lag ≠ drift); foot-signed markdown invisible (`head -50` only → 90→105
+  files). `sig_lines()` = fence-aware head-50 + tail-60, region holding `Signed:` only,
+  fields read from the `Signed:` line onward. One git walk per file (`git log --format=%cs`
+  gives last date + count). Cost: ~24s → ~35s on this repo (1,262 grep candidates, mostly
+  benchmark JSON that *mentions* Signed:).
+- Implication for the whitepaper's 14%: the audit script had the same blind spots (no
+  inline/bullet dialect, no import-lag rule) → the portfolio figure is a floor. Re-run the
+  audit with the CLI's rules before quoting it again.
 
 <!--
 Signed: Kev + claude-fable-5-1, 2026-09-05
@@ -835,6 +851,8 @@ Review: Kev + claude-fable-5-1, 2026-09-05 (later) — addendum appended for the
 of the session (whitepaper v0.1.0, audit, hook, deploy). The hook this session built
 blocked this very edit until this line existed. Working as designed.
 Review: Kev + claude-fable-5-1, 2026-09-05 (late) — gallery drift + sigblock bullets added.
+Review: Kev + claude-fable-5-1, 2026-09-06 — review-sweep bullets; the sweep found the
+instrument wrong before it found the files, which is the whole point of running it.
 -->
 
 ---

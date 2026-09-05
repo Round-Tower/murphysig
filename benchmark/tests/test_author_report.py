@@ -11,6 +11,12 @@ confidence calibration split. Pure aggregation math over synthetic
 rows — this is where a sign error would silently flip the finding.
 
 Confidence: 0.85
+
+Reviews:
+
+2026-09-05 (Kev + claude-fable-5-1): Tests added for the audit fold: dropped
+rows counted per arm, rows partition by judge, MEAN is the mean of paired
+deltas, a pair with no complete model is absent. Confidence now 0.9.
 """
 
 from __future__ import annotations

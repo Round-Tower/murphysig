@@ -11,6 +11,11 @@ behaviour via re-export; these pin the new module's own public API
 directly so a future edit to providers.py can't drift unnoticed.
 
 Confidence: 0.85
+
+Reviews:
+
+2026-09-05 (Kev + claude-fable-5-1): Two tests for the max_tokens parameter
+(default 2048, explicit pass-through). Confidence now 0.85, held.
 """
 
 from __future__ import annotations

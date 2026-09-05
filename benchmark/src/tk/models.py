@@ -5,6 +5,13 @@ Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
 
 Confidence: 0.85 - frozen dataclasses; coverage/accuracy are floats 0-1
 (judge output); hedging is ordinal 1-5; questions_back is count.
+
+Reviews:
+
+2026-09-05 (Kev + claude-fable-5-1): BriefingVariant.PROSE and TKCase.prose
+added for the structure-vs-content control (773cbe8). The control showed
+content carries 80-94% of the uplift; the type change is what made that
+measurable. Confidence now 0.85, held.
 """
 
 from __future__ import annotations

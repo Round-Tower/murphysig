@@ -17,6 +17,13 @@ extraction is proven safe by the green suite.
 
 Confidence: 0.85 — pure move; no logic changed. The OpenAI client
 creation is factored into make_client() so both runners share it too.
+
+Reviews:
+
+2026-09-05 (Kev + claude-fable-5-1): create_completion gained a max_tokens
+parameter (c0d3327); the 2048 default is unchanged for judge and TK/Honesty
+callers, subject runners raise it. Two tests cover both paths. Confidence
+now 0.85, held.
 """
 
 from __future__ import annotations

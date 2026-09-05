@@ -9,6 +9,12 @@ using the standard question set. Save each briefing immediately for
 crash resilience.
 
 Confidence: 0.85 - mirrors src/runner.py shape, adapted for TK types.
+
+Reviews:
+
+2026-09-05 (Kev + claude-fable-5-1): Renders the PROSE variant as an
+unstructured comment block (773cbe8). No change to the orchestration shape.
+Confidence now 0.85, held.
 """
 
 from __future__ import annotations

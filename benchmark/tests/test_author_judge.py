@@ -12,6 +12,14 @@ of raising (repo lesson: a strict parser kills a long sweep on one
 malformed row). No API calls.
 
 Confidence: 0.85
+
+Reviews:
+
+2026-09-05 (Kev + claude-fable-5-1): Twelve tests added with the audit fold:
+balanced-brace extraction (prose with braces, fenced JSON, two objects),
+skip-not-all-miss for list hazards, verdict normalisation, core_correct
+strings, defaulted-key audit trail, judge-tag derivation. Confidence now
+0.9.
 """
 
 from __future__ import annotations

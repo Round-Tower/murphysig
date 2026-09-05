@@ -26,6 +26,17 @@ Usage:
     set -a; source .env; set +a
     PYTHONPATH=. python scripts/run_author_openai.py --provider openrouter \
         --model google/gemini-2.5-flash --reps 5
+
+Reviews:
+
+2026-09-05 (Kev + claude-fable-5-1): Two post-signature changes.
+split_signature strips a MurphySig block left inside the code fence (46% of
+pilot sign-arm rows) and reroutes it to the trailing note with a
+sig_in_fence flag, so the hazard judge is blind again (06a6071).
+SUBJECT_MAX_TOKENS raised to 8192 and finish_reason recorded after 147/600
+rows truncated on reasoning-by-default models (c0d3327). The Open above is
+closed: n>=5, dual judges and the fixture audit all landed in the archived
+2026-08-22 canonical run. Confidence now 0.85.
 """
 
 from __future__ import annotations
