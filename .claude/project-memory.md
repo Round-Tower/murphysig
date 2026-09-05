@@ -784,6 +784,37 @@ whitepaper. M1K3 spoke throughout (Kev's ask).
   `reflect_harder` budget bump so no control rows truncate.
 - `submit-indexnow.sh` after this deploy.
 
+**Addendum (same session, later — all DEPLOYED, 943c883 live, IndexNow 200):**
+- **Whitepaper v0.1.0 shipped** (`site/src/pages/whitepaper.md`, root copy renamed
+  `MURPHYSIG_WHITEPAPER-v0.1.0.md` and REGENERATED from the page — strip frontmatter,
+  absolutise links, add header; don't hand-edit the root copy). §3.1/§4 rewritten off the
+  refuted claims; §5 "What we measured" table; **§7 "The practice, audited"** with four
+  verbatim sigs (heuristic_scorer, SelfQueryGate, KokoroVoiceSynthesisAdapter,
+  M1K3.entitlements — each read from source first, elisions marked `[...]`); **§8 "The
+  watermark and the signature"** (Anthropic marks all post-2026-08-02 model text + C2PA
+  files; detection = "may have been processed by Claude"; SynthID-Text in Gemini; OpenAI
+  text unmarked; EU Art. 50 in force 2 Aug, Code of Practice adequate 8–9 Jul, ~190
+  signatories; Tamim & Khan arXiv 2607.16010 on paraphrase). The August HN/blog watermark
+  drafts in scratch/ are now largely absorbed into §8 — decide if they still post alone.
+- **Alignment pass**: README evidence table, spec.md + spec.txt Empirical Evidence (four
+  themes, write-side paragraph, review entries), sitemap lastmods. Normative spec untouched.
+- **Portfolio audit** → `scratch/sig-audit-2026-09-05.md` (signed): 3,305 raw → **1,276
+  unique** (m1k3 mirror trees were the whole gap), 15 repos, 18 model tokens, **14% ever
+  reviewed**, 244 >30d unreviewed, ONE honest confidence downgrade (heuristic_scorer
+  0.6→0.4). Token drift flagged not fixed: `claude-fable-5.1` ×24 vs `-5-1` ×8, bare
+  `claude` ×25, wrong-suffix sonnet ×5.
+- **Review-on-Touch is now ENFORCED globally**: `~/.agent-context/hooks/pre-commit` blocks
+  a >5-changed-line edit to a HEAD-signed file that adds no Review line (either dialect);
+  `SIG_SKIP=1` bypass; 6 tests in `~/.agent-context/hooks/tests/test_pre_commit_review.sh`
+  (red→green). Rule written into global CLAUDE.md Workflow + murphysig SKILL.md (its April
+  Open: on "non-trivial" closed with a review). Fired live on the next real commit.
+- **Code blocks**: pre-wrap split signature lines mid-word (Kev screenshot) → replaced with
+  `font-size: clamp(0.625rem, 1.9cqi, 0.875em)` on a container-query `.prose`; wrap OFF,
+  scroll only below the floor. Open: wide samples on /spec may render small.
+- Gotcha: `pnpm build` from a `cd site &&` compound command lost cwd → "No package.json" —
+  use `pnpm --dir <abs path> build`. HEIC screenshots exceed the Read cap → `sips -s format
+  jpeg --resampleWidth 1400` first.
+
 <!--
 Signed: Kev + claude-fable-5-1, 2026-09-05
 Format: MurphySig v0.4 (https://murphysig.dev/spec)
@@ -792,6 +823,9 @@ Context: Publishing pass, no new data. Value was in re-deriving the numbers from
 archived verdicts and in finding the surfaces (llms.txt, Schema.org, theme table) that
 still contradicted the run.
 Confidence: 0.85 — numbers verified; page framing is interpretation, labelled as such.
+Review: Kev + claude-fable-5-1, 2026-09-05 (later) — addendum appended for the second half
+of the session (whitepaper v0.1.0, audit, hook, deploy). The hook this session built
+blocked this very edit until this line existed. Working as designed.
 -->
 
 ---
