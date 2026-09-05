@@ -811,8 +811,16 @@ whitepaper. M1K3 spoke throughout (Kev's ask).
 - **Code blocks**: pre-wrap split signature lines mid-word (Kev screenshot) → replaced with
   `font-size: clamp(0.625rem, 1.9cqi, 0.875em)` on a container-query `.prose`; wrap OFF,
   scroll only below the floor. Open: wide samples on /spec may render small.
+- **`sig gallery` now shows drift** (Kev: "yes"): per-file `Drift: Nd` (sig date → last
+  commit via `git log -1 --format=%cs`), flagged `unreviewed` past `SIG_DRIFT_DAYS` (30),
+  footer `N signed · R/N reviewed (P%) · D drifted >30d unreviewed`. On this repo tonight:
+  **90 signed · 12/90 reviewed (13%) · 24 drifted**. TDD (12/12 in tests/test_sig.sh; the
+  fixture repo sets `core.hooksPath /dev/null` so the global hook can't fire inside a test).
+- **Code readability everywhere**: shared `.sigblock` rule (container query, 1.8cqi clamp,
+  no wrap) on the three homepage receipts + both registry-page pres. `/spec` checked by Kev.
 - Gotcha: `pnpm build` from a `cd site &&` compound command lost cwd → "No package.json" —
-  use `pnpm --dir <abs path> build`. HEIC screenshots exceed the Read cap → `sips -s format
+  use `pnpm --dir <abs path> build`. Colour escapes inside an asserted string break
+  substring tests — wrap the whole phrase, not the value. HEIC screenshots exceed the Read cap → `sips -s format
   jpeg --resampleWidth 1400` first.
 
 <!--
@@ -826,6 +834,7 @@ Confidence: 0.85 — numbers verified; page framing is interpretation, labelled 
 Review: Kev + claude-fable-5-1, 2026-09-05 (later) — addendum appended for the second half
 of the session (whitepaper v0.1.0, audit, hook, deploy). The hook this session built
 blocked this very edit until this line existed. Working as designed.
+Review: Kev + claude-fable-5-1, 2026-09-05 (late) — gallery drift + sigblock bullets added.
 -->
 
 ---
