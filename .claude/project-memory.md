@@ -838,6 +838,12 @@ whitepaper. M1K3 spoke throughout (Kev's ask).
 - Implication for the whitepaper's 14%: the audit script had the same blind spots (no
   inline/bullet dialect, no import-lag rule) → the portfolio figure is a floor. Re-run the
   audit with the CLI's rules before quoting it again.
+- **Audit re-run (Kev: "do it kid")**: `sig_audit2.py` with the gallery's rules → **1,305 unique
+  · 246 reviewed (19%) · 138 drifted** (was 1,276 / 14% / 244). 681 of 1,302 tracked files have a
+  single commit (signed-then-imported, not drift). Inline `Review:` is 321 of 410 entries — the
+  dialect the first pass missed is the majority dialect. Two new m1k3 worktrees (qa-mobile,
+  tooltrace) folded into the family dedupe. Whitepaper §7 + root MD, audit report, global
+  CLAUDE.md + murphysig SKILL.md all carry the corrected figures; the paper says why they moved.
 
 <!--
 Signed: Kev + claude-fable-5-1, 2026-09-05
@@ -853,6 +859,7 @@ blocked this very edit until this line existed. Working as designed.
 Review: Kev + claude-fable-5-1, 2026-09-05 (late) — gallery drift + sigblock bullets added.
 Review: Kev + claude-fable-5-1, 2026-09-06 — review-sweep bullets; the sweep found the
 instrument wrong before it found the files, which is the whole point of running it.
+Review: Kev + claude-fable-5-1, 2026-09-06 (later) — audit re-run bullet.
 -->
 
 ---

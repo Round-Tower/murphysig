@@ -11,6 +11,12 @@
 
 ---
 
+**Authors**: Kevin Murphy, Claude (claude-opus-4-6-20250610 for v0.0.2; claude-fable-5-1 for this revision)
+
+> **Revised, not rewritten.** The first version of this paper (February 2026) was written before any of MurphySig's claims had been tested. Between April and August 2026 we tested them — four themes, six model families, two independent judges — and two of the claims below did not survive. This revision keeps the argument, corrects the mechanism, and says plainly what the data supports. The operational form lives in the [specification](/spec/); the numbers live on the [benchmark page](/benchmark/).
+
+---
+
 ## Abstract
 
 As we enter the era of ubiquitous AI collaboration, the provenance of our creative work is disappearing. Code, prose, and art are becoming black boxes—outputs without history. MurphySig is a proposal to reclaim that history. It is a convention for signing work with natural language context that is legible to both humans and machine intelligence. It imposes no tooling requirements, only a cultural one: that the *process* of creation is as valuable as the artifact itself.
@@ -66,7 +72,7 @@ One part of the convention *does* act directly on model behaviour, and it acts s
 
 ## 5. What We Measured
 
-Every claim in this paper is either supported below or explicitly labelled as not. Full method, tables, per-family charts and archived raw runs are on the [benchmark page](https://murphysig.dev/benchmark); all runs are committed with signed manifests.
+Every claim in this paper is either supported below or explicitly labelled as not. Full method, tables, per-family charts and archived raw runs are on the [benchmark page](/benchmark/); all runs are committed with signed manifests.
 
 | Question | Result |
 |---|---|
@@ -102,13 +108,15 @@ A convention that only exists in a spec is a proposal. This one has been used, b
 
 | | |
 |---|---|
-| Unique signed files | **1,276** |
-| Repositories | 15 |
+| Unique signed files | **1,305** |
+| Projects (checkouts) | 13 (15) |
 | Distinct model tokens in signatures | 18 |
-| Files that ever received a review entry | **178 (14%)** |
-| Files with more than a month of unreviewed commits | 244 |
+| Files that ever received a review entry | **246 (19%)** |
+| Files with more than a month of unreviewed commits | 138 (of 621 with commits after their signature) |
 
-Git blames one author for all of it. The signatures say otherwise. Signing at creation became a reflex in June 2026—over 1,400 signatures in the three months since—and the write side has scaled without friction. The review side has not: the loop closes about one time in seven. That is the discipline's honest failure mode, and it hasn't moved since we first measured it in July.
+Git blames one author for all of it. The signatures say otherwise. Signing at creation became a reflex in June 2026—over 1,400 signatures in the three months since—and the write side has scaled without friction. The review side has not: the loop closes about one time in five. That is the discipline's honest failure mode, and it has not moved since we first measured it in July (16%, one repository).
+
+A note on the number. The first pass of this audit, run the evening before, reported 14% and 244 drifted files. The instrument had two of the blind spots it was auditing for: it did not count the inline `Review:` dialect most of M1K3 uses, and it called a file signed before its first commit "drifted." We found both by pointing the CLI's gallery at its own repository, fixed the gallery under test, and re-ran the audit with the same rules. The corrected figures are the ones above. The audit script was wrong in the same direction as the practice, which is what a review is for.
 
 Four signatures from that audit, quoted verbatim, show what the practice does when it works.
 
@@ -134,7 +142,7 @@ Four signatures from that audit, quoted verbatim, show what the practice does wh
 # fast, and it is measurably not a substitute for the judge.
 ```
 
-The February model said *I'm not sure this is good enough; check.* The check happened. The July model—three generations later—wrote the answer back into the file and lowered the confidence. Of 1,276 signed files, this is the only one whose review made the number go *down*. The write-side benchmark says stated confidence is directionally honest but absolutely overconfident; this is what that looks like in a real repository.
+The February model said *I'm not sure this is good enough; check.* The check happened. The July model—three generations later—wrote the answer back into the file and lowered the confidence. Of 1,305 signed files, three carry a review that lowered the number, and this is the only one that moved by more than a few hundredths. The write-side benchmark says stated confidence is directionally honest but absolutely overconfident; this is what that looks like in a real repository.
 
 **A review that was also a bug report.** A prompt-injection gate in M1K3, signed in July, reviewed in August by a different model:
 
@@ -224,10 +232,12 @@ We once thought the signature taught the machine to read. It turns out it teache
 
 *Context: v0.1.0 — the first revision written after the claims were tested. Sections 3.1 and 4 carried the refuted "confidence makes the AI scrutinise" and "the signature is a prompt" claims for seven months after the benchmark page corrected them; both are now replaced with what the data supports (confidence as triage signal; tacit knowledge as the mechanism; the norm as the one thing that acts directly on the model). Section 5 is new. Sections 3.2 and 6 gained the write-side result. Section 7 is new: the 2026-09-05 portfolio audit (scratch/sig-audit-2026-09-05.md) and four signatures quoted verbatim, each read from its source file before being embedded. Section 8 is new: watermark facts from Anthropic's announcement and help centre (Aug 2026), the EU Code of Practice adequacy decision (Jul 2026), and Tamim & Khan, arXiv 2607.16010, on paraphrase robustness. Abstract and conclusion revised to match. Sections 1 and 2 untouched.*
 
-*Confidence: 0.85 — every empirical sentence traces to an archived run, the audit report, or a cited source; the "truth-capture device" framing, confidence-as-triage, and the floor/ceiling reading of watermarks are interpretation, stated as such. The audit's 14% is exact for the two review dialects found and may undercount a third.*
+*Confidence: 0.85 — every empirical sentence traces to an archived run, the audit report, or a cited source; the "truth-capture device" framing, confidence-as-triage, and the floor/ceiling reading of watermarks are interpretation, stated as such. The audit figures are the corrected 2026-09-06 pass: three review dialects counted, import lag excluded from drift.*
 
 *Open: Confidence-as-triage is the one lever here we assert from descriptive data and have not tested as an intervention. Does routing attention by `Confidence:` + unresolved `Open:` find real problems faster than random? That is the next eval.*
 
 *Reviews:*
 
 *2026-02-12 (Kev + claude-opus-4-6-20250610): v0.0.2 - Aligned with spec v0.2.1. Fixed imprecise model references (claude-opus-4.5 → claude-opus-4-5-20250514, Claude-3.7 → current model). The whitepaper now practices what the spec preaches.*
+
+*2026-09-06 (Kev + claude-fable-5-1): Section 7 figures corrected after the audit instrument was fixed (14% → 19% reviewed; 244 → 138 drifted; one confidence downgrade → three). The argument is unchanged; the number moved toward the practice, not away from it. Confidence now 0.85, held.*
