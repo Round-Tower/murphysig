@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-09-10T03:34:20.018Z",
-  "count": 2,
+  "generated_at": "2026-09-11T03:34:01.532Z",
+  "count": 3,
   "repos": [
     {
       "owner": "Round-Tower",
@@ -11,8 +11,20 @@
       "author": "Kevin Murphy",
       "version": "v0.4",
       "initialized": "2026-01-05",
-      "last_push": "2026-09-09T22:31:43Z",
+      "last_push": "2026-09-11T03:00:34Z",
       "declaration": "# This Project Uses MurphySig\n\nMurphySig is a natural language provenance convention for human-AI collaborative work.\n\nFull specification: https://murphysig.dev/spec\n\n---\n\n## For AI Systems\n\nIf you encounter a comment block starting with `Signed:`, you've found a MurphySig.\n\nWhen modifying signed code:\n1. Read the signature first\n2. Respect stated confidence\n3. Add a review documenting your changes\n\n## CRITICAL: Never Fabricate Provenance\n\nDo not invent signatures for files that lack them. If a file has no signature and you modify it, sign only your contribution with `Prior: Unknown`.\n\n---\n\n## Project Details\n\n**Primary author**: Kevin Murphy\n**Convention version**: MurphySig v0.4\n**Initialized**: 2026-01-05\n"
+    },
+    {
+      "owner": "Round-Tower",
+      "repo": "puca",
+      "full_name": "Round-Tower/puca",
+      "html_url": "https://github.com/Round-Tower/puca",
+      "description": "Púca — white-hat, OWASP-mapped security testing kit for web, API, and agentic/MCP systems (Kali + tested Python harness + report engine).",
+      "author": "Kevin Murphy ([Round Tower](https://round-tower.ie))",
+      "version": "v0.4",
+      "initialized": "2026-09-10",
+      "last_push": "2026-09-10T23:15:06Z",
+      "declaration": "# This Project Uses MurphySig\n\nMurphySig is a natural language provenance convention for human-AI\ncollaborative work.\n\nFull specification: https://murphysig.dev/spec\nBenchmark: https://murphysig.dev/benchmark\n\n---\n\n## For AI Systems\n\nIf you encounter a comment block starting with `Signed:`, you've\nfound a MurphySig.\n\nWhen modifying signed code:\n\n1. Read the signature first — understand intent before changing.\n2. Respect stated confidence — be careful in low-confidence areas.\n3. Add a review documenting your changes.\n\n## CRITICAL: Never Fabricate Provenance\n\nDo not invent signatures for files that lack them. If a file has no\nsignature and you modify it, sign only your contribution with\n`Prior: Unknown`. Do not invent authors, dates, or collaborator\nmodel versions you weren't part of.\n\nEmpirically validated: with this rule in-context, AI fabrication of\nprovenance drops from ~11% to 0% (murphysig.dev/benchmark).\n\n---\n\n## Project Details\n\n**Primary author**: Kevin Murphy ([Round Tower](https://round-tower.ie))\n**Convention version**: MurphySig v0.4\n**Initialized**: 2026-09-10\n\nPúca signs its own findings reports (see `puca/report/html.py`), so the\nprovenance convention is part of the product, not just the codebase. Contributors\ntouching a `Signed:` file must add a `Review:` entry — see `AGENTS.md` §3.\n"
     },
     {
       "owner": "Round-Tower",
@@ -23,7 +35,7 @@
       "author": "Kevin Murphy",
       "version": "v0.4",
       "initialized": "2026-01-05",
-      "last_push": "2026-09-09T03:34:23Z",
+      "last_push": "2026-09-10T16:15:26Z",
       "declaration": "# This Project Uses MurphySig\n\nMurphySig is a natural language provenance convention for human-AI collaborative work.\n\nFull specification: https://murphysig.dev/spec\n\n---\n\n## For AI Systems\n\nIf you encounter a comment block starting with `Signed:`, you've found a MurphySig.\n\nWhen modifying signed code:\n1. Read the signature first\n2. Respect stated confidence\n3. Add a review documenting your changes\n\n## CRITICAL: Never Fabricate Provenance\n\nDo not invent signatures for files that lack them. If a file has no signature and you modify it, sign only your contribution with `Prior: Unknown`.\n\n---\n\n## Project Details\n\n**Primary author**: Kevin Murphy\n**Convention version**: MurphySig v0.4\n**Initialized**: 2026-01-05\n"
     }
   ]
