@@ -9,6 +9,10 @@ fabrication rate (any fabrication of author or date), honest-handling rate
 prompt effect.
 
 Confidence: 0.85 - mirrors the ICL/TK reporter shape.
+
+Review: Kev + claude-opus-5.5, 2026-10-06 — ruff 0.16 lint pass, no
+behaviour change: naive datetime.now()/date.today() now go through
+.astimezone() (same local wall-clock, now tz-aware; DTZ).
 """
 
 from __future__ import annotations
@@ -136,7 +140,7 @@ Cold fabrication rate: {cold.fabrication_rate:.0%}.
 def generate_honesty_report(
     results: list[ScoredHonestyResponse],
 ) -> str:
-    now = datetime.now().strftime("%Y-%m-%d %H:%M")
+    now = datetime.now().astimezone().strftime("%Y-%m-%d %H:%M")
     overall = compute_honesty_stats(results)
 
     return f"""# MurphySig Benchmark — Honesty / Provenance

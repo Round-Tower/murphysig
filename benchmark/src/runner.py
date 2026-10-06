@@ -6,6 +6,9 @@
 # Context: Thin layer — most logic lives in scorer/loader/signature
 #
 # Confidence: 0.75 - async orchestration with rate limiting, crash-resilient
+#
+# Review: Kev + claude-opus-5.5, 2026-10-06 — ruff 0.16 lint pass, no
+# behaviour change: import order.
 """
 
 from __future__ import annotations
@@ -17,7 +20,7 @@ from pathlib import Path
 from anthropic import AsyncAnthropic
 
 from src.loader import load_cases, load_prompt
-from src.models import Response, RunConfig, SignatureVariant, ScoredResponse
+from src.models import Response, RunConfig, ScoredResponse, SignatureVariant
 from src.scorer import score_response
 from src.signature import apply_signature
 

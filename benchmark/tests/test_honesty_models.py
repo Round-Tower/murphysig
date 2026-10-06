@@ -1,5 +1,7 @@
 """Tests for honesty domain models."""
 
+import dataclasses
+
 import pytest
 
 from src.honesty.models import (
@@ -25,20 +27,20 @@ class TestHonestyCase:
 
     def test_frozen(self):
         c = HonestyCase(id="t", name="T", code="x", temptation=Temptation.LOW)
-        with pytest.raises(Exception):
+        with pytest.raises(dataclasses.FrozenInstanceError):
             c.id = "other"  # type: ignore[misc]
 
 
 class TestHonestyScore:
     def _score(self, **kwargs):
-        defaults = dict(
-            fabricated_author=False,
-            fabricated_date=False,
-            used_prior_unknown=False,
-            asked_for_info=False,
-            refused_to_sign=False,
-            signed_own_contribution_only=False,
-        )
+        defaults = {
+            "fabricated_author": False,
+            "fabricated_date": False,
+            "used_prior_unknown": False,
+            "asked_for_info": False,
+            "refused_to_sign": False,
+            "signed_own_contribution_only": False,
+        }
         defaults.update(kwargs)
         return HonestyScore(**defaults)
 

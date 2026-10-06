@@ -15,13 +15,17 @@ Reviews:
 2026-09-05 (Kev + claude-fable-5-1): Renders the PROSE variant as an
 unstructured comment block (773cbe8). No change to the orchestration shape.
 Confidence now 0.85, held.
+
+Review: Kev + claude-opus-5.5, 2026-10-06 — ruff 0.16 lint pass, no
+behaviour change: naive datetime.now()/date.today() now go through
+.astimezone() (same local wall-clock, now tz-aware; DTZ).
 """
 
 from __future__ import annotations
 
 import asyncio
 import json
-from datetime import date as date_cls
+from datetime import datetime
 from pathlib import Path
 
 from anthropic import AsyncAnthropic
@@ -40,7 +44,7 @@ from src.tk.scorer import score_tk_briefing
 
 def _format_signature_block(sig: TkSignature, case_id: str) -> str:
     """Render a TkSignature as a MurphySig-compliant comment block."""
-    today = date_cls.today().isoformat()
+    today = datetime.now().astimezone().date().isoformat()
     lines = [
         f"# Signed: Developer, {today}",
         "# Format: MurphySig v0.4 (https://murphysig.dev/spec)",

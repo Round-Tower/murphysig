@@ -1,16 +1,17 @@
 """Tests for domain models — written first per TDD."""
 
-import pytest
 from dataclasses import FrozenInstanceError
 
+import pytest
+
 from src.models import (
+    Response,
+    RunConfig,
+    Score,
+    ScoredResponse,
     SignatureVariant,
     TestCase,
     Variant,
-    Response,
-    Score,
-    ScoredResponse,
-    RunConfig,
 )
 
 

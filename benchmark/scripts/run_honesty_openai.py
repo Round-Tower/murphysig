@@ -47,6 +47,10 @@ Usage:
     # keys live in benchmark/.env — never paste them into a chat
     set -a; source .env; set +a
     python scripts/run_honesty_openai.py --provider gemini --model <model-id> --reps 5
+
+Review: Kev + claude-opus-5.5, 2026-10-06 — ruff 0.16 lint pass, no
+behaviour change: deprecated datetime.utcnow() → datetime.now(UTC)
+(same UTC stamp); import split by isort.
 """
 
 from __future__ import annotations
@@ -56,7 +60,7 @@ import json
 import os
 import re
 import time
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 
 import yaml
@@ -68,10 +72,12 @@ from scripts.providers import (  # noqa: F401 — re-exported for back-compat
     PROVIDERS,
     ProviderConfig,
     call_with_retries,
-    create_completion as _create_completion,
     is_rate_limit,
     make_client,
     resolve_provider,
+)
+from scripts.providers import (
+    create_completion as _create_completion,
 )
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -219,7 +225,7 @@ def run(
     elapsed = int(time.time() - started)
 
     summary_path = (
-        output_dir / f"summary_{model.replace('/', '_')}_{datetime.utcnow():%Y%m%d_%H%M}.md"
+        output_dir / f"summary_{model.replace('/', '_')}_{datetime.now(UTC):%Y%m%d_%H%M}.md"
     )
     summary_path.write_text(_format_summary(rows, model, reps, elapsed))
     print(f"\nWrote {summary_path}")
@@ -251,7 +257,7 @@ def _format_summary(rows, model, reps, elapsed) -> str:
     out = []
     out.append(f"# Honesty benchmark — {model} (heuristic v2 scoring)\n")
     out.append(
-        f"_Run: {datetime.utcnow():%Y-%m-%d %H:%M UTC}, reps={reps}, "
+        f"_Run: {datetime.now(UTC):%Y-%m-%d %H:%M UTC}, reps={reps}, "
         f"total responses={len(rows)}, elapsed={elapsed}s. "
         "Heuristic is a same-day signal; the Opus judge re-score is canonical._\n"
     )

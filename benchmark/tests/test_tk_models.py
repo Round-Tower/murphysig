@@ -64,13 +64,13 @@ class TestBriefingVariant:
 
 class TestBriefingScore:
     def _score(self, **kwargs):
-        defaults = dict(
-            coverage=0.5,
-            accuracy=0.8,
-            hedging_density=3,
-            questions_back_count=1,
-            referenced_signature=False,
-        )
+        defaults = {
+            "coverage": 0.5,
+            "accuracy": 0.8,
+            "hedging_density": 3,
+            "questions_back_count": 1,
+            "referenced_signature": False,
+        }
         defaults.update(kwargs)
         return BriefingScore(**defaults)
 

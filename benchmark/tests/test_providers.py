@@ -16,6 +16,10 @@ Reviews:
 
 2026-09-05 (Kev + claude-fable-5-1): Two tests for the max_tokens parameter
 (default 2048, explicit pass-through). Confidence now 0.85, held.
+
+Review: Kev + claude-opus-5.5, 2026-10-06 — ruff 0.16 lint pass, no
+behaviour change: rate-limit fake raises RuntimeError (TRY002); fake
+response choices is a tuple (RUF012).
 """
 
 from __future__ import annotations
@@ -59,7 +63,7 @@ class TestRetry:
         def fn():
             calls["n"] += 1
             if calls["n"] < 3:
-                raise Exception("429 rate limit")
+                raise RuntimeError("429 rate limit")
             return "ok"
 
         out = call_with_retries(fn, retries=5, base_delay=1.0, sleep=slept.append)
@@ -90,7 +94,7 @@ class _FakeClient:
                     message = _Msg()
                     finish_reason = "stop"
                 class _Resp:
-                    choices = [_Choice()]
+                    choices = (_Choice(),)
                 return _Resp()
 
         class _Chat:

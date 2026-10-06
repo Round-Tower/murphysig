@@ -20,9 +20,15 @@ balanced-brace extraction (prose with braces, fenced JSON, two objects),
 skip-not-all-miss for list hazards, verdict normalisation, core_correct
 strings, defaulted-key audit trail, judge-tag derivation. Confidence now
 0.9.
+
+Review: Kev + claude-opus-5.5, 2026-10-06 — ruff 0.16 lint pass, no
+behaviour change: import order; ClassVar on the CASE fixture; %-format
+→ f-string.
 """
 
 from __future__ import annotations
+
+from typing import ClassVar
 
 from scripts.rescore_author_judge import (
     build_deferral_prompt,
@@ -103,7 +109,11 @@ class TestDeferral:
 
 # --- 2026-08-22 adversarial-audit additions (parsing + dual-judge safety) ---
 
-from scripts.rescore_author_judge import DEFAULT_JUDGE, _first_json, derive_judge_tag  # noqa: E402
+from scripts.rescore_author_judge import (
+    DEFAULT_JUDGE,
+    _first_json,
+    derive_judge_tag,
+)
 
 
 class TestFirstJsonRobust:
@@ -128,7 +138,7 @@ class TestFirstJsonRobust:
 
 
 class TestParseHazardVerdictHardened:
-    CASE = {"hazards": {"H1": "x", "H2": "y"}}
+    CASE: ClassVar[dict] = {"hazards": {"H1": "x", "H2": "y"}}
 
     def test_hazards_as_list_is_a_skip_not_an_all_miss(self):
         raw = '{"hazards": ["H1", "H2"], "core_correct": true}'
@@ -141,7 +151,7 @@ class TestParseHazardVerdictHardened:
 
     def test_core_correct_string_values_are_not_truthy(self):
         for bad in ('"no"', '"false"', '"unclear"'):
-            raw = '{"hazards": {"H1": "handled"}, "core_correct": %s}' % bad
+            raw = f'{{"hazards": {{"H1": "handled"}}, "core_correct": {bad}}}'
             assert parse_hazard_verdict(raw, self.CASE)["core_correct"] is False
         raw = '{"hazards": {"H1": "handled"}, "core_correct": "true"}'
         assert parse_hazard_verdict(raw, self.CASE)["core_correct"] is True

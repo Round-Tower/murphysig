@@ -24,6 +24,10 @@ Reviews:
 parameter (c0d3327); the 2048 default is unchanged for judge and TK/Honesty
 callers, subject runners raise it. Two tests cover both paths. Confidence
 now 0.85, held.
+
+Review: Kev + claude-opus-5.5, 2026-10-06 — ruff 0.16 lint pass, no
+behaviour change: unused `noqa: BLE001` dropped (BLE is not selected);
+the reason stays as a comment.
 """
 
 from __future__ import annotations
@@ -100,7 +104,7 @@ def call_with_retries(fn, *, retries: int, base_delay: float, sleep=time.sleep):
     for attempt in range(retries + 1):
         try:
             return fn()
-        except Exception as e:  # noqa: BLE001 — provider SDKs vary
+        except Exception as e:  # provider SDKs vary
             if not is_rate_limit(e) or attempt == retries:
                 raise
             sleep(base_delay * (2**attempt))
@@ -131,7 +135,7 @@ def create_completion(
 
             try:
                 return call_with_retries(_do, retries=5, base_delay=2.0)
-            except Exception as e:  # noqa: BLE001 — provider SDKs vary
+            except Exception as e:  # provider SDKs vary
                 last_err = e
                 msg = str(e)
                 if with_temp and "temperature" in msg:

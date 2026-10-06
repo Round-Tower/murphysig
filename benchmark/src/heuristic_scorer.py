@@ -20,6 +20,9 @@ Less nuanced than Opus scoring, but gives us results immediately.
 # same-day directional signal only, never for reported numbers (the judge
 # is canonical, per project policy). Confidence now 0.4 — it runs, it's
 # fast, and it is measurably not a substitute for the judge.
+#
+# Review: Kev + claude-opus-5.5, 2026-10-06 — ruff 0.16 lint pass, no
+# behaviour change: set(generator) → set comprehension; import spacing.
 """
 
 from __future__ import annotations
@@ -27,7 +30,6 @@ from __future__ import annotations
 import re
 
 from src.models import Response, Score, ScoredResponse, SignatureVariant
-
 
 # Bug detection keywords per case
 BUG_KEYWORDS: dict[str, list[str]] = {
@@ -86,7 +88,7 @@ def _count_suggestions(text: str) -> int:
     # Use the larger of numbered/bullet counts, plus unique actionable verbs
     list_count = max(len(numbered), len(bullets))
     # Cap actionable to avoid overcounting
-    action_count = min(len(set(a.lower() for a in actionable)), 8)
+    action_count = min(len({a.lower() for a in actionable}), 8)
     count = max(list_count, action_count)
     return max(1, min(count, 15))  # Floor at 1, cap at 15
 

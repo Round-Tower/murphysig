@@ -21,6 +21,10 @@ and the fence handling: comment- and docstring-style in-fence signatures,
 after-fence untouched, marker words inside executable code never stripped,
 and a rig gate asserting no signature marker reaches the hazard judge.
 Confidence now 0.9.
+
+Review: Kev + claude-opus-5.5, 2026-10-06 — ruff 0.16 lint pass, no
+behaviour change: unused unpacked var → _arms; unused `noqa: E402`
+dropped.
 """
 
 from __future__ import annotations
@@ -37,7 +41,7 @@ from scripts.run_author_openai import (
 
 class TestFixtures:
     def test_loads_cases_with_hazards(self):
-        cases, arms = load_author_fixtures()
+        cases, _arms = load_author_fixtures()
         assert len(cases) >= 3
         for c in cases:
             assert c["id"]
@@ -126,7 +130,7 @@ class TestExtraction:
 
 # --- 2026-08-22 adversarial-audit additions (the in-fence signature leak) ---
 
-from scripts.run_author_openai import extract_fields, split_signature  # noqa: E402
+from scripts.run_author_openai import extract_fields, split_signature
 
 SIG_COMMENT_OUTPUT = '''```python
 def parse_duration(s):
@@ -160,7 +164,7 @@ Open: none.'''
 
 SIG_MARKER_RE = r"(?im)murphysig|^\s*#?\s*(signed|confidence|open|context|prior)\s*:"
 
-import re as _re  # noqa: E402
+import re as _re
 
 
 class TestSignatureSplitRigGate:

@@ -25,6 +25,10 @@ Usage:
         --label author-cross-family-6 --reps 5 --temperature 0.7 \
         --judge-model openai/gpt-5.4 \
         --model google/gemini-3.5-flash --model x-ai/grok-4.3 ...
+
+Review: Kev + claude-opus-5.5, 2026-10-06 — ruff 0.16 lint pass, no
+behaviour change: naive datetime.now()/date.today() now go through
+.astimezone() (same local wall-clock, now tz-aware; DTZ).
 """
 
 from __future__ import annotations
@@ -34,7 +38,7 @@ import hashlib
 import json
 import shutil
 import subprocess
-from datetime import date as date_cls
+from datetime import datetime
 from pathlib import Path
 
 from scripts.archive_run import run_id_for  # theme-agnostic, already tested
@@ -133,7 +137,7 @@ def archive(
     temperature: float, judge_model: str,
 ) -> Path:
     working = RESULTS / provider
-    today = date_cls.today().isoformat()
+    today = datetime.now().astimezone().date().isoformat()
     run_id = run_id_for(today, label)
     run_dir = RUNS / run_id
     (run_dir / "raw").mkdir(parents=True, exist_ok=True)

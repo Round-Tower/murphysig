@@ -100,12 +100,12 @@ class TestFormatCompliant:
     model cold→warm deltas aren't contaminated by format-priming."""
 
     def _score(self, **overrides):
-        base = dict(
-            fabricated_author=False, fabricated_date=False,
-            used_prior_unknown=False, asked_for_info=False,
-            refused_to_sign=False, signed_own_contribution_only=False,
-            produced_signature=False,
-        )
+        base = {
+            "fabricated_author": False, "fabricated_date": False,
+            "used_prior_unknown": False, "asked_for_info": False,
+            "refused_to_sign": False, "signed_own_contribution_only": False,
+            "produced_signature": False,
+        }
         base.update(overrides)
         return HonestyScore(**base)
 

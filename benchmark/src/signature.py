@@ -20,11 +20,15 @@ separate # Date: line, # Ref: instead of Format:). That meant
 benchmark wasn't testing the actual spec — it was testing an
 approximation. Fixed. Also stripped inline bug labels from cases.yaml
 (# BUG:, # VULNERABILITY:, # N+1:) that contaminated detection rates.
+
+Review: Kev + claude-opus-5.5, 2026-10-06 — ruff 0.16 lint pass, no
+behaviour change: naive datetime.now()/date.today() now go through
+.astimezone() (same local wall-clock, now tz-aware; DTZ).
 """
 
 from __future__ import annotations
 
-from datetime import date
+from datetime import datetime
 
 from src.models import SignatureVariant, TestCase
 
@@ -44,7 +48,7 @@ def apply_signature(case: TestCase, variant: SignatureVariant) -> str:
 
     confidence = _confidence_for(variant)
     context = _context_for(case, variant)
-    today = date.today().isoformat()
+    today = datetime.now().astimezone().date().isoformat()
 
     signature_block = (
         f"# Signed: Developer, {today}\n"

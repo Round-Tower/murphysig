@@ -30,6 +30,9 @@ pilot's attrition was arm-asymmetric; reports partition by judge and never
 pool graders; the MEAN row is the mean of per-model paired deltas, not the
 delta of pooled means. All three under test. This is the code that produced
 the published null. Confidence now 0.85.
+
+Review: Kev + claude-opus-5.5, 2026-10-06 — ruff 0.16 lint pass, no
+behaviour change: open() wrapped in a context manager (SIM115).
 """
 
 from __future__ import annotations
@@ -233,7 +236,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     rows = []
     for path in sorted(glob.glob(args.judged)):
-        rows.extend(json.loads(open(path).read()))
+        with open(path) as fh:
+            rows.extend(json.load(fh))
     # Never pool judges into one cell — one report section per judge.
     report = "\n---\n\n".join(
         render_report(g) for _judge, g in sorted(group_rows_by_judge(rows).items())

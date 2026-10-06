@@ -23,6 +23,10 @@ Usage:
         --label cross-family-6 --reps 10 --judge-model claude-opus-4-6 \
         --provider openrouter \
         --model google/gemini-3.5-flash --model x-ai/grok-4.3 ...
+
+Review: Kev + claude-opus-5.5, 2026-10-06 — ruff 0.16 lint pass, no
+behaviour change: naive datetime.now()/date.today() now go through
+.astimezone() (same local wall-clock, now tz-aware; DTZ).
 """
 
 from __future__ import annotations
@@ -33,7 +37,7 @@ import json
 import re
 import shutil
 import subprocess
-from datetime import date as date_cls
+from datetime import datetime
 from pathlib import Path
 
 from scripts.cross_family_report import aggregate_rows, render_table
@@ -133,7 +137,7 @@ def archive(
     *, label: str, provider: str, models: list[str], reps: int, judge_model: str, theme: str
 ) -> Path:
     working = RESULTS / provider
-    today = date_cls.today().isoformat()
+    today = datetime.now().astimezone().date().isoformat()
     run_id = run_id_for(today, label)
     run_dir = RUNS / run_id
     (run_dir / "raw").mkdir(parents=True, exist_ok=True)

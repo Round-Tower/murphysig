@@ -26,6 +26,11 @@ Usage:
     set -a; source .env; set +a
     PYTHONPATH=. python scripts/run_tk_openai.py --provider openrouter \
         --model google/gemini-2.5-flash --reps 10
+
+Review: Kev + claude-opus-5.5, 2026-10-06 — ruff 0.16 lint pass, no
+behaviour change: naive datetime.now()/date.today() now go through
+.astimezone() (same local wall-clock, now tz-aware; DTZ); timezone.utc
+→ UTC.
 """
 
 from __future__ import annotations
@@ -33,8 +38,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
-from datetime import date as date_cls
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import yaml
@@ -127,7 +131,7 @@ def run(
     client = make_client(cfg)
 
     cases, template = load_tk_fixtures()
-    today = date_cls.today().isoformat()
+    today = datetime.now().astimezone().date().isoformat()
     output_dir = RESULTS_ROOT / provider_name
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -159,7 +163,7 @@ def run(
                 fname = f"{case['id']}_{variant}_{model.replace('/', '_')}_{rep}.json"
                 (output_dir / fname).write_text(json.dumps(row, indent=2))
 
-    stamp = f"{datetime.now(timezone.utc):%Y%m%d_%H%M}"
+    stamp = f"{datetime.now(UTC):%Y%m%d_%H%M}"
     manifest = output_dir / f"_runlog_{model.replace('/', '_')}_{stamp}.json"
     manifest.write_text(
         json.dumps(

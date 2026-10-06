@@ -7,6 +7,10 @@ Usage:
 # Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
 #
 # Confidence: 0.8 - thin resume script, delegates to existing modules
+#
+# Review: Kev + claude-opus-5.5, 2026-10-06 — ruff 0.16 lint pass, no
+# behaviour change: naive datetime.now()/date.today() now go through
+# .astimezone() (same local wall-clock, now tz-aware; DTZ).
 """
 
 from __future__ import annotations
@@ -97,7 +101,7 @@ async def main():
 
     # Step 4: Generate report
     report = generate_report(scored)
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M")
+    timestamp = datetime.now().astimezone().strftime("%Y%m%d_%H%M")
     report_path = results_dir / f"report_{timestamp}.md"
     report_path.write_text(report)
 
