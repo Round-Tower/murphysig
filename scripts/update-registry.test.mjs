@@ -10,7 +10,7 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseMurphysig, gh } from "./update-registry.mjs";
+import { parseMurphysig, gh, buildEntry } from "./update-registry.mjs";
 
 const FULL = `# This Project Uses MurphySig
 
@@ -130,4 +130,70 @@ test("gh does not retry a plain 404", async () => {
     /404/,
   );
   assert.equal(calls, 1);
+});
+
+// Review-fold (security-auditor, 2026-10-06): bound what a stranger's repo
+// can push into main, and check the identifiers that become URLs and paths.
+
+const DECL = "**Primary author**: Ada\n**Convention version**: 0.4\n**Initialized**: 2026-04-21\n";
+const repoMeta = (over = {}) => ({
+  private: false,
+  html_url: "https://github.com/ada/engine",
+  description: "Analytical",
+  pushed_at: "2026-10-01T00:00:00Z",
+  ...over,
+});
+
+test("buildEntry builds a normal entry", () => {
+  const e = buildEntry("ada/engine", DECL, repoMeta());
+  assert.equal(e.owner, "ada");
+  assert.equal(e.repo, "engine");
+  assert.equal(e.version, "v0.4");
+  assert.equal(e.declaration, DECL);
+});
+
+test("buildEntry skips private repos", () => {
+  assert.equal(buildEntry("ada/engine", DECL, repoMeta({ private: true })), null);
+});
+
+test("buildEntry skips oversized declarations instead of committing them", () => {
+  assert.equal(buildEntry("ada/engine", DECL + "x".repeat(25_000), repoMeta()), null);
+});
+
+test("buildEntry rejects names that are not plain GitHub owner/repo", () => {
+  for (const bad of ["ada/..", "ada/.", "../etc", "ada/engine/x", "ad a/engine", "ada.x/engine"]) {
+    assert.equal(buildEntry(bad, DECL, repoMeta()), null, bad);
+  }
+});
+
+test("buildEntry rejects a non-GitHub html_url", () => {
+  assert.equal(buildEntry("ada/engine", DECL, repoMeta({ html_url: "javascript:alert(1)" })), null);
+  assert.equal(buildEntry("ada/engine", DECL, repoMeta({ html_url: "https://evil.example/ada/engine" })), null);
+});
+
+test("buildEntry sanitises and caps the description", () => {
+  const e = buildEntry("ada/engine", DECL, repoMeta({ description: "a\u202eb\u200bc\u0007" + "d".repeat(400) }));
+  assert.ok(!/[\u202e\u200b\u0007]/.test(e.description));
+  assert.equal(e.description.length, 300);
+});
+
+test("author loses bidi overrides and zero-width characters", () => {
+  const parsed = parseMurphysig("**Primary author**: \u202eAda\u2066\u200d Lovelace\ufeff");
+  assert.equal(parsed.author, "Ada Lovelace");
+});
+
+test("gh passes an abort timeout to fetch", async () => {
+  let seen;
+  await gh("/x", "t", { fetch: async (_u, init) => ((seen = init), reply(200, {})), sleep: async () => {} });
+  assert.ok(seen.signal instanceof AbortSignal);
+});
+
+test("gh refuses to sleep for an absurd Retry-After", async () => {
+  await assert.rejects(
+    gh("/x", "t", {
+      fetch: async () => reply(429, "slow down", { "retry-after": "86400" }),
+      sleep: async () => {},
+    }),
+    /Retry-After/i,
+  );
 });

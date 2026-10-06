@@ -23,6 +23,13 @@
 // sanitised (author: control chars stripped, capped at 100). gh() retries
 // rate limits with the advertised wait — two consecutive nightly runs had
 // died on a single code-search 429. Confidence 0.85.
+// Review: Kev + claude-opus-5.5, 2026-10-06 — security-auditor fold.
+// buildEntry() is the gate for what reaches main: full_name must be a plain
+// owner/repo (no "." or ".."), html_url must be https://github.com/, and
+// declarations over 20 KB are skipped (a stranger could otherwise commit
+// ~100 MB). Author + description lose bidi/zero-width chars (spoofing);
+// description capped at 300. gh() has a 30s fetch timeout and refuses a
+// Retry-After over 2 minutes. Confidence 0.9.
 //
 // Usage: GITHUB_TOKEN=$(gh auth token) node scripts/update-registry.mjs
 
@@ -45,8 +52,19 @@ const OUT = join(
 // (site/src/lib/escape.mjs) — this is the second wall, not the only one.
 const VERSION_RE = /^v\d+(\.\d+){0,3}$/;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
-const CONTROL_RE = /[\u0000-\u001f\u007f-\u009f\u2028\u2029]/g;
+// Control chars, line separators, zero-width and bidi-override characters:
+// none belong in a name, and bidi/zero-width ones can make a displayed
+// author or description read as something it is not.
+const CONTROL_RE =
+  /[\u0000-\u001f\u007f-\u009f\u200b-\u200f\u2028-\u202e\u2060-\u2069\ufeff]/g;
 const AUTHOR_MAX = 100;
+const DESCRIPTION_MAX = 300;
+const DECLARATION_MAX = 20_000; // real declarations are ~1-2 KB
+// GitHub owners are [A-Za-z0-9-]; repos add . and _ (but never "." or "..").
+const FULL_NAME_RE = /^[A-Za-z0-9-]+\/(?!\.\.?$)[A-Za-z0-9._-]+$/;
+
+const cleanText = (value, max) =>
+  typeof value === "string" ? value.replace(CONTROL_RE, "").trim().slice(0, max) || null : null;
 
 /** Parse the Project Details fields out of a .murphysig declaration. */
 export function parseMurphysig(content) {
@@ -62,14 +80,39 @@ export function parseMurphysig(content) {
   }
   let initialized = grab("Initialized");
   if (initialized && !DATE_RE.test(initialized)) initialized = null;
-  let author = grab("Primary author");
-  if (author) {
-    author = author.replace(CONTROL_RE, "").trim().slice(0, AUTHOR_MAX) || null;
-  }
+  const author = cleanText(grab("Primary author"), AUTHOR_MAX);
   return { author, version, initialized };
 }
 
+/**
+ * One registry entry from a search hit, or null if it should be skipped.
+ * Everything here ends up committed to main and deployed unattended, so
+ * identifiers are validated and stranger-supplied text is bounded.
+ */
+export function buildEntry(fullName, content, repo) {
+  if (repo.private) return null; // registry is public-only, belt and braces
+  if (!FULL_NAME_RE.test(fullName)) return null;
+  if (typeof repo.html_url !== "string" || !repo.html_url.startsWith("https://github.com/")) return null;
+  if (content.length > DECLARATION_MAX) return null;
+  const [owner, name] = fullName.split("/");
+  const parsed = parseMurphysig(content);
+  return {
+    owner,
+    repo: name,
+    full_name: fullName,
+    html_url: repo.html_url,
+    description: cleanText(repo.description, DESCRIPTION_MAX),
+    author: parsed.author,
+    version: parsed.version,
+    initialized: parsed.initialized,
+    last_push: repo.pushed_at ?? null,
+    declaration: content,
+  };
+}
+
 const sleepMs = (ms) => new Promise((r) => setTimeout(r, ms));
+const FETCH_TIMEOUT_MS = 30_000;
+const MAX_RETRY_WAIT_MS = 120_000;
 
 /** How long GitHub asked us to wait, in ms (Retry-After or "try again in Xs"). */
 function retryDelayMs(res, body, attempt) {
@@ -89,6 +132,7 @@ function retryDelayMs(res, body, attempt) {
 export async function gh(path, token, { fetch: fetchImpl = fetch, sleep = sleepMs, maxAttempts = 5 } = {}) {
   for (let attempt = 1; ; attempt++) {
     const res = await fetchImpl(`${API}${path}`, {
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: "application/vnd.github+json",
@@ -104,6 +148,9 @@ export async function gh(path, token, { fetch: fetchImpl = fetch, sleep = sleepM
       throw new Error(`GitHub ${path} -> ${res.status}: ${body.slice(0, 200)}`);
     }
     const wait = retryDelayMs(res, body, attempt);
+    if (wait > MAX_RETRY_WAIT_MS) {
+      throw new Error(`GitHub ${path} -> ${res.status}: Retry-After ${wait}ms exceeds ${MAX_RETRY_WAIT_MS}ms`);
+    }
     console.warn(`  ~ ${path} rate-limited (${res.status}); retry ${attempt}/${maxAttempts - 1} in ${wait}ms`);
     await sleep(wait);
   }
@@ -136,22 +183,14 @@ async function main() {
         gh(`/repos/${fullName}/contents/.murphysig`, token),
         gh(`/repos/${fullName}`, token),
       ]);
-      if (repo.private) continue; // registry is public-only, belt and braces
       const content = Buffer.from(file.content, "base64").toString("utf-8");
-      const parsed = parseMurphysig(content);
-      entries.push({
-        owner: fullName.split("/")[0],
-        repo: fullName.split("/")[1],
-        full_name: fullName,
-        html_url: repo.html_url,
-        description: repo.description ?? null,
-        author: parsed.author,
-        version: parsed.version,
-        initialized: parsed.initialized,
-        last_push: repo.pushed_at ?? null,
-        declaration: content,
-      });
-      console.log(`  + ${fullName} (${parsed.version ?? "version unknown"})`);
+      const entry = buildEntry(fullName, content, repo);
+      if (!entry) {
+        console.warn(`  - ${fullName}: skipped (private, malformed or oversized)`);
+        continue;
+      }
+      entries.push(entry);
+      console.log(`  + ${fullName} (${entry.version ?? "version unknown"})`);
     } catch (err) {
       console.warn(`  ! ${fullName}: ${err.message}`);
     }
