@@ -11,6 +11,12 @@
 # Confidence: 0.7 - standard cron+commit workflow; the open risk is
 # code-search visibility under the default GITHUB_TOKEN. If the sweep
 # misses repos it should see, add a classic PAT as REGISTRY_TOKEN.
+#
+# Review: Kev + claude-opus-5.5, 2026-10-06 — this job deploys strangers'
+# content to main unattended, which made it the path for a stored XSS (fixed
+# in the renderer + scripts/update-registry.mjs). Added a concurrency group
+# (no racing pushes) and timeout-minutes: 15 (was the 6h default). The
+# 2026-10-05/06 failures were code-search 429s, now retried in gh().
 
 name: registry
 
@@ -22,9 +28,17 @@ on:
 permissions:
   contents: write
 
+# One sweep at a time: two overlapping runs would race their pushes to main.
+concurrency:
+  group: registry
+  cancel-in-progress: false
+
 jobs:
   update:
     runs-on: ubuntu-latest
+    # gh() has per-request timeouts and bounded retries; this is the backstop
+    # (the Actions default is 6 hours).
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
 

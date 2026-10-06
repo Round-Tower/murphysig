@@ -75,7 +75,11 @@
     Cache-Control = "public, max-age=86400"
 
 # Badges refresh nightly — cache for an hour so updates propagate same-day.
+# They're built from third-party registry data: escaped at build time
+# (site/src/lib/escape.mjs), and this CSP is the backstop — a directly opened
+# SVG can never run script, even if escaping regresses.
 [[headers]]
   for = "/badge/*"
   [headers.values]
     Cache-Control = "public, max-age=3600"
+    Content-Security-Policy = "default-src 'none'; style-src 'unsafe-inline'; sandbox"
