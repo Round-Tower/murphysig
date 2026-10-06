@@ -15,6 +15,10 @@
 //
 // Confidence: 0.8 - regex HTML scanning is fine for Astro's own output;
 // it would not be for arbitrary HTML.
+//
+// Review: Kev + claude-opus-5.5, 2026-10-06 — CodeQL on #33: end tags with
+// whitespace (</script >) now close a script, and the header name is fully
+// regex-escaped (backslash included) before matching netlify.toml.
 
 import { createHash } from "node:crypto";
 
@@ -45,7 +49,7 @@ function attr(tagAttrs, name) {
 /** CSP hash sources for every inline script a browser would execute. */
 export function inlineScriptHashes(html) {
   const out = [];
-  for (const m of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
+  for (const m of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)) {
     const [, attrs, body] = m;
     if (attr(attrs, "src") !== null) continue;
     if (!JS_TYPES.has((attr(attrs, "type") ?? "").toLowerCase())) continue; // data blocks (ld+json)
@@ -127,7 +131,7 @@ export function policyFromNetlifyToml(toml, path, header) {
   for (const block of toml.split(/^\[\[headers\]\]\s*$/m).slice(1)) {
     const forMatch = block.match(/^\s*for\s*=\s*"([^"]*)"/m);
     if (forMatch?.[1] !== path) continue;
-    const esc = header.replace(/[-]/g, "\\-");
+    const esc = header.replace(/[.*+?^${}()|[\]\\-]/g, "\\$&"); // literal match
     const m = block.match(new RegExp(`^\\s*${esc}\\s*=\\s*"([^"]*)"`, "m"));
     return m ? m[1] : null;
   }

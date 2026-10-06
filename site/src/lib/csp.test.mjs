@@ -107,3 +107,16 @@ test("policyFromNetlifyToml reads the header from the named block", () => {
   );
   assert.equal(policyFromNetlifyToml(toml, "/nope", "X"), null);
 });
+
+test("an end tag with whitespace (</script >) still closes the script", () => {
+  const html = `<script>a()</script ><script>b()</script\t>`;
+  const hashes = inlineScriptHashes(html);
+  assert.equal(hashes.length, 2);
+  assert.notEqual(hashes[0], hashes[1]);
+});
+
+test("policyFromNetlifyToml treats the header name literally (no regex)", () => {
+  const toml = `[[headers]]\n  for = "/*"\n  [headers.values]\n    XaY = "wrong"\n    X.Y = "right"\n`;
+  assert.equal(policyFromNetlifyToml(toml, "/*", "X.Y"), "right");
+  assert.equal(policyFromNetlifyToml(toml, "/*", "X\\Y"), null);
+});
