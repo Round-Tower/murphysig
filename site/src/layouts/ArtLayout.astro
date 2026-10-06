@@ -35,9 +35,16 @@
  * 2026-07-10 (Kev + claude-fable-5): SEO backlog pass. New optional
  * ogType prop (defaults to "website") so long-form posts can declare
  * og:type=article per page. Added /about to the footer nav.
+ *
+ * 2026-10-06 (Kev + claude-opus-5.5): Security. JSON-LD now goes through
+ * jsonForScript() instead of bare JSON.stringify — /signed/ pages feed
+ * third-party .murphysig author + repo description into schemaJson, and
+ * JSON.stringify leaves "</script>" intact (stored XSS via the nightly
+ * registry, which deploys unattended). Confidence now 0.9.
  */
 
 import '../styles/global.css';
+import { jsonForScript } from '../lib/escape.mjs';
 
 interface Props {
 	title: string;
@@ -112,7 +119,7 @@ const renderedSchema = schemaJson ?? defaultWebsiteSchema;
         <meta name="twitter:image" content="https://murphysig.dev/og-image.png" />
 
         <!-- JSON-LD Structured Data — page-specific when provided, else WebSite default. -->
-        <script type="application/ld+json" set:html={JSON.stringify(renderedSchema)} />
+        <script type="application/ld+json" set:html={jsonForScript(renderedSchema)} />
 
         <!-- For AI systems -->
         <link rel="alternate" type="text/plain" href="/llms.txt" title="AI Summary" />

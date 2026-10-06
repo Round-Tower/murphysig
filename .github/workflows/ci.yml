@@ -49,4 +49,6 @@ jobs:
           cache: npm
           cache-dependency-path: site/package-lock.json
       - run: npm ci
+      - name: Escape tests (registry content is third-party)
+        run: node --test src/lib/*.test.mjs
       - run: npm run build

@@ -10,7 +10,7 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseMurphysig } from "./update-registry.mjs";
+import { parseMurphysig, gh } from "./update-registry.mjs";
 
 const FULL = `# This Project Uses MurphySig
 
@@ -46,4 +46,88 @@ test("tolerates varied spacing and bare version numbers", () => {
   assert.equal(parsed.author, "Ada Lovelace");
   assert.equal(parsed.version, "v0.4");
   assert.equal(parsed.initialized, "2026-04-21");
+});
+
+// Hostile declarations: the registry ingests .murphysig files from ANY
+// public repo and deploys unattended, so parsed fields must be inert even
+// before the render-side escapes (site/src/lib/escape.mjs) apply.
+
+test("rejects a version that is not a version", () => {
+  const parsed = parseMurphysig(
+    '**Convention version**: v0.4"/><script>alert(1)</script>',
+  );
+  assert.equal(parsed.version, null);
+});
+
+test("rejects an initialized value that is not a date", () => {
+  const parsed = parseMurphysig("**Initialized**: </script><script>x</script>");
+  assert.equal(parsed.initialized, null);
+});
+
+test("strips control characters and line separators from author", () => {
+  const parsed = parseMurphysig("**Primary author**: Ada\u0000\u001b[31m\u2028Lovelace\u0085");
+  assert.equal(parsed.author, "Ada[31mLovelace");
+});
+
+test("caps author length", () => {
+  const parsed = parseMurphysig(`**Primary author**: ${"A".repeat(500)}`);
+  assert.equal(parsed.author.length, 100);
+});
+
+// GitHub code search allows ~10 req/min; a 429 used to kill the whole
+// nightly run (2026-10-05 and -06). gh() now backs off and retries.
+
+const reply = (status, body, headers = {}) => ({
+  ok: status >= 200 && status < 300,
+  status,
+  headers: { get: (k) => headers[k.toLowerCase()] ?? null },
+  json: async () => body,
+  text: async () => (typeof body === "string" ? body : JSON.stringify(body)),
+});
+
+test("gh retries a 429 after the advertised wait", async () => {
+  const replies = [
+    reply(429, '{"message":"try again in 2.332055904s"}'),
+    reply(200, { ok: true }),
+  ];
+  const slept = [];
+  const out = await gh("/search/code?q=x", "t", {
+    fetch: async () => replies.shift(),
+    sleep: async (ms) => slept.push(ms),
+  });
+  assert.deepEqual(out, { ok: true });
+  assert.equal(slept.length, 1);
+  assert.ok(slept[0] >= 2333 && slept[0] < 10_000, `slept ${slept[0]}`);
+});
+
+test("gh honours Retry-After on a secondary rate limit (403)", async () => {
+  const replies = [
+    reply(403, "secondary rate limit", { "retry-after": "7" }),
+    reply(200, { ok: 1 }),
+  ];
+  const slept = [];
+  await gh("/x", "t", { fetch: async () => replies.shift(), sleep: async (ms) => slept.push(ms) });
+  assert.deepEqual(slept, [7000]);
+});
+
+test("gh gives up after maxAttempts", async () => {
+  let calls = 0;
+  await assert.rejects(
+    gh("/x", "t", {
+      fetch: async () => (calls++, reply(429, "try again in 1s")),
+      sleep: async () => {},
+      maxAttempts: 3,
+    }),
+    /429/,
+  );
+  assert.equal(calls, 3);
+});
+
+test("gh does not retry a plain 404", async () => {
+  let calls = 0;
+  await assert.rejects(
+    gh("/x", "t", { fetch: async () => (calls++, reply(404, "Not Found")), sleep: async () => {} }),
+    /404/,
+  );
+  assert.equal(calls, 1);
 });
