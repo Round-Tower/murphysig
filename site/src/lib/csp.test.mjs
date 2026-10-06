@@ -120,3 +120,8 @@ test("policyFromNetlifyToml treats the header name literally (no regex)", () => 
   assert.equal(policyFromNetlifyToml(toml, "/*", "X.Y"), "right");
   assert.equal(policyFromNetlifyToml(toml, "/*", "X\\Y"), null);
 });
+
+test("an end tag with attributes or newlines (</script\\t\\n bar>) closes the script", () => {
+  const hashes = inlineScriptHashes(`<script>a()</script\t\n bar><script>b()</script>`);
+  assert.equal(hashes.length, 2);
+});

@@ -17,7 +17,7 @@
 // it would not be for arbitrary HTML.
 //
 // Review: Kev + claude-opus-5.5, 2026-10-06 — CodeQL on #33: end tags with
-// whitespace (</script >) now close a script, and the header name is fully
+// whitespace or ignored attributes (</script >, </script\t\n bar>) close a script, and the header name is fully
 // regex-escaped (backslash included) before matching netlify.toml.
 
 import { createHash } from "node:crypto";
@@ -49,7 +49,7 @@ function attr(tagAttrs, name) {
 /** CSP hash sources for every inline script a browser would execute. */
 export function inlineScriptHashes(html) {
   const out = [];
-  for (const m of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)) {
+  for (const m of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\b[^>]*>/gi)) {
     const [, attrs, body] = m;
     if (attr(attrs, "src") !== null) continue;
     if (!JS_TYPES.has((attr(attrs, "type") ?? "").toLowerCase())) continue; // data blocks (ld+json)
