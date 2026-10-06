@@ -51,6 +51,16 @@
     Content-Type = "text/plain; charset=utf-8"
     Cache-Control = "public, max-age=300"
 
+# Site-wide CSP, Report-Only until a deploy has run clean, then rename the key
+# to Content-Security-Policy. The two inline scripts Astro emits are pinned by
+# sha256 (no 'unsafe-inline' for script — /signed/ pages render third-party
+# registry content). style-src keeps 'unsafe-inline' for Astro's style="" attrs.
+# site/scripts/check-csp.mjs runs in CI after the build and fails if any page
+# needs something this policy doesn't allow (e.g. a changed inline script).
+# When several [[headers]] blocks match a path, a later block's value for the
+# SAME header name wins (observed: /badge/* Cache-Control beats /*.svg). The
+# badge block below sets the enforcing Content-Security-Policy, a different
+# header name, so it is never weakened by this one; keep this block above it.
 [[headers]]
   for = "/*"
   [headers.values]
@@ -58,6 +68,7 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Content-Security-Policy-Report-Only = "default-src 'self'; script-src 'self' 'sha256-/x7W7R75k8Roq0WaVRQX9blP4OufE5xbAdzklGxsgpw=' 'sha256-Bw9PH/AVnU4WninGTAvNVumb+gbECejwi7KrDYF0L40='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
 
 [[headers]]
   for = "/*.css"
