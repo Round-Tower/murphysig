@@ -52,6 +52,10 @@ jobs:
           cache: npm
           cache-dependency-path: site/package-lock.json
       - run: npm ci
-      - name: Escape tests (registry content is third-party)
+      - name: Escape + CSP tests (registry content is third-party)
         run: node --test src/lib/*.test.mjs
       - run: npm run build
+      - name: Built pages are allowed by the site CSP
+        # Fails on a changed inline script (stale sha256 pin in netlify.toml)
+        # or a new external origin, before the policy is ever enforced.
+        run: node scripts/check-csp.mjs
