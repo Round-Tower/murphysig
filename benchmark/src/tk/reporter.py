@@ -8,6 +8,10 @@ signed vs unsigned briefings on coverage, accuracy, hedging, and
 questions-back. Tests whether signatures help AIs brief unfamiliar code.
 
 Confidence: 0.85 - mirrors the ICL reporter shape.
+
+Review: Kev + claude-opus-5.5, 2026-10-06 — ruff 0.16 lint pass, no
+behaviour change: naive datetime.now()/date.today() now go through
+.astimezone() (same local wall-clock, now tz-aware; DTZ).
 """
 
 from __future__ import annotations
@@ -150,7 +154,7 @@ Signature reference rate on signed variants: {signed.signature_reference_rate:.0
 
 
 def generate_tk_report(results: list[ScoredBriefing]) -> str:
-    now = datetime.now().strftime("%Y-%m-%d %H:%M")
+    now = datetime.now().astimezone().strftime("%Y-%m-%d %H:%M")
     overall = compute_tk_stats(results)
 
     return f"""# MurphySig Benchmark — Tacit Knowledge (TK)

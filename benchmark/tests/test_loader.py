@@ -43,7 +43,7 @@ class TestLoadCases:
 
     def test_clean_code_has_no_expected_issues(self, cases_yaml: Path):
         cases = load_cases(cases_yaml)
-        clean = [c for c in cases if c.id == "clean_code"][0]
+        clean = next(c for c in cases if c.id == "clean_code")
         assert clean.has_bug is False
         assert clean.expected_issues == []
 

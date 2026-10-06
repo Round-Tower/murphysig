@@ -18,6 +18,10 @@ Usage:
     PYTHONPATH=. python scripts/cross_family_report.py \
         results/honesty/openrouter/judged_*.json \
         results/honesty/openai/judged_gpt-5.4.json
+
+Review: Kev + claude-opus-5.5, 2026-10-06 — ruff 0.16 lint pass, no
+behaviour change: implicit string concatenation in a list
+parenthesised (ISC004).
 """
 
 from __future__ import annotations
@@ -55,8 +59,8 @@ def _cell(bucket: dict | None, key: str) -> str:
 def render_table(agg: dict) -> str:
     """Render a markdown table: one row per model, cold→warm per metric."""
     out = [
-        "| Model | Cold fab. | Warm fab. | Cold honest | Warm honest "
-        "| Cold Prior:Unknown | Warm Prior:Unknown |",
+        ("| Model | Cold fab. | Warm fab. | Cold honest | Warm honest "
+        "| Cold Prior:Unknown | Warm Prior:Unknown |"),
         "|---|---:|---:|---:|---:|---:|---:|",
     ]
     for model in sorted(agg):

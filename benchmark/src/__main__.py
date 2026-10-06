@@ -30,6 +30,10 @@ Usage:
     python -m src honesty-report       # Honesty: generate honesty report
 
     python -m src all                  # Run all three end-to-end (~$12)
+
+Review: Kev + claude-opus-5.5, 2026-10-06 — ruff 0.16 lint pass, no
+behaviour change: naive datetime.now()/date.today() now go through
+.astimezone() (same local wall-clock, now tz-aware; DTZ).
 """
 
 from __future__ import annotations
@@ -137,7 +141,7 @@ def cmd_report(args: argparse.Namespace) -> None:
 
 def cmd_report_inner(scored) -> None:
     report = generate_report(scored)
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M")
+    timestamp = datetime.now().astimezone().strftime("%Y%m%d_%H%M")
     report_path = _results_dir() / f"report_{timestamp}.md"
     report_path.write_text(report)
     print(f"\nReport written to {report_path}")
@@ -216,7 +220,7 @@ def cmd_tk_report_inner(scored) -> None:
     from src.tk.reporter import generate_tk_report
 
     report = generate_tk_report(scored)
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M")
+    timestamp = datetime.now().astimezone().strftime("%Y%m%d_%H%M")
     report_path = _theme_results_dir("tk") / f"report_{timestamp}.md"
     report_path.write_text(report)
     print(f"\nTK report written to {report_path}")
@@ -297,7 +301,7 @@ def cmd_honesty_report_inner(scored) -> None:
     from src.honesty.reporter import generate_honesty_report
 
     report = generate_honesty_report(scored)
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M")
+    timestamp = datetime.now().astimezone().strftime("%Y%m%d_%H%M")
     report_path = _theme_results_dir("honesty") / f"report_{timestamp}.md"
     report_path.write_text(report)
     print(f"\nHonesty report written to {report_path}")
@@ -340,7 +344,7 @@ async def cmd_all(args: argparse.Namespace) -> None:
     from src.unified_reporter import generate_unified_report
 
     unified = generate_unified_report(_base_dir())
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M")
+    timestamp = datetime.now().astimezone().strftime("%Y%m%d_%H%M")
     path = _results_dir() / f"unified_report_{timestamp}.md"
     path.write_text(unified)
     print(f"\nUnified report written to {path}")

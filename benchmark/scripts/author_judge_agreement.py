@@ -21,6 +21,10 @@ Usage:
     cd benchmark
     PYTHONPATH=. python scripts/author_judge_agreement.py \
         --dir results/author/openrouter --second-tag __claude-opus-4-6
+
+Review: Kev + claude-opus-5.5, 2026-10-06 — ruff 0.16 lint pass, no
+behaviour change: implicit string concatenation in a list
+parenthesised (ISC004).
 """
 
 from __future__ import annotations
@@ -74,8 +78,8 @@ def render_agreement(rows: list[dict], judge_a: str, judge_b: str) -> str:
     lines = [
         "# Author-quality — inter-judge agreement",
         "",
-        f"Headline Δ(sign_revise − reflect_harder), paired per model. "
-        f"Judge A = {judge_a}, Judge B = {judge_b}.",
+        (f"Headline Δ(sign_revise − reflect_harder), paired per model. "
+        f"Judge A = {judge_a}, Judge B = {judge_b}."),
         "",
         f"| Model | Δ {judge_a} | Δ {judge_b} | concordant |",
         "|---|---|---|---|",

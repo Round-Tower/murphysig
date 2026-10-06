@@ -11,13 +11,17 @@ showed the old strict heuristic inverted the GPT-5.4 headline).
 These tests cover the pure logic; no API calls.
 
 Confidence: 0.85
+
+Review: Kev + claude-opus-5.5, 2026-10-06 — ruff 0.16 lint pass, no
+behaviour change: rate-limit fakes raise RuntimeError, not bare
+Exception (TRY002); import order.
 """
 
 from __future__ import annotations
 
-import pytest
 from urllib.parse import urlparse
 
+import pytest
 
 from scripts.run_honesty_openai import (
     PROVIDERS,
@@ -55,7 +59,7 @@ class TestRetry:
         def fn():
             calls["n"] += 1
             if calls["n"] < 3:
-                raise Exception("429 rate-limit")
+                raise RuntimeError("429 rate-limit")
             return "ok"
 
         out = call_with_retries(fn, retries=5, base_delay=1.0, sleep=slept.append)
@@ -72,9 +76,9 @@ class TestRetry:
 
     def test_gives_up_after_retries(self):
         def fn():
-            raise Exception("429 always")
+            raise RuntimeError("429 always")
 
-        with pytest.raises(Exception, match="429"):
+        with pytest.raises(RuntimeError, match="429"):
             call_with_retries(fn, retries=2, base_delay=0.0, sleep=lambda s: None)
 
 

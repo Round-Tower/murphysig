@@ -17,6 +17,9 @@ Reviews:
 2026-09-05 (Kev + claude-fable-5-1): Tests added for the audit fold: dropped
 rows counted per arm, rows partition by judge, MEAN is the mean of paired
 deltas, a pair with no complete model is absent. Confidence now 0.9.
+
+Review: Kev + claude-opus-5.5, 2026-10-06 — ruff 0.16 lint pass, no
+behaviour change: unused `noqa: E402` dropped.
 """
 
 from __future__ import annotations
@@ -134,7 +137,7 @@ class TestCalibration:
 
 # --- 2026-08-22 adversarial-audit additions ---
 
-from scripts.author_report import group_rows_by_judge, paired_delta_means  # noqa: E402
+from scripts.author_report import group_rows_by_judge, paired_delta_means
 
 
 class TestJudgeGrouping:

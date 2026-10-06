@@ -7,6 +7,10 @@ Usage:
 # Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
 #
 # Confidence: 0.7 - heuristic analysis, to be validated with LLM judge later
+#
+# Review: Kev + claude-opus-5.5, 2026-10-06 — ruff 0.16 lint pass, no
+# behaviour change: naive datetime.now()/date.today() now go through
+# .astimezone() (same local wall-clock, now tz-aware; DTZ).
 """
 
 from __future__ import annotations
@@ -65,7 +69,7 @@ def main():
         "only 1/18 responses (Haiku, none variant). 4/5 test cases are complete.\n",
     )
 
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M")
+    timestamp = datetime.now().astimezone().strftime("%Y%m%d_%H%M")
     report_path = results_dir / f"report_heuristic_{timestamp}.md"
     report_path.write_text(report)
     print(f"\nReport written to {report_path}")

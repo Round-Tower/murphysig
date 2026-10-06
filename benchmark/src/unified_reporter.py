@@ -9,6 +9,10 @@ labeled as non-empirical (cultural practice, not a hypothesis).
 
 Confidence: 0.8 - straightforward composition; narrative section is
 formulaic but honest.
+
+Review: Kev + claude-opus-5.5, 2026-10-06 — ruff 0.16 lint pass, no
+behaviour change: naive datetime.now()/date.today() now go through
+.astimezone() (same local wall-clock, now tz-aware; DTZ).
 """
 
 from __future__ import annotations
@@ -26,7 +30,7 @@ from src.tk.runner import load_scored_briefings
 
 def generate_unified_report(base_dir: Path) -> str:
     """Generate a unified report combining all three sub-benchmarks."""
-    now = datetime.now().strftime("%Y-%m-%d %H:%M")
+    now = datetime.now().astimezone().strftime("%Y-%m-%d %H:%M")
     results_dir = base_dir / "results"
 
     # Load each theme's scored data if available

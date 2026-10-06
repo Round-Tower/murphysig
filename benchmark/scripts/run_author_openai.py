@@ -37,6 +37,9 @@ SUBJECT_MAX_TOKENS raised to 8192 and finish_reason recorded after 147/600
 rows truncated on reasoning-by-default models (c0d3327). The Open above is
 closed: n>=5, dual judges and the fixture audit all landed in the archived
 2026-08-22 canonical run. Confidence now 0.85.
+
+Review: Kev + claude-opus-5.5, 2026-10-06 — ruff 0.16 lint pass, no
+behaviour change: timezone.utc → UTC (UP017).
 """
 
 from __future__ import annotations
@@ -45,7 +48,7 @@ import argparse
 import json
 import os
 import re
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import yaml
@@ -207,7 +210,7 @@ def run(
                 fname = f"{case['id']}_{arm}_{model.replace('/', '_')}_{rep}.json"
                 (output_dir / fname).write_text(json.dumps(row, indent=2))
 
-    stamp = f"{datetime.now(timezone.utc):%Y%m%d_%H%M}"
+    stamp = f"{datetime.now(UTC):%Y%m%d_%H%M}"
     manifest = output_dir / f"_runlog_{model.replace('/', '_')}_{stamp}.json"
     manifest.write_text(
         json.dumps(

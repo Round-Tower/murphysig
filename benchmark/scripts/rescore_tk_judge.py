@@ -28,6 +28,9 @@ Usage:
     PYTHONPATH=. python scripts/rescore_tk_judge.py --dir results/tk/openrouter \
         --model <id> --judge-family openai --judge-model anthropic/claude-opus-4.6 \
         --judge-tag ""
+
+Review: Kev + claude-opus-5.5, 2026-10-06 — ruff 0.16 lint pass, no
+behaviour change: timezone.utc → UTC (UP017).
 """
 
 from __future__ import annotations
@@ -36,7 +39,7 @@ import argparse
 import asyncio
 import json
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from src.tk.loader import load_tk_cases
@@ -227,7 +230,7 @@ async def rescore(
     if skipped:
         print(f"  ⚠ {skipped}/{len(rows)} rows skipped (judge errors) for {model}")
 
-    stamp = f"{datetime.now(timezone.utc):%Y%m%d_%H%M}"
+    stamp = f"{datetime.now(UTC):%Y%m%d_%H%M}"
     if judge_tag_override is not None:
         judge_tag = judge_tag_override
     else:

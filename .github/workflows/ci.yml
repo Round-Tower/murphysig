@@ -29,10 +29,11 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install
-        # ruff pinned: unpinned, ruff 0.16 widened its default rules and failed
-        # Lint on unchanged code (51 findings), which blocked every Dependabot
-        # PR from auto-merging — including the astro critical. Bump on purpose.
-        run: pip install -e ".[dev,providers]" ruff==0.15.22
+        # ruff pinned on purpose: an unpinned 0.16 release widened the default
+        # rules and failed Lint on unchanged code, silently blocking every
+        # Dependabot auto-merge (incl. the astro critical). Bump the pin in its
+        # own PR, with the code fixed to match — 0.16.10 since 2026-10-06.
+        run: pip install -e ".[dev,providers]" ruff==0.16.10
       - name: Lint
         run: ruff check .
       - name: Test

@@ -11,6 +11,10 @@
 # high_stats variable removed in the CI lint sweep (ef51e90). No behaviour
 # change; the hypothesis framing this signature worried about has since been
 # superseded by the four-theme suite. Confidence now 0.8, held.
+#
+# Review: Kev + claude-opus-5.5, 2026-10-06 — ruff 0.16 lint pass, no
+# behaviour change: naive datetime.now()/date.today() now go through
+# .astimezone() (same local wall-clock, now tz-aware; DTZ).
 """
 
 from __future__ import annotations
@@ -181,7 +185,7 @@ def generate_report(results: list[ScoredResponse]) -> str:
     Returns:
         Complete markdown report string.
     """
-    now = datetime.now().strftime("%Y-%m-%d %H:%M")
+    now = datetime.now().astimezone().strftime("%Y-%m-%d %H:%M")
     overall = compute_stats(results)
 
     return f"""# MurphySig Benchmark Results
