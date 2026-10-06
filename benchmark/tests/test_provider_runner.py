@@ -16,6 +16,7 @@ Confidence: 0.85
 from __future__ import annotations
 
 import pytest
+from urllib.parse import urlparse
 
 
 from scripts.run_honesty_openai import (
@@ -85,7 +86,7 @@ class TestResolveProvider:
 
     def test_gemini_preset(self) -> None:
         cfg = resolve_provider("gemini", {"GEMINI_API_KEY": "g-test"})
-        assert "generativelanguage.googleapis.com" in cfg.base_url
+        assert urlparse(cfg.base_url).hostname == "generativelanguage.googleapis.com"
         assert cfg.api_key == "g-test"
 
     def test_missing_key_raises_with_env_var_name(self) -> None:
