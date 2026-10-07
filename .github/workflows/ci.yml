@@ -39,6 +39,20 @@ jobs:
       - name: Test
         run: python -m pytest -q
 
+  hero:
+    # The README banner (assets/hero.svg) and its generator: GitHub-safe, says only
+    # what the README says, and the sample signature keeps the spec's shape. pytest
+    # alone — the byte-for-byte rebuild test skips without fonttools.
+    name: hero (pytest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: pip install pytest
+      - run: python -m pytest -q scripts/hero
+
   site:
     name: site (build)
     runs-on: ubuntu-latest
