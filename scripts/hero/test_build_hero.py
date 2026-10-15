@@ -16,11 +16,14 @@
 # 2026-10-15 (claude-opus-5-5): the banner-link pin now parses the href and
 # compares the host. The substring match CodeQL flagged
 # (py/incomplete-url-substring-sanitization) passed a lookalike host such as
-# murphysig.dev.example.com. Confidence now 0.85.
+# murphysig.dev.example.com. The SVG is now parsed as XML, since a malformed
+# one renders nothing in <img>. Its accessible name has to resolve too:
+# <title> first, aria-labelledby naming real ids. Confidence now 0.9.
 
 import re
 from itertools import pairwise
 from urllib.parse import urlsplit
+from xml.etree import ElementTree
 
 import build_hero as hero
 import pytest
@@ -50,7 +53,18 @@ def test_the_svg_is_self_contained():
     assert not re.search(r'(href|src)\s*=\s*["\']https?:|url\(\s*["\']?https?:|@import', s)
     assert s.count("data:font/woff2;base64,") == 4               # serif, italic, sans, mono — inlined
     assert f'viewBox="0 0 {hero.W} {hero.H}"' in s
-    assert "<title" in s and "<desc" in s and 'role="img"' in s
+
+
+def test_the_svg_is_well_formed_and_names_itself():
+    """A malformed SVG renders nothing inside <img>, so parse it rather than grep it.
+    The accessible name must resolve: <title> first, aria-labelledby naming real ids."""
+    root = ElementTree.fromstring(svg())
+    ns = "{http://www.w3.org/2000/svg}"
+    assert root.tag == f"{ns}svg" and root.get("role") == "img"
+    assert root[0].tag == f"{ns}title"
+    named = {el.get("id"): "".join(el.itertext()).strip() for el in root if el.tag in (f"{ns}title", f"{ns}desc")}
+    assert root.get("aria-labelledby", "").split() == list(named)
+    assert all(named.values())
 
 
 def test_reduced_motion_shows_the_finished_block():
