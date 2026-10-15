@@ -10,9 +10,17 @@
 #
 # Confidence: 0.85 - string-level pins on a generated file; the look itself is
 # verified by eye (contact sheets), not here.
+#
+# Reviews:
+#
+# 2026-10-15 (claude-opus-5-5): the banner-link pin now parses the href and
+# compares the host. The substring match CodeQL flagged
+# (py/incomplete-url-substring-sanitization) passed a lookalike host such as
+# murphysig.dev.example.com. Confidence now 0.85.
 
 import re
 from itertools import pairwise
+from urllib.parse import urlsplit
 
 import build_hero as hero
 import pytest
@@ -28,8 +36,12 @@ def svg() -> str:
 # ── GitHub-safe ────────────────────────────────────────────────────────────
 
 def test_the_readme_shows_the_repo_hero():
-    assert f'src="{hero.OUTPUT.relative_to(REPO).as_posix()}"' in README
-    assert "https://murphysig.dev" in README.split("<h1")[0]   # the banner still links the site
+    src = hero.OUTPUT.relative_to(REPO).as_posix()
+    banner = re.search(rf'<a href="([^"]+)">\s*<img src="{re.escape(src)}"', README)
+    assert banner, "the hero is the README's banner image, inside its link"
+    link = urlsplit(banner.group(1))
+    # the banner still links the site: compare the parsed host, never a substring
+    assert (link.scheme, link.hostname) == ("https", "murphysig.dev")
 
 
 def test_the_svg_is_self_contained():
