@@ -19,6 +19,12 @@
 # murphysig.dev.example.com. The SVG is now parsed as XML, since a malformed
 # one renders nothing in <img>. Its accessible name has to resolve too:
 # <title> first, aria-labelledby naming real ids. Confidence now 0.9.
+#
+# 2026-10-15 (claude-opus-5-5): pre-push review fold. .hostname drops a port
+# and a user@ prefix, so the pin compares (scheme, netloc) instead. The regex
+# had also lost the old pin's "above the <h1>" guarantee; it searches only the
+# text above the title again. Both mutants were green before, red now.
+# Confidence now 0.9.
 
 import re
 from itertools import pairwise
@@ -40,11 +46,13 @@ def svg() -> str:
 
 def test_the_readme_shows_the_repo_hero():
     src = hero.OUTPUT.relative_to(REPO).as_posix()
-    banner = re.search(rf'<a href="([^"]+)">\s*<img src="{re.escape(src)}"', README)
-    assert banner, "the hero is the README's banner image, inside its link"
+    above_the_title = README.split("<h1")[0]
+    banner = re.search(rf'<a href="([^"]+)">\s*<img src="{re.escape(src)}"', above_the_title)
+    assert banner, "the hero is the README's banner: above the title, inside its link"
     link = urlsplit(banner.group(1))
-    # the banner still links the site: compare the parsed host, never a substring
-    assert (link.scheme, link.hostname) == ("https", "murphysig.dev")
+    # the banner still links the site: compare the whole parsed authority, never a
+    # substring. Not .hostname either, which drops a port or a user@ prefix.
+    assert (link.scheme, link.netloc) == ("https", "murphysig.dev")
 
 
 def test_the_svg_is_self_contained():
