@@ -35,7 +35,19 @@
 # missing Format the review flagged) and no field it lacks. A font-metric check
 # keeps each line inside the card and the card clear of the title and chips.
 # Confidence 0.9, held.
+#
+# 2026-10-16 (claude-opus-5.5): independent-verifier fold. The Context's "CI runs
+# these with pytest alone" no longer holds. Three pins skipped in CI: the fit and
+# rebuild checks (no fonttools), and the whole-at-commit check (depth-1 clone). So
+# the quote was pinned only to the working tree. A skip now fails under CI=true,
+# and CI installs the generator's exact fonttools/brotli pins (a test keeps the two
+# in step). New pins: alt and desc account for every review the quote carries
+# (they named one of two), and the inlined fonts are the woff2 they claim to be
+# (they were raw TrueType). Each was red first. Confidence 0.9, held.
 
+import base64
+import importlib
+import os
 import re
 import subprocess
 from itertools import pairwise
@@ -45,13 +57,35 @@ from xml.etree import ElementTree
 
 import build_hero as hero
 import pytest
+import tomllib
 
 REPO = hero.REPO
 README = (REPO / "README.md").read_text()
+ALT = re.search(r'<img src="assets/hero\.svg" alt="([^"]+)"', README).group(1)
 
 
 def svg() -> str:
     return hero.OUTPUT.read_text()
+
+
+def desc() -> str:
+    root = ElementTree.fromstring(svg())
+    return "".join(root.find("{http://www.w3.org/2000/svg}desc").itertext())
+
+
+def unrunnable(reason: str):
+    """Skip on a laptop without the extras; fail in CI, where the hero job installs the
+    generator's pins and fetches full history, so every pin has to run there."""
+    if os.environ.get("CI"):
+        pytest.fail(f"CI must run this pin: {reason}")
+    pytest.skip(reason)
+
+
+def require(module: str):
+    try:
+        return importlib.import_module(module)
+    except ImportError:
+        unrunnable(f"{module} is not installed")
 
 
 # ── GitHub-safe ────────────────────────────────────────────────────────────
@@ -96,6 +130,30 @@ def test_reduced_motion_shows_the_finished_block():
 
 def test_the_svg_stays_light():
     assert hero.OUTPUT.stat().st_size < 150_000
+
+
+def test_the_inlined_fonts_are_the_woff2_they_claim():
+    """Each face is declared data:font/woff2 with format('woff2'), so the bytes must be
+    WOFF2 (magic wOF2). Raw TrueType renders in Chrome but is a mislabelled hint, and it
+    is the larger file."""
+    blobs = re.findall(r"data:font/woff2;base64,([A-Za-z0-9+/=]+)", svg())
+    assert len(blobs) == 4
+    assert [base64.b64decode(blob)[:4] for blob in blobs] == [b"wOF2"] * 4
+
+
+def test_ci_installs_the_generators_exact_pins():
+    """The byte-for-byte rebuild only holds on the versions that wrote the file, so the
+    generator pins fonttools and brotli exactly and the CI hero job installs the same."""
+    script = (hero.HERE / "build_hero.py").read_text()
+    block = re.search(r"^# /// script\n(.*?)^# ///$", script, re.MULTILINE | re.DOTALL).group(1)
+    deps = tomllib.loads("\n".join(line.removeprefix("# ") for line in block.splitlines()))["dependencies"]
+    assert sorted(dep.split("==")[0] for dep in deps) == ["brotli", "fonttools"]
+    assert all(re.fullmatch(r"[a-z]+==\d+(\.\d+)+", dep) for dep in deps), deps
+    ci = (REPO / ".github/workflows/ci.yml").read_text()
+    job = re.search(r"^  hero:\n(.*?)(?=^  \S|\Z)", ci, re.MULTILINE | re.DOTALL)
+    assert job, "ci.yml has a hero job"
+    for dep in deps:
+        assert dep in job.group(1), dep
 
 
 def test_the_fonts_ship_with_their_licences():
@@ -152,7 +210,7 @@ def test_the_signature_is_whole_at_its_pinned_commit():
     shown = subprocess.run(["git", "-C", str(REPO), "show", f"{hero.SOURCE_COMMIT}:{hero.SOURCE_PATH}"],
                            capture_output=True, text=True, check=False)
     if shown.returncode != 0:
-        pytest.skip(f"{hero.SOURCE_COMMIT[:7]} is not in this clone")
+        unrunnable(f"{hero.SOURCE_COMMIT[:7]} is not in this clone")
     source = shown.stdout.splitlines()
     start, end = hero.SOURCE_LINE - 1, hero.SOURCE_LINE - 1 + len(hero.SIGNATURE)
     assert source[start:end] == hero.SIGNATURE
@@ -197,10 +255,7 @@ def test_the_descriptions_name_only_fields_the_signature_has():
     the SVG <desc> name every field label the quote carries, and no spec field it lacks."""
     labels = {m.group(1) for line in hero.SIGNATURE if (m := re.match(r"#\s*([A-Z][a-z]+):", line))}
     assert labels >= {"Signed", "Format", "Context", "Confidence", "Reviews"}
-    alt = re.search(r'<img src="assets/hero\.svg" alt="([^"]+)"', README).group(1)
-    root = ElementTree.fromstring(svg())
-    desc = "".join(root.find("{http://www.w3.org/2000/svg}desc").itertext())
-    for text in (alt, desc):
+    for text in (ALT, desc()):
         assert hero.FILE_TAB in text
         for label in labels:
             assert label in text, label
@@ -208,11 +263,27 @@ def test_the_descriptions_name_only_fields_the_signature_has():
             assert f"{absent}," not in text and f"{absent} " not in text, absent
 
 
+def test_the_descriptions_account_for_every_review():
+    """The quote carries two reviews: the 2026-07-12 entry and an inline 2026-10-06
+    lint pass. A verifier caught the alt and the desc summary naming only the first;
+    a screen reader hears only the alt. Each review's date is in both summaries
+    (the desc's summary is the text before its verbatim copy of the quote)."""
+    entry = re.compile(r"#\s*(?:(\d{4}-\d{2}-\d{2}) \(|Review: [^,]+, (\d{4}-\d{2}-\d{2}))")
+    dates = [m.group(1) or m.group(2) for line in hero.SIGNATURE if (m := entry.match(line))]
+    assert dates == ["2026-07-12", "2026-10-06"]
+    verbatim_start = hero.SIGNATURE[0].lstrip("#").strip()
+    summary = desc().split(verbatim_start)[0]
+    assert summary != desc(), "the desc quotes the signature after its summary"
+    for text in (ALT, summary):
+        for date in dates:
+            assert date in text, date
+
+
 def test_everything_fits_its_box():
     """A real signature runs to ~76 columns, not the old sample's ~45. Every code line
     ends inside the card, the card clears the title and the chips, the meter clears the
     file tab, and the card and its caption sit inside the canvas."""
-    pytest.importorskip("fontTools")
+    require("fontTools")
     from fontTools.ttLib import TTFont
 
     font = {name: TTFont(hero.FONTS / f"{name}.ttf") for name in
@@ -255,6 +326,6 @@ def test_the_typing_leaves_a_hold_before_the_loop_restarts():
 def test_the_committed_svg_is_exactly_what_the_generator_builds():
     """Byte-for-byte (the font subsets carry a pinned timestamp). Run after any edit:
     uv run scripts/hero/build_hero.py"""
-    pytest.importorskip("fontTools")
-    pytest.importorskip("brotli")
+    require("fontTools")
+    require("brotli")
     assert hero.build() == svg()

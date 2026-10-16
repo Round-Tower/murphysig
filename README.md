@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://murphysig.dev">
-    <img src="assets/hero.svg" alt="MurphySig — sign your work. A real MurphySig types itself into a code comment, quoted verbatim from this repo's benchmark/src/heuristic_scorer.py: Signed, Format, Context and Confidence 0.6, then a Reviews entry reporting the validation the signature asked for (a coin flip), and a confidence meter drops to 0.4." width="100%">
+    <img src="assets/hero.svg" alt="MurphySig — sign your work. A real MurphySig types itself out, quoted verbatim from the module docstring of this repo's benchmark/src/heuristic_scorer.py: Signed, Format, Context and Confidence 0.6, then its Reviews: a 2026-07-12 entry that reports the validation the signature asked for (a coin flip) and lowers the confidence to 0.4, and a 2026-10-06 lint pass with no behaviour change. A confidence meter fills to 0.6 and drops to 0.4." width="100%">
   </a>
 </p>
 

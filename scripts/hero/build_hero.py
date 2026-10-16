@@ -1,6 +1,6 @@
 # /// script
 # requires-python = ">=3.11"
-# dependencies = ["fonttools>=4.50", "brotli>=1.1"]
+# dependencies = ["fonttools==4.67.0", "brotli==1.2.0"]
 # ///
 # Signed: Kev + claude-opus-5-5, 2026-10-07
 # Format: MurphySig v0.4 (https://murphysig.dev/spec)
@@ -35,6 +35,17 @@
 # values from the text. The gutter numbers are the file's own and a caption cites
 # repo, commit, path and lines. Typing 46 → 80 cps over a 26 s loop. Confidence
 # 0.8, held: frames checked in headless Chrome; Safari's live animation is unseen.
+#
+# 2026-10-16 (claude-opus-5.5): independent-verifier fold. The entry above is
+# loose in two places. "Signed in February" rests on the signature's own date
+# (git first has the file 2026-04-19, in the benchmark's bulk import). The
+# validation ran in June; the July review reports it, not measures it. The alt
+# and desc named one review of the quote's two, missing the inline 2026-10-06
+# lint pass; now both, pinned. They also said "code comment" for lines that sit
+# in a module docstring; reworded. The fonts were raw TrueType declared as woff2:
+# Subsetter ignores options.flavor, so font.flavor is set before save, and the
+# file is lighter for it. fonttools and brotli are pinned exactly, so CI can run
+# the byte-for-byte rebuild on the same versions. Confidence 0.8, held.
 
 from __future__ import annotations
 
@@ -63,10 +74,11 @@ TAGLINE = "Sign your work."
 CHIPS = ["No tooling required", "A comment block, any language", "Spec v0.4", "Fabrication 11% → 0% (Claude)", "Unlicense"]
 
 # The card quotes a real MurphySig, verbatim: the banner for a provenance convention
-# must not fabricate provenance. This one asked in February to be validated; the July
-# review reports the validation (a coin flip) and lowers the confidence. Never edit the
-# lines by hand. Re-quote them from the file at a pinned main commit; the tests compare
-# them line for line and parse them back out of the SVG.
+# must not fabricate provenance. Its signature (dated 2026-02-16) asks to be validated;
+# the 2026-07-12 review reports the June validation (a coin flip) and lowers the
+# confidence, and a 2026-10-06 lint pass follows. Never edit the lines by hand.
+# Re-quote them from the file at a pinned main commit; the tests compare them line for
+# line and parse them back out of the SVG.
 SOURCE_REPO = "Round-Tower/murphysig"
 SOURCE_PATH = "benchmark/src/heuristic_scorer.py"
 SOURCE_COMMIT = "39b539fe823e88e034de29054e748eee704761a0"  # main, 2026-10-06 (#32): the last to touch it
@@ -121,11 +133,11 @@ def font_face(path: Path, family: str, text: str, style: str = "normal"):
 
     font = TTFont(path, recalcTimestamp=False)  # reproducible bytes
     options = subset.Options()
-    options.flavor = "woff2"
     options.layout_features = ["kern", "liga"]
     subsetter = subset.Subsetter(options)
     subsetter.populate(text=text)
     subsetter.subset(font)
+    font.flavor = "woff2"  # Subsetter ignores options.flavor; without this, save() writes TrueType
     buf = io.BytesIO()
     font.save(buf)
     b64 = base64.b64encode(buf.getvalue()).decode()
@@ -315,11 +327,14 @@ def build() -> str:
 
     first = marks[0][0]
     said = " ".join(text for line in lines if (text := line.lstrip("#").strip()))
-    desc = (f"A real MurphySig types itself into a code comment, quoted verbatim from {FILE_TAB} "
-            f"({SOURCE_PATH}, lines {SOURCE_LINE}–{SOURCE_LINE + len(lines) - 1}, in {SOURCE_REPO} at commit {SOURCE_COMMIT[:7]}): "
-            f"Signed, Format, Context and Confidence {first}, then a Reviews entry that reports the validation the "
-            f"signature asked for, while a confidence meter fills to {first} and drops to {marks[-1][0]}. "
-            f"The signature, comment markers dropped: {said} "
+    final_said = marks[-1][0]
+    desc = (f"A real MurphySig types itself out in a code card, quoted verbatim from {FILE_TAB} "
+            f"({SOURCE_PATH}, lines {SOURCE_LINE}–{SOURCE_LINE + len(lines) - 1} of its module docstring, "
+            f"in {SOURCE_REPO} at commit {SOURCE_COMMIT[:7]}): Signed, Format, Context and Confidence {first}, "
+            f"then its Reviews: a 2026-07-12 entry that reports the validation the signature asked for "
+            f"(a coin flip) and lowers the confidence to {final_said}, and a 2026-10-06 lint pass with no "
+            f"behaviour change. A confidence meter fills to {first} and drops to {final_said}. "
+            f"The signature, its # markers dropped: {said} "
             f"Beside it: MurphySig. Sign your work. No tooling required; a comment block, any language; spec v0.4; "
             f"fabrication 11% to 0% on Claude in the benchmark; Unlicense.")
 
