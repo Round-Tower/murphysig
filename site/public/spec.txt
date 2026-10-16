@@ -75,9 +75,9 @@ Tacit Knowledge — SUPPORTED, with an honest correction. Signed code produces b
 
 Honesty — STRONGLY SUPPORTED. The "never fabricate" rule achieves perfect compliance. Fabrication rate dropped from 11% cold to 0% warm. Honest handling: 11% → 100%. Prior: Unknown usage: 0% → 100%. The norm is load-bearing.
 
-In-Context Learning — signatures ARE read (85% reference rate, 0% unsigned), but confidence direction does NOT polarize review behavior. The previous spec claim that "Confidence: 0.3 says scrutinize this" has been removed.
+In-Context Learning — signatures ARE read (85% reference rate, 0% unsigned), but confidence direction does NOT polarize review behavior. The previous spec claim (`Confidence: 0.3` says: "Scrutinize this. It's likely buggy.") has been removed.
 
-Write side — NULL on quality, REAL on disclosure. Knowing it will sign does not make a model write better code than a matched (deliberately longer) reflection control — mean paired delta -0.005 (GPT-5.4) / +0.025 (Opus 4.6) across six families, all within ±0.10 — and does not make it worse. Of hazards missed in code, models confess 68% in Open: vs 45% under plain reflection; stated confidence tracks miss rate. Adding "resolve what you can before you sign" halves misses at zero cost. The signature is a truth-capture device, not a quality-forcing function.
+Write side — NULL on quality, REAL on disclosure. Knowing it will sign does not make a model write better code than a matched (deliberately longer) reflection control — mean paired delta -0.005 (GPT-5.4) / +0.025 (Opus 4.6) across six families, all within ±0.10 — and does not make it worse. Of hazards missed in code, models confess 68% in Open: vs 45% under plain reflection; stated confidence tracks miss rate. Adding "Before you sign, resolve what you can" halves misses at zero cost. The signature is a truth-capture device, not a quality-forcing function.
 
 Caveats: small case sets (5 TK cases, 4 write-side tasks); the original ICL/Honesty runs were Claude-only (TK, Honesty and the write-side run now span six families and are dual-judged; ICL remains Claude-only). The TK coverage delta is robust, but the control shows it is the content, not the structure. Honesty's warm rate is judge-robust; its cold→warm delta is judge-dependent, so lead with the warm endpoint.
 
@@ -391,21 +391,23 @@ Real blocks, quoted verbatim from Round-Tower/m1k3 (github.com/Round-Tower/m1k3)
 — an open-source on-device AI companion whose history is MurphySig-signed end
 to end. Murphy's Law says things break; this is the breakage, attributed.
 
-A retirement, with reasons — BrainTier.swift:
+A retirement, with reasons — BrainTier.swift @ 3c53ad04:
 
 //  Review: Kev + claude-fable-5, 2026-07-02 — HUGE RETIRED (the all-gemma
 //  reshuffle, step 1). Qwen3-8B was the weakest tool-caller and nobody's
 //  favourite at anything; gemma-4 native tool-calling is Kev-verified live on
 //  3.31.4. Three tiers again. A persisted "huge" migrates to .big via
-//  `init(persisted:)` — never a silent Mini downgrade.
+//  `init(persisted:)` — never a silent Mini downgrade. The memory-floor /
+//  isSelectable seam is KEPT (returns nil today): gemma-4-12B takes the Big
+//  slot with a floor once upstream fixes RotatingKVCache.temporalOrder.
 
-Murphy's Law, attributed — OnboardingView.swift:
+Murphy's Law, attributed — OnboardingView.swift @ ee37af46 (since retired):
 
 //  Review: Kev + claude-fable-5, 2026-07-02, Confidence 0.85 — fixed the first-run
 //  regression (ed711813 shipped opening on .speech, so You/Brain/Ears were
 //  unreachable and onboarding "completed" with nothing chosen); …
 
-Provenance that survives an NDA — LocalAgent.swift:
+Provenance that survives an NDA — LocalAgent.swift @ 6c0ff81a:
 
 //  Signed: Kev + claude-opus-4-8, 2026-06-06, Confidence 0.85,
 //  Prior: internal call-pipeline project, domain ReAct agent (Kev)
@@ -551,3 +553,8 @@ reflection out of scope" while the write-side run (2026-08-22, six families,
 dual-judged, pre-registered) had tested exactly that. Added the write-side paragraph
 (null on quality, 68% vs 45% disclosure), corrected intro and caveats to four themes /
 six families. Mirror of spec.md. The v0.5 bump remains separate work.
+
+2026-10-16 (Kev + claude-opus-5-5): Mirror of spec.md's quote pass. BrainTier
+quoted whole (lines 39-45; it was cut mid-line unmarked), the three Wild blocks
+pinned to the commits they were taken from, the tested clause quoted as tested,
+and the retired scrutiny claim quoted as the old spec said it.

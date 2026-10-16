@@ -19,21 +19,21 @@ That's the problem MurphySig exists to solve. Not the only solution — git blam
 
 ## The convention
 
-A MurphySig is a comment block at the top of any file:
+A MurphySig is a comment block in the file it describes. Here is a real one — Cartogram's 9.0.5 hotfix (`MapStylesAdapter.kt`, lines 117–128 at commit 295a6ba5, verbatim):
 
 ```
-Signed: Kev + claude-opus-4-7, 2026-04-23
-Format: MurphySig v0.4 (https://murphysig.dev/spec)
-
-Context: Hotfix 9.0.5 — deferred MapView.onDestroy() to next frame to
-narrow the race window between Maps SDK lite mode's posted Runnables
-and bitmap recycling. The crash is entirely inside Google's obfuscated
-code with zero app code in the stack trace.
-
-Confidence: 0.6 - narrows the race but doesn't eliminate it; budget
-devices with slower SoCs may still hit the window.
-Open: Should we pursue the snapshot-to-ImageView refactor for the
-style picker?
+     * Signed: Kev + claude-opus-4-6, 2026-03-02
+     * Format: MurphySig v0.1 (https://murphysig.dev/spec)
+     *
+     * Context: Hotfix 9.0.5 — deferred MapView.onDestroy() to next frame via view.post{}
+     * to narrow the race window between Maps SDK lite mode's posted Runnables and bitmap
+     * recycling. The crash is entirely inside Google's obfuscated code (lib6.lite.ac.run)
+     * with zero app code in the stack trace. This mitigation narrows the window but cannot
+     * close it — the proper fix is replacing lite MapViews with snapshot ImageViews.
+     *
+     * Confidence: 0.6 - narrows the race but doesn't eliminate it; budget devices with
+     * slower SoCs may still hit the window. No way to unit test a Maps SDK internal race.
+     * Open: Should we pursue the snapshot-to-ImageView refactor for the style picker?
 ```
 
 That's it. No tooling required. The CLI (`bin/sig`) is a 526-line bash script that helps you author signatures and run a `gallery` over signed work, but the convention is just structured comments. AI assistants read them; humans read them; nothing breaks if you ignore them.
@@ -68,9 +68,9 @@ Ninety days of my own commit activity, 2026-01-23 to 2026-04-23, GitHub-verified
 
 Roughly 1.5 MurphySig-touching commits per day, sustained, across most active codebases. The signatures I've valued most in retrospect:
 
-- **Cartogram hotfix 9.0.5** — `Confidence: 0.6, narrows the race but doesn't eliminate it`. Six months from now, when the crash returns, that 0.6 is the lighthouse that says "you didn't fix this, you mitigated it."
-- **m1k3 ADR-0001** — own-inference-library decision. `Confidence: 0.82, HIGH on the decision, MEDIUM on execution timeline`. The ADR alone wouldn't have caught the calibration; the sig forces you to split it.
-- **Rubin BinauralBeatsGenerator** — `Confidence: 0.85, ISO 226:2003 approximation verified`. The sig is shorter than the file's own KDoc but says something the KDoc doesn't: I am *that* confident, not just functional.
+- **Cartogram hotfix 9.0.5** — `Confidence: 0.6 - narrows the race but doesn't eliminate it`. Six months from now, when the crash returns, that 0.6 is the lighthouse that says "you didn't fix this, you mitigated it."
+- **m1k3 ADR-0001** — own-inference-library decision. `Confidence: 0.82 - HIGH on the decision itself (the alternatives are worse).` … `MEDIUM on execution timeline`. The ADR alone wouldn't have caught the calibration; the sig forces you to split it.
+- **Rubin BinauralBeatsGenerator** — `Confidence: 0.85 - verified by BinauralBeatsGeneratorTest, ISO math solid`. The sig is shorter than the file's own KDoc but says something the KDoc doesn't: I am *that* confident, not just functional.
 
 ## What is honestly missing
 
@@ -129,4 +129,13 @@ Reviews:
 
 2026-07-10 (Kev + claude-fable-5): Metadata only — frontmatter
 ogType: article so the layout emits og:type=article. No content change.
+
+2026-10-16 (Kev + claude-opus-5-5): Quotes corrected to their sources; the
+post is otherwise as published. The convention block was Cartogram's 9.0.5
+hotfix signature re-signed with this post's model and date (claude-opus-4-7,
+2026-04-23) and Format v0.4; the file says claude-opus-4-6, 2026-03-02, v0.1,
+and the block had lost three clauses unmarked. It is now MapStylesAdapter.kt
+lines 117-128 at cartogram 295a6ba5, verbatim. Three inline Confidence quotes
+were reworded (", " for " - ", and a composite "ISO 226:2003 approximation
+verified" no version of the file ever said); each is now an exact fragment.
 -->

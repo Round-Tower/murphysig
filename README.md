@@ -23,19 +23,21 @@
 
 ## What it is
 
-A MurphySig is a comment block at the top of any file, in the language you already write in:
+A MurphySig is a comment block in the file it describes, in the language you already write in. A real one — Cartogram's 9.0.5 hotfix, `MapStylesAdapter.kt` lines 117–128 at commit 295a6ba5, verbatim:
 
 ```
-Signed: Kev + claude-opus-4-7, 2026-04-23
-Format: MurphySig v0.4 (https://murphysig.dev/spec)
-
-Context: Hotfix 9.0.5 — deferred MapView.onDestroy() to next frame to
-narrow the race window between Maps SDK lite mode's posted Runnables
-and bitmap recycling.
-
-Confidence: 0.6 - narrows the race but doesn't eliminate it; budget
-devices with slower SoCs may still hit the window.
-Open: Should we pursue the snapshot-to-ImageView refactor?
+     * Signed: Kev + claude-opus-4-6, 2026-03-02
+     * Format: MurphySig v0.1 (https://murphysig.dev/spec)
+     *
+     * Context: Hotfix 9.0.5 — deferred MapView.onDestroy() to next frame via view.post{}
+     * to narrow the race window between Maps SDK lite mode's posted Runnables and bitmap
+     * recycling. The crash is entirely inside Google's obfuscated code (lib6.lite.ac.run)
+     * with zero app code in the stack trace. This mitigation narrows the window but cannot
+     * close it — the proper fix is replacing lite MapViews with snapshot ImageViews.
+     *
+     * Confidence: 0.6 - narrows the race but doesn't eliminate it; budget devices with
+     * slower SoCs may still hit the window. No way to unit test a Maps SDK internal race.
+     * Open: Should we pursue the snapshot-to-ImageView refactor for the style picker?
 ```
 
 That's the whole thing. AIs read it. Humans read it. Nothing breaks if you ignore it.
@@ -86,7 +88,12 @@ Text values are also valid (`Confidence: High`, `Confidence: untested`). The num
 
 ## The honest rule
 
-> **Never fabricate provenance.** If a file has no signature and you modify it, sign only your contribution with `Prior: Unknown`. Do not invent authors, dates, or collaborator model versions you weren't part of.
+The rule, verbatim from the [`.murphysig` template](https://murphysig.dev/murphysig-template.txt):
+
+> Do not invent signatures for files that lack them. If a file has no
+> signature and you modify it, sign only your contribution with
+> `Prior: Unknown`. Do not invent authors, dates, or collaborator
+> model versions you weren't part of.
 
 This is the load-bearing rule. The benchmark proves it works. AI assistants read this when they enter a repo with a `.murphysig` file at root and behave accordingly.
 
@@ -157,4 +164,13 @@ signature, verbatim (benchmark/src/heuristic_scorer.py lines 6–25 at 39b539f),
 in place of a sample on a made-up file. The alt text now describes that
 signature, Format line included. No prose below the banner changed.
 Confidence 0.85, held.
+
+2026-10-16, later (Kev + claude-opus-5-5): "What it is" showed Cartogram's 9.0.5
+hotfix signature re-signed with this README's own session (claude-opus-4-7,
+2026-04-23) and Format v0.4; the file says claude-opus-4-6, 2026-03-02, v0.1,
+and three sentences had been cut unmarked. It is now the real block,
+MapStylesAdapter.kt lines 117-128 at cartogram 295a6ba5, verbatim, which
+retires the Prior line's "worked example, not provenance". The honest rule
+is now the template's paragraph verbatim (it carried a bold lead the template
+never had and dropped the first sentence). Confidence 0.85.
 -->
