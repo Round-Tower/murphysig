@@ -21,20 +21,35 @@
 # motion) and WebKit (Quick Look); Safari's live animation is unseen. The
 # timings and the sample signature are taste.
 # Open: should the banner also carry a dark variant via <picture>?
+#
+# Reviews:
+#
+# 2026-10-16 (claude-opus-5.5): Kev's call: the card quotes a real signature.
+# The sample on a made-up retry.ts broke MurphySig's first rule (never fabricate
+# provenance) on the project's own front door. It now shows benchmark/src/
+# heuristic_scorer.py lines 6–25 at 39b539f, verbatim: signed in February asking
+# to be validated, then the July review that measured it a coin flip and lowered
+# its confidence to 0.4. Real lines run to 76 columns, so the code drops 15 → 13
+# px, the card widens and the canvas grows to 1280×520. The confidence meter
+# moved to the tab strip, so nothing is drawn inside the quote, and it reads its
+# values from the text. The gutter numbers are the file's own and a caption cites
+# repo, commit, path and lines. Typing 46 → 80 cps over a 26 s loop. Confidence
+# 0.8, held: frames checked in headless Chrome; Safari's live animation is unseen.
 
 from __future__ import annotations
 
 import base64
 import io
+import re
 import sys
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
 OUTPUT = REPO / "assets/hero.svg"
 FONTS = HERE / "fonts"
 
-W, H = 1280, 440
+W, H = 1280, 520
 
 # site/src/styles/global.css
 PAPER, INK, STONE, GRID, CONN, TRACK, MUTED = "#fbfaf8", "#1a1a1a", "#78716c", "#e7e5e1", "#d6d3cd", "#f1efeb", "#737373"
@@ -47,32 +62,56 @@ TAGLINE = "Sign your work."
 # retired an unqualified "100% → 0%" headline, so no bare percentage appears here.
 CHIPS = ["No tooling required", "A comment block, any language", "Spec v0.4", "Fabrication 11% → 0% (Claude)", "Unlicense"]
 
-FILE_TAB = "retry.ts"
-# The sample block, in the spec's documented shape (Signed / Format / Context /
-# Confidence / Open, then a Reviews entry: "YYYY-MM-DD (Who): … Confidence now X.").
-BAR = "{bar}"
+# The card quotes a real MurphySig, verbatim: the banner for a provenance convention
+# must not fabricate provenance. This one asked in February to be validated; the July
+# review reports the validation (a coin flip) and lowers the confidence. Never edit the
+# lines by hand. Re-quote them from the file at a pinned main commit; the tests compare
+# them line for line and parse them back out of the SVG.
+SOURCE_REPO = "Round-Tower/murphysig"
+SOURCE_PATH = "benchmark/src/heuristic_scorer.py"
+SOURCE_COMMIT = "39b539fe823e88e034de29054e748eee704761a0"  # main, 2026-10-06 (#32): the last to touch it
+SOURCE_LINE = 6                                             # the Signed: line; the gutter counts from here
+FILE_TAB = PurePosixPath(SOURCE_PATH).name
 SIGNATURE = [
-    "// Signed: Kev + claude-opus-5-5, 2026-10-07",
-    "// Format: MurphySig v0.4",
-    "//",
-    "// Context: retry with jitter, so the queue",
-    "// drains before the socket closes.",
-    "//",
-    f"// Confidence: 0.7 {BAR}",
-    "// Open: does the backoff cap hold on 3G?",
-    "//",
-    "// Reviews:",
-    "// 2026-10-09 (Kev + claude-opus-5-5): cap",
-    "// held on 3G. Confidence now 0.85.",
+    "# Signed: Kev + claude-opus-4-6, 2026-02-16",
+    "# Format: MurphySig v0.3.3 (https://murphysig.dev/spec)",
+    "#",
+    "# Context: Fallback scorer when API limits are hit. Should be validated",
+    "#          against LLM judge results when available.",
+    "#",
+    "# Confidence: 0.6 - heuristic approximation, not as good as LLM judge",
+    "#",
+    "# Reviews:",
+    "#",
+    "# 2026-07-12 (Kev + claude-fable-5): Closing the loop this signature opened.",
+    "# The validation it asked for happened in June 2026: heuristic-vs-judge",
+    "# agreement measured at 9/18 on the honesty benchmark — a coin flip. The",
+    "# February suspicion was empirically confirmed; treat this scorer as",
+    "# same-day directional signal only, never for reported numbers (the judge",
+    "# is canonical, per project policy). Confidence now 0.4 — it runs, it's",
+    "# fast, and it is measurably not a substitute for the judge.",
+    "#",
+    "# Review: Kev + claude-opus-5.5, 2026-10-06 — ruff 0.16 lint pass, no",
+    "# behaviour change: set(generator) → set comprehension; import spacing.",
 ]
+CITE = (f"verbatim · {SOURCE_REPO} @ {SOURCE_COMMIT[:7]} · {SOURCE_PATH}, "
+        f"lines {SOURCE_LINE}–{SOURCE_LINE + len(SIGNATURE) - 1}")
+METER_LABEL = "confidence"
 GLYPHS = ["//", "#", "--", "/*", ";;", "<!--", "%", "'", "*/", "-->", "REM"]
 
-LOOP = 15.0          # seconds per cycle
-CPS = 46             # typing speed, characters per second
+LOOP = 26.0          # seconds per cycle
+CPS = 80             # typing speed, characters per second
 LINE_GAP = 0.12      # pause after each line
 START = 1.1          # the underline draws first
-REVIEW_PAUSE = 0.9   # a beat before the Reviews entry arrives
+REVIEW_PAUSE = 0.9   # a beat before each review arrives
 FADE = 0.6           # the block fades out at the end of a cycle
+
+TX, TITLE_SIZE = 88, 112    # the left column
+MONO_SIZE, LINE_H = 13, 19  # the quote: 76 columns have to fit beside the title
+CITE_SIZE = 11
+
+CONFIDENCE = re.compile(r"Confidence(?::| now) ([01]\.\d+)")
+REVIEW = re.compile(r"#\s*Reviews?:")
 
 
 # ── Fonts (from ~/.claude/skills/github-hero/herokit.py) ───────────────────
@@ -103,32 +142,52 @@ def advance(font, text: str, size: float, tracking: float = 0) -> float:
 def schedule(lines: list[str]) -> list[tuple[float, float]]:
     """(start, end) seconds for each typed line; blank comment lines type too (fast)."""
     t, out = START, []
-    for i, line in enumerate(lines):
-        if line.startswith("// Reviews:"):
+    for line in lines:
+        if REVIEW.match(line):
             t += REVIEW_PAUSE
-        n = len(line.replace(BAR, ""))
-        d = max(n, 1) / CPS
+        d = max(len(line), 1) / CPS
         out.append((t, t + d))
         t += d + LINE_GAP
     assert t < LOOP - FADE - 2.0, f"the typing ({t:.1f}s) must leave a hold before the loop ends"
     return out
 
 
+def confidence_marks(lines: list[str]) -> list[tuple[str, int, int]]:
+    """Every confidence the quote states, in order: (value as written, line, end column).
+    The meter moves through these values and no others."""
+    return [(m.group(1), i, m.end(1)) for i, line in enumerate(lines) for m in CONFIDENCE.finditer(line)]
+
+
 def pct(seconds: float) -> str:
     return f"{100 * seconds / LOOP:.3f}%"
+
+
+def esc(text: str) -> str:
+    return text.replace("&", "&amp;").replace("<", "&lt;")
 
 
 # ── Compose ────────────────────────────────────────────────────────────────
 def build() -> str:
     lines = SIGNATURE
-    mono_text = "".join(lines) + "".join(GLYPHS) + FILE_TAB + "0123456789"
+    marks = confidence_marks(lines)
+    mono_text = "".join(lines) + "".join(GLYPHS) + FILE_TAB + "0123456789" + CITE + METER_LABEL
     serif_css, serif = font_face(FONTS / "InstrumentSerif-Regular.ttf", "Serif", TITLE)
     italic_css, italic = font_face(FONTS / "InstrumentSerif-Italic.ttf", "SerifItalic", TAGLINE + TITLE, "italic")
     sans_css, sans = font_face(FONTS / "InterTight-Medium.ttf", "Sans", EYEBROW + "".join(CHIPS))
-    mono_css, mono = font_face(FONTS / "JetBrainsMono-Regular.ttf", "Mono", mono_text.replace(BAR, ""))
+    mono_css, mono = font_face(FONTS / "JetBrainsMono-Regular.ttf", "Mono", mono_text)
 
-    tx = 88
-    title_size, title_y = 112, 226
+    # The card: as wide as the quote's longest line, on the right, centred with its caption.
+    tab_h, tab_size, pad_top, pad_bottom, pad_right, cite_gap = 34, 12.5, 14, 12, 16, 24
+    card_w = round(42 + max(advance(mono, line, MONO_SIZE) for line in lines) + pad_right)
+    card_x = W - 56 - card_w
+    card_h = tab_h + pad_top + LINE_H * len(lines) + pad_bottom
+    card_y = round((H - card_h - cite_gap) / 2)
+    body_y = card_y + tab_h + pad_top
+    gutter_x, text_x = card_x + 30, card_x + 42
+
+    # The left column, centred on the canvas.
+    tx, title_size = TX, TITLE_SIZE
+    title_y = round(H / 2 - 38)
     murphy_w = advance(serif, "Murphy", title_size)
     title_w = murphy_w + advance(italic, "Sig", title_size)
 
@@ -142,42 +201,30 @@ def build() -> str:
     chips, cx, cy = [], tx, tag_y + 34
     for label in CHIPS:
         w = advance(sans, label, chip_size) + chip_pad * 2
-        if cx + w > 690:
+        if cx + w > card_x - 32:
             cx, cy = tx, cy + chip_h + chip_gap
         chips.append(f'<g class="chip"><rect x="{cx:.1f}" y="{cy}" width="{w:.1f}" height="{chip_h}" rx="{chip_h / 2}"/>'
                      f'<text x="{cx + chip_pad:.1f}" y="{cy + chip_h / 2 + 5:.1f}">{label}</text></g>')
         cx += w + chip_gap
 
-    # The card.
-    card_x, card_y, card_w = 716, 50, 500
-    tab_h, line_h, mono_size = 34, 24.5, 15
-    body_y = card_y + tab_h + 18
-    card_h = tab_h + 18 + line_h * len(lines) + 14
-    gutter_x, text_x = card_x + 34, card_x + 50
     times = schedule(lines)
     end_typing = times[-1][1]
-
-    review_i = next(i for i, ln in enumerate(lines) if ln.startswith("// Reviews:"))
+    review_i = next(i for i, ln in enumerate(lines) if REVIEW.match(ln))
     review_start = times[review_i][0]
     rows, covers, cover_css = [], [], []
-    bar_x = bar_w = 0.0
     for i, (line, (s, e)) in enumerate(zip(lines, times)):
-        y = body_y + i * line_h + mono_size
-        shown = line.replace(BAR, "")
-        width = advance(mono, shown, mono_size) + 4
-        if BAR in line:
-            bar_x = text_x + advance(mono, shown, mono_size) + 2
-            bar_w = 120
-            width += bar_w + 4
-        rows.append(f'<text class="num" x="{gutter_x}" y="{y:.1f}" text-anchor="end">{i + 1}</text>'
-                    f'<text class="code{" rev" if i >= len(lines) - 3 else ""}" x="{text_x}" y="{y:.1f}">{shown.replace("&", "&amp;").replace("<", "&lt;")}</text>')
+        y = body_y + i * LINE_H + MONO_SIZE
+        width = advance(mono, line, MONO_SIZE) + 4
+        # The gutter carries the source file's own line numbers; xml:space keeps the
+        # quote's indentation in renderers that ignore CSS white-space.
+        rows.append(f'<text class="num" x="{gutter_x}" y="{y:.1f}" text-anchor="end">{SOURCE_LINE + i}</text>'
+                    f'<text class="code{" rev" if i >= review_i else ""}" x="{text_x}" y="{y:.1f}" xml:space="preserve">{esc(line)}</text>')
         # A paper-coloured cover slides right in character steps: the typewriter. Its
         # transform ATTRIBUTE is the revealed position, so a renderer that ignores CSS
         # animation shows the finished block; the keyframes override it in browsers.
-        n = max(len(shown), 1)
-        covers.append(f'<rect class="cv cv{i}{" cvr" if i >= review_i else ""}" x="{text_x - 2}" y="{y - mono_size + 1:.1f}" width="{width:.1f}" height="{line_h}" transform="translate({width:.1f} 0)"/>'
-                      f'<rect class="ca ca{i}" x="{text_x - 1}" y="{y - mono_size + 2:.1f}" width="8" height="{mono_size + 3:.1f}"/>')
-        step = (width - (bar_w + 4 if BAR in line else 0)) / n
+        n = max(len(line), 1)
+        covers.append(f'<rect class="cv cv{i}{" cvr" if i >= review_i else ""}" x="{text_x - 2}" y="{y - MONO_SIZE + 1:.1f}" width="{width:.1f}" height="{LINE_H}" transform="translate({width:.1f} 0)"/>'
+                      f'<rect class="ca ca{i}" x="{text_x - 1}" y="{y - MONO_SIZE + 2:.1f}" width="7" height="{MONO_SIZE + 3:.1f}"/>')
         cover_css.append(
             f".cv{i}{{animation:cv{i} {LOOP}s infinite{f',cvr {LOOP}s infinite' if i >= review_i else ''}}}"
             f"@keyframes cv{i}{{0%,{pct(s)}{{transform:translateX(0);animation-timing-function:steps({n},end)}}"
@@ -185,16 +232,36 @@ def build() -> str:
             f".ca{i}{{opacity:0;animation:ca{i} {LOOP}s infinite}}"
             f"@keyframes ca{i}{{0%,{pct(s)}{{opacity:0;transform:translateX(0);animation-timing-function:steps({n},end)}}"
             f"{pct(s + 0.001)}{{opacity:1;transform:translateX(0);animation-timing-function:steps({n},end)}}"
-            f"{pct(e)}{{opacity:1;transform:translateX({step * n:.1f}px);animation-timing-function:step-end}}"
-            f"{pct(e + LINE_GAP)},100%{{opacity:0;transform:translateX({step * n:.1f}px)}}}}"
+            f"{pct(e)}{{opacity:1;transform:translateX({width:.1f}px);animation-timing-function:step-end}}"
+            f"{pct(e + LINE_GAP)},100%{{opacity:0;transform:translateX({width:.1f}px)}}}}"
         )
 
-    last_y = body_y + (len(lines) - 1) * line_h + mono_size
-    last_x = text_x + advance(mono, lines[-1], mono_size) + 3
-    conf_i = next(i for i, ln in enumerate(lines) if BAR in ln)
-    conf_end = times[conf_i][1]
-    bar_y = body_y + conf_i * line_h + mono_size - 9
-    review_end = end_typing
+    last_y = body_y + (len(lines) - 1) * LINE_H + MONO_SIZE
+    last_x = text_x + advance(mono, lines[-1], MONO_SIZE) + 3
+
+    # The confidence meter sits in the tab strip, outside the quote, and moves through
+    # the values the quote states at the moment each one is typed.
+    reveal = [times[i][0] + end / CPS for _, i, end in marks]
+    final = float(marks[-1][0])
+    meter_w, meter_h = 88, 8
+    value_x = card_x + card_w - 16 - max(advance(mono, v, tab_size) for v, _, _ in marks)
+    bar_x = value_x - 10 - meter_w
+    label_x = bar_x - 10 - advance(mono, METER_LABEL, tab_size)
+    bar_y = card_y + 16
+    ease = "animation-timing-function:cubic-bezier(.2,.8,.2,1)"
+    bar_frames = [f"0%,{pct(reveal[0])}{{transform:scaleX(0);{ease}}}"]
+    values, value_css = [], []
+    for k, (value, _, _) in enumerate(marks):
+        last = k == len(marks) - 1
+        scale = f"transform:scaleX({float(value) / final:.4f})"
+        settle = pct(reveal[k] + (0.7 if k == 0 else 0.8))
+        bar_frames.append(f"{settle},100%{{{scale}}}" if last else f"{settle},{pct(reveal[k + 1])}{{{scale};{ease}}}")
+        # Without CSS (or with reduced motion) only the final value shows.
+        hidden = "" if last else ' opacity="0"'
+        values.append(f'<text class="cval cval{k}" x="{value_x:.1f}" y="{card_y + 25}"{hidden}>{value}</text>')
+        off = "" if last else f"{pct(reveal[k + 1])}{{opacity:0}}"
+        value_css.append(f".cval{k}{{animation:cval{k} {LOOP}s step-end infinite}}"
+                         f"@keyframes cval{k}{{0%{{opacity:0}}{pct(reveal[k])}{{opacity:1}}{off}100%{{opacity:{int(last)}}}}}")
 
     # Background: ledger rules, the margin rule, and a scatter of comment glyphs.
     rules = "".join(f"M0 {y}h{W}" for y in range(36, H, 28))
@@ -206,10 +273,11 @@ def build() -> str:
             glyph = GLYPHS[(k * 7 + gy // 56) % len(GLYPHS)]
             glyphs.append(f'<text x="{gx + jitter}" y="{gy + (k * 13) % 17}">{glyph.replace("<", "&lt;")}</text>')
             k += 1
+    edge = card_x / W  # the glyphs come back at the card's edge
 
-    hold_from = review_end + 0.2
-    hl_y = body_y + review_i * line_h + 1  # flush with the review covers' top edge
-    hl_h = line_h * (len(lines) - review_i) + 2
+    hold_from = end_typing + 0.2
+    hl_y = body_y + review_i * LINE_H + 1  # flush with the review covers' top edge
+    hl_h = LINE_H * (len(lines) - review_i) + 2
     css = f"""{serif_css}{italic_css}{sans_css}{mono_css}
 .eyebrow{{font-family:'Sans',Inter,sans-serif;font-size:13px;letter-spacing:3.6px;fill:{STONE}}}
 .title{{font-family:'Serif',serif;font-size:{title_size}px;fill:{INK}}}
@@ -218,10 +286,13 @@ def build() -> str:
 .chip rect{{fill:#ffffff;stroke:{CONN};stroke-width:1}}
 .chip text{{font-family:'Sans',Inter,sans-serif;font-size:{chip_size}px;fill:{INK}}}
 .glyphs text{{font-family:'Mono',monospace;font-size:15px;fill:{STONE}}}
-.code{{font-family:'Mono',monospace;font-size:{mono_size}px;fill:#3f3c39;white-space:pre}}
+.code{{font-family:'Mono',monospace;font-size:{MONO_SIZE}px;fill:#3f3c39;white-space:pre}}
 .code.rev{{fill:{INK}}}
-.num{{font-family:'Mono',monospace;font-size:12px;fill:#b8b3ad}}
-.tabtext{{font-family:'Mono',monospace;font-size:12.5px;fill:{STONE}}}
+.num{{font-family:'Mono',monospace;font-size:11px;fill:#b8b3ad}}
+.tabtext{{font-family:'Mono',monospace;font-size:{tab_size}px;fill:{STONE}}}
+.meterlabel{{font-family:'Mono',monospace;font-size:{tab_size}px;fill:{STONE}}}
+.cval{{font-family:'Mono',monospace;font-size:{tab_size}px;fill:{INK}}}
+.cite{{font-family:'Mono',monospace;font-size:{CITE_SIZE}px;fill:{STONE}}}
 .cv{{fill:#ffffff}}
 .ca{{fill:{INK}}}
 .ink{{fill:none;stroke:{INK};stroke-width:3.2;stroke-linecap:round;stroke-dasharray:101;stroke-dashoffset:0;animation:ink {LOOP}s infinite}}
@@ -229,7 +300,8 @@ def build() -> str:
 .block{{animation:block {LOOP}s infinite}}
 @keyframes block{{0%,{pct(LOOP - FADE)}{{opacity:1}}{pct(LOOP - 0.05)},100%{{opacity:0}}}}
 .barfill{{transform-box:fill-box;transform-origin:left center;animation:bar {LOOP}s infinite}}
-@keyframes bar{{0%,{pct(conf_end)}{{transform:scaleX(0);animation-timing-function:cubic-bezier(.2,.8,.2,1)}}{pct(conf_end + 0.7)},{pct(review_end)}{{transform:scaleX({0.7 / 0.85:.4f});animation-timing-function:cubic-bezier(.2,.8,.2,1)}}{pct(review_end + 0.8)},100%{{transform:scaleX(1)}}}}
+@keyframes bar{{{"".join(bar_frames)}}}
+{"".join(value_css)}
 .mark{{opacity:0;animation:mark {LOOP}s infinite}}
 @keyframes mark{{0%,{pct(review_start - 0.55)}{{opacity:0}}{pct(review_start - 0.15)},100%{{opacity:1}}}}
 @keyframes cvr{{0%,{pct(review_start - 0.55)}{{fill:#ffffff}}{pct(review_start - 0.15)},100%{{fill:{TRACK}}}}}
@@ -237,17 +309,27 @@ def build() -> str:
 @keyframes caret{{0%,{pct(hold_from)}{{opacity:0}}{pct(hold_from + 0.01)}{{opacity:1}}{pct(hold_from + 0.55)}{{opacity:0}}{pct(hold_from + 1.1)}{{opacity:1}}{pct(hold_from + 1.65)}{{opacity:0}}{pct(hold_from + 2.2)}{{opacity:1}}{pct(hold_from + 2.75)}{{opacity:0}}{pct(hold_from + 3.3)}{{opacity:1}}{pct(LOOP - FADE)},100%{{opacity:0}}}}
 {"".join(cover_css)}
 @media (prefers-reduced-motion:reduce){{
-.cv,.ca,.ink,.block,.barfill,.caret,.mark{{animation:none}}
+.cv,.ca,.ink,.block,.barfill,.cval,.caret,.mark{{animation:none}}
 .cv,.ca{{display:none}}.caret,.mark{{opacity:1}}
 }}"""
 
+    first = marks[0][0]
+    said = " ".join(text for line in lines if (text := line.lstrip("#").strip()))
+    desc = (f"A real MurphySig types itself into a code comment, quoted verbatim from {FILE_TAB} "
+            f"({SOURCE_PATH}, lines {SOURCE_LINE}–{SOURCE_LINE + len(lines) - 1}, in {SOURCE_REPO} at commit {SOURCE_COMMIT[:7]}): "
+            f"Signed, Format, Context and Confidence {first}, then a Reviews entry that reports the validation the "
+            f"signature asked for, while a confidence meter fills to {first} and drops to {marks[-1][0]}. "
+            f"The signature, comment markers dropped: {said} "
+            f"Beside it: MurphySig. Sign your work. No tooling required; a comment block, any language; spec v0.4; "
+            f"fabrication 11% to 0% on Claude in the benchmark; Unlicense.")
+
     return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" role="img" aria-labelledby="t d">
 <title id="t">MurphySig — sign your work</title>
-<desc id="d">A MurphySig block types itself into a code comment: Signed, Format, Context, Confidence with an ink bar, Open, then a Reviews entry that raises the confidence. Beside it: MurphySig. Sign your work. No tooling required; a comment block, any language; spec v0.4; fabrication 11% to 0% on Claude in the benchmark; Unlicense.</desc>
+<desc id="d">{esc(desc)}</desc>
 <!-- Generated by scripts/hero/build_hero.py — edit that, not this. Fonts: Instrument Serif, Inter Tight, JetBrains Mono (SIL OFL 1.1). -->
 <style>{css}</style>
 <defs>
-<linearGradient id="fade" x1="0" x2="1"><stop offset=".08" stop-color="#fff" stop-opacity=".9"/><stop offset=".3" stop-color="#fff" stop-opacity=".18"/><stop offset=".5" stop-color="#fff" stop-opacity=".18"/><stop offset=".56" stop-color="#fff" stop-opacity=".9"/></linearGradient>
+<linearGradient id="fade" x1="0" x2="1"><stop offset=".08" stop-color="#fff" stop-opacity=".9"/><stop offset=".24" stop-color="#fff" stop-opacity=".18"/><stop offset="{edge - 0.06:.3f}" stop-color="#fff" stop-opacity=".18"/><stop offset="{edge:.3f}" stop-color="#fff" stop-opacity=".9"/></linearGradient>
 <mask id="glyphmask"><rect width="{W}" height="{H}" fill="url(#fade)"/></mask>
 <clipPath id="cardclip"><rect x="{card_x}" y="{card_y}" width="{card_w}" height="{card_h:.1f}" rx="10"/></clipPath>
 <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#1a1a1a" flood-opacity=".08"/></filter>
@@ -261,22 +343,25 @@ def build() -> str:
 <path class="ink" d="{under}" pathLength="100"/>
 <text class="tag" x="{tx}" y="{tag_y}">{TAGLINE}</text>
 {"".join(chips)}
-<g filter="url(#shadow)"><rect x="{card_x}" y="{card_y}" width="{card_w}" height="{card_h:.1f}" rx="10" fill="#ffffff" stroke="{GRID}"/></g>
+<g filter="url(#shadow)"><rect class="card" x="{card_x}" y="{card_y}" width="{card_w}" height="{card_h:.1f}" rx="10" fill="#ffffff" stroke="{GRID}"/></g>
 <g clip-path="url(#cardclip)">
 <rect x="{card_x}" y="{card_y}" width="{card_w}" height="{tab_h}" fill="{TRACK}"/>
 <path d="M{card_x} {card_y + tab_h}h{card_w}" stroke="{GRID}"/>
-<rect x="{card_x + 14}" y="{card_y + 7}" width="{advance(mono, FILE_TAB, 12.5) + 26:.1f}" height="{tab_h - 7}" rx="5" fill="#ffffff"/>
+<rect class="tab" x="{card_x + 14}" y="{card_y + 7}" width="{advance(mono, FILE_TAB, tab_size) + 26:.1f}" height="{tab_h - 7}" rx="5" fill="#ffffff"/>
 <text class="tabtext" x="{card_x + 27}" y="{card_y + 25}">{FILE_TAB}</text>
 <g class="block">
+<text class="meterlabel" x="{label_x:.1f}" y="{card_y + 25}">{METER_LABEL}</text>
+<rect x="{bar_x:.1f}" y="{bar_y}" width="{meter_w}" height="{meter_h}" rx="2" fill="#ffffff" stroke="{CONN}" stroke-width=".8"/>
+<rect class="barfill" x="{bar_x:.1f}" y="{bar_y}" width="{meter_w * final:.1f}" height="{meter_h}" rx="2" fill="{INK}"/>
+{"".join(values)}
 <rect class="mark" x="{card_x + 1}" y="{hl_y:.1f}" width="{card_w - 2}" height="{hl_h:.1f}" fill="{TRACK}"/>
 <path class="mark" d="M{card_x + 1.5} {hl_y:.1f}v{hl_h:.1f}" stroke="{INK}" stroke-width="3"/>
 {"".join(rows)}
-<rect x="{bar_x:.1f}" y="{bar_y:.1f}" width="{bar_w}" height="9" rx="2" fill="{TRACK}" stroke="{CONN}" stroke-width=".8"/>
-<rect class="barfill" x="{bar_x:.1f}" y="{bar_y:.1f}" width="{bar_w * 0.85:.1f}" height="9" rx="2" fill="{INK}"/>
 {"".join(covers)}
-<rect class="caret" x="{last_x:.1f}" y="{last_y - mono_size + 2:.1f}" width="8" height="{mono_size + 3:.1f}" fill="{INK}"/>
+<rect class="caret" x="{last_x:.1f}" y="{last_y - MONO_SIZE + 2:.1f}" width="7" height="{MONO_SIZE + 3:.1f}" fill="{INK}"/>
 </g>
 </g>
+<text class="cite" x="{card_x + 2}" y="{card_y + card_h + cite_gap:.1f}">{esc(CITE)}</text>
 </svg>
 """
 
