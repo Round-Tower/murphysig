@@ -39,6 +39,25 @@ jobs:
       - name: Test
         run: python -m pytest -q
 
+  hero:
+    # The README banner (assets/hero.svg) and its generator: GitHub-safe, says only
+    # what the README says, and the signature it quotes is verbatim from its file and
+    # whole at its pinned commit. Every pin runs here, and one that can't fails (CI=true)
+    # instead of skipping: full history holds the pinned commit, and the generator's
+    # exact fonttools/brotli pins drive the fit check and the byte-for-byte rebuild.
+    # A test keeps these pins in step with build_hero.py's script block.
+    name: hero (pytest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # the quote's pinned commit must be in the clone
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: pip install pytest==9.1.1 fonttools==4.67.0 brotli==1.2.0
+      - run: python -m pytest -q scripts/hero
+
   site:
     name: site (build)
     runs-on: ubuntu-latest
