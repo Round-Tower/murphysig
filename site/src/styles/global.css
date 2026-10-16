@@ -725,12 +725,14 @@ body {
   max-width: 100%;
 }
 /* A quoted line that is one physical line in its file but far wider than
-   any screen (the Rubin 2026-03-24 review: 375 characters). No font size
-   fits it, and a scrollbar would hide most of it. So only that line
-   soft-wraps, as an inline-block after its " * "
-   gutter: the wrapped text hangs under its own first character. No
-   newline is added, so a copy gives back the file's one line. */
-.sigblock pre .sigwrap {
+   any screen (the Rubin 2026-03-24 review: 375 characters, on the homepage
+   and in whitepaper §7). No font size fits it, and a scrollbar would hide
+   most of it. So only that line soft-wraps, as an inline-block after its
+   gutter: the wrapped text hangs under its own first character. 3ch is the
+   " * " gutter; a wider gutter ("//  ") needs its own width. No newline is
+   added, so a copy gives back the file's one line. */
+.sigblock pre .sigwrap,
+.prose pre .sigwrap {
   display: inline-block;
   vertical-align: top;
   white-space: pre-wrap;

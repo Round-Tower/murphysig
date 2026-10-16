@@ -163,10 +163,9 @@ The February model said *I'm not sure this is good enough; check.* The check hap
 
 The original `Context:` line told the reviewer where the guard lived. The reviewer found the half the guard missed, named the live consequence, and recorded the fix—in the file, where the next reader will find it before they find the issue tracker.
 
-**An `Open:` half-answered the next day.** A voice adapter in Rubin, signed by the human alone:
+**An `Open:`, half answered.** A voice adapter in Rubin, signed by the human alone:
 
-```
-/**
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0"><code>/**
  * Signed: Kev, 2026-03-23
  * Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
  * Prior: Unknown (no signature existed before this edit)
@@ -180,11 +179,10 @@ The original `Context:` line told the reviewer where the guard lived. The review
  *
  * Reviews:
  *
- * 2026-03-24 (Kev + claude-opus-4-6): Security/reliability review: Mutex serialization correct for sequential guidance. 240s timeout justified by thermal throttling math (60 tokens x 3.6s = 216s + playback). Fallback chain solid — Kokoro failure gracefully degrades to platform TTS. Pre-warm pattern eliminates cold-start latency. Clean adapter pattern. Confidence now High.
- */
-```
+ * <span class="sigwrap">2026-03-24 (Kev + claude-opus-4-6): Security/reliability review: Mutex serialization correct for sequential guidance. 240s timeout justified by thermal throttling math (60 tokens x 3.6s = 216s + playback). Fallback chain solid — Kokoro failure gracefully degrades to platform TTS. Pre-warm pattern eliminates cold-start latency. Clean adapter pattern. Confidence now High.</span>
+ */</code></pre>
 
-The question the author knew they were ducking was half answered by the next reader, with arithmetic: the 240-second timeout is justified. The other half—can pre-warm fail silently on a low-end device?—is still open in the file today. Note the signature has no model in it: MurphySig is a convention for minds, and one of the minds is allowed to be only you.
+The question the author knew they were ducking was half answered, with arithmetic, by a review dated the next day: the 240-second timeout is justified. The other half—can pre-warm fail silently on a low-end device?—is still open in the file today. Note the signature has no model in it: MurphySig is a convention for minds, and one of the minds is allowed to be only you.
 
 **Signing the scary line.** An entitlements file—the fifty most security-relevant lines in a macOS app, and the fifty least likely to carry a comment:
 
@@ -248,4 +246,4 @@ We once thought the signature taught the machine to read. It turns out it teache
 
 *2026-09-06 (Kev + claude-fable-5-1): Section 7 figures corrected after the audit instrument was fixed (14% → 19% reviewed; 244 → 138 drifted; one confidence downgrade → three). The argument is unchanged; the number moved toward the practice, not away from it. Confidence now 0.85, held.*
 
-*2026-10-16 (Kev + claude-opus-5-5): Section 7's quotes re-checked against git, byte for byte. Two of the four were not verbatim: the Rubin review is one line in the source and was reflowed into five, and the entitlements block was reflowed around its elision. Both are now whole line ranges written straight from `git show` (rubin 0a64b00e lines 1–16; m1k3 54714497 lines 26–36). Two claims corrected with them: the Rubin `Open:` was half answered, not closed (the pre-warm half is still open), and the entitlements file carried three signatures at the audit, not four—nor one per sandbox hole. The heuristic_scorer and SelfQueryGate quotes were already exact. Confidence held at 0.85.*
+*2026-10-16 (Kev + claude-opus-5-5): Section 7's quotes re-checked against git, byte for byte. Two of the four were not verbatim: the Rubin review is one line in the source and was reflowed into five, and the entitlements block was reflowed around its elision. Both are now whole line ranges written straight from `git show` (rubin 0a64b00e lines 1–16, its 375-character review soft-wrapped on the page, never split; m1k3 54714497 lines 26–36). The other two were already exact at the commits they were taken from: murphysig feecdcf8 `benchmark/src/heuristic_scorer.py` lines 6–22, and m1k3 37d43e25 `SelfQueryGate.swift` lines 22–33 (a 2026-09-10 comment sweep later edited that review in place, so it no longer matches master). Claims corrected with them: the Rubin `Open:` was half answered, not closed (the pre-warm half is still open), and the entitlements file carried three signatures at the audit, not four—nor one per sandbox hole. The Rubin dates are as recorded in the file: signature and review entered git together on 2026-04-19 (rubin b083f61). Confidence held at 0.85.*
