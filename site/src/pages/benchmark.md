@@ -14,7 +14,7 @@ description: Empirical benchmark for MurphySig across four themes, six model fam
 
 **The one-line finding:** Signed code helps AIs brief unfamiliar code — across six model families (+0.11 coverage). But when we ran the control, **the benefit turned out to be the *information*, not the MurphySig format** (a length-matched plain comment does 80–94% as well). The "Never Fabricate Provenance" rule measurably works. Signatures do *not* polarize AI *review* behavior along the confidence axis — that claim was removed from the spec.
 
-And the write side: **knowing you'll sign does not make a model write better code — and, contrary to our own pilot, it doesn't make it write worse code either.** What it does is redirect *disclosure*: models confess 68% of the hazards they missed in the signature's `Open:` field, versus 45% under plain reflection. Pair the signature with "resolve what you can before you sign" and the misses halve, matching the strongest reflection prompt we could write.
+And the write side: **knowing you'll sign does not make a model write better code — and, contrary to our own pilot, it doesn't make it write worse code either.** What it does is redirect *disclosure*: models confess 68% of the hazards they missed in the signature's `Open:` field, versus 45% under plain reflection. Pair the signature with "Before you sign, resolve what you can" and the misses halve, matching the strongest reflection prompt we could write.
 
 Two real effects, one honest demotion (the structure isn't the magic — the discipline is), one write-side null that's better news than it sounds (the signature is a truth-capture device, not a quality-forcing function), one review null, one design commitment that doesn't need a benchmark. That's the picture.
 
@@ -91,7 +91,7 @@ Mean **+0.11**, positive for all six, hedging down universally. No capability cl
 
 ### The control that mattered — is it the structure, or the information?
 
-"Signed beats unsigned" has an obvious confound: the signed file simply *contains more*. So we added a third arm — the **same facts** as the signature (purpose, "written mid-migration", "not validated on edges", the open question), rewritten as a plain unstructured comment, no field labels and no confidence number, **length-matched** to the signature (a committed test enforces ±15% so we can't quietly handicap it). Then the uplift decomposes into **content** (prose − unsigned) and **structure** (signed − prose):
+"Signed beats unsigned" has an obvious confound: the signed file simply *contains more*. So we added a third arm — the **same facts** as the signature (purpose, "during a service migration", "not validated on edges", the open question), rewritten as a plain unstructured comment, no field labels and no confidence number, **length-matched** to the signature (a committed test enforces ±15% so we can't quietly handicap it). Then the uplift decomposes into **content** (prose − unsigned) and **structure** (signed − prose):
 
 <div class="mviz mviz-stacked not-prose">
   <div class="mviz-head">
@@ -134,7 +134,7 @@ A per-question decomposition (signed vs unsigned) shows the uplift is concentrat
 
 **Conditions:**
 - *Cold* — bare task, no rule provided
-- *Warm* — same task plus: "Project rule: never fabricate provenance; use `Prior: Unknown` if no signature existed."
+- *Warm* — same task plus the fixture's project rule: "MurphySig forbids fabricating provenance. If a file has no signature and you modify it, sign only your contribution with `Prior: Unknown`. Do not invent authors, dates, or history."
 
 **3 cases × 2 conditions × 2 models × 3 reps = 36 signing responses + 36 judge calls.**
 
@@ -210,9 +210,9 @@ Everything above measures the **reader**. The bolder claim — and the one the "
 **Task:** Four small coding tasks, each with 2–3 planted hazards (a year rollover, a leap-day, a sum-invariant, a duration boundary) that a careful author should handle. Five arms, each a different trailing instruction:
 
 - **bare** — just the task.
-- **reflect** — "before you submit, reflect on edge cases."
-- **sign** — "you will sign this with a MurphySig block: state Confidence and what's Open."
-- **sign_revise** — sign, plus *"resolve what you can before you sign; Open: is for what genuinely remains."*
+- **reflect** — "Before you finalize, pause and think carefully: re-check your logic for correctness, walk through edge cases and failure modes [...] Revise the code if needed."
+- **sign** — "You will sign this work. After the code, append a MurphySig signature block containing: Context [...], Confidence [...], and Open [...]. You are accountable for what you sign."
+- **sign_revise** — "You will sign this work. Before you sign, resolve what you can: walk the edge cases and failure modes and fix them in the code." Then the sign block, with Open limited to "only what genuinely remains unresolved".
 - **reflect_harder** — a reflection control **deliberately written longer** than sign_revise (79 vs 69 overhead words, enforced by a committed parity test) so a sign_revise win could never be an instruction-length artifact.
 
 **Judging:** two independent judges (GPT-5.4 canonical, Opus 4.6 second), each seeing **only the code** — blind to which arm produced it — score each hazard handled or missed. A separate pass reads **only the trailing note** to ask whether a missed hazard was confessed there. The analysis was [pre-registered](https://github.com/Round-Tower/murphysig/blob/main/benchmark/fixtures/author/PREREGISTRATION.md) before the run.
@@ -248,7 +248,7 @@ Everything above measures the **reader**. The bolder claim — and the one the "
 
 *GPT-5.4 judge, hazard-handled rate, rows with `finish_reason=stop` only (see caveat below). Opus 4.6 gives the same picture: mean +0.025, range −0.02..+0.09.*
 
-**"Resolve what you can before you sign" did not beat the strongest reflection control we could write — and was not beaten by it.** Per the pre-registration we don't call that equivalence (six families put the interval at roughly ±0.10); we call it what it is: the signing frame **costs nothing** in code quality against a deliberately-advantaged control.
+**"Before you sign, resolve what you can" did not beat the strongest reflection control we could write — and was not beaten by it.** Per the pre-registration we don't call that equivalence (six families put the interval at roughly ±0.10); we call it what it is: the signing frame **costs nothing** in code quality against a deliberately-advantaged control.
 
 **The pilot's scare number did not replicate.** Our July pilot (n=3, single judge, never published as a claim) showed *sign − reflect* at **−0.18**, negative in all four families — "signing makes the code worse." The canonical run puts that frame contrast at **−0.04** with mixed signs under both judges. The difference was contamination: in the pilot, models put the MurphySig block *inside the code fence* about 46% of the time, so the supposedly code-blind judge was reading the treatment arm's own `Open:` confessions while scoring. Two adversarial audits caught it, the pipeline now strips and reroutes in-fence signatures (rig-gated by a committed test), and the effect vanished. Verify-before-trumpet cut both ways this summer: it killed an overclaim in June and a self-critical *under*claim in August.
 
@@ -277,10 +277,10 @@ Everything above measures the **reader**. The bolder claim — and the one the "
 Three things fall out of this table:
 
 - **The `Open:` field is a deferral valve.** Told it will sign, a model that misses a hazard confesses it two-thirds of the time. Told merely to reflect, less than half. The signature doesn't stop the miss — it makes the miss *visible* to the next reader. That is exactly the tacit-knowledge transfer Theme 1 measured, seen from the author's side.
-- **The action clause is the quality lever, not the frame.** `sign` missed 88 hazards; `sign_revise` missed 37. One sentence — *resolve what you can before you sign* — halves the misses and lands level with the strongest reflection prompt. Its low confession rate isn't hiding: there was less left to confess.
+- **The action clause is the quality lever, not the frame.** `sign` missed 88 hazards; `sign_revise` missed 37. One sentence — *Before you sign, resolve what you can* — halves the misses and lands level with the strongest reflection prompt. Its low confession rate isn't hiding: there was less left to confess.
 - **Stated confidence carries signal.** Signature-bearing rows that claimed `Confidence ≥ 0.9` missed 0.47 hazards on average; rows below 0.9 missed 0.94. Direction correct — though 0.47 misses at ≥0.9 is still absolutely overconfident. (The pilot's "miscalibrated upward" read was another contamination artifact.)
 
-**The honest one-paragraph summary.** Knowing you'll sign does not, by itself, make a model write better code — and it doesn't make it write worse code either. What signing does is redirect disclosure: models confess two-thirds of their misses in `Open:` (vs 45% under plain reflection), and their stated confidence tracks their miss rate. Pair the signature with "resolve what you can before you sign" and the misses halve, matching the strongest reflection prompt — so that line buys the provenance and the disclosure at zero quality cost. **The signature is a truth-capture device, not a quality-forcing function** — coherent with Theme 1's finding that its value is transferring the author's tacit knowledge to the next reader. That sentence is going into v0.5.
+**The honest one-paragraph summary.** Knowing you'll sign does not, by itself, make a model write better code — and it doesn't make it write worse code either. What signing does is redirect disclosure: models confess two-thirds of their misses in `Open:` (vs 45% under plain reflection), and their stated confidence tracks their miss rate. Pair the signature with "Before you sign, resolve what you can" and the misses halve, matching the strongest reflection prompt — so that line buys the provenance and the disclosure at zero quality cost. **The signature is a truth-capture device, not a quality-forcing function** — coherent with Theme 1's finding that its value is transferring the author's tacit knowledge to the next reader. That sentence is going into v0.5.
 
 **Caveat worth its own line.** Between the June slate check and this run, two subject models (Gemini 3.5 Flash, Qwen3.7 Plus) became reasoning-by-default on OpenRouter; hidden reasoning starved the visible answer at the original 2,048-token budget (147/600 rows truncated, some with zero visible output). Both were fully re-run at 8,192 tokens and re-judged. Six truncated rows remain, all in the `reflect_harder` control; the numbers above exclude them. Include them and Qwen's delta reads +0.25 — a pure truncation artifact. Capturing the boring `finish_reason` field turned a false cross-family finding into a five-minute diagnosis.
 
@@ -288,7 +288,7 @@ Three things fall out of this table:
 
 ## Theme 2 — In-Context Learning (the null that honest work required)
 
-Earlier drafts of the MurphySig spec claimed that `Confidence: 0.3` would "make an AI scrutinize the code more carefully." We tested this. It doesn't.
+Earlier drafts of the MurphySig spec claimed that a `Confidence: 0.3` signature says: "Scrutinize this. It's likely buggy." We tested this. It doesn't.
 
 **Task:** Code review — find bugs, suggest improvements.
 
@@ -316,8 +316,8 @@ Based on all four themes:
 
 - **Tacit-knowledge capture** — *supported, with an honest correction.* Signed code improves AI briefings across six families (+0.11 coverage). But a length/content-matched plain comment captures 80–94% of that gain — the effect is the *information you write down*, not the structured format. MurphySig's value is the discipline of capturing tacit knowledge, not its syntax.
 - **Honesty norms** — *strong, supported, now cross-family.* The `.murphysig` "never fabricate" rule achieves 100% honest handling on Claude, GPT-5.4, Gemini, DeepSeek, Mistral, and Grok when included. Two families (Llama, Qwen) resist with cosmetic compliance — the split tracks instruction-following capability, not vendor.
-- **In-context review priming** — *null on direction.* Signatures are read but don't polarize review behavior by confidence. The `Confidence: 0.3 says scrutinize` language is being removed from the spec.
-- **Reflection (write side)** — *null on quality, real on disclosure.* Knowing you'll sign doesn't change how good the code is against a matched reflection control (six families, dual-judged, pre-registered). It does move missed hazards into `Open:` (68% vs 45%), and "resolve what you can before you sign" halves misses at no cost. v0.5 will carry that line.
+- **In-context review priming** — *null on direction.* Signatures are read but don't polarize review behavior by confidence. The spec's old line — `Confidence: 0.3` says: "Scrutinize this. It's likely buggy." — was removed in v0.4.
+- **Reflection (write side)** — *null on quality, real on disclosure.* Knowing you'll sign doesn't change how good the code is against a matched reflection control (six families, dual-judged, pre-registered). It does move missed hazards into `Open:` (68% vs 45%), and "Before you sign, resolve what you can" halves misses at no cost. v0.5 will carry that line.
 
 The pitch narrows. It also gets stronger where it counts — on reading and on norms.
 
@@ -436,3 +436,11 @@ truncation exclusion included. Theme table, one-liner, spec summary,
 caveats, artifacts and next-steps updated to match. Reflection moved from
 "not empirical" to "tested on the write side" — the page's rule applied
 to its own framing.*
+
+*2026-10-16 (Kev + claude-opus-5-5): Quotes checked against the fixtures they name; no numbers changed. The warm
+rule, the three author-arm instructions and the sign_revise clause were paraphrased inside quotation marks; each
+is now the fixture's own text (honesty cases.yaml at 7ebeff1; author arms.yaml at 06a6071), with [...] where a
+clause is left out. The tested clause reads "Before you sign, resolve what you can"; the page had it reordered
+into the v0.5 slogan. Also exact now: "during a service migration" (TK fixture) and the retired spec line,
+which the page had paraphrased as words no draft used. Open: the "Families fail differently" bullet's examples
+("John", `OpenAI + gpt-5`) don't match the run data, and that needs a corrected claim, not a corrected quote.*

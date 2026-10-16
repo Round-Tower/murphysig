@@ -137,11 +137,11 @@ On the `orphan_utility` case specifically, 33% of cold AIs fabricated an author 
 
 **In-context learning — signatures are read.** 85% reference rate on signed review variants (vs 0% unsigned). Models read signed context and cite it in their output.
 
-**The write side — null on quality, real on disclosure.** Does knowing you will sign make the author's code better? Across six families, dual-judged and pre-registered, "resolve what you can before you sign" neither beat nor lost to a deliberately longer reflection control (mean paired Δ −0.005 GPT-5.4 / +0.025 Opus 4.6, every family within ±0.10). What signing does: of hazards missed in code, models confess 68% in `Open:` vs 45% under plain reflection; stated confidence tracks miss rate. The signature is a truth-capture device, not a quality-forcing function.
+**The write side — null on quality, real on disclosure.** Does knowing you will sign make the author's code better? Across six families, dual-judged and pre-registered, "Before you sign, resolve what you can" neither beat nor lost to a deliberately longer reflection control (mean paired Δ −0.005 GPT-5.4 / +0.025 Opus 4.6, every family within ±0.10). What signing does: of hazards missed in code, models confess 68% in `Open:` vs 45% under plain reflection; stated confidence tracks miss rate. The signature is a truth-capture device, not a quality-forcing function.
 
 ### What the data does NOT support
 
-- **Confidence direction does not polarize review behavior.** Earlier drafts claimed `Confidence: 0.3` would make AIs "scrutinize this — it's likely buggy." The benchmark refuted that — scrutiny was invariant between `high` and `low` variants. That claim has been removed from v0.4.
+- **Confidence direction does not polarize review behavior.** Earlier drafts said a `Confidence: 0.3` signature says: "Scrutinize this. It's likely buggy." The benchmark refuted that — scrutiny was invariant between `high` and `low` variants. That claim has been removed from v0.4.
 - **Bug detection ordering** (predicted `low > unsigned > high`) was flat at the 100% ceiling on 4 of 5 cases.
 
 ### Caveats
@@ -846,20 +846,22 @@ on-device AI companion whose history is MurphySig-signed end to end. Murphy's
 Law says things break; this is what it looks like when the breakage is
 attributed.
 
-**A retirement, with reasons** — [`BrainTier.swift`](https://github.com/Round-Tower/m1k3/blob/master/macos/Sources/M1K3Inference/BrainTier.swift):
+**A retirement, with reasons** — [`BrainTier.swift`](https://github.com/Round-Tower/m1k3/blob/3c53ad04a76208cb0b7fb8fef4c720dd4865ec23/macos/Sources/M1K3Inference/BrainTier.swift#L39-L45):
 
 ```swift
 //  Review: Kev + claude-fable-5, 2026-07-02 — HUGE RETIRED (the all-gemma
 //  reshuffle, step 1). Qwen3-8B was the weakest tool-caller and nobody's
 //  favourite at anything; gemma-4 native tool-calling is Kev-verified live on
 //  3.31.4. Three tiers again. A persisted "huge" migrates to .big via
-//  `init(persisted:)` — never a silent Mini downgrade.
+//  `init(persisted:)` — never a silent Mini downgrade. The memory-floor /
+//  isSelectable seam is KEPT (returns nil today): gemma-4-12B takes the Big
+//  slot with a floor once upstream fixes RotatingKVCache.temporalOrder.
 ```
 
 A model tier removed from a shipping app: what left, why, what migrates, and
 the seam kept for its successor. Try recovering that from a diff.
 
-**Murphy's Law, attributed** — [`OnboardingView.swift`](https://github.com/Round-Tower/m1k3/blob/master/macos/M1K3App/OnboardingView.swift):
+**Murphy's Law, attributed** — [`OnboardingView.swift`](https://github.com/Round-Tower/m1k3/blob/ee37af461acffeee0bf22c1c1f7ae4b418b8653a/macos/M1K3App/OnboardingView.swift#L22-L24):
 
 ```swift
 //  Review: Kev + claude-fable-5, 2026-07-02, Confidence 0.85 — fixed the first-run
@@ -869,9 +871,9 @@ the seam kept for its successor. Try recovering that from a diff.
 
 The onboarding flow that "completed" with nothing chosen. The review names the
 commit that broke it, what the breakage looked like, and who was there when it
-was found.
+was found. (`ed711813` predates the open-source history rewrite; the same commit is now [`20812315`](https://github.com/Round-Tower/m1k3/commit/208123159573a918b16e7c558e50182310b64e15).)
 
-**Provenance that survives an NDA** — [`LocalAgent.swift`](https://github.com/Round-Tower/m1k3/blob/master/macos/Sources/M1K3Agent/LocalAgent.swift):
+**Provenance that survives an NDA** — [`LocalAgent.swift`](https://github.com/Round-Tower/m1k3/blob/6c0ff81a0867e84810be6ffa30cd85681d70dc7b/macos/Sources/M1K3Agent/LocalAgent.swift#L16-L17):
 
 ```swift
 //  Signed: Kev + claude-opus-4-8, 2026-06-06, Confidence 0.85,
@@ -1030,3 +1032,5 @@ Public domain. Use freely. Attribution appreciated but not required.
 *2026-07-02 (Kev + claude-fable-5, later): "Name the Model, Not the Product" — prompted by the first third-party-agent signature in the wild: OpenCode's agent discovered .murphysig unaided and signed a codebase review, first as model-only (no human), then — corrected live — as human + product name (no model). Both failure modes in one document, so the spec now says it plainly: name human, weights, and harness; if the human is unknown to you, say so rather than omit them. Mirror in spec.txt.*
 
 *2026-09-05 (Kev + claude-fable-5-1): Empirical Evidence section caught up with the benchmark — no normative spec text touched. It still said "three sub-benchmarks… reflection out of scope" while the write-side run (2026-08-22, six families, dual-judged, pre-registered) had tested exactly that. Added the write-side paragraph (null on quality, 68% vs 45% disclosure), corrected the intro and caveats to four themes / six families, linked the archived runs. Mirror in spec.txt. The v0.5 bump — action clause, Open: as ledger — remains separate work.*
+
+*2026-10-16 (Kev + claude-opus-5-5): Quotes checked against their sources, byte for byte; no normative text touched. Signatures in the Wild: the BrainTier review was cut mid-line with no mark — just before the seam sentence the prose credits — so it is now lines 39–45 whole. All three links are now commit permalinks (OnboardingView.swift left master on 2026-07-04, so its link had 404'd since two days after this section shipped), and the pre-open-source hash in that quote now points at its rewritten twin. Evidence: the tested clause is quoted as tested, "Before you sign, resolve what you can" (the page had it reordered into the v0.5 slogan), and the retired scrutiny claim is quoted as the old spec said it. The 2026-04-18 entry above quotes the Model Versioning guidance as "friendly names are meaningless"; it never said that. It says "Always include the specific model version.", calls bare "Claude" or "GPT" meaningless, and lists friendly names as fine for casual contexts. That entry stays as written; this corrects it.*

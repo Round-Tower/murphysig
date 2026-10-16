@@ -709,7 +709,9 @@ body {
    scroll only as the last resort. The wrapper carries the padding, so
    1.8cqi (vs 1.9 in .prose) leaves room for it. Kev, 2026-09-05:
    "the other pages need the same code readability treatment".
-   Signed: Kev + claude-fable-5-1, 2026-09-05, Confidence 0.8, Prior: Unknown */
+   Signed: Kev + claude-fable-5-1, 2026-09-05, Confidence 0.8, Prior: Unknown
+   Review: Kev + claude-opus-5-5, 2026-10-16 — one exception, .sigwrap below,
+   for a source line no width can fit. Everything else still never wraps. */
 .sigblock {
   container-type: inline-size;
 }
@@ -721,6 +723,20 @@ body {
   tab-size: 4;
   overflow-x: auto;
   max-width: 100%;
+}
+/* A quoted line that is one physical line in its file but far wider than
+   any screen (the Rubin 2026-03-24 review: 375 characters, on the homepage
+   and in whitepaper §7). No font size fits it, and a scrollbar would hide
+   most of it. So only that line soft-wraps, as an inline-block after its
+   gutter: the wrapped text hangs under its own first character. 3ch is the
+   " * " gutter; a wider gutter ("//  ") needs its own width. No newline is
+   added, so a copy gives back the file's one line. */
+.sigblock pre .sigwrap,
+.prose pre .sigwrap {
+  display: inline-block;
+  vertical-align: top;
+  white-space: pre-wrap;
+  max-width: calc(100% - 3ch);
 }
 
 /* Tables — editorial/scientific-paper aesthetic
