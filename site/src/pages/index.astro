@@ -20,6 +20,17 @@
  *
  * Confidence: 0.75 - the quoted signatures are verbatim-verified (high);
  * the voice is my read of Kev's, verify-by-ear (his).
+ *
+ * Review: Kev + claude-opus-5-5, 2026-10-16 — the "verbatim-verified" above
+ * did not hold. Compared byte for byte against git, all three receipts had
+ * been reflowed, and two dropped text without a [...]: the Rubin review lost
+ * its fallback/pre-warm sentences, the Gemma review lost "e4b has 18 shared
+ * layers, 12B has 0" and "results in PR #39". Each block is now a whole line
+ * range written straight from `git show`, with the commit and lines in a
+ * footnote. Two prose claims corrected with them: the Rubin Open: was half
+ * answered the next day, not closed (the pre-warm half is still open), and
+ * nothing in the source says the spike was signed "in the morning".
+ * Confidence now 0.85 on the quotes (byte-compared); the voice note stands.
  */
 
 import ArtLayout from '../layouts/ArtLayout.astro';
@@ -93,7 +104,7 @@ import ArtLayout from '../layouts/ArtLayout.astro';
                 <p>
                     One comment block. Who made it. What they were thinking. How sure they were.
                     Here's a real one, from the meditation app — I signed this on my own, no model
-                    in the room, and a review closed the open question the next day:
+                    in the room, and a review answered half of its open question the next day:
                 </p>
             </div>
 
@@ -111,16 +122,13 @@ import ArtLayout from '../layouts/ArtLayout.astro';
  * Falls back to platform TTS if Kokoro fails. Ported from m1k3.
  *
  * Confidence: High - timeout architecture simplified, no nested timeouts
- * Open: Is 240s timeout too generous? Could pre-warm fail silently on
- * low-end devices?
+ * Open: Is 240s timeout too generous? Could pre-warm fail silently on low-end devices?
  *
  * Reviews:
  *
- * 2026-03-24 (Kev + claude-opus-4-6): Security/reliability review: Mutex
- * serialization correct for sequential guidance. 240s timeout justified
- * by thermal throttling math (60 tokens x 3.6s = 216s + playback).
- * Fallback chain solid. Confidence now High.
+ * <span class="sigwrap">2026-03-24 (Kev + claude-opus-4-6): Security/reliability review: Mutex serialization correct for sequential guidance. 240s timeout justified by thermal throttling math (60 tokens x 3.6s = 216s + playback). Fallback chain solid — Kokoro failure gracefully degrades to platform TTS. Pre-warm pattern eliminates cold-start latency. Clean adapter pattern. Confidence now High.</span>
  */</pre>
+            <div class="text-neutral-400 mt-4 font-mono text-xs">Lines 1–16 at rubin commit 0a64b00e, verbatim. The 2026-03-24 review is one line in the file, soft-wrapped here; a review added in October now sits above it.</div>
         </div>
 
         <article class="prose prose-neutral max-w-none font-serif text-lg leading-relaxed space-y-8">
@@ -165,26 +173,33 @@ import ArtLayout from '../layouts/ArtLayout.astro';
         <div class="sigblock bg-gray-50 border border-neutral-200 p-6 md:p-10 rounded-sm overflow-x-auto">
             <div class="text-neutral-400 select-none mb-4 font-mono text-sm">cartogram · MapKitBackendView.swift</div>
 <pre class="text-neutral-700">// Signed: Kev + claude-opus-4-7 (1M), 2026-05-26, Confidence 0.7
-// Native MKMapView wallpaper backend behind the MapRendering protocol —
-// the battery-friendly engine. [...] this file is the AppKit/MapKit glue
-// (camera, appearance, pulse layer, drift timer), untested like
-// PowerMonitor. [...] Prior: Unknown.
-// Reviewed: claude-opus-4-6, 2026-06-21 — perf overhaul: drift changed
-// from setCamera(animated:false) at N fps to setCamera(animated:true) at
-// 1s intervals [...] Together: 52% → 0% CPU. Confidence 0.85.
-// Reviewed: claude-opus-5, 2026-07-28 — drift cadence: tried, failed,
-// reverted. The 2026-06-21 note above says 1s intervals; the constant
-// that shipped in that same commit was 0.1s. I took that mismatch as a
-// bug and lengthened the interval (a size-adaptive DriftCadence,
-// 0.6s→1.6s, later 1.0s), reasoning that fewer retargets must be
-// proportionally cheaper on a large surface. On hardware it was
-// stop-motion at every value tried, because MapKit does not stretch a
-// camera animation to fill the gap [...] So 0.1s was not a regression;
-// it is load-bearing, and the 1s in the 06-21 note is the part that was
-// wrong. Reverted to 0.1s, DriftCadence deleted rather than left as a
-// dead knob. [...] Confidence 0.9 on the revert (observed directly); the
+// Native MKMapView wallpaper backend behind the MapRendering protocol — the
+// battery-friendly engine. Style→MKMapConfiguration and zoom→distance judgement is
+// extracted to the tested MapKitStyleMapping; this file is the AppKit/MapKit glue
+// (camera, appearance, pulse layer, drift timer), untested like PowerMonitor. Pulse
+// is config-driven not policy-gated, mirroring the web CSS pulse. Prior: Unknown.
+// Reviewed: claude-opus-4-6, 2026-06-21 — perf overhaul: drift changed from
+// setCamera(animated:false) at N fps to setCamera(animated:true) at 1s intervals
+// (MapKit rotates the rendered surface instead of re-rendering tiles — ~0% CPU).
+// Pulse changed from CABasicAnimation (60fps compositor recomposites) to 4fps
+// Timer-driven discrete animation (~93% fewer compositor wakes). Together: 52% → 0%
+// CPU. Confidence 0.85.
+// Reviewed: claude-opus-5, 2026-07-28 — drift cadence: tried, failed, reverted.
+// The 2026-06-21 note above says 1s intervals; the constant that shipped in that
+// same commit was 0.1s. I took that mismatch as a bug and lengthened the interval
+// (a size-adaptive DriftCadence, 0.6s→1.6s, later 1.0s), reasoning that fewer
+// retargets must be proportionally cheaper on a large surface. On hardware it was
+// stop-motion at every value tried, because MapKit does not stretch a camera
+// animation to fill the gap — and wrapping the call in an NSAnimationContext with
+// an explicit duration doesn't change that, since setCamera(_:animated:) is
+// imperative and ignores the ambient context. So 0.1s was not a regression; it is
+// load-bearing, and the 1s in the 06-21 note is the part that was wrong. Reverted
+// to 0.1s, DriftCadence deleted rather than left as a dead knob.
+// The large-display lag it was meant to address was elsewhere and is measured:
+// uncapped snapshot canvas and a main-thread 16-bit PNG encode (65MB→10MB), both
+// fixed in this branch. Confidence 0.9 on the revert (observed directly); the
 // standing lesson is that drift cost needs Instruments, not reasoning.</pre>
-            <div class="text-neutral-400 mt-4 font-mono text-xs">[...] marks elisions — the full block is 27 lines and lives at line 284 of the file.</div>
+            <div class="text-neutral-400 mt-4 font-mono text-xs">The whole block: lines 284–310 at cartogram commit 30aba265, verbatim. A fourth review has been added since.</div>
         </div>
 
         <article class="prose prose-neutral max-w-none font-serif text-lg leading-relaxed space-y-8">
@@ -201,8 +216,8 @@ import ArtLayout from '../layouts/ArtLayout.astro';
             <div>
                 <h2 class="text-xl font-sans font-medium mb-2 tracking-wide text-neutral-900 uppercase text-xs">Confidence is a number that moves</h2>
                 <p>
-                    Not decoration — a live value. This spike was signed 0.5 in the morning and
-                    reviewed 0.9 the same day, with the measurement attached:
+                    Not decoration — a live value. This spike was signed 0.5 and reviewed 0.9
+                    the same day, with the measurement attached:
                 </p>
             </div>
 
@@ -210,14 +225,15 @@ import ArtLayout from '../layouts/ArtLayout.astro';
 
         <div class="sigblock bg-gray-50 border border-neutral-200 p-6 md:p-10 rounded-sm overflow-x-auto">
             <div class="text-neutral-400 select-none mb-4 font-mono text-sm">m1k3 · GemmaVisionSpike.swift</div>
-<pre class="text-neutral-700">//  Signed: Kev + claude-sonnet-5, 2026-07-14, Confidence 0.5 (spike;
-//  compiles, on-device run pending), Prior: Unknown
-//  Review: claude-fable-5, 2026-07-14 — the on-device run HAPPENED same
-//  day: e4b FAILS to load under MLXVLM (keyNotFound
-//  layers.24.self_attn.v_proj — upstream Gemma4 VLM lacks the
-//  KV-shared-layer sanitize fix); gemma-4-12B-it-4bit loads + describes
-//  the M1K3 app icon correctly, 265 prompt tokens/image, 7333MB peak.
-//  Confidence now 0.9 for the instrument itself (measured live).</pre>
+<pre class="text-neutral-700">//  Signed: Kev + claude-sonnet-5, 2026-07-14, Confidence 0.5 (spike; compiles,
+//  on-device run pending), Prior: Unknown
+//  Review: claude-fable-5, 2026-07-14 — the on-device run HAPPENED same day:
+//  e4b FAILS to load under MLXVLM (keyNotFound layers.24.self_attn.v_proj —
+//  upstream Gemma4 VLM lacks the KV-shared-layer sanitize fix; e4b has 18
+//  shared layers, 12B has 0); gemma-4-12B-it-4bit loads + describes the M1K3
+//  app icon correctly, 265 prompt tokens/image, 7333MB peak. Confidence now
+//  0.9 for the instrument itself (measured live, results in PR #39).</pre>
+            <div class="text-neutral-400 mt-4 font-mono text-xs">Lines 25–32 at m1k3 commit d665fab8, verbatim. A third entry on 2026-10-06 recorded that an upstream fix later let e4b load; the spike was retired in October.</div>
         </div>
 
         <article class="prose prose-neutral max-w-none font-serif text-lg leading-relaxed space-y-8">

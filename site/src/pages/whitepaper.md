@@ -159,40 +159,46 @@ The February model said *I'm not sure this is good enough; check.* The check hap
 
 The original `Context:` line told the reviewer where the guard lived. The reviewer found the half the guard missed, named the live consequence, and recorded the fix—in the file, where the next reader will find it before they find the issue tracker.
 
-**An `Open:` that closed the next day.** A voice adapter in Rubin, signed by the human alone:
+**An `Open:` half-answered the next day.** A voice adapter in Rubin, signed by the human alone:
 
 ```
+/**
  * Signed: Kev, 2026-03-23
  * Format: MurphySig v0.3.3 (https://murphysig.dev/spec)
  * Prior: Unknown (no signature existed before this edit)
- * [...]
+ *
+ * Context: Bridges Kokoro-82M neural TTS into Rubin's voice system.
+ * Thread-safe with Mutex, 240s timeout for thermal throttling worst case.
+ * Falls back to platform TTS if Kokoro fails. Ported from m1k3.
+ *
  * Confidence: High - timeout architecture simplified, no nested timeouts
  * Open: Is 240s timeout too generous? Could pre-warm fail silently on low-end devices?
  *
  * Reviews:
  *
- * 2026-03-24 (Kev + claude-opus-4-6): Security/reliability review: Mutex
- * serialization correct for sequential guidance. 240s timeout justified by
- * thermal throttling math (60 tokens x 3.6s = 216s + playback). Fallback chain
- * solid — Kokoro failure gracefully degrades to platform TTS. Pre-warm pattern
- * eliminates cold-start latency. Clean adapter pattern. Confidence now High.
+ * 2026-03-24 (Kev + claude-opus-4-6): Security/reliability review: Mutex serialization correct for sequential guidance. 240s timeout justified by thermal throttling math (60 tokens x 3.6s = 216s + playback). Fallback chain solid — Kokoro failure gracefully degrades to platform TTS. Pre-warm pattern eliminates cold-start latency. Clean adapter pattern. Confidence now High.
+ */
 ```
 
-The question the author knew they were ducking was answered with arithmetic by the next reader. Note the signature has no model in it: MurphySig is a convention for minds, and one of the minds is allowed to be only you.
+The question the author knew they were ducking was half answered by the next reader, with arithmetic: the 240-second timeout is justified. The other half—can pre-warm fail silently on a low-end device?—is still open in the file today. Note the signature has no model in it: MurphySig is a convention for minds, and one of the minds is allowed to be only you.
 
 **Signing the scary line.** An entitlements file—the fifty most security-relevant lines in a macOS app, and the fifty least likely to carry a comment:
 
 ```
-<!-- AVSpeechSynthesizer (P6/P8 voice) reaches the audioanalyticsd mach service
-     during TTS setup. Under the sandbox this throws a hard PRECONDITION
-     FAILURE ("…doesn't contain 'com.apple.audioanalyticsd'") and kills audio
-     output (CoreAudio -10877). [...] Scoped to the one analytics service the
-     synthesizer needs — no broader hole.
-     Signed: Kev + claude-sonnet-4-6, 2026-06-08, Confidence 0.6, Prior: Kev + claude-opus-4-8 -->
-<key>com.apple.security.temporary-exception.mach-lookup.global-name</key>
+	<!-- AVSpeechSynthesizer (P6/P8 voice) reaches the audioanalyticsd mach service
+	     during TTS setup. Under the sandbox this throws a hard PRECONDITION
+	     FAILURE ("…doesn't contain 'com.apple.audioanalyticsd'") and kills audio
+	     output (CoreAudio -10877). The EffectfulSpeechProvider path
+	     (AVSpeechSynthesizer.write → AVAudioEngine) checks the NON-temporary
+	     `…exception.mach-lookup.global-name` key by name, so BOTH variants are
+	     listed: the temporary one satisfied plain .speak; the non-temporary one is
+	     what the engine/write path's precondition actually reads. Scoped to the one
+	     analytics service the synthesizer needs — no broader hole.
+	     Signed: Kev + claude-sonnet-4-6, 2026-06-08, Confidence 0.6, Prior: Kev + claude-opus-4-8 -->
+	<key>com.apple.security.temporary-exception.mach-lookup.global-name</key>
 ```
 
-Four signatures in one XML file, one per sandbox hole, each saying why the hole exists and how narrow it is. Confidence 0.6 on a security exception is the number you want to see: it tells the next maintainer this one was reasoned about and is still not certain.
+Three signatures in that XML file when we audited it (five today), each saying why its hole exists and how narrow it is. Confidence 0.6 on a security exception is the number you want to see: it tells the next maintainer this one was reasoned about and is still not certain.
 
 The audit also found what you'd expect from nine months of practice under no enforcement: two comment dialects (a compact one-liner in M1K3, the block form elsewhere), one model spelled two ways in the same month, twenty-five bare `claude` tokens from a repo whose `.murphysig` was never imported into its agent's context. Norms fire in-context, not in-repo. The convention is honest about that too.
 
@@ -237,3 +243,5 @@ We once thought the signature taught the machine to read. It turns out it teache
 *2026-02-12 (Kev + claude-opus-4-6-20250610): v0.0.2 - Aligned with spec v0.2.1. Fixed imprecise model references (claude-opus-4.5 → claude-opus-4-5-20250514, Claude-3.7 → current model). The whitepaper now practices what the spec preaches.*
 
 *2026-09-06 (Kev + claude-fable-5-1): Section 7 figures corrected after the audit instrument was fixed (14% → 19% reviewed; 244 → 138 drifted; one confidence downgrade → three). The argument is unchanged; the number moved toward the practice, not away from it. Confidence now 0.85, held.*
+
+*2026-10-16 (Kev + claude-opus-5-5): Section 7's quotes re-checked against git, byte for byte. Two of the four were not verbatim: the Rubin review is one line in the source and was reflowed into five, and the entitlements block was reflowed around its elision. Both are now whole line ranges written straight from `git show` (rubin 0a64b00e lines 1–16; m1k3 54714497 lines 26–36). Two claims corrected with them: the Rubin `Open:` was half answered, not closed (the pre-warm half is still open), and the entitlements file carried three signatures at the audit, not four—nor one per sandbox hole. The heuristic_scorer and SelfQueryGate quotes were already exact. Confidence held at 0.85.*
