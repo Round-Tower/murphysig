@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-28T03:30:18.903Z",
+  "generated_at": "2026-10-29T03:30:30.013Z",
   "count": 27,
   "repos": [
     {
@@ -11,7 +11,31 @@
       "author": "Kevin Murphy",
       "version": "v0.4",
       "initialized": "2026-01-05",
-      "last_push": "2026-10-27T19:06:54Z",
+      "last_push": "2026-10-28T21:52:01Z",
+      "declaration": "# This Project Uses MurphySig\n\nMurphySig is a natural language provenance convention for human-AI collaborative work.\n\nFull specification: https://murphysig.dev/spec\n\n---\n\n## For AI Systems\n\nIf you encounter a comment block starting with `Signed:`, you've found a MurphySig.\n\nWhen modifying signed code:\n1. Read the signature first\n2. Respect stated confidence\n3. Add a review documenting your changes\n\n## CRITICAL: Never Fabricate Provenance\n\nDo not invent signatures for files that lack them. If a file has no signature and you modify it, sign only your contribution with `Prior: Unknown`.\n\n---\n\n## Project Details\n\n**Primary author**: Kevin Murphy\n**Convention version**: MurphySig v0.4\n**Initialized**: 2026-01-05\n"
+    },
+    {
+      "owner": "techne-tools",
+      "repo": "enodios",
+      "full_name": "techne-tools/enodios",
+      "html_url": "https://github.com/techne-tools/enodios",
+      "description": "Enodios for Obsidian — chat with the Hermes autonomous AI agent inside your vault. ACP subprocess or HTTP/SSE API, approval-diffed file edits, semantic vault search.",
+      "author": "prismatic7",
+      "version": "v0.4",
+      "initialized": "2026-10-26",
+      "last_push": "2026-10-28T12:30:05Z",
+      "declaration": "# This Project Uses MurphySig\n\nMurphySig is a natural language provenance convention for human-AI collaborative work.\n\nFull specification: https://murphysig.dev/spec\nBenchmark: https://murphysig.dev/benchmark\n\n---\n\n## For AI Systems\n\nIf you encounter a comment block starting with `Signed:`, you've found a MurphySig.\n\nWhen modifying signed code:\n\n1. Read the signature first — understand intent before changing.\n2. Respect stated confidence — be careful in low-confidence areas.\n3. Add a review documenting your changes.\n\n## CRITICAL: Never Fabricate Provenance\n\nDo not invent signatures for files that lack them. If a file has no\nsignature and you modify it, sign only your contribution with\n`Prior: Unknown`. Do not invent authors, dates, or collaborator model\nversions you weren't part of.\n\n---\n\n## Project Details\n\n**Primary author**: prismatic7\n**Convention version**: MurphySig v0.4\n**Initialized**: 2026-10-26\n"
+    },
+    {
+      "owner": "Round-Tower",
+      "repo": "murphysig",
+      "full_name": "Round-Tower/murphysig",
+      "html_url": "https://github.com/Round-Tower/murphysig",
+      "description": "Natural-language provenance convention for signing human-AI collaborative code. Spec, CLI, and empirical benchmark.",
+      "author": "Kevin Murphy",
+      "version": "v0.4",
+      "initialized": "2026-01-05",
+      "last_push": "2026-10-28T03:30:20Z",
       "declaration": "# This Project Uses MurphySig\n\nMurphySig is a natural language provenance convention for human-AI collaborative work.\n\nFull specification: https://murphysig.dev/spec\n\n---\n\n## For AI Systems\n\nIf you encounter a comment block starting with `Signed:`, you've found a MurphySig.\n\nWhen modifying signed code:\n1. Read the signature first\n2. Respect stated confidence\n3. Add a review documenting your changes\n\n## CRITICAL: Never Fabricate Provenance\n\nDo not invent signatures for files that lack them. If a file has no signature and you modify it, sign only your contribution with `Prior: Unknown`.\n\n---\n\n## Project Details\n\n**Primary author**: Kevin Murphy\n**Convention version**: MurphySig v0.4\n**Initialized**: 2026-01-05\n"
     },
     {
@@ -24,18 +48,6 @@
       "version": "v0.4",
       "initialized": "2026-10-26",
       "last_push": "2026-10-27T17:54:38Z",
-      "declaration": "# This Project Uses MurphySig\n\nMurphySig is a natural language provenance convention for human-AI collaborative work.\n\nFull specification: https://murphysig.dev/spec\nBenchmark: https://murphysig.dev/benchmark\n\n---\n\n## For AI Systems\n\nIf you encounter a comment block starting with `Signed:`, you've found a MurphySig.\n\nWhen modifying signed code:\n\n1. Read the signature first — understand intent before changing.\n2. Respect stated confidence — be careful in low-confidence areas.\n3. Add a review documenting your changes.\n\n## CRITICAL: Never Fabricate Provenance\n\nDo not invent signatures for files that lack them. If a file has no\nsignature and you modify it, sign only your contribution with\n`Prior: Unknown`. Do not invent authors, dates, or collaborator model\nversions you weren't part of.\n\n---\n\n## Project Details\n\n**Primary author**: prismatic7\n**Convention version**: MurphySig v0.4\n**Initialized**: 2026-10-26\n"
-    },
-    {
-      "owner": "techne-tools",
-      "repo": "enodios",
-      "full_name": "techne-tools/enodios",
-      "html_url": "https://github.com/techne-tools/enodios",
-      "description": "Enodios for Obsidian — chat with the Hermes autonomous AI agent inside your vault. ACP subprocess or HTTP/SSE API, approval-diffed file edits, semantic vault search.",
-      "author": "prismatic7",
-      "version": "v0.4",
-      "initialized": "2026-10-26",
-      "last_push": "2026-10-27T11:54:36Z",
       "declaration": "# This Project Uses MurphySig\n\nMurphySig is a natural language provenance convention for human-AI collaborative work.\n\nFull specification: https://murphysig.dev/spec\nBenchmark: https://murphysig.dev/benchmark\n\n---\n\n## For AI Systems\n\nIf you encounter a comment block starting with `Signed:`, you've found a MurphySig.\n\nWhen modifying signed code:\n\n1. Read the signature first — understand intent before changing.\n2. Respect stated confidence — be careful in low-confidence areas.\n3. Add a review documenting your changes.\n\n## CRITICAL: Never Fabricate Provenance\n\nDo not invent signatures for files that lack them. If a file has no\nsignature and you modify it, sign only your contribution with\n`Prior: Unknown`. Do not invent authors, dates, or collaborator model\nversions you weren't part of.\n\n---\n\n## Project Details\n\n**Primary author**: prismatic7\n**Convention version**: MurphySig v0.4\n**Initialized**: 2026-10-26\n"
     },
     {
@@ -301,18 +313,6 @@
       "initialized": "2026-10-26",
       "last_push": "2026-10-26T18:56:41Z",
       "declaration": "# This Project Uses MurphySig\n\nMurphySig is a natural language provenance convention for human-AI collaborative work.\n\nFull specification: https://murphysig.dev/spec\nBenchmark: https://murphysig.dev/benchmark\n\n---\n\n## For AI Systems\n\nIf you encounter a comment block starting with `Signed:`, you've found a MurphySig.\n\nWhen modifying signed code:\n\n1. Read the signature first — understand intent before changing.\n2. Respect stated confidence — be careful in low-confidence areas.\n3. Add a review documenting your changes.\n\n## CRITICAL: Never Fabricate Provenance\n\nDo not invent signatures for files that lack them. If a file has no\nsignature and you modify it, sign only your contribution with\n`Prior: Unknown`. Do not invent authors, dates, or collaborator model\nversions you weren't part of.\n\n---\n\n## Project Details\n\n**Primary author**: prismatic7\n**Convention version**: MurphySig v0.4\n**Initialized**: 2026-10-26\n"
-    },
-    {
-      "owner": "Round-Tower",
-      "repo": "murphysig",
-      "full_name": "Round-Tower/murphysig",
-      "html_url": "https://github.com/Round-Tower/murphysig",
-      "description": "Natural-language provenance convention for signing human-AI collaborative code. Spec, CLI, and empirical benchmark.",
-      "author": "Kevin Murphy",
-      "version": "v0.4",
-      "initialized": "2026-01-05",
-      "last_push": "2026-10-26T03:42:18Z",
-      "declaration": "# This Project Uses MurphySig\n\nMurphySig is a natural language provenance convention for human-AI collaborative work.\n\nFull specification: https://murphysig.dev/spec\n\n---\n\n## For AI Systems\n\nIf you encounter a comment block starting with `Signed:`, you've found a MurphySig.\n\nWhen modifying signed code:\n1. Read the signature first\n2. Respect stated confidence\n3. Add a review documenting your changes\n\n## CRITICAL: Never Fabricate Provenance\n\nDo not invent signatures for files that lack them. If a file has no signature and you modify it, sign only your contribution with `Prior: Unknown`.\n\n---\n\n## Project Details\n\n**Primary author**: Kevin Murphy\n**Convention version**: MurphySig v0.4\n**Initialized**: 2026-01-05\n"
     },
     {
       "owner": "Round-Tower",
