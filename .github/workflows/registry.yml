@@ -17,6 +17,10 @@
 # in the renderer + scripts/update-registry.mjs). Added a concurrency group
 # (no racing pushes) and timeout-minutes: 15 (was the 6h default). The
 # 2026-10-05/06 failures were code-search 429s, now retried in gh().
+# Review: Kev + claude-opus-5.5, 2026-11-21 — 429s with Retry-After past the
+# 2-minute cap kept it red every other night; the script now skips such a night
+# (exit 0 + ::warning::) while registry.json is under 72 h old. Tests run by
+# file glob: Node 22+ no longer accepts a bare directory for --test.
 
 name: registry
 
@@ -47,7 +51,7 @@ jobs:
           node-version: 20
 
       - name: Run parser tests
-        run: node --test scripts/
+        run: node --test scripts/*.test.mjs
 
       - name: Update registry
         env:
