@@ -39,6 +39,19 @@ jobs:
       - name: Test
         run: python -m pytest -q
 
+  registry:
+    # The nightly registry job deploys strangers' content to main unattended;
+    # its parser, entry gate and rate-limit handling get checked on every PR,
+    # not just at 03:23 on main.
+    name: registry (node --test)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 20
+      - run: node --test scripts/*.test.mjs
+
   hero:
     # The README banner (assets/hero.svg) and its generator: GitHub-safe, says only
     # what the README says, and the signature it quotes is verbatim from its file and

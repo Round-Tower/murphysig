@@ -29,11 +29,14 @@ jobs:
           REPO: ${{ github.repository }}
           HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
         run: |
+          # Dependabot-authored only: the label alone is not proof of origin
+          # (anyone with triage rights can add it to any PR). gh reports the
+          # bot's login as "app/dependabot".
           pr=$(gh pr list --repo "$REPO" --state open --label automerge \
-                 --json number,headRefOid \
-                 --jq ".[] | select(.headRefOid==\"$HEAD_SHA\") | .number")
+                 --json number,headRefOid,author \
+                 --jq ".[] | select(.headRefOid==\"$HEAD_SHA\" and .author.login==\"app/dependabot\") | .number")
           if [ -z "$pr" ]; then
-            echo "No automerge-labeled PR at $HEAD_SHA — nothing to do."
+            echo "No automerge-labeled Dependabot PR at $HEAD_SHA — nothing to do."
             exit 0
           fi
           echo "CI green for #$pr — merging."

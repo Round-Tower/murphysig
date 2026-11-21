@@ -30,10 +30,19 @@
 // ~100 MB). Author + description lose bidi/zero-width chars (spoofing);
 // description capped at 300. gh() has a 30s fetch timeout and refuses a
 // Retry-After over 2 minutes. Confidence 0.9.
+// Review: Kev + claude-opus-5.5, 2026-11-21 — the nightly run still went red
+// every other night (11-08..11-21): code search answered 429 with Retry-After
+// 130-736 s, past the 2-minute cap, under the default GITHUB_TOKEN
+// (REGISTRY_TOKEN unset). gh() now raises RateLimitError for that, and
+// sweepFailure() turns it into a skipped night (exit 0, registry untouched)
+// while registry.json is under 72 h old; past that it fails loudly. A rate
+// limit on a per-repo fetch aborts the sweep instead of silently dropping that
+// repo from the committed registry. Confidence 0.85 — unit-tested with stubs;
+// the 72 h threshold is a judgement call.
 //
 // Usage: GITHUB_TOKEN=$(gh auth token) node scripts/update-registry.mjs
 
-import { writeFileSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -110,6 +119,30 @@ export function buildEntry(fullName, content, repo) {
   };
 }
 
+/** GitHub said "not now" (429 / secondary 403) and we could not wait it out. */
+export class RateLimitError extends Error {
+  constructor(message, { status } = {}) {
+    super(message);
+    this.name = "RateLimitError";
+    this.status = status;
+  }
+}
+
+// A rate-limited night is skipped while the committed registry is younger
+// than this; after it, the job goes red so a lasting outage gets noticed.
+const MAX_STALE_MS = 72 * 3_600_000;
+
+/**
+ * What a failed sweep should do: "skip" (exit 0, keep the committed
+ * registry) for a rate limit while the registry is fresh, else "fail".
+ */
+export function sweepFailure(err, lastGeneratedAt, now = Date.now()) {
+  if (!(err instanceof RateLimitError)) return "fail";
+  const generated = Date.parse(lastGeneratedAt ?? "");
+  if (!Number.isFinite(generated)) return "fail";
+  return now - generated < MAX_STALE_MS ? "skip" : "fail";
+}
+
 const sleepMs = (ms) => new Promise((r) => setTimeout(r, ms));
 const FETCH_TIMEOUT_MS = 30_000;
 const MAX_RETRY_WAIT_MS = 120_000;
@@ -144,44 +177,37 @@ export async function gh(path, token, { fetch: fetchImpl = fetch, sleep = sleepM
     const rateLimited =
       res.status === 429 ||
       (res.status === 403 && (res.headers.get("retry-after") || /rate limit/i.test(body)));
-    if (!rateLimited || attempt >= maxAttempts) {
+    if (!rateLimited) {
       throw new Error(`GitHub ${path} -> ${res.status}: ${body.slice(0, 200)}`);
+    }
+    if (attempt >= maxAttempts) {
+      throw new RateLimitError(`GitHub ${path} -> ${res.status}: ${body.slice(0, 200)}`, { status: res.status });
     }
     const wait = retryDelayMs(res, body, attempt);
     if (wait > MAX_RETRY_WAIT_MS) {
-      throw new Error(`GitHub ${path} -> ${res.status}: Retry-After ${wait}ms exceeds ${MAX_RETRY_WAIT_MS}ms`);
+      throw new RateLimitError(
+        `GitHub ${path} -> ${res.status}: Retry-After ${wait}ms exceeds ${MAX_RETRY_WAIT_MS}ms`,
+        { status: res.status },
+      );
     }
     console.warn(`  ~ ${path} rate-limited (${res.status}); retry ${attempt}/${maxAttempts - 1} in ${wait}ms`);
     await sleep(wait);
   }
 }
 
-async function main() {
-  const token = process.env.REGISTRY_TOKEN || process.env.GITHUB_TOKEN;
-  if (!token) {
-    console.error("Set GITHUB_TOKEN (or REGISTRY_TOKEN) first.");
-    process.exit(2);
-  }
-
-  // Code search caps at 1000 results — far beyond current scale.
-  const search = await gh(
-    "/search/code?q=filename:.murphysig&per_page=100",
-    token,
-  );
-  const rootHits = search.items.filter(
-    (item) => item.path === ".murphysig" && !item.repository.private,
-  );
-  console.log(
-    `Search: ${search.total_count} hits, ${rootHits.length} root-level public`,
-  );
-
+/**
+ * Registry entries for the search hits. A repo that 404s or is malformed is
+ * skipped; a rate limit aborts the whole sweep, because committing a registry
+ * with that repo missing would delist it until the next good night.
+ */
+export async function fetchEntries(rootHits, ghFn) {
   const entries = [];
   for (const hit of rootHits) {
     const fullName = hit.repository.full_name;
     try {
       const [file, repo] = await Promise.all([
-        gh(`/repos/${fullName}/contents/.murphysig`, token),
-        gh(`/repos/${fullName}`, token),
+        ghFn(`/repos/${fullName}/contents/.murphysig`),
+        ghFn(`/repos/${fullName}`),
       ]);
       const content = Buffer.from(file.content, "base64").toString("utf-8");
       const entry = buildEntry(fullName, content, repo);
@@ -192,8 +218,52 @@ async function main() {
       entries.push(entry);
       console.log(`  + ${fullName} (${entry.version ?? "version unknown"})`);
     } catch (err) {
+      if (err instanceof RateLimitError) throw err;
       console.warn(`  ! ${fullName}: ${err.message}`);
     }
+  }
+  return entries;
+}
+
+async function sweep(token) {
+  const ghFn = (path) => gh(path, token);
+  // Code search caps at 1000 results — far beyond current scale.
+  const search = await ghFn("/search/code?q=filename:.murphysig&per_page=100");
+  const rootHits = search.items.filter(
+    (item) => item.path === ".murphysig" && !item.repository.private,
+  );
+  console.log(
+    `Search: ${search.total_count} hits, ${rootHits.length} root-level public`,
+  );
+  return fetchEntries(rootHits, ghFn);
+}
+
+function lastGeneratedAt() {
+  try {
+    return JSON.parse(readFileSync(OUT, "utf-8")).generated_at ?? null;
+  } catch {
+    return null;
+  }
+}
+
+async function main() {
+  const token = process.env.REGISTRY_TOKEN || process.env.GITHUB_TOKEN;
+  if (!token) {
+    console.error("Set GITHUB_TOKEN (or REGISTRY_TOKEN) first.");
+    process.exit(2);
+  }
+
+  let entries;
+  try {
+    entries = await sweep(token);
+  } catch (err) {
+    const last = lastGeneratedAt();
+    if (sweepFailure(err, last) === "skip") {
+      // ::warning:: surfaces on the run summary without turning it red.
+      console.log(`::warning::Registry sweep skipped (${err.message}); keeping registry from ${last}.`);
+      return;
+    }
+    throw err;
   }
 
   entries.sort((a, b) => (b.last_push ?? "").localeCompare(a.last_push ?? ""));
