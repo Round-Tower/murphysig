@@ -5,12 +5,17 @@ name: Dependabot triage
 # actual merge only happens AFTER CI passes — see automerge-on-green.yml. This
 # avoids branch protection (which would block the registry bot's direct push).
 
-on: pull_request_target
+# opened/synchronize/reopened only: label, edit and close events have nothing
+# to triage, and each would be another pull_request_target run with a write
+# token.
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
 
+# Labelling and commenting on a PR need pull-requests: write, not issues: write.
 permissions:
   contents: read
   pull-requests: write
-  issues: write
 
 jobs:
   triage:
@@ -19,7 +24,7 @@ jobs:
     steps:
       - name: Fetch Dependabot metadata
         id: meta
-        uses: dependabot/fetch-metadata@v3
+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
